@@ -29,4 +29,30 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
+
+    if (project.path.startsWith(":bounded_context:")) {
+        sourceSets {
+            val domainSourceSet = create("domain") {
+            }
+
+            val applicationSourceSet = create("application") {
+                compileClasspath += domainSourceSet.compileClasspath
+                runtimeClasspath += domainSourceSet.runtimeClasspath
+            }
+
+            val outputAdapterSourceSet = create("output-adapter") {
+                listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
+                    compileClasspath += sourceSet.compileClasspath
+                    runtimeClasspath += sourceSet.runtimeClasspath
+                }
+            }
+
+            val inputAdapterSourceSet = create("input-adapter") {
+                listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
+                    compileClasspath += sourceSet.compileClasspath
+                    runtimeClasspath += sourceSet.runtimeClasspath
+                }
+            }
+        }
+    }
 }
