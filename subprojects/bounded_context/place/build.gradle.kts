@@ -1,0 +1,3 @@
+dependencies {
+    domainImplementation(project(":stdlib"))
+}
