@@ -82,6 +82,15 @@ subprojects {
 
                 exposeArtifact(this)
             }
+
+            val infraSourceSet = create("infra") {
+                listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
+                    compileClasspath += sourceSet.compileClasspath + sourceSet.output
+                    runtimeClasspath += sourceSet.runtimeClasspath + sourceSet.output
+                }
+
+                exposeArtifact(this)
+            }
         }
     }
 }
