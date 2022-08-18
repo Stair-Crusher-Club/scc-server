@@ -57,6 +57,9 @@ subprojects {
 
             val domainSourceSet = create("domain") {
             }
+            project.dependencies {
+                add(domainSourceSet.implementationConfigurationName, project(":stdlib"))
+            }
 
             val applicationSourceSet = create("application") {
                 compileClasspath += domainSourceSet.compileClasspath + domainSourceSet.output
