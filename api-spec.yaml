@@ -418,7 +418,7 @@ paths:
 components:
    # Reusable schemas (data models)
   schemas:
-    Timestamp:
+    EpochMillisTimestamp:
       description: 특정 시각을 표현하기 위한 모델.
       type: object
       properties:
@@ -554,7 +554,7 @@ components:
         comment:
           type: string
         createdAt:
-          $ref: '#/components/schemas/Timestamp'
+          $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
         - id
         - placeId
@@ -608,7 +608,7 @@ components:
         comment:
           type: string
         createdAt:
-          $ref: '#/components/schemas/Timestamp'
+          $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
         - id
         - buildingId
