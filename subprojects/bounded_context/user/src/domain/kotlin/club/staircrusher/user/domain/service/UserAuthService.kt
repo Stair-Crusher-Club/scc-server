@@ -3,7 +3,7 @@ package club.staircrusher.user.domain.service
 import club.staircrusher.stdlib.domain.DomainException
 import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
-import domain.user.exception.UserAuthenticationException
+import club.staircrusher.user.domain.exception.UserAuthenticationException
 
 class UserAuthService(
     private val tokenManager: TokenManager,

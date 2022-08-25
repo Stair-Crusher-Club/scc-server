@@ -1,3 +1,3 @@
-package domain.user.exception
+package club.staircrusher.user.domain.exception
 
 class UserAuthenticationException : RuntimeException()

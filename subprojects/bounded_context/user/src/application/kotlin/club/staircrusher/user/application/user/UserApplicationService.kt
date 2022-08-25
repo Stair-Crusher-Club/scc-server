@@ -32,7 +32,7 @@ class UserApplicationService(
     fun login(
         nickname: String,
         password: String
-    ): LoginResult = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    ): LoginResult = transactionManager.doInTransaction {
         val user = userAuthService.authenticate(nickname, password)
         val accessToken = userAuthService.issueAccessToken(user)
         LoginResult(user, accessToken)

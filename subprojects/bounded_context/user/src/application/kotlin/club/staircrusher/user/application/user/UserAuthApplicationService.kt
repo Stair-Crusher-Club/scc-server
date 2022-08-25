@@ -3,7 +3,7 @@ package club.staircrusher.user.application.user
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.domain.repository.UserRepository
 import club.staircrusher.user.domain.service.UserAuthService
-import domain.user.exception.UserAuthenticationException
+import club.staircrusher.user.domain.exception.UserAuthenticationException
 import java.sql.SQLException
 
 class UserAuthApplicationService(
