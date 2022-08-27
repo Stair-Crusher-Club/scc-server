@@ -21,7 +21,7 @@ class PlaceAccessibilityCommentService(
         if (normalizedComment.isBlank()) {
             throw DomainException("한 글자 이상의 의견을 제출해주세요.")
         }
-        return placeAccessibilityCommentRepository.add(
+        return placeAccessibilityCommentRepository.save(
             PlaceAccessibilityComment(
             id = EntityIdGenerator.generateRandom(),
             placeId = params.placeId,

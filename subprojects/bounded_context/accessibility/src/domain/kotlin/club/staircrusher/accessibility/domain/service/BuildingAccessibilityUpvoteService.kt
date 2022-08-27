@@ -17,7 +17,7 @@ class BuildingAccessibilityUpvoteService(
             return existingUpvote
         }
 
-        return buildingAccessibilityUpvoteRepository.add(
+        return buildingAccessibilityUpvoteRepository.save(
             BuildingAccessibilityUpvote(
             id = EntityIdGenerator.generateRandom(),
             userId = user.id,
@@ -30,7 +30,7 @@ class BuildingAccessibilityUpvoteService(
     fun cancelUpvote(user: AuthUser, buildingAccessibility: BuildingAccessibility) {
         buildingAccessibilityUpvoteRepository.findByUserAndBuildingAccessibilityAndNotDeleted(user.id, buildingAccessibility)?.let {
             it.deletedAt = clock.instant()
-            buildingAccessibilityUpvoteRepository.add(it)
+            buildingAccessibilityUpvoteRepository.save(it)
         }
     }
 

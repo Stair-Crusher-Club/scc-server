@@ -24,7 +24,7 @@ class PlaceAccessibilityService(
         if (placeAccessibilityRepository.findByPlaceId(params.placeId) != null) {
             throw DomainException("이미 접근성 정보가 등록된 장소입니다.")
         }
-        val result = placeAccessibilityRepository.add(
+        val result = placeAccessibilityRepository.save(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = params.placeId,

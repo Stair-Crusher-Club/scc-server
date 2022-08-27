@@ -28,7 +28,7 @@ class BuildingAccessibilityService(
             !params.hasElevator && params.elevatorStairInfo != StairInfo.UNDEFINED) {
             throw DomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.") // TODO: 테스트 추가
         }
-        return buildingAccessibilityRepository.add(
+        return buildingAccessibilityRepository.save(
             BuildingAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 buildingId = params.buildingId,
