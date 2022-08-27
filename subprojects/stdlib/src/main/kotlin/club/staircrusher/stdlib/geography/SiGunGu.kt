@@ -5,5 +5,5 @@ data class SiGunGu(
     val id: String,
     val name: String,
     // 시도는 굳이 엔티티로 만들 필요가 없어서 string으로 대체한다.
-    val sido: String,
+    val siDo: String,
 )
