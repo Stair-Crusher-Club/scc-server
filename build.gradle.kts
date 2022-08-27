@@ -57,6 +57,9 @@ subprojects {
 
             val domainSourceSet = create("domain") {
             }
+            project.dependencies {
+                add(domainSourceSet.implementationConfigurationName, project(":stdlib"))
+            }
 
             val applicationSourceSet = create("application") {
                 compileClasspath += domainSourceSet.compileClasspath + domainSourceSet.output
@@ -75,6 +78,15 @@ subprojects {
             }
 
             val inputAdapterSourceSet = create("input-adapter") {
+                listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
+                    compileClasspath += sourceSet.compileClasspath + sourceSet.output
+                    runtimeClasspath += sourceSet.runtimeClasspath + sourceSet.output
+                }
+
+                exposeArtifact(this)
+            }
+
+            val infraSourceSet = create("infra") {
                 listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
                     compileClasspath += sourceSet.compileClasspath + sourceSet.output
                     runtimeClasspath += sourceSet.runtimeClasspath + sourceSet.output

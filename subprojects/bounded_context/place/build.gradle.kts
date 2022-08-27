@@ -1,3 +1,2 @@
 dependencies {
-    domainImplementation(project(":stdlib"))
 }
