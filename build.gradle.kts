@@ -31,6 +31,15 @@ subprojects {
     }
 
     if (project.path.startsWith(":bounded_context:")) {
+        /**
+         * 아래와 같이 source set hierarchy를 구축한다.
+         *
+         *                           input-adapter
+         *                          /
+         * domain <- application <---- output-adapter
+         *                          \
+         *                           infra
+         */
         sourceSets {
             /**
              * parameter로 받는 source set의 output을 다른 project의 dependency로 사용할 수 있도록 노출해주는 함수.
@@ -56,22 +65,20 @@ subprojects {
             }
 
             val domainSourceSet = create("domain") {
-            }
-            project.dependencies {
-                add(domainSourceSet.implementationConfigurationName, project(":stdlib"))
+                // domain source set은 외부에서 의존하지 못하도록 exposeArtifact를 하지 않는다.
             }
 
             val applicationSourceSet = create("application") {
-                compileClasspath += domainSourceSet.compileClasspath + domainSourceSet.output
-                runtimeClasspath += domainSourceSet.runtimeClasspath + domainSourceSet.output
+                compileClasspath += domainSourceSet.output
+                runtimeClasspath += domainSourceSet.output
 
                 exposeArtifact(this)
             }
 
             val outputAdapterSourceSet = create("output-adapter") {
                 listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
-                    compileClasspath += sourceSet.compileClasspath + sourceSet.output
-                    runtimeClasspath += sourceSet.runtimeClasspath + sourceSet.output
+                    compileClasspath += sourceSet.output
+                    runtimeClasspath += sourceSet.output
                 }
 
                 exposeArtifact(this)
@@ -79,8 +86,8 @@ subprojects {
 
             val inputAdapterSourceSet = create("input-adapter") {
                 listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
-                    compileClasspath += sourceSet.compileClasspath + sourceSet.output
-                    runtimeClasspath += sourceSet.runtimeClasspath + sourceSet.output
+                    compileClasspath += sourceSet.output
+                    runtimeClasspath += sourceSet.output
                 }
 
                 exposeArtifact(this)
@@ -88,12 +95,22 @@ subprojects {
 
             val infraSourceSet = create("infra") {
                 listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
-                    compileClasspath += sourceSet.compileClasspath + sourceSet.output
-                    runtimeClasspath += sourceSet.runtimeClasspath + sourceSet.output
+                    compileClasspath += sourceSet.output
+                    runtimeClasspath += sourceSet.output
                 }
 
                 exposeArtifact(this)
             }
         }
+
+        fun addCommonDependenciesToAllSourceSets(project: Project) {
+            project.sourceSets.forEach { sourceSet ->
+                project.dependencies {
+                    add(sourceSet.implementationConfigurationName, project(":stdlib"))
+                }
+            }
+        }
+
+        addCommonDependenciesToAllSourceSets(project)
     }
 }
