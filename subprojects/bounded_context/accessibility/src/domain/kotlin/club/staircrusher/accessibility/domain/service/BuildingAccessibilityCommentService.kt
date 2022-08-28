@@ -21,7 +21,7 @@ class BuildingAccessibilityCommentService(
         if (normalizedComment.isBlank()) {
             throw DomainException("한 글자 이상의 의견을 제출해주세요.")
         }
-        return buildingAccessibilityCommentRepository.add(BuildingAccessibilityComment(
+        return buildingAccessibilityCommentRepository.save(BuildingAccessibilityComment(
             id = EntityIdGenerator.generateRandom(),
             buildingId = params.buildingId,
             userId = params.userId,

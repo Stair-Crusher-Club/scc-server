@@ -19,7 +19,7 @@ class UserService(
 
     fun createUser(params: CreateUserParams): User {
         val normalizedNickname = normalizeAndValidateNickname(params.nickname)
-        return userRepository.add(
+        return userRepository.save(
             User(
                 id = EntityIdGenerator.generateRandom(),
                 nickname = normalizedNickname,
@@ -33,7 +33,7 @@ class UserService(
     fun updateUserInfo(user: User, nickname: String, instagramId: String?): User {
         user.nickname = normalizeAndValidateNickname(nickname, userId = user.id)
         user.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
-        return userRepository.add(user)
+        return userRepository.save(user)
     }
 
     private fun normalizeAndValidateNickname(nickname: String, userId: String? = null): String {
