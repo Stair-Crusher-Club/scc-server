@@ -8,4 +8,6 @@ dependencies {
 
     infraImplementation("org.springframework.boot:spring-boot-starter-web")
     infraApi(project(":admin-api"))
+
+    testImplementation(project(":bounded_context:quest", "infra"))
 }
