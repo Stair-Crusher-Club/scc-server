@@ -1,0 +1,15 @@
+.create-club-quest-page-body {
+  height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+
+  #map {
+    min-width: 200px;
+    height: calc(100vw - 40px);
+    max-height: 500px;
+  }
+
+  .body-item-fixed-height {
+    flex: 0 0 auto;
+  }
+}
