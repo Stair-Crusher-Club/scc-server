@@ -27,8 +27,13 @@
   margin-top: 0;
 }
 
-.app-body {
-  max-width: 1024px;
-  padding: 20px;
-  margin: 0 auto 0;
+.app-body-container {
+  height: calc(100vh - 50px);
+  overflow-y: scroll;
+
+  .app-body {
+    max-width: 1024px;
+    padding: 20px;
+    margin: 0 auto 0;
+  }
 }

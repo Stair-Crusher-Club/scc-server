@@ -10,8 +10,10 @@ function AuthenticatedPageLayout() {
           ? (
             <div>
               <AppMenu />
-              <div className="app-body">
-                <Outlet />
+              <div className="app-body-container">
+                <div className="app-body">
+                  <Outlet />
+                </div>
               </div>
             </div>
           )
