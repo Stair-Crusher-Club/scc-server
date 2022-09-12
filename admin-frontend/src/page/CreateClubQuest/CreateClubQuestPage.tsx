@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, NumericInput } from '@blueprintjs/core';
+import { DefaultApi } from '../../api/api';
 
 import './CreateClubQuestPage.scss';
 
@@ -16,13 +17,14 @@ interface QuestCenterIndicator {
 
 function CreateClubQuestPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [map, setMap] = useState<any>(null);
+  const [map, setMap] = useState<kakao.maps.Map | null>(null);
 
   const [questCenter, setQuestCenter] = useState<kakao.maps.LatLng | null>(null);
   const [questRadius, setQuestRadius] = useState<number>(200);
   const [questCenterIndicator, setQuestCenterIndicator] = useState<QuestCenterIndicator | null>(null);
-
   const [questClusterCount, setQuestClusterCount] = useState(1);
+
+  const [questClustersMarkers, setQuestClustersMarkers] = useState<Array<Array<kakao.maps.Marker>>>([]);
 
   function withLoading(promise: Promise<any>): Promise<any> {
     setIsLoading(true);
@@ -32,7 +34,7 @@ function CreateClubQuestPage() {
   useEffect(installMapOnce, []);
   useEffect(() => {
     createOrUpdateQuestCenterIndicator();
-    setQuestClusterCount(Math.ceil((questRadius * questRadius - 1) / (200 * 200)));
+    setQuestClusterCount(Math.ceil((questRadius * questRadius - 1) / (300 * 300))); // 대략 300m x 300m 사이즈의 구역으로 나누는 걸 추천해준다.
   }, [questCenter, questRadius]);
 
   function installMapOnce() {
@@ -78,6 +80,70 @@ function CreateClubQuestPage() {
     // 대충 200m * 200m 짜리를 한 구역에 적절한 넓이라고 생각하고 퀘스트 분할 수를 추천해준다.
   }
 
+  async function dryRunCreateClubQuest() {
+    // const res = await new DefaultApi().clubQuestsDryRunCreatePost({
+    //   centerLocation: {
+    //     lng: questCenter!.getLng(),
+    //     lat: questCenter!.getLat(),
+    //   },
+    //   radiusMeters: questRadius,
+    //   clusterCount: questClusterCount,
+    // });
+    // const questClusters = res.data;
+    const questClusters = Array(questClusterCount).fill(0).map(() => {
+      const clusterCenter = {
+        lng: questCenter!.getLng() + (Math.random() - 0.5) / 100,
+        lat: questCenter!.getLat() + (Math.random() - 0.5) / 100,
+      }
+      return Array(10).fill(0).map(() => ({
+        name: 'haha',
+        location: {
+          lng: clusterCenter!.lng + (Math.random() - 0.5) / 500,
+          lat: clusterCenter!.lat + (Math.random() - 0.5) / 500,
+        },
+      }));
+    });
+    questClustersMarkers.forEach((questClusterMarkers) => {
+      questClusterMarkers.forEach((marker) => {
+        marker.setMap(null);
+      });
+    });
+    const newQuestClustersMarkers = questClusters.map((targetPlaces) => {
+      return targetPlaces.map((targetPlace) => {
+        const marker = new window.kakao.maps.Marker({
+          position: new kakao.maps.LatLng(targetPlace.location.lat, targetPlace.location.lng),
+        });
+        marker.setMap(map);
+        return marker
+      });
+    });
+    setQuestClustersMarkers(newQuestClustersMarkers);
+  }
+
+  function showAllClustersMarkers() {
+    questClustersMarkers.forEach((questClusterMarkers, idx) => {
+      questClusterMarkers.forEach((marker) => {
+        marker.setMap(map);
+      });
+    });
+  }
+
+  function showOnlyClusterMarkers(selectedIdx: number) {
+    return () => {
+      questClustersMarkers.forEach((questClusterMarkers, idx) => {
+        if (idx === selectedIdx) {
+          questClusterMarkers.forEach((marker) => {
+            marker.setMap(map);
+          });
+        } else {
+          questClusterMarkers.forEach((marker) => {
+            marker.setMap(null);
+          });
+        }
+      });
+    };
+  }
+
   return (
     <div>
       <h1>퀘스트 생성하기</h1>
@@ -108,8 +174,23 @@ function CreateClubQuestPage() {
               onValueChange={setQuestClusterCount}
             />
           </div>
-          <Button icon="refresh" text="퀘스트 분할하기" onClick={() => {}}></Button>
+          <Button icon="refresh" text="퀘스트 분할하기" onClick={dryRunCreateClubQuest} disabled={!questCenter || !questRadius || !questClusterCount}></Button>
         </div>
+        {
+          questClustersMarkers.length > 0
+            ? (
+              <div>
+                <p>분할 결과 :</p>
+                <Button text="전체 표시" onClick={showAllClustersMarkers} />
+                {
+                  questClustersMarkers.map((_, idx) => (
+                    <Button key={idx} text={`클러스터 ${idx + 1}`} onClick={showOnlyClusterMarkers(idx)} />
+                  ))
+                }
+              </div>
+            )
+            : null
+        }
       </div>
     </div>
   );
