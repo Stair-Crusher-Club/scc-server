@@ -50,6 +50,8 @@ function CreateClubQuestPage() {
     window.kakao.maps.event.addListener(newMap, 'click', (mouseEvent: kakao.maps.event.MouseEvent) => {
       setQuestCenter(mouseEvent.latLng);
     });
+    const zoomControl = new window.kakao.maps.ZoomControl();
+    newMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
   }
 
   function createOrUpdateQuestCenterIndicator() {
