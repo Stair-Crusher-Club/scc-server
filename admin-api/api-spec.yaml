@@ -1,0 +1,106 @@
+openapi: '3.0.0'
+info:
+  title: Stair Crusher Club Admin API Specification
+  version: '1.0.0'
+  description: |
+    ## 계단정복지도 서비스의 서버 - 어드민 통신을 위한 API 명세.
+
+defaultContentType: application/json
+
+paths:
+  /clubQuests/create/dryRun:
+    post:
+      summary: 주어진 조건(중심 위치, 반경, 퀘스트 분할 숫자 등)으로 퀘스트를 생성하면 어떻게 생성될지 시뮬레이션하여 미리 확인한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                centerLocation:
+                  $ref: '#/components/schemas/LocationDTO'
+                radiusMeters:
+                  type: integer
+                clusterCount:
+                  type: integer
+              required:
+                - centerLocation
+                - radiusMeters
+                - clusterCount
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClubQuestCreateDryRunResultItemDTO'
+
+  /clubQuests/create:
+    post:
+      summary: dryRun 생성 결과를 받아서 실제로 퀘스트를 생성한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                questNamePrefix:
+                  type: string
+                dryRunResults:
+                  items:
+                    $ref: '#/components/schemas/ClubQuestCreateDryRunResultItemDTO'
+              required:
+                - questNamePrefix
+                - dryRunResults
+      responses:
+        '204': {}
+
+components:
+  # Reusable schemas (data models)
+  schemas:
+    LocationDTO:
+      description: 위치를 위경도로 표현하기 위한 모델.
+      type: object
+      properties:
+        lng:
+          type: number
+          format: double
+        lat:
+          type: number
+          format: double
+      required:
+        - lng
+        - lat
+
+    ClubQuestCreateDryRunResultItemDTO:
+      description: 퀘스트 생성 시뮬레이션 결과. 각 퀘스트마다 1개의 아이템이 반환된다.
+      properties:
+        questCenterLocation:
+          $ref: '#/components/schemas/LocationDTO'
+        targetPlaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubQuestTargetPlaceDTO'
+      required:
+        - questCenterLocation
+        - targetPlaces
+
+    ClubQuestTargetPlaceDTO:
+      description: 퀘스트 대상이 되는 점포 정보.
+      properties:
+        name:
+          type: string
+          description: 점포의 human-readable한 이름.
+        location:
+          $ref: '#/components/schemas/LocationDTO'
+          description: 점포의 위경도 좌표.
+        placeId:
+          type: string
+          description: 점포의 ID.
+      required:
+        - name
+        - location
+        - placeId
