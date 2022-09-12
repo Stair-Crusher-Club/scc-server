@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button, NumericInput } from '@blueprintjs/core';
 import { DefaultApi } from '../../api/api';
 
@@ -24,7 +24,12 @@ function CreateClubQuestPage() {
   const [questCenterIndicator, setQuestCenterIndicator] = useState<QuestCenterIndicator | null>(null);
   const [questClusterCount, setQuestClusterCount] = useState(1);
 
-  const [questClustersMarkers, setQuestClustersMarkers] = useState<Array<Array<kakao.maps.Marker>>>([]);
+  const [questClustersMarkers, _setQuestClustersMarkers] = useState<Array<Array<kakao.maps.Marker>>>([]);
+  const questClustersMarkersRef = useRef(questClustersMarkers);
+  function setQuestClustersMarkers(newValue: Array<Array<kakao.maps.Marker>>) {
+    questClustersMarkersRef.current = newValue;
+    _setQuestClustersMarkers(newValue);
+  }
 
   function withLoading(promise: Promise<any>): Promise<any> {
     setIsLoading(true);
@@ -47,11 +52,17 @@ function CreateClubQuestPage() {
       level: 8,
     });
     setMap(newMap);
-    window.kakao.maps.event.addListener(newMap, 'click', (mouseEvent: kakao.maps.event.MouseEvent) => {
-      setQuestCenter(mouseEvent.latLng);
-    });
+    window.kakao.maps.event.addListener(newMap, 'click', updateQuestCenterOnMapClick);
     const zoomControl = new window.kakao.maps.ZoomControl();
     newMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+  }
+
+  function updateQuestCenterOnMapClick(mouseEvent: kakao.maps.event.MouseEvent) {
+    console.log(questClustersMarkersRef.current);
+    if (questClustersMarkersRef.current.length > 0) {
+      return; // dryRunCreate를 한 이후에는 지도 클릭 시 퀘스트 중심이 이동하지 않는 것이 좋다.
+    }
+    setQuestCenter(mouseEvent.latLng);
   }
 
   function createOrUpdateQuestCenterIndicator() {
@@ -79,7 +90,6 @@ function CreateClubQuestPage() {
         regionCircle,
       });
     }
-    // 대충 200m * 200m 짜리를 한 구역에 적절한 넓이라고 생각하고 퀘스트 분할 수를 추천해준다.
   }
 
   async function dryRunCreateClubQuest() {
@@ -120,6 +130,15 @@ function CreateClubQuestPage() {
       });
     });
     setQuestClustersMarkers(newQuestClustersMarkers);
+  }
+
+  function clearDryRunResult() {
+    questClustersMarkers.forEach((questClusterMarkers, idx) => {
+      questClusterMarkers.forEach((marker) => {
+        marker.setMap(null);
+      });
+    });
+    setQuestClustersMarkers([]);
   }
 
   function showAllClustersMarkers() {
@@ -177,6 +196,7 @@ function CreateClubQuestPage() {
             />
           </div>
           <Button icon="refresh" text="퀘스트 분할하기" onClick={dryRunCreateClubQuest} disabled={!questCenter || !questRadius || !questClusterCount}></Button>
+          <Button icon="trash" text="처음부터 다시하기" onClick={clearDryRunResult} disabled={questClustersMarkers.length === 0}></Button>
         </div>
         {
           questClustersMarkers.length > 0
