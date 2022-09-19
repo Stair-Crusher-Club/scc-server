@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button, NumericInput } from '@blueprintjs/core';
-import { DefaultApi } from '../../api/api';
+import { ClubQuestCreateDryRunResultItemDTO } from '../../api';
+import { AdminApi } from '../../AdminApi';
 
 import './CreateClubQuestPage.scss';
 
@@ -24,7 +25,8 @@ function CreateClubQuestPage() {
   const [questCenterIndicator, setQuestCenterIndicator] = useState<QuestCenterIndicator | null>(null);
   const [questClusterCount, setQuestClusterCount] = useState(1);
 
-  const [questClustersMarkers, _setQuestClustersMarkers] = useState<Array<Array<kakao.maps.Marker>>>([]);
+  const [questClustersMarkers, _setQuestClustersMarkers] = useState<kakao.maps.Marker[][]>([]);
+  const [dryRunResults, setDryRunResults] = useState<ClubQuestCreateDryRunResultItemDTO[]>([]);
   const questClustersMarkersRef = useRef(questClustersMarkers);
   function setQuestClustersMarkers(newValue: Array<Array<kakao.maps.Marker>>) {
     questClustersMarkersRef.current = newValue;
@@ -58,7 +60,6 @@ function CreateClubQuestPage() {
   }
 
   function updateQuestCenterOnMapClick(mouseEvent: kakao.maps.event.MouseEvent) {
-    console.log(questClustersMarkersRef.current);
     if (questClustersMarkersRef.current.length > 0) {
       return; // dryRunCreate를 한 이후에는 지도 클릭 시 퀘스트 중심이 이동하지 않는 것이 좋다.
     }
@@ -93,35 +94,24 @@ function CreateClubQuestPage() {
   }
 
   async function dryRunCreateClubQuest() {
-    // const res = await new DefaultApi().clubQuestsDryRunCreatePost({
-    //   centerLocation: {
-    //     lng: questCenter!.getLng(),
-    //     lat: questCenter!.getLat(),
-    //   },
-    //   radiusMeters: questRadius,
-    //   clusterCount: questClusterCount,
-    // });
-    // const questClusters = res.data;
-    const questClusters = Array(questClusterCount).fill(0).map(() => {
-      const clusterCenter = {
-        lng: questCenter!.getLng() + (Math.random() - 0.5) / 100,
-        lat: questCenter!.getLat() + (Math.random() - 0.5) / 100,
-      }
-      return Array(10).fill(0).map(() => ({
-        name: 'haha',
-        location: {
-          lng: clusterCenter!.lng + (Math.random() - 0.5) / 500,
-          lat: clusterCenter!.lat + (Math.random() - 0.5) / 500,
-        },
-      }));
+    const res = await AdminApi.clubQuestsCreateDryRunPost({
+      centerLocation: {
+        lng: questCenter!.getLng(),
+        lat: questCenter!.getLat(),
+      },
+      radiusMeters: questRadius,
+      clusterCount: questClusterCount,
     });
+    const dryRunResult = res.data;
+    setDryRunResults(dryRunResult)
+
     questClustersMarkers.forEach((questClusterMarkers) => {
       questClusterMarkers.forEach((marker) => {
         marker.setMap(null);
       });
     });
-    const newQuestClustersMarkers = questClusters.map((targetPlaces) => {
-      return targetPlaces.map((targetPlace) => {
+    const newQuestClustersMarkers = dryRunResult.map((targetPlaces) => {
+      return targetPlaces.targetPlaces.map((targetPlace) => {
         const marker = new window.kakao.maps.Marker({
           position: new kakao.maps.LatLng(targetPlace.location.lat, targetPlace.location.lng),
         });
@@ -133,6 +123,7 @@ function CreateClubQuestPage() {
   }
 
   function clearDryRunResult() {
+    setDryRunResults([]);
     questClustersMarkers.forEach((questClusterMarkers, idx) => {
       questClusterMarkers.forEach((marker) => {
         marker.setMap(null);
@@ -163,6 +154,18 @@ function CreateClubQuestPage() {
         }
       });
     };
+  }
+
+  async function createClubQuest() {
+    if (!window.confirm('퀘스트를 생성하시겠습니까?')) {
+      return;
+    }
+    await AdminApi.clubQuestsCreatePost({
+      questNamePrefix: 'haha',
+      dryRunResults,
+    });
+    alert('퀘스트 생성을 완료했습니다.');
+    // TODO: 퀘스트 상세 페이지 혹은 퀘스트 목록 페이지로 이동
   }
 
   return (
@@ -196,7 +199,8 @@ function CreateClubQuestPage() {
             />
           </div>
           <Button icon="refresh" text="퀘스트 분할하기" onClick={dryRunCreateClubQuest} disabled={!questCenter || !questRadius || !questClusterCount}></Button>
-          <Button icon="trash" text="처음부터 다시하기" onClick={clearDryRunResult} disabled={questClustersMarkers.length === 0}></Button>
+          <Button icon="trash" text="처음부터 다시하기" onClick={clearDryRunResult} disabled={dryRunResults.length === 0}></Button>
+          <Button icon="confirm" text="확정하기 (퀘스트 생성)" onClick={createClubQuest} disabled={dryRunResults.length === 0}></Button>
         </div>
         {
           questClustersMarkers.length > 0

@@ -32,8 +32,8 @@ class ClubQuestCreateAplService(
                         ClubQuestTargetPlace(
                             name = "퀘스트 $questIdx-$placeIdx",
                             location = Location(
-                                lng = centerLocation.lng + (Random().nextDouble() - 0.5) / 500,
-                                lat = centerLocation.lat + (Random().nextDouble() - 0.5) / 500,
+                                lng = questCenterLocation.lng + (Random().nextDouble() - 0.5) / 500,
+                                lat = questCenterLocation.lat + (Random().nextDouble() - 0.5) / 500,
                             ),
                             placeId = "$questIdx-$placeIdx",
                         )
