@@ -8,6 +8,7 @@ interface MapsService {
         address: String,
     ): List<Place>
 
+    // TODO: support filters
     suspend fun findByKeyword(
         keyword: String,
     ): List<Place>

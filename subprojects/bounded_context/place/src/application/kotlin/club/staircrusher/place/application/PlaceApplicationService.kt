@@ -14,7 +14,7 @@ class PlaceApplicationService(
         return placeRepository.findByIdOrNull(placeId)
     }
 
-    // FIXME: Should this function be suspend?
+    // TODO: support filter
     suspend fun findByKeyword(keyword: String): List<Place> {
         val places = mapsService.findByKeyword(keyword)
         transactionManager.doInTransaction {
