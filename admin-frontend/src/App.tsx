@@ -10,7 +10,7 @@ import AuthenticatedPageLayout from './AuthenticatedPageLayout';
 import "./App.scss";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <div>
