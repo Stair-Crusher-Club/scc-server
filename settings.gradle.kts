@@ -33,4 +33,10 @@ pluginManagement {
 
         id("io.spring.dependency-management") version springDependencyManagementVersion
     }
+
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven(url = "https://repo.spring.io/milestone/")
+    }
 }
