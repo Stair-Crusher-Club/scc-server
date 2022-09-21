@@ -28,7 +28,7 @@ subprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "17"
     }
 
     if (project.path.startsWith(":bounded_context:")) {
@@ -53,6 +53,7 @@ subprojects {
                 val jarTask = project.tasks.register("${sourceSet.name}Jar", org.gradle.jvm.tasks.Jar::class) {
                     from(sourceSet.output)
                     group = "build"
+                    archiveClassifier.set(sourceSet.name)
                 }
                 project.configurations {
                     val configurationName = sourceSet.name
@@ -62,7 +63,7 @@ subprojects {
             }
 
             val domainSourceSet = create("domain") {
-                // domain source set은 외부에서 의존하지 못하도록 exposeArtifact를 하지 않는다.
+                exposeArtifact(this)
             }
 
             val applicationSourceSet = create("application") {
