@@ -5,10 +5,12 @@ import club.staircrusher.quest.domain.repository.ClubQuestRepository
 import club.staircrusher.quest.domain.vo.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.vo.ClubQuestTargetPlace
 import club.staircrusher.stdlib.geography.Location
+import org.springframework.stereotype.Component
 import java.util.Random
 import java.util.UUID
 
 // TODO: 트랜잭션 처리
+@Component
 class ClubQuestCreateAplService(
     private val clubQuestRepository: ClubQuestRepository,
 ) {
