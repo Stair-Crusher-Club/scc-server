@@ -4,10 +4,6 @@ import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place.domain.model.PlaceCategory
 
 interface MapsService {
-    suspend fun findByAddress(
-        address: String,
-    ): List<Place>
-
     // TODO: support filters
     suspend fun findByKeyword(
         keyword: String,

@@ -10,15 +10,12 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.http.client.reactive.ReactorResourceFactory
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.annotation.GetExchange
 import reactor.core.publisher.Mono
-import reactor.netty.http.HttpResources
 import reactor.netty.http.client.HttpClient
-import reactor.netty.resources.ConnectionProvider
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -66,11 +63,6 @@ class KakaoMapsService(
             @RequestParam(required = false) size: Int? = null,
             @RequestParam(required = false) sort: String? = null,
         ): Mono<String>
-    }
-
-
-    override suspend fun findByAddress(address: String): List<Place> {
-        TODO("Not yet implemented")
     }
 
     override suspend fun findByKeyword(keyword: String): List<Place> {
