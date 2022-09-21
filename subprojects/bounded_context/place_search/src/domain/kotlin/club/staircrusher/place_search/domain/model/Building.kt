@@ -1,4 +1,4 @@
-package club.staircrusher.place_search.model
+package club.staircrusher.place_search.domain.model
 
 data class Building(
     val id: String,
