@@ -1,11 +1,11 @@
-package club.staircrusher.place.application
+package club.staircrusher.place.application.service
 
-import club.staircrusher.place.domain.entity.Place
-import club.staircrusher.place.domain.repository.PlaceRepository
-import club.staircrusher.place.domain.service.MapsService
+import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.application.port.out.persistence.PlaceRepository
+import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.stdlib.persistence.TransactionManager
 
-class PlaceApplicationService(
+class PlaceService(
     private val placeRepository: PlaceRepository,
     private val mapsService: MapsService,
     private val transactionManager: TransactionManager,
