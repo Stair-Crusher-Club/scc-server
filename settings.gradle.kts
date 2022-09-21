@@ -1,4 +1,5 @@
 rootProject.name = "scc-server"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 fileTree("subprojects").filter { it.name == "build.gradle.kts" }.forEach {
     val parentDir = it.parentFile
@@ -14,4 +15,22 @@ fileTree("subprojects").filter { it.name == "build.gradle.kts" }.forEach {
     }
     include(projectName)
     project(":$projectName").projectDir = parentDir
+}
+
+
+pluginManagement {
+    val kotlinVersion: String by settings
+    val springBootVersion: String by settings
+    val sqlDelightVersion: String by settings
+    val springDependencyManagementVersion: String by settings
+
+    plugins {
+        kotlin("jvm") version kotlinVersion
+
+        id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
+        id("org.springframework.boot") version springBootVersion
+        id("com.squareup.sqldelight") version sqlDelightVersion
+
+        id("io.spring.dependency-management") version springDependencyManagementVersion
+    }
 }
