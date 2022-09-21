@@ -1,15 +1,21 @@
 package club.staircrusher.place.output_adapter.out.web
 
 import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place.domain.model.PlaceCategory
+import club.staircrusher.stdlib.geography.Location
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.http.codec.json.KotlinSerializationJsonDecoder
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.support.WebClientAdapter
@@ -36,9 +42,13 @@ class KakaoMapsService(
             }
             .responseTimeout(Duration.ofSeconds(2))
 
+        val decoder = KotlinSerializationJsonDecoder(Json { ignoreUnknownKeys = true })
+
+        // FIXME: add error handling
         val client = WebClient.builder()
             .baseUrl("https://dapi.kakao.com")
             .clientConnector(ReactorClientHttpConnector(httpClient))
+            .codecs { it.defaultCodecs().kotlinSerializationJsonDecoder(decoder) }
             .defaultHeader("Authorization", "KakaoAK $kakaoProperties")
             .build()
 
@@ -62,16 +72,89 @@ class KakaoMapsService(
             @RequestParam(required = false) page: Int? = null,
             @RequestParam(required = false) size: Int? = null,
             @RequestParam(required = false) sort: String? = null,
-        ): Mono<String>
+        ): Mono<KeywordSearchResult>
     }
 
     override suspend fun findByKeyword(keyword: String): List<Place> {
         val result = kakaoService.searchByKeyword(keyword).awaitFirstOrNull()
-        logger.info { result }
-        return listOf()
+        logger.debug { result }
+        return result?.documents?.map {
+            Place(
+                id = it.id,
+                name = it.placeName,
+                location = Location(
+                    lng = it.x.toDouble(),
+                    lat = it.y.toDouble(),
+                ),
+                building = TODO(),
+                siGunGuId = TODO(),
+                eupMyeonDongId = TODO(),
+                category = TODO()// it.categoryGroupCode,
+            )
+        } ?: emptyList()
     }
 
     override suspend fun findByCategory(category: PlaceCategory): List<Place> {
         TODO("Not yet implemented")
     }
+
+    @Serializable
+    data class KeywordSearchResult(
+        @SerialName("documents")
+        val documents: List<Document>,
+        @SerialName("meta")
+        val meta: Meta,
+    ) {
+        @Serializable
+        data class Document(
+            @SerialName("address_name")
+            val addressName: String,
+            @SerialName("category_group_code")
+            val categoryGroupCode: String,
+            @SerialName("category_group_name")
+            val categoryGroupName: String,
+            @SerialName("category_name")
+            val categoryName: String,
+            @SerialName("distance")
+            val distance: String,
+            @SerialName("id")
+            val id: String,
+            @SerialName("phone")
+            val phone: String,
+            @SerialName("place_name")
+            val placeName: String,
+            @SerialName("place_url")
+            val placeUrl: String,
+            @SerialName("road_address_name")
+            val roadAddressName: String,
+            @SerialName("x")
+            val x: String,
+            @SerialName("y")
+            val y: String,
+        )
+
+        @Serializable
+        data class Meta(
+            @SerialName("is_end")
+            val isEnd: Boolean,
+            @SerialName("pageable_count")
+            val pageableCount: Int,
+            @SerialName("same_name")
+            val sameName: RegionInfo,
+            @SerialName("total_count")
+            val totalCount: Int,
+        ) {
+            @Serializable
+            data class RegionInfo(
+                @SerialName("keyword")
+                val keyword: String,
+                @SerialName("region")
+                val region: List<String>,
+                @SerialName("selected_region")
+                val selectedRegion: String,
+            )
+        }
+    }
 }
+
+\ No newline at end of file
