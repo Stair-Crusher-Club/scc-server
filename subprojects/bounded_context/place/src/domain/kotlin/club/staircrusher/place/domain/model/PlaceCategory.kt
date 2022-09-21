@@ -1,4 +1,4 @@
-package club.staircrusher.place.domain.entity
+package club.staircrusher.place.domain.model
 
 enum class PlaceCategory(val humanReadableName: String) {
     MARKET(humanReadableName = "대형마트"),

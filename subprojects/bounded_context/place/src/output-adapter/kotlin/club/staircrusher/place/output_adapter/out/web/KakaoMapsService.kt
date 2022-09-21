@@ -1,8 +1,8 @@
-package club.staircrusher.place.output_adapter.service
+package club.staircrusher.place.output_adapter.out.web
 
-import club.staircrusher.place.domain.entity.Place
-import club.staircrusher.place.domain.entity.PlaceCategory
-import club.staircrusher.place.domain.service.MapsService
+import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.domain.model.PlaceCategory
+import club.staircrusher.place.application.port.out.web.MapsService
 
 class KakaoMapsService: MapsService {
     override suspend fun findByAddress(address: String): List<Place> {

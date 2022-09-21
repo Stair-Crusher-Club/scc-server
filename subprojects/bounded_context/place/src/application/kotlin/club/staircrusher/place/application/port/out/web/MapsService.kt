@@ -1,7 +1,7 @@
-package club.staircrusher.place.domain.service
+package club.staircrusher.place.application.port.out.web
 
-import club.staircrusher.place.domain.entity.Place
-import club.staircrusher.place.domain.entity.PlaceCategory
+import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.domain.model.PlaceCategory
 
 interface MapsService {
     suspend fun findByAddress(

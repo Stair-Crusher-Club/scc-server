@@ -1,4 +1,4 @@
-package club.staircrusher.place.domain.entity
+package club.staircrusher.place.domain.model
 
 import club.staircrusher.stdlib.geography.Location
 
