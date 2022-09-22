@@ -1,10 +1,10 @@
-package club.staircrusher.place_search.output_adapter.out
+package club.staircrusher.place_search.infra.adapter.out.web
 
 import club.staircrusher.accessibility.application.AccessibilityApplicationService
 import club.staircrusher.place_search.domain.model.BuildingAccessibility
 import club.staircrusher.place_search.domain.model.Place
 import club.staircrusher.place_search.domain.model.PlaceAccessibility
-import club.staircrusher.place_search.application.port.out.AccessibilityService
+import club.staircrusher.place_search.application.port.out.web.AccessibilityService
 
 class InMemoryAccessibilityService(
     private val accessibilityApplicationService: AccessibilityApplicationService,

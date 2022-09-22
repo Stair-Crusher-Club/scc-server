@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.output_adapter.service
+package club.staircrusher.accessibility.infra.adapter.out.web
 
 import club.staircrusher.accessibility.domain.model.Place
 import club.staircrusher.accessibility.domain.service.PlaceService
