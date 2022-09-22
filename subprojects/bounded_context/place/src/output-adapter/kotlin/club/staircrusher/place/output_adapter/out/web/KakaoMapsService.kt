@@ -91,10 +91,10 @@ class KakaoMapsService(
                     lng = it.x.toDouble(),
                     lat = it.y.toDouble(),
                 ),
-                building = TODO(),
-                siGunGuId = TODO(),
-                eupMyeonDongId = TODO(),
-                category = TODO()// it.categoryGroupCode,
+                building = null,
+                siGunGuId = null,
+                eupMyeonDongId = null,
+                category = it.categoryGroupCode.toPlaceCategory(),
             )
         } ?: emptyList()
     }
@@ -115,7 +115,7 @@ class KakaoMapsService(
             @SerialName("address_name")
             val addressName: String,
             @SerialName("category_group_code")
-            val categoryGroupCode: String,
+            val categoryGroupCode: Category,
             @SerialName("category_group_name")
             val categoryGroupName: String,
             @SerialName("category_name")
@@ -136,7 +136,53 @@ class KakaoMapsService(
             val x: String,
             @SerialName("y")
             val y: String,
-        )
+        ) {
+            @Serializable
+            enum class Category {
+                MT1, //	대형마트
+                CS2, //	편의점
+                PS3, //	어린이집, 유치원
+                SC4, //	학교
+                AC5, //	학원
+                PK6, //	주차장
+                OL7, //	주유소, 충전소
+                SW8, //	지하철역
+                BK9, //	은행
+                CT1, //	문화시설
+                AG2, //	중개업소
+                PO3, //	공공기관
+                AT4, //	관광명소
+                AD5, //	숙박
+                FD6, //	음식점
+                CE7, //	카페
+                HP8, //	병원
+                PM9, //	약국
+                ;
+
+                fun toPlaceCategory(): PlaceCategory {
+                    return when (this) {
+                        MT1 -> PlaceCategory.MARKET
+                        CS2 -> PlaceCategory.CONVENIENCE_STORE
+                        PS3 -> PlaceCategory.KINDERGARTEN
+                        SC4 -> PlaceCategory.SCHOOL
+                        AC5 -> PlaceCategory.ACADEMY
+                        PK6 -> PlaceCategory.PARKING_LOT
+                        OL7 -> PlaceCategory.GAS_STATION
+                        SW8 -> PlaceCategory.SUBWAY_STATION
+                        BK9 -> PlaceCategory.BANK
+                        CT1 -> PlaceCategory.CULTURAL_FACILITIES
+                        AG2 -> PlaceCategory.AGENCY
+                        PO3 -> PlaceCategory.PUBLIC_OFFICE
+                        AT4 -> PlaceCategory.ATTRACTION
+                        AD5 -> PlaceCategory.ACCOMODATION
+                        FD6 -> PlaceCategory.RESTAURANT
+                        CE7 -> PlaceCategory.CAFE
+                        HP8 -> PlaceCategory.HOSPITAL
+                        PM9 -> PlaceCategory.PHARMACY
+                    }
+                }
+            }
+        }
 
         @Serializable
         data class Meta(
