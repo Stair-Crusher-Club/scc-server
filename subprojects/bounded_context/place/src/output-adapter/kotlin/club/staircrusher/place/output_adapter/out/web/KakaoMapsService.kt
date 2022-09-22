@@ -1,7 +1,6 @@
 package club.staircrusher.place.output_adapter.out.web
 
 import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place.domain.model.PlaceCategory
 import club.staircrusher.stdlib.geography.Location
@@ -9,11 +8,12 @@ import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.json.KotlinSerializationJsonDecoder
 import org.springframework.web.bind.annotation.RequestParam
@@ -44,12 +44,17 @@ class KakaoMapsService(
 
         val decoder = KotlinSerializationJsonDecoder(Json { ignoreUnknownKeys = true })
 
-        // FIXME: add error handling
         val client = WebClient.builder()
             .baseUrl("https://dapi.kakao.com")
             .clientConnector(ReactorClientHttpConnector(httpClient))
             .codecs { it.defaultCodecs().kotlinSerializationJsonDecoder(decoder) }
-            .defaultHeader("Authorization", "KakaoAK $kakaoProperties")
+            .defaultHeaders { it.add(HttpHeaders.AUTHORIZATION, "KakaoAK $kakaoProperties") }
+            .defaultStatusHandler(HttpStatusCode::isError) { response ->
+                response
+                    .bodyToMono(KakaoError::class.java)
+                    .map { RuntimeException(it.msg) }
+                    .onErrorResume { response.createException() }
+            }
             .build()
 
         val factory = WebClientAdapter.createHttpServiceProxyFactory(client)
@@ -155,6 +160,12 @@ class KakaoMapsService(
             )
         }
     }
-}
 
-\ No newline at end of file
+    @Serializable
+    data class KakaoError(
+        @SerialName("code")
+        val code: Int,
+        @SerialName("msg")
+        val msg: String,
+    )
+}
