@@ -13,13 +13,16 @@ dependencyManagement {
 dependencies {
     val kotlinLoggingVersion: String by project
     val kotlinSerializationVersion: String by project
+    val jakartaInjectVersion: String by project
 
-   infraImplementation("org.springframework.boot:spring-boot-starter-web")
-   infraImplementation("org.springframework:spring-webflux")
-   infraImplementation("io.projectreactor.netty:reactor-netty")
+    applicationImplementation("jakarta.inject:jakarta.inject-api:$jakartaInjectVersion")
 
-   infraImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
-   infraImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
+    infraImplementation("org.springframework.boot:spring-boot-starter-web")
+    infraImplementation("org.springframework:spring-webflux")
+    infraImplementation("io.projectreactor.netty:reactor-netty")
 
-   infraImplementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+    infraImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
+    infraImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
+
+    infraImplementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 }
