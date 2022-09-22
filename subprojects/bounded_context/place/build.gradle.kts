@@ -13,9 +13,6 @@ dependencyManagement {
 dependencies {
     val kotlinLoggingVersion: String by project
     val kotlinSerializationVersion: String by project
-    val jakartaInjectVersion: String by project
-
-    applicationImplementation("jakarta.inject:jakarta.inject-api:$jakartaInjectVersion")
 
     infraImplementation("org.springframework.boot:spring-boot-starter-web")
     infraImplementation("org.springframework:spring-webflux")
