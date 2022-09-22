@@ -1,4 +1,4 @@
-package club.staircrusher.place_search.application.port.out
+package club.staircrusher.place_search.application.port.out.web
 
 import club.staircrusher.place_search.domain.model.Place
 

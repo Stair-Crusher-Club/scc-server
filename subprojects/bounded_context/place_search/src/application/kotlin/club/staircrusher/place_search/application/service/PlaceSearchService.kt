@@ -1,8 +1,8 @@
 package club.staircrusher.place_search.application.service
 
 import club.staircrusher.place_search.domain.model.Place
-import club.staircrusher.place_search.application.port.out.AccessibilityService
-import club.staircrusher.place_search.application.port.out.PlaceService
+import club.staircrusher.place_search.application.port.out.web.AccessibilityService
+import club.staircrusher.place_search.application.port.out.web.PlaceService
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 

@@ -35,11 +35,7 @@ subprojects {
         /**
          * 아래와 같이 source set hierarchy를 구축한다.
          *
-         *                           input-adapter
-         *                          /
-         * domain <- application <---- output-adapter
-         *                          \
-         *                           infra
+         * domain <- application <- infra
          */
         sourceSets {
             /**
@@ -48,7 +44,7 @@ subprojects {
              *
              * dependencies {
              *     // someBoundedContext의 application source set의 코드에 의존한다.
-             *     outputAdapterImplementation(project(":someBoundedContext", "application"))
+             *     infraImplementation(project(":someBoundedContext", "application"))
              * }
              *
              * refs: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000138910-Gradle-dependency-on-non-main-source-set-module#community_comment_115000181524
@@ -72,24 +68,6 @@ subprojects {
             val applicationSourceSet = create("application") {
                 compileClasspath += domainSourceSet.output
                 runtimeClasspath += domainSourceSet.output
-
-                exposeArtifact(this)
-            }
-
-            val outputAdapterSourceSet = create("output-adapter") {
-                listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
-                    compileClasspath += sourceSet.output
-                    runtimeClasspath += sourceSet.output
-                }
-
-                exposeArtifact(this)
-            }
-
-            val inputAdapterSourceSet = create("input-adapter") {
-                listOf(domainSourceSet, applicationSourceSet).forEach { sourceSet ->
-                    compileClasspath += sourceSet.output
-                    runtimeClasspath += sourceSet.output
-                }
 
                 exposeArtifact(this)
             }

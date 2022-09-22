@@ -1,4 +1,4 @@
-package club.staircrusher.place.output_adapter.out.web
+package club.staircrusher.place.infra.adapter.out.web
 
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place

@@ -1,11 +1,12 @@
-package club.staircrusher.place_search.output_adapter.out
+package club.staircrusher.place_search.infra.adapter.out.web
 
+import club.staircrusher.place_search.application.port.out.web.PlaceService
 import club.staircrusher.place_search.domain.model.Building
 import club.staircrusher.place_search.domain.model.Place
 
 class InMemoryPlaceService(
     private val placeService: club.staircrusher.place.application.service.PlaceService,
-) : club.staircrusher.place_search.application.port.out.PlaceService {
+) : PlaceService {
     override suspend fun findByKeyword(keyword: String): List<Place> {
         // Since `Place` class of place domain is not included in application layer,
         // it is not easy to define extension function for converting from place.Place
