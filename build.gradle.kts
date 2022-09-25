@@ -23,7 +23,8 @@ subprojects {
     }
 
     dependencies {
-        testImplementation(kotlin("test"))
+        val jUnitJupiterVersion: String by project
+        testImplementation("org.junit.jupiter:junit-jupiter:$jUnitJupiterVersion")
     }
 
     tasks.test {

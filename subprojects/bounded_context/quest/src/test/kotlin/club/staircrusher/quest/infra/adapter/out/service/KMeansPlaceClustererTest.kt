@@ -1,8 +1,8 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
 import club.staircrusher.stdlib.geography.Location
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class KMeansPlaceClustererTest {
     @Test
