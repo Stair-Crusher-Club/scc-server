@@ -92,10 +92,14 @@ subprojects {
             }
         }
 
+        val springContextVersion: String by project
+        val coroutineVersion: String by project
         fun addCommonDependenciesToAllSourceSets(project: Project) {
             project.sourceSets.forEach { sourceSet ->
                 project.dependencies {
+                    add(sourceSet.implementationConfigurationName, "org.springframework:spring-context:$springContextVersion") // TODO: custom @Component가 동작하지 않아서 임시로 Spring의 @Component를 사용하기 위함임
                     add(sourceSet.implementationConfigurationName, project(":stdlib"))
+                    add(sourceSet.implementationConfigurationName, "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
                 }
             }
         }

@@ -2,7 +2,7 @@ package club.staircrusher.place.infra.adapter.out.web
 
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.place.domain.model.PlaceCategory
+import club.staircrusher.stdlib.place.PlaceCategory
 import club.staircrusher.stdlib.geography.Location
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.json.KotlinSerializationJsonDecoder
+import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.support.WebClientAdapter
@@ -25,7 +26,7 @@ import reactor.netty.http.client.HttpClient
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
-
+@Component
 class KakaoMapsService(
     kakaoProperties: Any,
 ): MapsService {
@@ -77,13 +78,72 @@ class KakaoMapsService(
             @RequestParam(required = false) page: Int? = null,
             @RequestParam(required = false) size: Int? = null,
             @RequestParam(required = false) sort: String? = null,
-        ): Mono<KeywordSearchResult>
+        ): Mono<SearchResult>
+
+        @GetExchange(
+            url = "/v2/local/search/category.json",
+            accept = ["application/json"],
+        )
+        fun searchByCategory(
+            @RequestParam(required = false) category_group_code: String? = null,
+            @RequestParam(required = false) x: String? = null,
+            @RequestParam(required = false) y: String? = null,
+            @RequestParam(required = false) radius: Int? = null,
+            @RequestParam(required = false) rect: String? = null,
+            @RequestParam(required = false) page: Int? = null,
+            @RequestParam(required = false) size: Int? = null,
+            @RequestParam(required = false) sort: String? = null,
+        ): Mono<SearchResult>
     }
 
     override suspend fun findByKeyword(keyword: String): List<Place> {
         val result = kakaoService.searchByKeyword(keyword).awaitFirstOrNull()
         logger.debug { result }
-        return result?.documents?.map {
+        return result?.convertToModel() ?: emptyList()
+    }
+
+    override suspend fun findByCategory(category: PlaceCategory): List<Place> {
+        TODO("Not yet implemented")
+    }
+
+    // TODO: 한 번에 한 페이지만 조회하는 대신 동시에 여러 페이지 조회하기
+    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchOption): List<Place> {
+        val result = mutableListOf<Place>()
+        var nextPage = 1
+        var pageablePage: Int? = null
+        while (pageablePage == null || nextPage <= pageablePage) {
+            val mono = when (option.region) {
+                is MapsService.SearchOption.CircleRegion -> {
+                    val region = option.region as MapsService.SearchOption.CircleRegion
+                    kakaoService.searchByCategory(
+                        category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
+                        x = region.centerLocation.lng.toString(),
+                        y = region.centerLocation.lat.toString(),
+                        radius = region.radiusMeters,
+                    )
+                }
+                is MapsService.SearchOption.RectangleRegion -> {
+                    val region = option.region as MapsService.SearchOption.RectangleRegion
+                    kakaoService.searchByCategory(
+                        category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
+                        rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" }
+                    )
+                }
+            }
+            val apiResult = mono.awaitFirstOrNull()
+            logger.debug { apiResult }
+            if (apiResult == null) {
+                break
+            }
+            pageablePage = apiResult.meta.pageableCount
+            nextPage += 1
+            result += apiResult.convertToModel()
+        }
+        return result
+    }
+
+    private fun SearchResult.convertToModel(): List<Place> {
+        return documents.map {
             Place(
                 id = it.id,
                 name = it.placeName,
@@ -96,15 +156,11 @@ class KakaoMapsService(
                 eupMyeonDongId = null,
                 category = it.categoryGroupCode.toPlaceCategory(),
             )
-        } ?: emptyList()
-    }
-
-    override suspend fun findByCategory(category: PlaceCategory): List<Place> {
-        TODO("Not yet implemented")
+        }
     }
 
     @Serializable
-    data class KeywordSearchResult(
+    data class SearchResult(
         @SerialName("documents")
         val documents: List<Document>,
         @SerialName("meta")
@@ -181,6 +237,31 @@ class KakaoMapsService(
                         PM9 -> PlaceCategory.PHARMACY
                     }
                 }
+
+                companion object {
+                    fun fromPlaceCategory(placeCategory: PlaceCategory): Category {
+                        return when (placeCategory) {
+                            PlaceCategory.MARKET -> MT1
+                            PlaceCategory.CONVENIENCE_STORE -> CS2
+                            PlaceCategory.KINDERGARTEN -> PS3
+                            PlaceCategory.SCHOOL -> SC4
+                            PlaceCategory.ACADEMY -> AC5
+                            PlaceCategory.PARKING_LOT -> PK6
+                            PlaceCategory.GAS_STATION -> OL7
+                            PlaceCategory.SUBWAY_STATION -> SW8
+                            PlaceCategory.BANK -> BK9
+                            PlaceCategory.CULTURAL_FACILITIES -> CT1
+                            PlaceCategory.AGENCY -> AG2
+                            PlaceCategory.PUBLIC_OFFICE -> PO3
+                            PlaceCategory.ATTRACTION -> AT4
+                            PlaceCategory.ACCOMODATION -> AD5
+                            PlaceCategory.RESTAURANT -> FD6
+                            PlaceCategory.CAFE -> CE7
+                            PlaceCategory.HOSPITAL -> HP8
+                            PlaceCategory.PHARMACY -> PM9
+                        }
+                    }
+                }
             }
         }
 
@@ -191,7 +272,7 @@ class KakaoMapsService(
             @SerialName("pageable_count")
             val pageableCount: Int,
             @SerialName("same_name")
-            val sameName: RegionInfo,
+            val sameName: RegionInfo?,
             @SerialName("total_count")
             val totalCount: Int,
         ) {
