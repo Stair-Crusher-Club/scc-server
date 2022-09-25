@@ -2,6 +2,7 @@ package club.staircrusher.quest.application
 
 import club.staircrusher.quest.domain.entity.ClubQuest
 import club.staircrusher.quest.domain.repository.ClubQuestRepository
+import club.staircrusher.quest.domain.service.PlaceClusterer
 import club.staircrusher.quest.domain.vo.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.vo.ClubQuestTargetPlace
 import club.staircrusher.stdlib.geography.Location
@@ -13,6 +14,7 @@ import java.util.UUID
 @Component
 class ClubQuestCreateAplService(
     private val clubQuestRepository: ClubQuestRepository,
+    private val placeClusterer: PlaceClusterer,
 ) {
     fun createDryRun(
         centerLocation: Location,
@@ -20,23 +22,22 @@ class ClubQuestCreateAplService(
         clusterCount: Int,
     ): List<ClubQuestCreateDryRunResultItem> {
         // TODO: 카카오 지도 API로 장소 긁어오기
-        return (0 until 10)
-            .map{
+        val randomLocations = (0 until 150)
+            .map {
                 Location(
                     lng = centerLocation.lng + (Random().nextDouble() - 0.5) / 100,
                     lat = centerLocation.lat + (Random().nextDouble() - 0.5) / 100,
                 )
             }
-            .mapIndexed { questIdx, questCenterLocation ->
+        return placeClusterer.clusterPlaces(randomLocations, clusterCount)
+            .toList()
+            .mapIndexed { questIdx, (questCenterLocation, locations) ->
                 ClubQuestCreateDryRunResultItem(
                     questCenterLocation = questCenterLocation,
-                    targetPlaces = (0 until 15).mapIndexed { placeIdx, it ->
+                    targetPlaces = locations.mapIndexed { placeIdx, location ->
                         ClubQuestTargetPlace(
                             name = "퀘스트 $questIdx-$placeIdx",
-                            location = Location(
-                                lng = questCenterLocation.lng + (Random().nextDouble() - 0.5) / 500,
-                                lat = questCenterLocation.lat + (Random().nextDouble() - 0.5) / 500,
-                            ),
+                            location = location,
                             placeId = "$questIdx-$placeIdx",
                         )
                     }
