@@ -5,7 +5,9 @@ import club.staircrusher.accessibility.domain.model.Place
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.domain.repository.PlaceAccessibilityRepository
+import org.springframework.stereotype.Component
 
+@Component
 class SearchAccessibilityService(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,

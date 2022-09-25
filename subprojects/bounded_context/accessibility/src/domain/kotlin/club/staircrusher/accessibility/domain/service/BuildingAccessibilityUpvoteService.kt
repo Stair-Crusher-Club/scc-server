@@ -5,8 +5,10 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import org.springframework.stereotype.Component
 import java.time.Clock
 
+@Component
 class BuildingAccessibilityUpvoteService(
     private val clock: Clock,
     private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,

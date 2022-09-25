@@ -1,6 +1,7 @@
 package club.staircrusher.place.domain.model
 
 import club.staircrusher.stdlib.geography.Location
+import club.staircrusher.stdlib.place.PlaceCategory
 
 data class Place(
     val id: String,

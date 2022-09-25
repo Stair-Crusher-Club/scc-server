@@ -15,7 +15,9 @@ import club.staircrusher.accessibility.domain.service.PlaceAccessibilityService
 import club.staircrusher.accessibility.domain.service.PlaceService
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import org.springframework.stereotype.Component
 
+@Component
 class AccessibilityApplicationService(
     private val transactionManager: TransactionManager,
     private val placeService: PlaceService,
@@ -83,5 +85,9 @@ class AccessibilityApplicationService(
         params: PlaceAccessibilityCommentService.CreateParams,
     ): PlaceAccessibilityComment = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
         placeAccessibilityCommentService.create(params)
+    }
+
+    fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> {
+        return placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
     }
 }

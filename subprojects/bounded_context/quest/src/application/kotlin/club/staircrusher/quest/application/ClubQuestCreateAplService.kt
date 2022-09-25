@@ -2,17 +2,20 @@ package club.staircrusher.quest.application
 
 import club.staircrusher.quest.domain.entity.ClubQuest
 import club.staircrusher.quest.domain.repository.ClubQuestRepository
+import club.staircrusher.quest.domain.service.AccessibilityService
+import club.staircrusher.quest.domain.service.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.domain.service.PlaceClusterer
 import club.staircrusher.quest.domain.vo.ClubQuestCreateDryRunResultItem
-import club.staircrusher.quest.domain.vo.ClubQuestTargetPlace
 import club.staircrusher.stdlib.geography.Location
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import java.util.Random
 import java.util.UUID
 
 // TODO: 트랜잭션 처리
 @Component
 class ClubQuestCreateAplService(
+    private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
+    private val accessibilityService: AccessibilityService,
     private val clubQuestRepository: ClubQuestRepository,
     private val placeClusterer: PlaceClusterer,
 ) {
@@ -21,26 +24,18 @@ class ClubQuestCreateAplService(
         radiusMeters: Int,
         clusterCount: Int,
     ): List<ClubQuestCreateDryRunResultItem> {
-        // TODO: 카카오 지도 API로 장소 긁어오기
-        val randomLocations = (0 until 150)
-            .map {
-                Location(
-                    lng = centerLocation.lng + (Random().nextDouble() - 0.5) / 100,
-                    lat = centerLocation.lat + (Random().nextDouble() - 0.5) / 100,
-                )
-            }
-        return placeClusterer.clusterPlaces(randomLocations, clusterCount)
+        val clubQuestTargetPlaces = runBlocking {
+            clubQuestTargetPlacesSearcher.search(centerLocation, radiusMeters)
+        }
+        val accessibilityExistingPlaceIds = accessibilityService.filterAccessibilityExistingPlaceIds(clubQuestTargetPlaces.map { it.placeId }).toSet()
+        return clubQuestTargetPlaces
+            .filterNot { it.placeId in accessibilityExistingPlaceIds }
+            .let { placeClusterer.clusterPlaces(it, clusterCount) }
             .toList()
-            .mapIndexed { questIdx, (questCenterLocation, locations) ->
+            .map { (questCenterLocation, belongingTargetPlaces) ->
                 ClubQuestCreateDryRunResultItem(
                     questCenterLocation = questCenterLocation,
-                    targetPlaces = locations.mapIndexed { placeIdx, location ->
-                        ClubQuestTargetPlace(
-                            name = "퀘스트 $questIdx-$placeIdx",
-                            location = location,
-                            placeId = "$questIdx-$placeIdx",
-                        )
-                    }
+                    targetPlaces = belongingTargetPlaces,
                 )
             }
     }

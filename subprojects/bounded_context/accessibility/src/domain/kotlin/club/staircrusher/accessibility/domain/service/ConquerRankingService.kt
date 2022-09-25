@@ -1,7 +1,9 @@
 package club.staircrusher.accessibility.domain.service
 
 import club.staircrusher.accessibility.domain.repository.PlaceAccessibilityRepository
+import org.springframework.stereotype.Component
 
+@Component
 class ConquerRankingService(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
 ) {

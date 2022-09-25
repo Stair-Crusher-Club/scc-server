@@ -4,8 +4,10 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityCommentRepository
 import club.staircrusher.stdlib.domain.DomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import org.springframework.stereotype.Component
 import java.time.Clock
 
+@Component
 class BuildingAccessibilityCommentService(
     private val clock: Clock,
     private val buildingAccessibilityCommentRepository: BuildingAccessibilityCommentRepository,
