@@ -1,7 +1,7 @@
 package club.staircrusher.stdlib.geography
 
 data class Length(
-   private val meter: Double,
+   val meter: Double,
 ) {
     companion object {
         fun ofMeters(meters: Double) = Length(meters)

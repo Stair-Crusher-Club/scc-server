@@ -3,6 +3,3 @@
 build/
 
 .DS_Store
-
-subprojects/api/src
-subprojects/admin-api/src
