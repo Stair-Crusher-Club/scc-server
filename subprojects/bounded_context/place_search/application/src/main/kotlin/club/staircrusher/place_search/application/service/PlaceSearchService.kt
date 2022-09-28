@@ -5,7 +5,9 @@ import club.staircrusher.place_search.application.port.out.web.AccessibilityServ
 import club.staircrusher.place_search.application.port.out.web.PlaceService
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
+import org.springframework.stereotype.Component
 
+@Component
 class PlaceSearchService(
     private val placeService: PlaceService,
     private val accessibilityService: AccessibilityService,
@@ -21,8 +23,8 @@ class PlaceSearchService(
         searchText: String,
         currentLocation: Location?,
         distanceMetersLimit: Length,
-        siGunGuId: String,
-        eupMyeonDongId: String,
+        siGunGuId: String?,
+        eupMyeonDongId: String?,
     ) : List<SearchPlacesResult> {
         val places = placeService.findByKeyword(searchText)
         return places.map {
