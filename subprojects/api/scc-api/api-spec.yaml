@@ -131,6 +131,8 @@ paths:
               properties:
                 placeId:
                   type: string
+              required:
+                - placeId
       responses:
         '200':
           content:
@@ -513,6 +515,7 @@ components:
     StairInfo:
       type: string
       enum:
+        - UNDEFINED # e.g. 엘리베이터가 아예 없는 경우, 엘리베이터 계단 정보는 UNDEFINED로 올린다.
         - NONE
         - ONE
         - TWO_TO_FIVE
