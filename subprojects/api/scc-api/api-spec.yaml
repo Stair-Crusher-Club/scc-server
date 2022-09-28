@@ -223,16 +223,17 @@ paths:
                 type: object
                 properties:
                   buildingAccessibility:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/BuildingAccessibility'
+                    $ref: '#/components/schemas/BuildingAccessibility'
                     description: 정보가 아직 채워지지 않았으면 null.
                   buildingAccessibilityComments:
-                    $ref: '#/components/schemas/BuildingAccessibilityComment'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BuildingAccessibilityComment'
                     description: 정보가 아직 채워지지 않았으면 empty list.
                   placeAccessibility:
                     $ref: '#/components/schemas/PlaceAccessibility'
                   placeAccessibilityComments:
+                    type: array
                     items:
                       $ref: '#/components/schemas/PlaceAccessibilityComment'
                   registeredUserOrder:
