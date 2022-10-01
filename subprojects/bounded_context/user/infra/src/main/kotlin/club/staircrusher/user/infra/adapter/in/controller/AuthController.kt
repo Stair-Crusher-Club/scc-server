@@ -2,6 +2,7 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.LoginPostRequest
 import club.staircrusher.api.spec.dto.SignUpPostRequest
+import club.staircrusher.spring_web.SccSecurityConfig.Companion.accessTokenHeader
 import club.staircrusher.user.application.user.UserApplicationService
 import club.staircrusher.user.application.user.UserAuthApplicationService
 import org.springframework.http.HttpRequest
@@ -39,9 +40,5 @@ class AuthController(
             .noContent()
             .header(accessTokenHeader, result.accessToken)
             .build()
-    }
-
-    companion object {
-        private const val accessTokenHeader = "X-SCC-ACCESS-KEY"
     }
 }

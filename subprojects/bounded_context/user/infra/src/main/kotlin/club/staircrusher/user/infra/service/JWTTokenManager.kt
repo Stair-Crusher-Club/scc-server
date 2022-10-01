@@ -4,13 +4,15 @@ import club.staircrusher.user.domain.service.TokenManager
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.stereotype.Component
 import java.time.Clock
 import java.time.Duration
 import java.util.Date
 import kotlin.reflect.KClass
 
+@Component
 class JWTTokenManager(
-    secret: String,
+    secret: String = "secret",
     private val clock: Clock,
 ) : TokenManager {
     private val objectMapper = jacksonObjectMapper()
