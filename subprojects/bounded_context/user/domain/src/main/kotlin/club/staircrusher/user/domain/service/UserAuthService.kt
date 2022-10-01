@@ -26,6 +26,7 @@ class UserAuthService(
         ))
     }
 
+    @Throws(TokenVerificationException::class)
     fun verifyAccessToken(token: String): UserAccessTokenPayload {
         return try {
             tokenManager.verify(token, UserAccessTokenPayload::class)

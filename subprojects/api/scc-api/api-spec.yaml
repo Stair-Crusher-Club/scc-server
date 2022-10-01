@@ -417,6 +417,8 @@ paths:
                 properties:
                   user:
                     $ref: '#/components/schemas/User'
+                required:
+                  - user
 
 components:
    # Reusable schemas (data models)

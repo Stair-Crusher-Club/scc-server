@@ -25,6 +25,10 @@ subprojects {
     dependencies {
         val jUnitJupiterVersion: String by project
         testImplementation("org.junit.jupiter:junit-jupiter:$jUnitJupiterVersion")
+
+        if (project.name == "infra") {
+            implementation(project(":spring-web"))
+        }
     }
 
     tasks.test {
