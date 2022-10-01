@@ -6,7 +6,9 @@ import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
 import club.staircrusher.user.domain.service.UserAuthService
 import club.staircrusher.user.domain.service.UserService
+import org.springframework.stereotype.Component
 
+@Component
 class UserApplicationService(
     private val transactionManager: TransactionManager,
     private val userRepository: UserRepository,

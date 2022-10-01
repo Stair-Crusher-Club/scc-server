@@ -28,10 +28,10 @@ paths:
                 - nickname
                 - password
       responses:
-        '201':
+        '204':
           description: |
             빈 response body를 내려준다.
-            대신 Header의 X-OURMAP-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
+            대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
             클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
 
   /login:
@@ -55,7 +55,7 @@ paths:
         '204':
           description: |
             빈 response body를 내려준다.
-            대신 Header의 X-OURMAP-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
+            대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
             클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
 
   /listAdministrativeAreas:
