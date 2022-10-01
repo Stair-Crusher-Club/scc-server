@@ -4,8 +4,10 @@ import club.staircrusher.stdlib.domain.DomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
+import org.springframework.stereotype.Component
 import java.time.Clock
 
+@Component
 class UserService(
     private val clock: Clock,
     private val userRepository: UserRepository,

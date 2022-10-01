@@ -4,15 +4,18 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.domain.repository.UserRepository
 import club.staircrusher.user.domain.service.UserAuthService
 import club.staircrusher.user.domain.exception.UserAuthenticationException
+import org.springframework.stereotype.Component
 import java.sql.SQLException
 
+@Component
 class UserAuthApplicationService(
     private val transactionManager: TransactionManager,
     private val userRepository: UserRepository,
     private val userAuthService: UserAuthService,
 ) {
     // User ID를 반환한다.
-    fun verify(accessToken: String): String = transactionManager.doInTransaction {
+    fun verify(accessToken: String?): String = transactionManager.doInTransaction {
+        accessToken ?: throw UserAuthenticationException()
         val userId = userAuthService.verifyAccessToken(accessToken).userId
         try {
             userRepository.findById(userId)

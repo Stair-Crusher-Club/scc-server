@@ -2,7 +2,9 @@ package club.staircrusher.user.infra.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import club.staircrusher.user.domain.service.PasswordEncryptor
+import org.springframework.stereotype.Component
 
+@Component
 object BCryptPasswordEncryptor : PasswordEncryptor {
     private val bcrypt = BCrypt.withDefaults()
     private val verifier = BCrypt.verifyer()
