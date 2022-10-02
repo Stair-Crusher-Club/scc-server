@@ -296,12 +296,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  buildingAccessibilityComments:
-                    items:
-                      $ref: '#/components/schemas/BuildingAccessibilityComment'
+                  buildingAccessibilityComment:
+                    $ref: '#/components/schemas/BuildingAccessibilityComment'
                     description: 해당 건물의 모든 접근성 정보 댓글 목록.
                 required:
-                  - buildingAccessibilityComments
+                  - buildingAccessibilityComment
 
   /registerPlaceAccessibilityComment:
     post:
@@ -327,12 +326,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  placeAccessibilityComments:
-                    items:
-                      $ref: '#/components/schemas/PlaceAccessibilityComment'
+                  placeAccessibilityComment:
+                    $ref: '#/components/schemas/PlaceAccessibilityComment'
                     description: 해당 건물의 모든 접근성 정보 댓글 목록.
                 required:
-                  - placeAccessibilityComments
+                  - placeAccessibilityComment
 
   /giveBuildingAccessibilityUpvote:
     post:
