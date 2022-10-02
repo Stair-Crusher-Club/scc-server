@@ -107,6 +107,24 @@ class KakaoMapsService(
     }
 
     // TODO: 한 번에 한 페이지만 조회하는 대신 동시에 여러 페이지 조회하기
+    override suspend fun findAllByKeyword(keyword: String): List<Place> {
+        val result = mutableListOf<Place>()
+        var nextPage = 1
+        var pageablePage: Int? = null
+        while (pageablePage == null || nextPage <= pageablePage) {
+            val apiResult = kakaoService.searchByKeyword(keyword).awaitFirstOrNull()
+            logger.debug { apiResult }
+            if (apiResult == null) {
+                break
+            }
+            pageablePage = apiResult.meta.pageableCount
+            nextPage += 1
+            result += apiResult.convertToModel()
+        }
+        return result
+    }
+
+    // TODO: 한 번에 한 페이지만 조회하는 대신 동시에 여러 페이지 조회하기
     override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchOption): List<Place> {
         val result = mutableListOf<Place>()
         var nextPage = 1

@@ -1,6 +1,7 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
 import club.staircrusher.api.converter.toModel
+import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
@@ -25,15 +26,13 @@ class SearchPlacesController(
             eupMyeonDongId = request.eupMyeonDongId,
         )
         return SearchPlacesPost200Response(
-            items = searchResults.map {
-                PlaceListItem(
-                    place = it.place.toDTO(),
-                    building = it.place.building.toDTO(),
-                    hasBuildingAccessibility = it.hasBuildingAccessibility,
-                    hasPlaceAccessibility = it.hasPlaceAccessibility,
-                    distanceMeters = it.distanceMeters?.meter?.toInt(),
-                )
-            }
+            items = searchResults.map { it.toDTO() }
         )
+    }
+
+    @PostMapping("/listPlacesInBuilding")
+    suspend fun listPlacesInBuilding(@RequestBody request: ListPlacesInBuildingPostRequest): List<PlaceListItem> {
+        return placeSearchService.listPlacesInBuilding(request.buildingId)
+            .map { it.toDTO() }
     }
 }

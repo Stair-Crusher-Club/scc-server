@@ -10,6 +10,10 @@ interface MapsService {
         keyword: String,
     ): List<Place>
 
+    suspend fun findAllByKeyword(
+        keyword: String,
+    ): List<Place>
+
     suspend fun findByCategory(
         category: PlaceCategory,
     ): List<Place>

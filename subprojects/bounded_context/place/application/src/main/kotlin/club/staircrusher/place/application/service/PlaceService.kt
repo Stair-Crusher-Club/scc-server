@@ -25,6 +25,12 @@ class PlaceService(
         return places
     }
 
+    suspend fun findAllByKeyword(keyword: String): List<Place> {
+        val places = mapsService.findAllByKeyword(keyword)
+        eventPublisher.publishEvent(PlaceSearchEvent(places))
+        return places
+    }
+
     suspend fun findAllByCategory(
         category: PlaceCategory,
         option: MapsService.SearchOption
