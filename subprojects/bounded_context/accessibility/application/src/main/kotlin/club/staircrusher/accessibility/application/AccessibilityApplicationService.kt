@@ -90,4 +90,10 @@ class AccessibilityApplicationService(
     fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> {
         return placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
     }
+
+    fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
+        val placeAccessibilities = placeAccessibilityRepository.findByUserId(userId)
+        val buildingAccessibilities = buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.id })
+        return Pair(placeAccessibilities, buildingAccessibilities)
+    }
 }

@@ -39,4 +39,8 @@ class PlaceService(
         eventPublisher.publishEvent(PlaceSearchEvent(places))
         return places
     }
+
+    fun findAllByIds(placeIds: Collection<String>): List<Place> {
+        return placeRepository.findByIdIn(placeIds)
+    }
 }
