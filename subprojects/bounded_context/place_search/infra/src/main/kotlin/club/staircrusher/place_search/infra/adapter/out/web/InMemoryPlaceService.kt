@@ -15,17 +15,7 @@ class InMemoryPlaceService(
         // to place_search.Place. Would it be better to define data transfer object in
         // application layer so that other source set depending on it can define extension
         // method easily?
-        return placeService.findByKeyword(keyword).map {
-            Place(
-                id = it.id,
-                name = it.name,
-                address = it.address.toString(),
-                building = Building(
-                    id = it.building!!.id,
-                    address = it.building!!.address.toString(),
-                ),
-            )
-        }
+        return placeService.findByKeyword(keyword).map { it.toModel() }
     }
 
     override suspend fun findAllByKeyword(keyword: String): List<Place> {
@@ -34,16 +24,20 @@ class InMemoryPlaceService(
         // to place_search.Place. Would it be better to define data transfer object in
         // application layer so that other source set depending on it can define extension
         // method easily?
-        return placeService.findAllByKeyword(keyword).map {
-            Place(
-                id = it.id,
-                name = it.name,
-                address = it.address.toString(),
-                building = Building(
-                    id = it.building!!.id,
-                    address = it.building!!.address.toString(),
-                ),
-            )
-        }
+        return placeService.findAllByKeyword(keyword).map { it.toModel() }
     }
+
+    override fun findAllByIds(ids: Collection<String>): List<Place> {
+        return placeService.findAllByIds(ids).map { it.toModel() }
+    }
+
+    private fun club.staircrusher.place.domain.model.Place.toModel() = Place(
+        id = id,
+        name = name,
+        address = address.toString(),
+        building = Building(
+            id = building!!.id,
+            address = building!!.address.toString(),
+        ),
+    )
 }

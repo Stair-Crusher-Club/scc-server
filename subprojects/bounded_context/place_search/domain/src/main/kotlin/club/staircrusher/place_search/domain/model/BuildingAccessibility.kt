@@ -1,4 +1,6 @@
 package club.staircrusher.place_search.domain.model
 
-class BuildingAccessibility {
-}
+data class BuildingAccessibility(
+    val id: String,
+    val buildingId: String,
+)

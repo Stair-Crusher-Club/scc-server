@@ -4,6 +4,8 @@ import club.staircrusher.place_search.domain.model.Place
 import club.staircrusher.place_search.application.port.out.web.AccessibilityService
 import club.staircrusher.place_search.application.port.out.web.BuildingService
 import club.staircrusher.place_search.application.port.out.web.PlaceService
+import club.staircrusher.place_search.domain.model.BuildingAccessibility
+import club.staircrusher.place_search.domain.model.PlaceAccessibility
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import org.springframework.stereotype.Component
@@ -16,8 +18,8 @@ class PlaceSearchService(
 ) {
     data class SearchPlacesResult(
         val place: Place,
-        val hasBuildingAccessibility: Boolean,
-        val hasPlaceAccessibility: Boolean,
+        val buildingAccessibility: BuildingAccessibility?,
+        val placeAccessibility: PlaceAccessibility?,
         val distanceMeters: Length? = null,
     )
 
@@ -43,8 +45,8 @@ class PlaceSearchService(
         val (placeAccessibility, buildingAccessibility) = accessibilityService.getAccessibility(this)
         return SearchPlacesResult(
             place = this,
-            hasBuildingAccessibility = buildingAccessibility != null,
-            hasPlaceAccessibility = placeAccessibility != null,
+            buildingAccessibility = buildingAccessibility,
+            placeAccessibility = placeAccessibility,
         )
     }
 }
