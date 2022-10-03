@@ -5,7 +5,7 @@ import club.staircrusher.user.domain.repository.UserRepository
 import org.springframework.stereotype.Component
 
 @Component
-class NoopUserRepository : UserRepository {
+class NoOpUserRepository : UserRepository {
     override fun findByNickname(nickname: String): User? {
         return null
     }
