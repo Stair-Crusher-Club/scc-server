@@ -1,32 +1,22 @@
 package club.staircrusher.spring_web
 
-import club.staircrusher.spring_web.app.SccAppAuthentication
 import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.service.UserAuthService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
-import java.time.Clock
 import java.time.Instant
-
-@SpringBootApplication(scanBasePackages = ["club.staircrusher"])
-open class SccAppSecurityConfigTestApplication {
-    @Bean
-    open fun clock(): Clock {
-        return Clock.systemUTC()
-    }
-}
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class SccAppSecurityConfigTest {
+class MultipleSecurityConfigsTest {
     @Autowired
     lateinit var userAuthService: UserAuthService
 
@@ -45,20 +35,30 @@ class SccAppSecurityConfigTest {
                 createdAt = Instant.now()
             )
         )
-        mvc.get("/echoUserId") {
+        mvc.get("/echoUserId/secured") {
             header(SccSecurityConfig.accessTokenHeader, accessToken)
         }.andExpect {
             content {
                 string(userId)
             }
         }
+        mvc.get("/echoUserId/secured").andExpect {
+            status {
+                isUnauthorized()
+            }
+        }
     }
 }
 
-@RestController
-class EchoUserIdController {
-    @GetMapping("/echoUserId")
-    fun echoUserId(authentication: SccAppAuthentication): String {
-        return authentication.principal
+@Configuration
+open class SecuredEchoUserIdSecurityConfig {
+    @Bean
+    open fun securedEchoUserIdFilterChain(http: HttpSecurity): SecurityFilterChain {
+        return http
+            .authorizeRequests {
+                it
+                    .antMatchers("/echoUserId/secured").authenticated()
+            }
+            .build()
     }
 }
