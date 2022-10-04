@@ -1,6 +1,6 @@
 package club.staircrusher.spring_web.app
 
-import club.staircrusher.spring_web.SccSecurityConfig.Companion.accessTokenHeader
+import club.staircrusher.spring_web.SccSecurityConfig
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -15,7 +15,7 @@ class SccAppAccessTokenFilter : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        val accessToken = request.getHeader(accessTokenHeader)
+        val accessToken = request.getHeader(SccSecurityConfig.accessTokenHeader)
         if (accessToken != null) {
             SecurityContextHolder.getContext().authentication = SccAppAuthentication(accessToken = accessToken)
         }

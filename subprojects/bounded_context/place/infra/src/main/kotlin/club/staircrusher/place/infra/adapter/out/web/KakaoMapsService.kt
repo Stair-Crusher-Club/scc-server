@@ -85,7 +85,7 @@ class KakaoMapsService(
             accept = ["application/json"],
         )
         fun searchByCategory(
-            @RequestParam(required = false) category_group_code: String? = null,
+            @RequestParam(required = true) category_group_code: String,
             @RequestParam(required = false) x: String? = null,
             @RequestParam(required = false) y: String? = null,
             @RequestParam(required = false) radius: Int? = null,
