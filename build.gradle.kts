@@ -15,9 +15,7 @@ subprojects {
     apply(plugin = "kotlin")
 
     repositories {
-        maven {
-            setUrl("https://repo.osgeo.org/repository/release/") // for org.geotools
-        }
+        maven(url = "https://repo.osgeo.org/repository/release/") // for org.geotools
         mavenCentral()
         maven(url = "https://repo.spring.io/milestone/")
     }

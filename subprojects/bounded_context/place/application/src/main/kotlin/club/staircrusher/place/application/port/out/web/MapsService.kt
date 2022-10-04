@@ -27,14 +27,14 @@ interface MapsService {
         val region: Region,
         val page: Int = 1,
     ) {
-        sealed class Region
+        sealed interface Region
         data class CircleRegion(
             val centerLocation: Location,
             val radiusMeters: Int,
-        ) : Region()
+        ) : Region
         data class RectangleRegion(
             val leftTopLocation: Location,
             val rightBottomLocation: Location,
-        ) : Region()
+        ) : Region
     }
 }

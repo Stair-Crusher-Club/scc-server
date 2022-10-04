@@ -14,7 +14,10 @@ class UserController(
     private val userApplicationService: UserApplicationService,
 ) {
     @PostMapping("/updateUserInfo")
-    fun updateUserInfo(@RequestBody request: UpdateUserInfoPostRequest, authentication: SccAppAuthentication): UpdateUserInfoPost200Response {
+    fun updateUserInfo(
+        @RequestBody request: UpdateUserInfoPostRequest,
+        authentication: SccAppAuthentication
+    ): UpdateUserInfoPost200Response {
         val updatedUser = userApplicationService.updateUserInfo(
             userId = authentication.principal,
             nickname = request.nickname,

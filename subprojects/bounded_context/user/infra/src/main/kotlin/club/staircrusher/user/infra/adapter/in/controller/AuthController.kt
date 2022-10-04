@@ -2,9 +2,8 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.LoginPostRequest
 import club.staircrusher.api.spec.dto.SignUpPostRequest
-import club.staircrusher.spring_web.SccSecurityConfig.Companion.accessTokenHeader
+import club.staircrusher.spring_web.SccSecurityConfig
 import club.staircrusher.user.application.user.UserApplicationService
-import club.staircrusher.user.application.user.UserAuthApplicationService
 import org.springframework.http.HttpRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AuthController(
     private val userApplicationService: UserApplicationService,
-    private val userAuthApplicationService: UserAuthApplicationService,
 ) {
     @PostMapping("/signUp")
     fun signUp(@RequestBody request: SignUpPostRequest): ResponseEntity<Unit> {
@@ -25,20 +23,20 @@ class AuthController(
         )
         return ResponseEntity
             .noContent()
-            .header(accessTokenHeader, result.accessToken)
+            .header(SccSecurityConfig.accessTokenHeader, result.accessToken)
             .build()
     }
 
     @PostMapping("/login")
     fun login(@RequestBody request: LoginPostRequest, httpRequest: HttpRequest): ResponseEntity<Unit> {
-        val accessToken = httpRequest.headers.getFirst(accessTokenHeader)
+        val accessToken = httpRequest.headers.getFirst(SccSecurityConfig.accessTokenHeader)
         val result = userApplicationService.login(
             nickname = request.nickname,
             password = request.password,
         )
         return ResponseEntity
             .noContent()
-            .header(accessTokenHeader, result.accessToken)
+            .header(SccSecurityConfig.accessTokenHeader, result.accessToken)
             .build()
     }
 }
