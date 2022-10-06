@@ -1,4 +1,4 @@
-val kotlinVersion = project.properties["kotlinVersion"] as String
+val kotlinVersion: String by project
 
 plugins {
     kotlin("jvm")

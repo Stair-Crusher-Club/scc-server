@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option java_package = "club.stairsrusher.proto";
+option java_multiple_files = true;
+
+package staircrusher;
+
+message Place {
+    string id = 1;
+    string name = 2;
+    Location location = 3;
+    optional Building building = 4;
+    optional string si_gun_gu_id = 5;
+    optional string eup_myeon_dong_id = 6;
+    optional PlaceCategory category = 7;
+}
+
+message Location {
+    double lng = 1;
+    double lat = 2;
+}
+
+message Building {
+    string id = 1;
+    optional string name = 2;
+    Location location = 3;
+    BuildingAddress address = 4;
+    string si_gun_gu_id = 5;
+    string eup_myeon_dong_id = 6;
+}
+
+message BuildingAddress {
+    string si_do = 1;
+    string si_gun_gu = 2;
+    string eup_myeon_dong = 3;
+    string li = 4;
+    string road_name = 5;
+    string main_building_number = 6;
+    string sub_building_number = 7;
+}
+
+enum PlaceCategory {
+    MARKET = 0;
+    CONVENIENCE_STORE = 1;
+    KINDERGARTEN = 2;
+    SCHOOL = 3;
+    ACADEMY = 4;
+    PARKING_LOT = 5;
+    GAS_STATION = 6;
+    SUBWAY_STATION = 7;
+    BANK = 8;
+    CULTURAL_FACILITIES = 9;
+    AGENCY = 10;
+    PUBLIC_OFFICE = 11;
+    ATTRACTION = 12;
+    ACCOMODATION = 13;
+    RESTAURANT = 14;
+    CAFE = 15;
+    HOSPITAL = 16;
+    PHARMACY = 17;
+}

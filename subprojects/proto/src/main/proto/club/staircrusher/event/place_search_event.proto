@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "club.stairsrusher.proto.event";
+option java_multiple_files = true;
+
+package staircrusher.event;
+
+import "club/staircrusher/place.proto";
+
+message PlaceSearchEvent {
+   repeated Place search_result = 1;
+}
