@@ -1,7 +1,12 @@
 package club.staircrusher.stdlib.domain.event
 
-fun interface DomainEventListener<T> where T : DomainEvent {
-    fun onDomainEvent(event: T)
+abstract class DomainEventListener<T> where T : DomainEvent {
+    protected abstract fun onDomainEvent(event: T)
 
-    operator fun invoke(event: T) = onDomainEvent(event)
+    abstract fun canConsume(event: DomainEvent): Boolean
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun invoke(event: DomainEvent) {
+        if (canConsume(event)) { onDomainEvent(event as T) }
+    }
 }
