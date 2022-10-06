@@ -23,6 +23,7 @@ pluginManagement {
     val springBootVersion: String by settings
     val sqlDelightVersion: String by settings
     val springDependencyManagementVersion: String by settings
+    val wireVersion: String by settings
 
     plugins {
         kotlin("jvm") version kotlinVersion
@@ -31,6 +32,7 @@ pluginManagement {
         id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
         id("org.springframework.boot") version springBootVersion
         id("com.squareup.sqldelight") version sqlDelightVersion
+        id("com.squareup.wire") version wireVersion
 
         id("io.spring.dependency-management") version springDependencyManagementVersion
     }
