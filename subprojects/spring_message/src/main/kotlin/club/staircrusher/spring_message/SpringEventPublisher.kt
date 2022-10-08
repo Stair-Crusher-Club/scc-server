@@ -1,4 +1,4 @@
-package club.staircrusher.place.infra.adapter.out.message
+package club.staircrusher.spring_message
 
 import club.staircrusher.stdlib.domain.event.DomainEvent
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
