@@ -1,10 +1,23 @@
 package club.staircrusher.packaging
 
+import club.staircrusher.stdlib.di.annotation.Component
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.ComponentScan.Filter
+import org.springframework.context.annotation.FilterType
 
-@SpringBootApplication(scanBasePackages = ["club.staircrusher"])
-open class SccServerApplication
+@SpringBootApplication(proxyBeanMethods = false)
+@ComponentScan(
+    basePackages = ["club.staircrusher"],
+    includeFilters = [
+        Filter(type = FilterType.ANNOTATION, classes = [Component::class]),
+    ],
+)
+open class SccServerApplication {
+    private val logger = LoggerFactory.getLogger(javaClass)
+}
 
 fun main(args: Array<String>) {
     runApplication<SccServerApplication>(*args)

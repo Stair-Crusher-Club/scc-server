@@ -2,7 +2,7 @@ package club.staircrusher.accessibility.infra.adapter.out.persistence
 
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.repository.PlaceAccessibilityCommentRepository
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class NoopPlaceAccessibilityCommentRepository : PlaceAccessibilityCommentRepository {

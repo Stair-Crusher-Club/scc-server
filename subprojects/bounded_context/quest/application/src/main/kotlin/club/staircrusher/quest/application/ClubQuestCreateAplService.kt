@@ -8,7 +8,7 @@ import club.staircrusher.quest.domain.service.PlaceClusterer
 import club.staircrusher.quest.domain.vo.ClubQuestCreateDryRunResultItem
 import club.staircrusher.stdlib.geography.Location
 import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 import java.util.UUID
 
 // TODO: 트랜잭션 처리

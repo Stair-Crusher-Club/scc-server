@@ -6,7 +6,7 @@ import club.staircrusher.quest.infra.kmeans.EuclideanDistance
 import club.staircrusher.quest.infra.kmeans.KMeans
 import club.staircrusher.quest.infra.kmeans.Record
 import club.staircrusher.stdlib.geography.Location
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class KMeansPlaceClusterer : PlaceClusterer {

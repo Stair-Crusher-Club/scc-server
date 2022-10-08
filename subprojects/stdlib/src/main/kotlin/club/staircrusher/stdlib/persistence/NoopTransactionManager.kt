@@ -1,6 +1,6 @@
 package club.staircrusher.stdlib.persistence
 
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class NoopTransactionManager : TransactionManager {

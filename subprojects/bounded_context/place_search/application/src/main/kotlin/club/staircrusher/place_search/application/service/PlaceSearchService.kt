@@ -8,7 +8,7 @@ import club.staircrusher.place_search.domain.model.BuildingAccessibility
 import club.staircrusher.place_search.domain.model.PlaceAccessibility
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class PlaceSearchService(

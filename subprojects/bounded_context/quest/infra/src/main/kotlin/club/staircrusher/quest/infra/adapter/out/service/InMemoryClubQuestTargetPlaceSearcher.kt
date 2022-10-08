@@ -9,7 +9,7 @@ import club.staircrusher.stdlib.place.PlaceCategory
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class InMemoryClubQuestTargetPlaceSearcher(

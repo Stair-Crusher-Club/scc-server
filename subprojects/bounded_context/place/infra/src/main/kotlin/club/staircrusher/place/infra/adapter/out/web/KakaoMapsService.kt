@@ -16,7 +16,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.json.KotlinSerializationJsonDecoder
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.support.WebClientAdapter

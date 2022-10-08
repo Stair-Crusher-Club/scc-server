@@ -3,7 +3,7 @@ package club.staircrusher.accessibility.infra.adapter.out.persistence
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityUpvoteRepository
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class NoopBuildingAccessibilityUpvoteRepository : BuildingAccessibilityUpvoteRepository {

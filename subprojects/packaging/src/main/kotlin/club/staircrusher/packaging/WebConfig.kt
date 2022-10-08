@@ -1,11 +1,10 @@
 package club.staircrusher.packaging
 
-import org.springframework.context.annotation.Configuration
+import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.web.servlet.config.annotation.CorsRegistry
-
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-@Configuration
+@Component
 open class WebConfig : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry

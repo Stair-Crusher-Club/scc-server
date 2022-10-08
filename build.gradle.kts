@@ -107,7 +107,7 @@ val layerProjectPathRegex = Regex("^:bounded_context:([^:]+):(domain|application
 subprojects {
     if (project.path.endsWith(":infra")) {
         packagingProject.dependencies {
-            runtimeOnly(project)
+            implementation(project)
         }
     }
 

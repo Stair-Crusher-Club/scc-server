@@ -6,7 +6,7 @@ import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.event.PlaceSearchEvent
 import club.staircrusher.stdlib.place.PlaceCategory
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class PlaceService(

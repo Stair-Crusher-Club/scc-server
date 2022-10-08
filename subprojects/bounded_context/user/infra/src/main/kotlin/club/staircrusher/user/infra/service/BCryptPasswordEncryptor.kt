@@ -2,7 +2,7 @@ package club.staircrusher.user.infra.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import club.staircrusher.user.domain.service.PasswordEncryptor
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 object BCryptPasswordEncryptor : PasswordEncryptor {

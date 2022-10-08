@@ -1,6 +1,6 @@
 package club.staircrusher.packaging
 
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId

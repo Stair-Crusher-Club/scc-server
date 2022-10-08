@@ -2,7 +2,7 @@ package club.staircrusher.user.infra.adapter.out.persistence
 
 import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class InMemoryUserRepository : UserRepository {

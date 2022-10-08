@@ -5,7 +5,7 @@ import club.staircrusher.place_search.domain.model.BuildingAccessibility
 import club.staircrusher.place_search.domain.model.Place
 import club.staircrusher.place_search.domain.model.PlaceAccessibility
 import club.staircrusher.place_search.application.port.out.web.AccessibilityService
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class InMemoryAccessibilityService(
