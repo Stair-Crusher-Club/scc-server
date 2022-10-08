@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":stdlib"))
     implementation(project(":bounded_context:user:application"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     api("org.springframework.boot:spring-boot-starter-security")

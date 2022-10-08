@@ -1,10 +1,20 @@
 package club.staircrusher.spring_web.app
 
-import club.staircrusher.user.domain.service.UserAuthService
+import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.user.application.user.UserApplicationService
+import club.staircrusher.user.application.user.UserAuthApplicationService
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.stereotype.Component
 
 @Component
 class SccAppAuthenticationManager(
-    userAuthService: UserAuthService
-) : ProviderManager(SccAppAuthenticationProvider(userAuthService))
+    userAuthApplicationService: UserAuthApplicationService,
+    userApplicationService: UserApplicationService,
+    transactionManager: TransactionManager,
+) : ProviderManager(
+    SccAppAuthenticationProvider(
+        userAuthApplicationService,
+        userApplicationService,
+        transactionManager,
+    ),
+)

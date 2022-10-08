@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority
 class SccAppAuthentication(
     private var accessToken: String?,
 ) : Authentication, CredentialsContainer {
-    private var userId: String? = null
+    private var userDetail: UserDetail? = null
 
     override fun getName(): String? {
         return null
@@ -21,23 +21,24 @@ class SccAppAuthentication(
         return accessToken
     }
 
-    override fun getDetails() {
+    override fun getDetails(): UserDetail {
+        return userDetail ?: throw IllegalStateException("Not authenticated yet.")
     }
 
     override fun getPrincipal(): String {
-        return userId ?: "Not authenticated yet."
+        return userDetail?.userId ?: "Not authenticated yet."
     }
 
     override fun isAuthenticated(): Boolean {
-        return userId != null
+        return userDetail != null
     }
 
     override fun setAuthenticated(isAuthenticated: Boolean) {
         throw IllegalArgumentException("Do not explicitly call this method. Call setUserInfo() instead.")
     }
 
-    fun setUserInfo(userId: String) {
-        this.userId = userId
+    fun setUserInfo(userDetail: UserDetail) {
+        this.userDetail = userDetail
     }
 
     override fun eraseCredentials() {
@@ -45,4 +46,10 @@ class SccAppAuthentication(
         // authentication이 올바르게 처리되면 credential을 날려준다.
         accessToken = null
     }
+
+    data class UserDetail(
+        val userId: String,
+        val nickname: String,
+        val instagramId: String?,
+    )
 }

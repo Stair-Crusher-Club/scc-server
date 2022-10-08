@@ -38,6 +38,10 @@ class UserService(
         return userRepository.save(user)
     }
 
+    fun getUser(userId: String): User? {
+        return userRepository.findByIdOrNull(userId)
+    }
+
     private fun normalizeAndValidateNickname(nickname: String, userId: String? = null): String {
         val normalizedNickname = nickname.trim()
         if (normalizedNickname.length < 2) {
