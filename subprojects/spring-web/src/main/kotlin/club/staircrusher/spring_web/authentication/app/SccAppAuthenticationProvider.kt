@@ -1,6 +1,7 @@
 package club.staircrusher.spring_web.authentication.app
 
 import club.staircrusher.spring_web.authentication.BeforeAuthSccAuthentication
+import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.user.UserApplicationService
 import club.staircrusher.user.application.user.UserAuthApplicationService
@@ -30,11 +31,11 @@ class SccAppAuthenticationProvider(
         } ?: throw BadCredentialsException("No User found with given credentials.")
 
         return SccAppAuthentication(
-            SccAppAuthentication.UserDetail(
-            userId = user.id,
-            nickname = user.nickname,
-            instagramId = user.instagramId,
-        )
+            AuthUser(
+                id = user.id,
+                nickname = user.nickname,
+                instagramId = user.instagramId,
+            ),
         )
     }
 

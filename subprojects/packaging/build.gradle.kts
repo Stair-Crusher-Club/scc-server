@@ -8,3 +8,5 @@ dependencies {
 
     implementation(project(":spring-web"))
 }
+
+tasks.bootJar { enabled = false }

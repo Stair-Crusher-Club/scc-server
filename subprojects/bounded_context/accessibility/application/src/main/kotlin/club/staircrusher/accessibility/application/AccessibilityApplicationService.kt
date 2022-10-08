@@ -6,13 +6,16 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityRepository
+import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.accessibility.domain.repository.PlaceAccessibilityCommentRepository
 import club.staircrusher.accessibility.domain.repository.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.service.BuildingAccessibilityCommentService
 import club.staircrusher.accessibility.domain.service.BuildingAccessibilityService
+import club.staircrusher.accessibility.domain.service.BuildingAccessibilityUpvoteService
 import club.staircrusher.accessibility.domain.service.PlaceAccessibilityCommentService
 import club.staircrusher.accessibility.domain.service.PlaceAccessibilityService
 import club.staircrusher.accessibility.domain.service.PlaceService
+import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.user.UserApplicationService
@@ -30,22 +33,30 @@ class AccessibilityApplicationService(
     private val placeAccessibilityCommentService: PlaceAccessibilityCommentService,
     private val buildingAccessibilityService: BuildingAccessibilityService,
     private val buildingAccessibilityCommentService: BuildingAccessibilityCommentService,
+    private val buildingAccessibilityUpvoteService: BuildingAccessibilityUpvoteService,
+    private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,
     private val userApplicationService: UserApplicationService,
 ) {
     data class GetAccessibilityResult(
         val buildingAccessibility: WithUserInfo<BuildingAccessibility>?,
+        val buildingAccessibilityUpvoteInfo: BuildingAccessibilityUpvoteInfo?,
         val buildingAccessibilityComments: List<WithUserInfo<BuildingAccessibilityComment>>,
         val placeAccessibility: WithUserInfo<PlaceAccessibility>?,
         val placeAccessibilityComments: List<WithUserInfo<PlaceAccessibilityComment>>,
         val hasOtherPlacesToRegisterInSameBuilding: Boolean,
-    )
+    ) {
+         data class BuildingAccessibilityUpvoteInfo(
+             val isUpvoted: Boolean,
+             val totalUpvoteCount: Int,
+         )
+    }
 
     data class WithUserInfo<T>(
         val value: T,
         val userInfo: UserInfo?
     )
 
-    fun getAccessibility(placeId: String): GetAccessibilityResult = transactionManager.doInTransaction {
+    fun getAccessibility(placeId: String, userId: String): GetAccessibilityResult = transactionManager.doInTransaction {
         val place = placeService.findPlace(placeId) ?: throw IllegalArgumentException("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.buildingId)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.buildingId)
@@ -57,9 +68,16 @@ class AccessibilityApplicationService(
                     + listOfNotNull(placeAccessibility?.userId)
                     + placeAccessibilityComments.mapNotNull { it.userId }
         ).map { it.toDomainModel() }.associateBy { it.userId }
+        val buildingAccessibilityUpvoteInfo = buildingAccessibility?.let {
+            GetAccessibilityResult.BuildingAccessibilityUpvoteInfo(
+                isUpvoted = buildingAccessibilityUpvoteService.isUpvoted(userId, it),
+                totalUpvoteCount = buildingAccessibilityUpvoteRepository.getTotalUpvoteCount(place.buildingId),
+            )
+        }
 
         GetAccessibilityResult(
             buildingAccessibility = buildingAccessibility?.let { WithUserInfo(it, userInfoById[it.userId]) },
+            buildingAccessibilityUpvoteInfo = buildingAccessibilityUpvoteInfo,
             buildingAccessibilityComments = buildingAccessibilityComments.map {
                 WithUserInfo(
                     value = it,
@@ -75,6 +93,16 @@ class AccessibilityApplicationService(
             },
             hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(place.buildingId)
         )
+    }
+
+    fun getPlaceAccessibility(placeId: String): PlaceAccessibility? = transactionManager.doInTransaction {
+        val place = placeService.findPlace(placeId) ?: throw IllegalArgumentException("Cannot find place with $placeId")
+        placeAccessibilityRepository.findByPlaceId(placeId)
+    }
+
+    fun getBuildingAccessibility(placeId: String): BuildingAccessibility? = transactionManager.doInTransaction {
+        val place = placeService.findPlace(placeId) ?: throw IllegalArgumentException("Cannot find place with $placeId")
+        buildingAccessibilityRepository.findByBuildingId(place.buildingId)
     }
 
     data class RegisterAccessibilityResult(

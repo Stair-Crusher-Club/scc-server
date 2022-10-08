@@ -19,13 +19,16 @@ class AccessibilityController(
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
     @PostMapping("/getAccessibility")
-    fun getAccessibility(@RequestBody request: GetAccessibilityPostRequest): GetAccessibilityPost200Response {
-        val result = accessibilityApplicationService.getAccessibility(request.placeId)
+    fun getAccessibility(
+        @RequestBody request: GetAccessibilityPostRequest,
+        authentication: SccAppAuthentication,
+    ): GetAccessibilityPost200Response {
+        val result = accessibilityApplicationService.getAccessibility(request.placeId, authentication.details.id)
         return GetAccessibilityPost200Response(
             buildingAccessibility = result.buildingAccessibility?.let {
                 it.value.toDTO(
-                    isUpvoted = false, // TODO: 제대로 채우기
-                    totalUpvoteCount = 0, // TODO: 제대로 채우기
+                    isUpvoted = result.buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
+                    totalUpvoteCount = result.buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0, // TODO: 제대로 채우기
                     registeredUserName = it.userInfo?.nickname,
                 )
             },

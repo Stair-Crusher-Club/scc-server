@@ -1,10 +1,11 @@
 package club.staircrusher.spring_web.authentication.app
 
+import club.staircrusher.stdlib.auth.AuthUser
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
 class SccAppAuthentication(
-    private val userDetail: UserDetail,
+    private val authUser: AuthUser,
 ) : Authentication {
     override fun getName(): String? {
         return null
@@ -18,12 +19,12 @@ class SccAppAuthentication(
         throw IllegalStateException("Do not call this method. Credential is erased.")
     }
 
-    override fun getDetails(): UserDetail {
-        return userDetail
+    override fun getDetails(): AuthUser {
+        return authUser
     }
 
     override fun getPrincipal(): String {
-        return userDetail.userId
+        return authUser.id
     }
 
     override fun isAuthenticated(): Boolean {
@@ -33,12 +34,6 @@ class SccAppAuthentication(
     override fun setAuthenticated(isAuthenticated: Boolean) {
         throw IllegalArgumentException("Do not call this method. This authentication is always authenticated.")
     }
-
-    data class UserDetail(
-        val userId: String,
-        val nickname: String,
-        val instagramId: String?,
-    )
 
     companion object {
         const val authority = "SCC_APP_AUTH"

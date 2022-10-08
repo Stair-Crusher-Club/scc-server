@@ -19,7 +19,7 @@ class AccessibilityUpvoteController(
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         buildingAccessibilityUpvoteApplicationService.giveUpvote(
-            authUser = AuthUser(authentication.principal),
+            authUser = authentication.details,
             buildingAccessibilityId = request.buildingAccessibilityId,
         )
         return ResponseEntity
@@ -33,7 +33,7 @@ class AccessibilityUpvoteController(
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         buildingAccessibilityUpvoteApplicationService.cancelUpvote(
-            authUser = AuthUser(authentication.principal),
+            authUser = authentication.details,
             buildingAccessibilityId = request.buildingAccessibilityId,
         )
         return ResponseEntity

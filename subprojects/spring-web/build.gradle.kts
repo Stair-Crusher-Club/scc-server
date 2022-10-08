@@ -12,3 +12,5 @@ dependencies {
     testImplementation(project(":bounded_context:user:infra"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
+
+tasks.bootJar { enabled = false }

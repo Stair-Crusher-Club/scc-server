@@ -26,3 +26,5 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 }
+
+tasks.bootJar { enabled = false }
