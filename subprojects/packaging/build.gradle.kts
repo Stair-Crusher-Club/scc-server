@@ -7,6 +7,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation(project(":spring-web"))
+    implementation(project(":spring_message"))
 }
 
 tasks.bootJar { enabled = false }

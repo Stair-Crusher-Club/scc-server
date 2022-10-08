@@ -1,7 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     kotlin("jvm")
+    id("org.springframework.boot")
 }
 
 repositories {
@@ -35,6 +37,10 @@ subprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
+    }
+
+    tasks.withType<BootJar>() {
+        enabled = false
     }
 }
 

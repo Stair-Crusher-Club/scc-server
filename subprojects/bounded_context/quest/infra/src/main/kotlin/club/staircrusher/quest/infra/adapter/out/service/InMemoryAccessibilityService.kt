@@ -4,8 +4,11 @@ import club.staircrusher.accessibility.application.AccessibilityApplicationServi
 import club.staircrusher.quest.domain.service.AccessibilityService
 import org.springframework.stereotype.Component
 
+/**
+ * Add suffix 2 in order to avoid conflicts with another InMemoryAccessibilityService
+ */
 @Component
-class InMemoryAccessibilityService(
+class InMemoryAccessibilityService2(
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) : AccessibilityService {
     override fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> {
