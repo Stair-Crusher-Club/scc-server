@@ -2,7 +2,7 @@ package club.staircrusher.place_search.infra.adapter.out.web
 
 import club.staircrusher.place_search.application.port.out.web.BuildingService
 import club.staircrusher.place_search.domain.model.Building
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class InMemoryBuildingService(

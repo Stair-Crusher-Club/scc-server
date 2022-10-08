@@ -4,7 +4,7 @@ import club.staircrusher.user.domain.service.TokenManager
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 import java.time.Clock
 import java.time.Duration
 import java.util.Date

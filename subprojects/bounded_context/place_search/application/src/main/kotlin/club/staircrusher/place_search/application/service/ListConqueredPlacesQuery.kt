@@ -3,7 +3,7 @@ package club.staircrusher.place_search.application.service
 import club.staircrusher.place_search.application.port.out.web.AccessibilityService
 import club.staircrusher.place_search.application.port.out.web.PlaceService
 import club.staircrusher.stdlib.persistence.TransactionManager
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class ListConqueredPlacesQuery(

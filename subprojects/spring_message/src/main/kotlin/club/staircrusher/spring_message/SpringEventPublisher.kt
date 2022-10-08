@@ -1,10 +1,10 @@
 package club.staircrusher.spring_message
 
+import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.event.DomainEvent
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.ApplicationEventPublisherAware
-import org.springframework.stereotype.Component
 
 @Component
 class SpringEventPublisher: ApplicationEventPublisherAware, DomainEventPublisher {

@@ -4,7 +4,7 @@ import club.staircrusher.stdlib.domain.DomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 import java.time.Clock
 
 @Component

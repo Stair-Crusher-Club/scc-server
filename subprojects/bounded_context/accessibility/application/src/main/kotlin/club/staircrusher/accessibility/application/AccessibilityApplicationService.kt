@@ -19,7 +19,7 @@ import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.user.UserApplicationService
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class AccessibilityApplicationService(

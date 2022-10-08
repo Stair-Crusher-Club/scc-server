@@ -1,7 +1,7 @@
 package club.staircrusher.user.infra.adapter.`in`.security
 
 import club.staircrusher.spring_web.authentication.SccSecurityConfig
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class UserBoundedContextSecurityConfig : SccSecurityConfig {

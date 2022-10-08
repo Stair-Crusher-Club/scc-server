@@ -3,7 +3,7 @@ package club.staircrusher.accessibility.infra.adapter.out.persistence
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.repository.PlaceAccessibilityRepository
 import club.staircrusher.stdlib.geography.EupMyeonDong
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class NoopPlaceAccessibilityRepository : PlaceAccessibilityRepository {

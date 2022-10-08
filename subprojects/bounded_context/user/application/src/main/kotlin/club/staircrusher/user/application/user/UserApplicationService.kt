@@ -6,7 +6,7 @@ import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
 import club.staircrusher.user.domain.service.UserAuthService
 import club.staircrusher.user.domain.service.UserService
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class UserApplicationService(

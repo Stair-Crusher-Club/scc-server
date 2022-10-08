@@ -5,7 +5,7 @@ import club.staircrusher.accessibility.domain.service.BuildingAccessibilityUpvot
 import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class BuildingAccessibilityUpvoteApplicationService(

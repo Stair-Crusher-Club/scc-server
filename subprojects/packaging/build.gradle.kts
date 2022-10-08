@@ -8,6 +8,7 @@ dependencies {
 
     implementation(project(":spring-web"))
     implementation(project(":spring_message"))
+    implementation(project(":stdlib"))
 }
 
 tasks.bootJar { enabled = false }

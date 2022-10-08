@@ -3,7 +3,7 @@ package club.staircrusher.place.infra.adapter.out.persistence
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.stdlib.geography.EupMyeonDong
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class NoopBuildingRepository : BuildingRepository {

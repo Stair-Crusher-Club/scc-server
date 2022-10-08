@@ -2,7 +2,7 @@ package club.staircrusher.accessibility.infra.adapter.out.web
 
 import club.staircrusher.accessibility.domain.model.Place
 import club.staircrusher.accessibility.domain.service.PlaceService
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 /**
  * Add suffix 2 in order to avoid conflicts with another InMemoryPlaceService

@@ -4,7 +4,7 @@ import club.staircrusher.stdlib.domain.DomainException
 import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
 import club.staircrusher.user.domain.exception.UserAuthenticationException
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class UserAuthService(

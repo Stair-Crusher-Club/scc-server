@@ -4,7 +4,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.repository.PlaceAccessibilityCommentRepository
 import club.staircrusher.stdlib.domain.DomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
-import org.springframework.stereotype.Component
+import club.staircrusher.stdlib.di.annotation.Component
 import java.time.Clock
 
 @Component
