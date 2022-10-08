@@ -4,7 +4,7 @@ import club.staircrusher.accessibility.domain.service.BuildingAccessibilityServi
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestBuildingAccessibilityParams
 
 
-fun RegisterAccessibilityPostRequestBuildingAccessibilityParams.toModel(userId: String) = BuildingAccessibilityService.CreateParams(
+fun RegisterAccessibilityPostRequestBuildingAccessibilityParams.toModel(userId: String?) = BuildingAccessibilityService.CreateParams(
     buildingId = buildingId,
     entranceStairInfo = entranceStairInfo.toModel(),
     hasSlope = hasSlope,

@@ -15,6 +15,7 @@ import club.staircrusher.accessibility.domain.service.PlaceAccessibilityService
 import club.staircrusher.accessibility.domain.service.PlaceService
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.user.application.user.UserApplicationService
 import org.springframework.stereotype.Component
 
 @Component
@@ -29,22 +30,49 @@ class AccessibilityApplicationService(
     private val placeAccessibilityCommentService: PlaceAccessibilityCommentService,
     private val buildingAccessibilityService: BuildingAccessibilityService,
     private val buildingAccessibilityCommentService: BuildingAccessibilityCommentService,
+    private val userApplicationService: UserApplicationService,
 ) {
     data class GetAccessibilityResult(
-        val buildingAccessibility: BuildingAccessibility?,
-        val buildingAccessibilityComments: List<BuildingAccessibilityComment>,
-        val placeAccessibility: PlaceAccessibility?,
-        val placeAccessibilityComments: List<PlaceAccessibilityComment>,
+        val buildingAccessibility: WithUserInfo<BuildingAccessibility>?,
+        val buildingAccessibilityComments: List<WithUserInfo<BuildingAccessibilityComment>>,
+        val placeAccessibility: WithUserInfo<PlaceAccessibility>?,
+        val placeAccessibilityComments: List<WithUserInfo<PlaceAccessibilityComment>>,
         val hasOtherPlacesToRegisterInSameBuilding: Boolean,
+    )
+
+    data class WithUserInfo<T>(
+        val value: T,
+        val userInfo: UserInfo?
     )
 
     fun getAccessibility(placeId: String): GetAccessibilityResult = transactionManager.doInTransaction {
         val place = placeService.findPlace(placeId) ?: throw IllegalArgumentException("Cannot find place with $placeId")
+        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.buildingId)
+        val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.buildingId)
+        val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
+        val placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId)
+        val userInfoById = userApplicationService.getUsers(
+            listOfNotNull(buildingAccessibility?.userId)
+                    + buildingAccessibilityComments.mapNotNull { it.userId }
+                    + listOfNotNull(placeAccessibility?.userId)
+                    + placeAccessibilityComments.mapNotNull { it.userId }
+        ).map { it.toDomainModel() }.associateBy { it.userId }
+
         GetAccessibilityResult(
-            buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.buildingId),
-            buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.buildingId),
-            placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId),
-            placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId),
+            buildingAccessibility = buildingAccessibility?.let { WithUserInfo(it, userInfoById[it.userId]) },
+            buildingAccessibilityComments = buildingAccessibilityComments.map {
+                WithUserInfo(
+                    value = it,
+                    userInfo = userInfoById[it.userId],
+                )
+            },
+            placeAccessibility = placeAccessibility?.let { WithUserInfo(it, userInfoById[it.userId]) },
+            placeAccessibilityComments = placeAccessibilityComments.map {
+                WithUserInfo(
+                    value = it,
+                    userInfo = userInfoById[it.userId],
+                )
+            },
             hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(place.buildingId)
         )
     }
@@ -54,6 +82,7 @@ class AccessibilityApplicationService(
         val placeAccessibilityComment: PlaceAccessibilityComment?,
         val buildingAccessibility: BuildingAccessibility?,
         val buildingAccessibilityComment: BuildingAccessibilityComment?,
+        val userInfo: UserInfo?,
     )
 
     fun register(
@@ -66,29 +95,39 @@ class AccessibilityApplicationService(
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let { placeAccessibilityCommentService.create(it) }
         val buildingAccessibility = createBuildingAccessibilityParams?.let { buildingAccessibilityService.create(it) }
         val buildingAccessibilityComment = createBuildingAccessibilityCommentParams?.let { buildingAccessibilityCommentService.create(it) }
+        val userInfo = createPlaceAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
 
         RegisterAccessibilityResult(
             placeAccessibility = placeAccessibility,
             placeAccessibilityComment = placeAccessibilityComment,
             buildingAccessibility = buildingAccessibility,
             buildingAccessibilityComment = buildingAccessibilityComment,
+            userInfo = userInfo,
         )
     }
 
     fun registerBuildingAccessibilityComment(
         params: BuildingAccessibilityCommentService.CreateParams,
-    ): BuildingAccessibilityComment = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
-        buildingAccessibilityCommentService.create(params)
+    ): WithUserInfo<BuildingAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+        val comment = buildingAccessibilityCommentService.create(params)
+        WithUserInfo(
+            value = comment,
+            userInfo = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
+        )
     }
 
     fun registerPlaceAccessibilityComment(
         params: PlaceAccessibilityCommentService.CreateParams,
-    ): PlaceAccessibilityComment = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
-        placeAccessibilityCommentService.create(params)
+    ): WithUserInfo<PlaceAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+        val comment = placeAccessibilityCommentService.create(params)
+        WithUserInfo(
+            value = comment,
+            userInfo = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
+        )
     }
 
-    fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> {
-        return placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
+    fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> = transactionManager.doInTransaction {
+        placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
     }
 
     fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {

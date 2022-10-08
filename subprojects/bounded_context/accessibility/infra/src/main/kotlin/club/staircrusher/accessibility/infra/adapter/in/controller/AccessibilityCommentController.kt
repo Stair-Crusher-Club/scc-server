@@ -22,7 +22,7 @@ class AccessibilityCommentController(
         @RequestBody request: RegisterBuildingAccessibilityCommentPostRequest,
         authentication: SccAppAuthentication,
     ): RegisterBuildingAccessibilityCommentPost200Response {
-        val comment = accessibilityApplicationService.registerBuildingAccessibilityComment(
+        val result = accessibilityApplicationService.registerBuildingAccessibilityComment(
             BuildingAccessibilityCommentService.CreateParams(
                 buildingId = request.buildingId,
                 userId = authentication.principal,
@@ -30,7 +30,7 @@ class AccessibilityCommentController(
             )
         )
         return RegisterBuildingAccessibilityCommentPost200Response(
-            buildingAccessibilityComment = comment.toDTO(user = null) // TODO: user 채우기
+            buildingAccessibilityComment = result.value.toDTO(userInfo = result.userInfo)
         )
     }
 
@@ -39,7 +39,7 @@ class AccessibilityCommentController(
         @RequestBody request: RegisterPlaceAccessibilityCommentPostRequest,
         authentication: SccAppAuthentication,
     ): RegisterPlaceAccessibilityCommentPost200Response {
-        val comment = accessibilityApplicationService.registerPlaceAccessibilityComment(
+        val result = accessibilityApplicationService.registerPlaceAccessibilityComment(
             PlaceAccessibilityCommentService.CreateParams(
                 placeId = request.placeId,
                 userId = authentication.principal,
@@ -47,7 +47,7 @@ class AccessibilityCommentController(
             )
         )
         return RegisterPlaceAccessibilityCommentPost200Response(
-            placeAccessibilityComment = comment.toDTO(user = null) // TODO: user 채우기
+            placeAccessibilityComment = result.value.toDTO(userInfo = result.userInfo)
         )
     }
 }
