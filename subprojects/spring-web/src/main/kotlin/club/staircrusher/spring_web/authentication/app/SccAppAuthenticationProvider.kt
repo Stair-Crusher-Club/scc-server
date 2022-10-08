@@ -1,26 +1,24 @@
-package club.staircrusher.spring_web.app
+package club.staircrusher.spring_web.authentication.app
 
+import club.staircrusher.spring_web.authentication.BeforeAuthSccAuthentication
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.user.UserApplicationService
 import club.staircrusher.user.application.user.UserAuthApplicationService
 import club.staircrusher.user.domain.service.TokenVerificationException
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
+import org.springframework.stereotype.Component
 
+@Component
 class SccAppAuthenticationProvider(
     private val userAuthApplicationService: UserAuthApplicationService,
     private val userApplicationService: UserApplicationService,
     private val transactionManager: TransactionManager,
 ) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication): Authentication {
-        val sccAppAuthentication = authentication as SccAppAuthentication
-        if (authentication.isAuthenticated) {
-            return authentication
-        }
-
-        val accessToken = sccAppAuthentication.credentials ?: throw AuthenticationCredentialsNotFoundException("Access token does not exist.")
+        val beforeAuthSccAuthentication = authentication as BeforeAuthSccAuthentication
+        val accessToken = beforeAuthSccAuthentication.credentials
         val userId = try {
             userAuthApplicationService.verify(accessToken)
         } catch (e: TokenVerificationException) {
@@ -30,15 +28,17 @@ class SccAppAuthenticationProvider(
         val user = transactionManager.doInTransaction {
             userApplicationService.getUser(userId)
         } ?: throw BadCredentialsException("No User found with given credentials.")
-        sccAppAuthentication.setUserInfo(SccAppAuthentication.UserDetail(
+
+        return SccAppAuthentication(
+            SccAppAuthentication.UserDetail(
             userId = user.id,
             nickname = user.nickname,
             instagramId = user.instagramId,
-        ))
-        return sccAppAuthentication
+        )
+        )
     }
 
     override fun supports(authentication: Class<*>): Boolean {
-        return SccAppAuthentication::class.java.isAssignableFrom(authentication)
+        return BeforeAuthSccAuthentication::class.java.isAssignableFrom(authentication)
     }
 }

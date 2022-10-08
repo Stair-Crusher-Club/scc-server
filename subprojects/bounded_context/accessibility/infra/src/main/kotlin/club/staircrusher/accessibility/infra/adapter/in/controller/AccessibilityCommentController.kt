@@ -8,7 +8,7 @@ import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPost20
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPostRequest
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityCommentPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityCommentPostRequest
-import club.staircrusher.spring_web.app.SccAppAuthentication
+import club.staircrusher.spring_web.authentication.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController

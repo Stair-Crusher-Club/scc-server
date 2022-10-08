@@ -2,7 +2,7 @@ package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.BuildingAccessibilityUpvoteApplicationService
 import club.staircrusher.api.spec.dto.GiveBuildingAccessibilityUpvotePostRequest
-import club.staircrusher.spring_web.app.SccAppAuthentication
+import club.staircrusher.spring_web.authentication.app.SccAppAuthentication
 import club.staircrusher.stdlib.auth.AuthUser
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
