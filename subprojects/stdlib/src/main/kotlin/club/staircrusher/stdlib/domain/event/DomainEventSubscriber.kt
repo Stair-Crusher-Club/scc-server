@@ -1,6 +1,6 @@
 package club.staircrusher.stdlib.domain.event
 
-abstract class DomainEventListener<T> where T : DomainEvent {
+abstract class DomainEventSubscriber<T> where T : DomainEvent {
     protected abstract fun onDomainEvent(event: T)
 
     abstract fun canConsume(event: DomainEvent): Boolean

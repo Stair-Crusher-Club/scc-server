@@ -12,3 +12,8 @@ idea {
 wire {
     kotlin {}
 }
+
+dependencies {
+    implementation(projects.stdlib)
+    implementation(projects.domainEvent)
+}

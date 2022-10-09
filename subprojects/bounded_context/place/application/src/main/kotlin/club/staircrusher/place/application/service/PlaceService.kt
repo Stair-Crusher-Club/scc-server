@@ -1,12 +1,13 @@
 package club.staircrusher.place.application.service
 
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.domain_event.PlaceSearchEvent
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.domain.event.PlaceSearchEvent
-import club.staircrusher.stdlib.place.PlaceCategory
-import club.staircrusher.stdlib.domain.event.DomainEventPublisher
+import club.staircrusher.place.application.toPlaceDTO
+import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.domain.event.DomainEventPublisher
+import club.staircrusher.stdlib.place.PlaceCategory
 
 @Component
 class PlaceService(
@@ -21,13 +22,13 @@ class PlaceService(
     // TODO: support filter
     suspend fun findByKeyword(keyword: String): List<Place> {
         val places = mapsService.findByKeyword(keyword)
-        eventPublisher.publishEvent(PlaceSearchEvent(places))
+        eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
 
     suspend fun findAllByKeyword(keyword: String): List<Place> {
         val places = mapsService.findAllByKeyword(keyword)
-        eventPublisher.publishEvent(PlaceSearchEvent(places))
+        eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
 
@@ -36,7 +37,7 @@ class PlaceService(
         option: MapsService.SearchOption
     ): List<Place> {
         val places = mapsService.findAllByCategory(category, option)
-        eventPublisher.publishEvent(PlaceSearchEvent(places))
+        eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
 
