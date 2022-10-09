@@ -1,0 +1,55 @@
+import club.staircrusher.stdlib.place.PlaceCategory;
+
+CREATE TABLE place (
+    id VARCHAR(256) NOT NULL PRIMARY KEY,
+    name VARCHAR(256) NOT NULL,
+    location_x FLOAT8 NOT NULL,
+    location_y FLOAT8 NOT NULL,
+    building_id VARCHAR(256) NULL,
+    si_gun_gu_id VARCHAR(256) NULL,
+    eup_myeon_dong_id VARCHAR(256) NULL,
+    category VARCHAR(256) AS PlaceCategory NULL
+);
+
+save:
+INSERT INTO place
+VALUES :place
+ON CONFLICT(id) DO UPDATE SET
+    name = EXCLUDED.name,
+    location_x = EXCLUDED.location_x,
+    location_y = EXCLUDED.location_y,
+    si_gun_gu_id = EXCLUDED.si_gun_gu_id,
+    eup_myeon_dong_id = EXCLUDED.eup_myeon_dong_id,
+    category = EXCLUDED.category;
+
+removeAll:
+DELETE FROM place;
+
+findById:
+SELECT *
+FROM place JOIN building ON place.building_id = building.id
+WHERE place.id = :id;
+
+findByNameContains:
+SELECT *
+FROM place
+WHERE
+    name LIKE :searchTextRegex;
+
+findByBuildingId:
+SELECT *
+FROM place
+WHERE id = :buildingId;
+
+findByIdIn:
+SELECT *
+FROM place
+WHERE id IN :ids;
+
+countByEupMyeonDong:
+SELECT COUNT(1)
+FROM place
+WHERE
+    id = :id
+    AND name = :name
+    AND si_gun_gu_id = :siGunGuId;

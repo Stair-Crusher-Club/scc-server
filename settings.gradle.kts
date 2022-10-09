@@ -31,7 +31,7 @@ pluginManagement {
 
         id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
         id("org.springframework.boot") version springBootVersion
-        id("com.squareup.sqldelight") version sqlDelightVersion
+        id("app.cash.sqldelight") version sqlDelightVersion
         id("com.squareup.wire") version wireVersion
 
         id("io.spring.dependency-management") version springDependencyManagementVersion

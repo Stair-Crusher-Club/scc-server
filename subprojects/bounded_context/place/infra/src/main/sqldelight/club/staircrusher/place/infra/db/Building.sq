@@ -1,0 +1,53 @@
+CREATE TABLE building (
+    id VARCHAR(256) NOT NULL PRIMARY KEY,
+    name VARCHAR(256) NULL,
+    location_x FLOAT8 NOT NULL,
+    location_y FLOAT8 NOT NULL,
+    address_si_do VARCHAR(256) NOT NULL,
+    address_si_gun_gu VARCHAR(256) NOT NULL,
+    address_eup_myeon_dong VARCHAR(256) NOT NULL,
+    address_li VARCHAR(256) NOT NULL,
+    address_road_name VARCHAR(256) NOT NULL,
+    address_main_building_number VARCHAR(256) NOT NULL,
+    address_sub_building_number VARCHAR(256) NOT NULL,
+    si_gun_gu_id VARCHAR(256) NOT NULL,
+    eup_myeon_dong_id VARCHAR(256) NOT NULL
+);
+
+save:
+INSERT INTO building
+VALUES :building
+ON CONFLICT(id) DO UPDATE SET
+    name = EXCLUDED.name,
+    location_x = EXCLUDED.location_x,
+    location_y = EXCLUDED.location_y,
+    address_si_do = EXCLUDED.address_si_do,
+    address_si_gun_gu = EXCLUDED.address_si_gun_gu,
+    address_eup_myeon_dong = EXCLUDED.address_eup_myeon_dong,
+    address_li = EXCLUDED.address_li,
+    address_road_name = EXCLUDED.address_road_name,
+    address_main_building_number = EXCLUDED.address_main_building_number,
+    address_sub_building_number = EXCLUDED.address_sub_building_number,
+    si_gun_gu_id = EXCLUDED.si_gun_gu_id,
+    eup_myeon_dong_id = EXCLUDED.eup_myeon_dong_id;
+
+removeAll:
+DELETE FROM building;
+
+findById:
+SELECT *
+FROM building
+WHERE id = :id;
+
+countByEupMyeonDong:
+SELECT COUNT(1)
+FROM building
+WHERE
+    id = :id
+    AND name = :name
+    AND si_gun_gu_id = :siGunGuId;
+
+findByIdIn:
+SELECT *
+FROM building
+WHERE id IN :ids;
