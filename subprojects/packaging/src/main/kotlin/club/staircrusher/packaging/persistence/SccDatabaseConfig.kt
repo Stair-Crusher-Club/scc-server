@@ -1,5 +1,6 @@
 package club.staircrusher.packaging.persistence
 
+import club.staircrusher.infra.persistence.sqldelight.OnlyOnceDatabaseMigrator
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.springframework.context.annotation.Bean
@@ -17,5 +18,12 @@ open class SccDatabaseConfig {
         config.password = sccDatabaseProperties.password
         config.isAutoCommit = false
         return HikariDataSource(config)
+    }
+
+    @Bean
+    open fun databaseMigrator(dataSource: DataSource): OnlyOnceDatabaseMigrator {
+        val onlyOnceDatabaseMigrator = OnlyOnceDatabaseMigrator(dataSource)
+        onlyOnceDatabaseMigrator.migrate()
+        return onlyOnceDatabaseMigrator
     }
 }
