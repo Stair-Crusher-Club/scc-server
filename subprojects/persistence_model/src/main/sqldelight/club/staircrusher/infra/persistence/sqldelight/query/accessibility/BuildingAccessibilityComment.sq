@@ -1,0 +1,21 @@
+save:
+INSERT INTO building_accessibility_comment
+VALUES :building_accessibility_comment
+ON CONFLICT(id) DO UPDATE SET
+    building_id = EXCLUDED.building_id,
+    user_id = EXCLUDED.user_id,
+    comment = EXCLUDED.comment,
+    created_at = EXCLUDED.created_at;
+
+removeAll:
+DELETE FROM building_accessibility_comment;
+
+findById:
+SELECT *
+FROM building_accessibility_comment
+WHERE building_accessibility_comment.id = :id;
+
+findByBuildingId:
+SELECT *
+FROM building_accessibility_comment
+WHERE building_id = :buildingId;

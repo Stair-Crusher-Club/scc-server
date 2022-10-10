@@ -1,0 +1,100 @@
+import club.staircrusher.stdlib.place.PlaceCategory;
+
+CREATE TABLE IF NOT EXISTS building (
+    id VARCHAR(256) NOT NULL PRIMARY KEY,
+    name VARCHAR(256) NULL,
+    location_x FLOAT8 NOT NULL,
+    location_y FLOAT8 NOT NULL,
+    address_si_do VARCHAR(256) NOT NULL,
+    address_si_gun_gu VARCHAR(256) NOT NULL,
+    address_eup_myeon_dong VARCHAR(256) NOT NULL,
+    address_li VARCHAR(256) NOT NULL,
+    address_road_name VARCHAR(256) NOT NULL,
+    address_main_building_number VARCHAR(256) NOT NULL,
+    address_sub_building_number VARCHAR(256) NOT NULL,
+    si_gun_gu_id VARCHAR(256) NOT NULL,
+    eup_myeon_dong_id VARCHAR(256) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS place (
+    id VARCHAR(256) NOT NULL PRIMARY KEY,
+    name VARCHAR(256) NOT NULL,
+    location_x FLOAT8 NOT NULL,
+    location_y FLOAT8 NOT NULL,
+    building_id VARCHAR(256) NULL,
+    si_gun_gu_id VARCHAR(256) NULL,
+    eup_myeon_dong_id VARCHAR(256) NULL,
+    category VARCHAR(256) AS PlaceCategory NULL
+);
+
+CREATE TABLE IF NOT EXISTS building_accessibility (
+  id varchar(36) NOT NULL,
+  building_id varchar(36) NOT NULL,
+  entrance_stair_info varchar(32) NOT NULL DEFAULT 'NONE',
+  has_slope boolean NOT NULL DEFAULT FALSE,
+  has_elevator boolean NOT NULL,
+  elevator_stair_info varchar(32) NOT NULL DEFAULT 'NONE',
+  user_id varchar(36) DEFAULT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (id)
+);
+CREATE INDEX IDX_building_accessibility_1 ON building_accessibility(building_id);
+CREATE INDEX IDX_building_accessibility_2 ON building_accessibility(user_id);
+
+CREATE TABLE IF NOT EXISTS building_accessibility_comment (
+  id varchar(36) NOT NULL,
+  building_id varchar(36) NOT NULL,
+  user_id varchar(36) DEFAULT NULL,
+  comment text NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (id)
+);
+CREATE INDEX IDX_building_accessibility_comment_1 ON building_accessibility_comment(building_id);
+CREATE INDEX IDX_building_accessibility_comment_2 ON building_accessibility_comment(user_id);
+
+CREATE TABLE IF NOT EXISTS building_accessibility_upvote (
+  id varchar(36) NOT NULL,
+  user_id varchar(36) NOT NULL,
+  building_accessibility_id varchar(36) NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  deleted_at TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+CREATE INDEX IDX_building_accessibility_upvote_1 ON building_accessibility_upvote(user_id);
+CREATE INDEX IDX_building_accessibility_upvote_2 ON building_accessibility_upvote(building_accessibility_id);
+
+CREATE TABLE IF NOT EXISTS place_accessibility (
+  id varchar(36) NOT NULL,
+  place_id varchar(36) NOT NULL,
+  is_first_floor boolean NOT NULL,
+  stair_info varchar(32) NOT NULL DEFAULT 'NONE',
+  has_slope boolean NOT NULL DEFAULT FALSE,
+  user_id varchar(36) DEFAULT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (id)
+);
+CREATE INDEX IDX_place_accessibility_1 ON place_accessibility(place_id);
+CREATE INDEX IDX_place_accessibility_2 ON place_accessibility(user_id);
+
+CREATE TABLE IF NOT EXISTS place_accessibility_comment (
+  id varchar(36) NOT NULL,
+  place_id varchar(36) NOT NULL,
+  user_id varchar(36) DEFAULT NULL,
+  comment text NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (id)
+);
+CREATE INDEX IDX_place_accessibility_comment_1 ON place_accessibility_comment(place_id);
+CREATE INDEX IDX_place_accessibility_comment_2 ON place_accessibility_comment(user_id);
+
+-- user는 reserved word라서 오류가 난다. "user"로 해도 마찬가지. 그래서 그냥 user_table로 우회한다.
+CREATE TABLE IF NOT EXISTS user_table (
+  id varchar(36) NOT NULL,
+  nickname varchar(32) NOT NULL,
+  encrypted_password varchar(64) NOT NULL,
+  instagram_id varchar(32) DEFAULT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE UNIQUE INDEX idx_user_table_1 ON user_table(nickname);
