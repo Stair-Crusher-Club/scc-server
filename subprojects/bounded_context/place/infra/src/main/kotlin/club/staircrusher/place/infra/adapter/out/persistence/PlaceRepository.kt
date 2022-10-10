@@ -8,7 +8,7 @@ import club.staircrusher.place.infra.toPlace
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
-// @Component
+@Component
 class PlaceRepository(
     placeDatabase: PlaceDatabase,
     private val buildingRepository: BuildingRepository,
