@@ -39,7 +39,7 @@ WHERE
 findByBuildingId:
 SELECT *
 FROM place
-WHERE id = :buildingId;
+WHERE building_id = :buildingId;
 
 findByIdIn:
 SELECT *
@@ -52,4 +52,4 @@ FROM place
 WHERE
     id = :id
     AND name = :name
-    AND si_gun_gu_id = :siGunGuId;
+    AND eup_myeon_dong_id = :eupMyeonDongId;
