@@ -11,6 +11,9 @@ dependencies {
     api("app.cash.sqldelight:jdbc-driver:$sqlDelightVersion")
     api("app.cash.sqldelight:coroutines-extensions:$sqlDelightVersion")
     implementation("app.cash.sqldelight:postgresql-dialect:$sqlDelightVersion")
+
+    val kotlinLoggingVersion: String by project
+    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 }
 
 idea {
@@ -27,5 +30,6 @@ sqldelight {
         packageName = "club.staircrusher.infra.persistence.sqldelight"
         dialect("app.cash.sqldelight:postgresql-dialect:$sqlDelightVersion")
         verifyMigrations = false
+        deriveSchemaFromMigrations = true
     }
 }

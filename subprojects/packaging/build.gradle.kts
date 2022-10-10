@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":spring-web"))
     implementation(project(":spring_message"))
     implementation(project(":stdlib"))
+    implementation(projects.sqldelight)
 }
 
 tasks.bootJar { enabled = false }

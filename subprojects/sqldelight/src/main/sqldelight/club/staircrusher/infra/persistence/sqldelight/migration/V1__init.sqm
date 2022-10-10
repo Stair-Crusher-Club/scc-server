@@ -1,0 +1,28 @@
+import club.staircrusher.stdlib.place.PlaceCategory;
+
+CREATE TABLE IF NOT EXISTS building (
+    id VARCHAR(256) NOT NULL PRIMARY KEY,
+    name VARCHAR(256) NULL,
+    location_x FLOAT8 NOT NULL,
+    location_y FLOAT8 NOT NULL,
+    address_si_do VARCHAR(256) NOT NULL,
+    address_si_gun_gu VARCHAR(256) NOT NULL,
+    address_eup_myeon_dong VARCHAR(256) NOT NULL,
+    address_li VARCHAR(256) NOT NULL,
+    address_road_name VARCHAR(256) NOT NULL,
+    address_main_building_number VARCHAR(256) NOT NULL,
+    address_sub_building_number VARCHAR(256) NOT NULL,
+    si_gun_gu_id VARCHAR(256) NOT NULL,
+    eup_myeon_dong_id VARCHAR(256) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS place (
+    id VARCHAR(256) NOT NULL PRIMARY KEY,
+    name VARCHAR(256) NOT NULL,
+    location_x FLOAT8 NOT NULL,
+    location_y FLOAT8 NOT NULL,
+    building_id VARCHAR(256) NULL,
+    si_gun_gu_id VARCHAR(256) NULL,
+    eup_myeon_dong_id VARCHAR(256) NULL,
+    category VARCHAR(256) AS PlaceCategory NULL
+);
