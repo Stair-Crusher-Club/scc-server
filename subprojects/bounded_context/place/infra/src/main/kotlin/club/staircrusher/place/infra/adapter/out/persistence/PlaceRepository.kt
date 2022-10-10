@@ -3,20 +3,20 @@ package club.staircrusher.place.infra.adapter.out.persistence
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.place.infra.DB
+import club.staircrusher.place.infra.PlaceDatabase
 import club.staircrusher.place.infra.toPlace
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
 // @Component
 class PlaceRepository(
-    db: DB,
+    placeDatabase: PlaceDatabase,
     private val buildingRepository: BuildingRepository,
 ) : PlaceRepository {
-    private val placeQueries = db.placeQueries
+    private val placeQueries = placeDatabase.placeQueries
 
     override fun findByNameContains(searchTextRegex: String): List<Place> {
-        val places = placeQueries.findByNameContains(searchTextRegex).executeAsList()
+        val places = placeQueries.findByNameContains("%$searchTextRegex%").executeAsList()
         val buildingIds = places.mapNotNull { it.building_id }
         val buildings = buildingRepository.findByIdIn(buildingIds).associateBy { it.id }
 
