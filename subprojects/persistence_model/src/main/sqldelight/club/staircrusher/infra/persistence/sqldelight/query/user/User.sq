@@ -1,0 +1,22 @@
+save:
+INSERT INTO user_table
+VALUES :user_table
+ON CONFLICT(id) DO UPDATE SET
+    id = EXCLUDED.id,
+    nickname = EXCLUDED.nickname,
+    encrypted_password = EXCLUDED.encrypted_password,
+    instagram_id = EXCLUDED.instagram_id,
+    created_at = EXCLUDED.created_at;
+
+removeAll:
+DELETE FROM user_table;
+
+findById:
+SELECT *
+FROM user_table
+WHERE user_table.id = :id;
+
+findByNickname:
+SELECT *
+FROM user_table
+WHERE user_table.nickname = :nickname;
