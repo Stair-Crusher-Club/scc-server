@@ -9,6 +9,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
     api(project(":api"))
+    implementation(projects.sqldelight)
     implementation("org.springframework.boot:spring-boot-starter-web")
 }
 

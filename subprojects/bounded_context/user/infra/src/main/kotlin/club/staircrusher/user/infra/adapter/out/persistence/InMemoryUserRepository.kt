@@ -11,10 +11,6 @@ class InMemoryUserRepository : UserRepository {
         return userById.values.find { it.nickname == nickname }
     }
 
-    override fun findByIdIn(ids: List<String>): List<User> {
-        return ids.mapNotNull { findByIdOrNull(it) }
-    }
-
     override fun save(entity: User): User {
         userById[entity.id] = entity
         return entity
