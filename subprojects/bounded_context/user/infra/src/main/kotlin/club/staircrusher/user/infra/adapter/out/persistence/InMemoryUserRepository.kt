@@ -5,32 +5,35 @@ import club.staircrusher.user.domain.repository.UserRepository
 import org.springframework.stereotype.Component
 
 @Component
-class NoopUserRepository : UserRepository {
+class InMemoryUserRepository : UserRepository {
+    private val userById = mutableMapOf<String, User>()
     override fun findByNickname(nickname: String): User? {
-        return null
+        return userById.values.find { it.nickname == nickname }
     }
 
     override fun findByIdIn(ids: List<String>): List<User> {
-        return emptyList()
+        return ids.mapNotNull { findByIdOrNull(it) }
     }
 
     override fun save(entity: User): User {
+        userById[entity.id] = entity
         return entity
     }
 
     override fun saveAll(entity: Collection<User>): User {
+        entity.forEach { save(it) }
         return entity.first()
     }
 
     override fun removeAll() {
-        // No-op
+        userById.clear()
     }
 
     override fun findById(id: String): User {
-        throw IllegalArgumentException("User of id $id does not exist.")
+        return userById[id] ?: throw IllegalArgumentException("User of id $id does not exist.")
     }
 
     override fun findByIdOrNull(id: String): User? {
-        return null
+        return userById[id]
     }
 }

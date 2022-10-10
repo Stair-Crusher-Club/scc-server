@@ -36,7 +36,7 @@ class BuildingAccessibilityUpvoteService(
         }
     }
 
-    fun isUpvoted(user: AuthUser, buildingAccessibility: BuildingAccessibility): Boolean {
-        return buildingAccessibilityUpvoteRepository.findByUserAndBuildingAccessibilityAndNotDeleted(user.id, buildingAccessibility) != null
+    fun isUpvoted(userId: String, buildingAccessibility: BuildingAccessibility): Boolean {
+        return buildingAccessibilityUpvoteRepository.findByUserAndBuildingAccessibilityAndNotDeleted(userId, buildingAccessibility) != null
     }
 }

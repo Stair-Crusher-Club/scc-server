@@ -53,4 +53,12 @@ class UserApplicationService(
         val user = userRepository.findById(userId)
         userService.updateUserInfo(user, nickname, instagramId)
     }
+
+    fun getUser(userId: String): User? = transactionManager.doInTransaction {
+        userRepository.findByIdOrNull(userId)
+    }
+
+    fun getUsers(userIds: List<String>): List<User> = transactionManager.doInTransaction {
+        userRepository.findByIdIn(userIds)
+    }
 }

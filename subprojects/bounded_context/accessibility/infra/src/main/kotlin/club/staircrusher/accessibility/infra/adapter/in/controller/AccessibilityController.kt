@@ -9,6 +9,7 @@ import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
+import club.staircrusher.spring_web.authentication.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -18,42 +19,54 @@ class AccessibilityController(
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
     @PostMapping("/getAccessibility")
-    fun getAccessibility(@RequestBody request: GetAccessibilityPostRequest): GetAccessibilityPost200Response {
-        val result = accessibilityApplicationService.getAccessibility(request.placeId)
-        // TODO: upvote 정보 및 유저 정보 제대로 채우기
+    fun getAccessibility(
+        @RequestBody request: GetAccessibilityPostRequest,
+        authentication: SccAppAuthentication,
+    ): GetAccessibilityPost200Response {
+        val result = accessibilityApplicationService.getAccessibility(request.placeId, authentication.details.id)
         return GetAccessibilityPost200Response(
-            buildingAccessibility = result.buildingAccessibility?.toDTO(
-                isUpvoted = false,
-                totalUpvoteCount = 0,
-                registeredUserName = null,
-            ),
-            placeAccessibility = result.placeAccessibility?.toDTO(
-                registeredUserName = null,
-            ),
-            buildingAccessibilityComments = result.buildingAccessibilityComments.map { it.toDTO(user = null) },
-            placeAccessibilityComments = result.placeAccessibilityComments.map { it.toDTO(user = null) },
+            buildingAccessibility = result.buildingAccessibility?.let {
+                it.value.toDTO(
+                    isUpvoted = result.buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
+                    totalUpvoteCount = result.buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0, // TODO: 제대로 채우기
+                    registeredUserName = it.userInfo?.nickname,
+                )
+            },
+            placeAccessibility = result.placeAccessibility?.let {
+                it.value.toDTO(
+                    registeredUserName = it.userInfo?.nickname,
+                )
+            },
+            buildingAccessibilityComments = result.buildingAccessibilityComments.map {
+                it.value.toDTO(userInfo = it.userInfo)
+            },
+            placeAccessibilityComments = result.placeAccessibilityComments.map {
+                it.value.toDTO(userInfo = it.userInfo)
+            },
             hasOtherPlacesToRegisterInBuilding = result.hasOtherPlacesToRegisterInSameBuilding,
         )
     }
 
     @PostMapping("/registerAccessibility")
-    fun registerAccessibility(@RequestBody request: RegisterAccessibilityPostRequest): RegisterAccessibilityPost200Response {
-        // TODO: Spring Security를 통해 access token의 userId 추출해서 사용해야 함.
-        // TODO: upvote 정보 및 유저 정보 제대로 채우기
+    fun registerAccessibility(
+        @RequestBody request: RegisterAccessibilityPostRequest,
+        sccAppAuthentication: SccAppAuthentication?,
+    ): RegisterAccessibilityPost200Response {
+        val userId = sccAppAuthentication?.principal
         val result = accessibilityApplicationService.register(
-            createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = ""),
+            createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = userId),
             createBuildingAccessibilityCommentParams = request.buildingAccessibilityParams?.comment?.let {
                 BuildingAccessibilityCommentService.CreateParams(
                     buildingId = request.buildingAccessibilityParams!!.buildingId,
-                    userId = null,
+                    userId = userId,
                     comment = it,
                 )
             },
-            createPlaceAccessibilityParams = request.placeAccessibilityParams.toModel(userId = ""),
+            createPlaceAccessibilityParams = request.placeAccessibilityParams.toModel(userId = userId),
             createPlaceAccessibilityCommentParams = request.placeAccessibilityParams.comment?.let {
                 PlaceAccessibilityCommentService.CreateParams(
                     placeId = request.placeAccessibilityParams.placeId,
-                    userId = null,
+                    userId = userId,
                     comment = it,
                 )
             },
@@ -62,16 +75,16 @@ class AccessibilityController(
             buildingAccessibility = result.buildingAccessibility?.toDTO(
                 isUpvoted = false,
                 totalUpvoteCount = 0,
-                registeredUserName = null,
+                registeredUserName = result.userInfo?.nickname,
             ),
             buildingAccessibilityComments = listOfNotNull(result.buildingAccessibilityComment).map {
-                it.toDTO(user = null)
+                it.toDTO(userInfo = result.userInfo)
             },
             placeAccessibility = result.placeAccessibility.toDTO(
-                registeredUserName = null,
+                registeredUserName = result.userInfo?.nickname,
             ),
             placeAccessibilityComments = listOfNotNull(result.placeAccessibilityComment).map {
-                it.toDTO(user = null)
+                it.toDTO(userInfo = result.userInfo)
             },
             registeredUserOrder = 0,
         )

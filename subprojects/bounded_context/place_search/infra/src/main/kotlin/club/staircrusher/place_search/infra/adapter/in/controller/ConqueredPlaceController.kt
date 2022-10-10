@@ -3,7 +3,7 @@ package club.staircrusher.place_search.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place_search.application.service.ListConqueredPlacesQuery
 import club.staircrusher.place_search.infra.adapter.`in`.converter.toDTO
-import club.staircrusher.spring_web.app.SccAppAuthentication
+import club.staircrusher.spring_web.authentication.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 

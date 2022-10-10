@@ -6,7 +6,7 @@ import club.staircrusher.place_search.application.service.PlaceSearchService
 fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     place = place.toDTO(),
     building = place.building.toDTO(),
-    hasBuildingAccessibility = hasBuildingAccessibility,
-    hasPlaceAccessibility = hasPlaceAccessibility,
+    hasBuildingAccessibility = buildingAccessibility != null,
+    hasPlaceAccessibility = placeAccessibility != null,
     distanceMeters = distanceMeters?.meter?.toInt(),
 )

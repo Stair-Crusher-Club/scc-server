@@ -10,3 +10,5 @@ dependencies {
     api(project(":api"))
     implementation("org.springframework.boot:spring-boot-starter-web")
 }
+
+tasks.bootJar { enabled = false }

@@ -2,7 +2,7 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.LoginPostRequest
 import club.staircrusher.api.spec.dto.SignUpPostRequest
-import club.staircrusher.spring_web.SccSecurityConfig
+import club.staircrusher.spring_web.authentication.SccSecurityFilterChainConfig
 import club.staircrusher.user.application.user.UserApplicationService
 import org.springframework.http.HttpRequest
 import org.springframework.http.ResponseEntity
@@ -23,20 +23,19 @@ class AuthController(
         )
         return ResponseEntity
             .noContent()
-            .header(SccSecurityConfig.accessTokenHeader, result.accessToken)
+            .header(SccSecurityFilterChainConfig.accessTokenHeader, result.accessToken)
             .build()
     }
 
     @PostMapping("/login")
     fun login(@RequestBody request: LoginPostRequest, httpRequest: HttpRequest): ResponseEntity<Unit> {
-        val accessToken = httpRequest.headers.getFirst(SccSecurityConfig.accessTokenHeader)
         val result = userApplicationService.login(
             nickname = request.nickname,
             password = request.password,
         )
         return ResponseEntity
             .noContent()
-            .header(SccSecurityConfig.accessTokenHeader, result.accessToken)
+            .header(SccSecurityFilterChainConfig.accessTokenHeader, result.accessToken)
             .build()
     }
 }

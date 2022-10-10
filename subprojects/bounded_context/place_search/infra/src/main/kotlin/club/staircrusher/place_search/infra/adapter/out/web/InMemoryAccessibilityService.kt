@@ -12,10 +12,8 @@ class InMemoryAccessibilityService(
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) : AccessibilityService {
     override fun getAccessibility(place: Place): Pair<PlaceAccessibility?, BuildingAccessibility?> {
-        val accessibility = accessibilityApplicationService.getAccessibility(place.id)
-
-        val placeAccessibility = accessibility.placeAccessibility?.let { it.toModel() }
-        val buildingAccessibility = accessibility.buildingAccessibility?.let { it.toModel() }
+        val placeAccessibility = accessibilityApplicationService.getPlaceAccessibility(place.id)?.toModel()
+        val buildingAccessibility = accessibilityApplicationService.getBuildingAccessibility(place.id)?.toModel()
         return Pair(placeAccessibility, buildingAccessibility)
     }
 
