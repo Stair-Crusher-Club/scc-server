@@ -4,10 +4,11 @@ import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.driver.jdbc.asJdbcDriver
 import club.staircrusher.place.infra.db.Place
 import club.staircrusher.place.infra.db.StairCrusherClub
+import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.place.PlaceCategory
 import javax.sql.DataSource
 
-// @Component
+@Component
 class PlaceDatabase(dataSource: DataSource) {
     private val placeCategoryStringColumnAdapter = object : ColumnAdapter<PlaceCategory, String> {
         override fun decode(databaseValue: String): PlaceCategory {

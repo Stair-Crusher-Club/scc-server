@@ -4,9 +4,10 @@ import club.staircrusher.place.application.port.out.persistence.BuildingReposito
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.infra.PlaceDatabase
 import club.staircrusher.place.infra.toBuilding
+import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
-// @Component
+@Component
 class BuildingRepository(placeDatabase: PlaceDatabase): BuildingRepository{
     private val buildingQueries = placeDatabase.buildingQueries
 
