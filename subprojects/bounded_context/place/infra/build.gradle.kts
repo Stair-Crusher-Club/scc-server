@@ -17,8 +17,6 @@ dependencies {
     val kotlinLoggingVersion: String by project
     val kotlinSerializationVersion: String by project
 
-    implementation(projects.domainEventApi)
-
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-webflux")
     implementation("io.projectreactor.netty:reactor-netty")
