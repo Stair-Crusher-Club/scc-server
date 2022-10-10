@@ -19,7 +19,7 @@ dependencies {
     val sqlDelightVersion: String by project
 
     implementation(projects.stdlib)
-    implementation(projects.sqldelight)
+    implementation(projects.persistenceModel)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-webflux")

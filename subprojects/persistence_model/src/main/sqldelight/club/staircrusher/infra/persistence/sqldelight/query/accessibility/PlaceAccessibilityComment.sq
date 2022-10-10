@@ -1,0 +1,21 @@
+save:
+INSERT INTO place_accessibility_comment
+VALUES :place_accessibility_comment
+ON CONFLICT(id) DO UPDATE SET
+    place_id = EXCLUDED.place_id,
+    user_id = EXCLUDED.user_id,
+    comment = EXCLUDED.comment,
+    created_at = EXCLUDED.created_at;
+
+removeAll:
+DELETE FROM place_accessibility_comment;
+
+findById:
+SELECT *
+FROM place_accessibility_comment
+WHERE place_accessibility_comment.id = :id;
+
+findByPlaceId:
+SELECT *
+FROM place_accessibility_comment
+WHERE place_id = :placeId;

@@ -1,16 +1,3 @@
-CREATE TABLE `place_accessibility` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `place_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_first_floor` boolean NOT NULL,
-  `stair_info` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NONE',
-  `has_slope` boolean NOT NULL DEFAULT FALSE,
-  `user_id` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  PRIMARY KEY (`id`)
-);
-CREATE INDEX `IDX_place_accessibility_1` ON place_accessibility(`place_id`);
-CREATE INDEX `IDX_place_accessibility_2` ON place_accessibility(`user_id`);
-
 save:
 INSERT INTO place_accessibility
 VALUES :place_accessibility
