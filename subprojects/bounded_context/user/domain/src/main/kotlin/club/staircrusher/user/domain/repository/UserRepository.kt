@@ -5,4 +5,5 @@ import club.staircrusher.user.domain.entity.User
 
 interface UserRepository : EntityRepository<User, String> {
     fun findByNickname(nickname: String): User?
+    fun findByIdIn(ids: Collection<String>): List<User>
 }

@@ -20,3 +20,8 @@ findByNickname:
 SELECT *
 FROM user_table
 WHERE user_table.nickname = :nickname;
+
+findByIdIn:
+SELECT *
+FROM user_table
+WHERE user_table.id IN :ids;

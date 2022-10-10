@@ -1,14 +1,21 @@
-package club.staircrusher.user.infra.adapter.out.persistence
+package club.staircrusher.spring_web.mock
 
 import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.repository.UserRepository
 import club.staircrusher.stdlib.di.annotation.Component
+import org.junit.jupiter.api.Order
+import org.springframework.core.Ordered
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 class InMemoryUserRepository : UserRepository {
     private val userById = mutableMapOf<String, User>()
     override fun findByNickname(nickname: String): User? {
         return userById.values.find { it.nickname == nickname }
+    }
+
+    override fun findByIdIn(ids: Collection<String>): List<User> {
+        return userById.values.filter { it.id in ids }
     }
 
     override fun save(entity: User): User {

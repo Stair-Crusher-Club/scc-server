@@ -42,4 +42,10 @@ class UserRepository(
             .executeAsOneOrNull()
             ?.toDomainModel()
     }
+
+    override fun findByIdIn(ids: Collection<String>): List<User> {
+        return queries.findByIdIn(ids = ids)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
 }
