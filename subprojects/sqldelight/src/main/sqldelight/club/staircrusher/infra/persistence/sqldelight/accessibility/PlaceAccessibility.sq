@@ -1,0 +1,68 @@
+CREATE TABLE `place_accessibility` (
+  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `place_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_first_floor` boolean NOT NULL,
+  `stair_info` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NONE',
+  `has_slope` boolean NOT NULL DEFAULT FALSE,
+  `user_id` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (`id`)
+);
+CREATE INDEX `IDX_place_accessibility_1` ON place_accessibility(`place_id`);
+CREATE INDEX `IDX_place_accessibility_2` ON place_accessibility(`user_id`);
+
+save:
+INSERT INTO place_accessibility
+VALUES :place_accessibility
+ON CONFLICT(id) DO UPDATE SET
+    place_id = EXCLUDED.place_id,
+    is_first_floor = EXCLUDED.is_first_floor,
+    stair_info = EXCLUDED.stair_info,
+    has_slope = EXCLUDED.has_slope,
+    user_id = EXCLUDED.user_id,
+    created_at = EXCLUDED.created_at;
+
+removeAll:
+DELETE FROM place_accessibility;
+
+findById:
+SELECT *
+FROM place_accessibility
+WHERE place_accessibility.id = :id;
+
+findByPlaceIds:
+SELECT *
+FROM place_accessibility
+WHERE place_id IN :placeIds;
+
+findByPlaceId:
+SELECT *
+FROM place_accessibility
+WHERE place_id = :placeId;
+
+findByUserId:
+SELECT *
+FROM place_accessibility
+WHERE user_id = :userId;
+
+countByEupMyeonDong:
+SELECT COUNT(1)
+FROM place_accessibility
+    JOIN place ON place.id = place_accessibility.place_id
+WHERE place.eup_myeon_dong_id = :eupMyeonDongId;
+
+countByUserId:
+SELECT COUNT(1)
+FROM place_accessibility
+WHERE user_id = :userId;
+
+hasAccessibilityNotRegisteredPlaceInBuilding:
+SELECT count(p.id) > 0
+FROM place p
+INNER JOIN building b ON b.id = :buildingId AND b.id = p.building_id
+LEFT OUTER JOIN place_accessibility pa ON p.id = pa.place_id
+WHERE pa.id IS NULL;
+
+countAll:
+SELECT COUNT(*)
+FROM place_accessibility pa;
