@@ -1,19 +1,19 @@
 package club.staircrusher.place.infra.adapter.out.persistence
 
+import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.place.infra.PlaceDatabase
 import club.staircrusher.place.infra.toPlace
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
 @Component
 class PlaceRepository(
-    placeDatabase: PlaceDatabase,
+    db: DB,
     private val buildingRepository: BuildingRepository,
 ) : PlaceRepository {
-    private val placeQueries = placeDatabase.placeQueries
+    private val placeQueries = db.placeQueries
 
     override fun findByNameContains(searchTextRegex: String): List<Place> {
         val places = placeQueries.findByNameContains("%$searchTextRegex%").executeAsList()
@@ -42,7 +42,7 @@ class PlaceRepository(
         return placeQueries.countByEupMyeonDong(
             id = eupMyeonDong.id,
             name = eupMyeonDong.name,
-            siGunGuId = eupMyeonDong.siGunGu.id,
+            eupMyeonDongId = eupMyeonDong.id,
         ).executeAsOne().toInt()
     }
 

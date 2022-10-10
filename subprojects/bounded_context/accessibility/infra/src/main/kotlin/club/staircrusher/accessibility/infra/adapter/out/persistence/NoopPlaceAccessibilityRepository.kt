@@ -27,20 +27,12 @@ class NoopPlaceAccessibilityRepository : PlaceAccessibilityRepository {
         return 0
     }
 
-    override fun countByUserIdGroupByEupMyeonDongId(userId: String): Map<String, Int> {
-        return emptyMap()
-    }
-
     override fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean {
         return false
     }
 
     override fun countAll(): Int {
         return 0
-    }
-
-    override fun listConquerRankingEntries(): List<Pair<String, Int>> {
-        return emptyList()
     }
 
     override fun save(entity: PlaceAccessibility): PlaceAccessibility {

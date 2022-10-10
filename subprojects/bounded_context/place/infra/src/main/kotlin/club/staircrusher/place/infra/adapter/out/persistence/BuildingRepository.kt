@@ -1,21 +1,21 @@
 package club.staircrusher.place.infra.adapter.out.persistence
 
+import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.infra.PlaceDatabase
 import club.staircrusher.place.infra.toBuilding
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
 @Component
-class BuildingRepository(placeDatabase: PlaceDatabase): BuildingRepository{
-    private val buildingQueries = placeDatabase.buildingQueries
+class BuildingRepository(db: DB): BuildingRepository{
+    private val buildingQueries = db.buildingQueries
 
     override fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int {
         return buildingQueries.countByEupMyeonDong(
             id = eupMyeonDong.id,
             name = eupMyeonDong.name,
-            siGunGuId = eupMyeonDong.siGunGu.id,
+            eupMyeonDongId = eupMyeonDong.id,
         ).executeAsOne().toInt()
     }
 

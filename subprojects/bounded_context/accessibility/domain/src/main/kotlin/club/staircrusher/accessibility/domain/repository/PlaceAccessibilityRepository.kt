@@ -10,8 +10,6 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     fun findByUserId(userId: String): List<PlaceAccessibility>
     fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int
     fun countByUserId(userId: String): Int
-    fun countByUserIdGroupByEupMyeonDongId(userId: String): Map<String, Int>
     fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean
     fun countAll(): Int
-    fun listConquerRankingEntries(): List<Pair<String, Int>>
 }

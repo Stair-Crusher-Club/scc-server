@@ -12,7 +12,6 @@ import java.time.Clock
 class PlaceAccessibilityService(
     private val clock: Clock,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
-    private val conquerRankingService: ConquerRankingService,
 ) {
     data class CreateParams(
         val placeId: String,
@@ -37,8 +36,6 @@ class PlaceAccessibilityService(
                 createdAt = clock.instant(),
             )
         )
-
-        params.userId?.let { conquerRankingService.updateRanking(it) }
 
         return result
     }
