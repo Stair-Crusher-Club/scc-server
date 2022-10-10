@@ -1,6 +1,6 @@
 package club.staircrusher.user.infra.adapter.out.persistence.sqldelight
 
-import club.staircrusher.infra.persistence.sqldelight.user.User
+import club.staircrusher.infra.persistence.sqldelight.query.user.User
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
