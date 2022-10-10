@@ -8,19 +8,4 @@ data class BuildingAddressDTO(
     val roadName: String,
     val mainBuildingNumber: String,
     val subBuildingNumber: String
-) {
-    override fun toString(): String {
-        // refs: https://www.juso.go.kr/CommonPageLink.do?link=/street/GuideBook
-        return buildString {
-            append("$siDo $siGunGu ")
-            if (!eupMyeonDong.endsWith("동")) {
-                append("$eupMyeonDong ")
-            }
-            append("$roadName ")
-            append(mainBuildingNumber)
-            if (subBuildingNumber.isNotBlank() && subBuildingNumber != "0") {
-                append("-$subBuildingNumber")
-            }
-        }
-    }
-}
+)

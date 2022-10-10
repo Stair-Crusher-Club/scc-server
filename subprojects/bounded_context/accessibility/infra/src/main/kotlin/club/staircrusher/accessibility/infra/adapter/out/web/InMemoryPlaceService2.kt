@@ -5,7 +5,7 @@ import club.staircrusher.accessibility.domain.service.PlaceService
 import club.staircrusher.stdlib.di.annotation.Component
 
 /**
- * Add suffix 2 in order to avoid conflicts with another InMemoryPlaceService
+ * FIXME: delete suffix 2 avoiding conflicts with another InMemoryPlaceService
  */
 @Component
 class InMemoryPlaceService2(
