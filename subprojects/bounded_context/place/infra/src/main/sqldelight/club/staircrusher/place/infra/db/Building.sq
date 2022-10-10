@@ -45,7 +45,7 @@ FROM building
 WHERE
     id = :id
     AND name = :name
-    AND si_gun_gu_id = :siGunGuId;
+    AND eup_myeon_dong_id = :eupMyeonDongId;
 
 findByIdIn:
 SELECT *
