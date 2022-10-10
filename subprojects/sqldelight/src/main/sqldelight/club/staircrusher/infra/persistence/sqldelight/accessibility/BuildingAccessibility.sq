@@ -1,0 +1,61 @@
+CREATE TABLE `building_accessibility` (
+  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `building_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `entrance_stair_info` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NONE',
+  `has_slope` boolean NOT NULL DEFAULT FALSE,
+  `has_elevator` boolean NOT NULL,
+  `elevator_stair_info` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NONE',
+  `user_id` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (`id`)
+);
+CREATE INDEX `IDX_building_accessibility_1` ON building_accessibility(`building_id`);
+CREATE INDEX `IDX_building_accessibility_2` ON building_accessibility(`user_id`);
+
+save:
+INSERT INTO building_accessibility
+VALUES :building_accessibility
+ON CONFLICT(id) DO UPDATE SET
+    building_id = EXCLUDED.building_id,
+    entrance_stair_info = EXCLUDED.entrance_stair_info,
+    has_slope = EXCLUDED.has_slope,
+    has_elevator = EXCLUDED.has_elevator,
+    elevator_stair_info = EXCLUDED.elevator_stair_info,
+    user_id = EXCLUDED.user_id,
+    created_at = EXCLUDED.created_at;
+
+removeAll:
+DELETE FROM building_accessibility;
+
+findById:
+SELECT *
+FROM building_accessibility
+WHERE building_accessibility.id = :id;
+
+findByBuildingIds:
+SELECT *
+FROM building_accessibility
+WHERE building_id IN :buildingIds;
+
+findByBuildingId:
+SELECT *
+FROM building_accessibility
+WHERE building_id = :buildingId;
+
+findByPlaceIds:
+SELECT building_accessibility.*
+FROM building_accessibility
+    JOIN building ON building.id = building_accessibility.building_id
+    JOIN place ON place.building_id = building.id
+WHERE place.id IN :placeIds;
+
+findByEupMyeonDong:
+SELECT building_accessibility.*
+FROM building_accessibility
+    JOIN building ON building.id = building_accessibility.building_id
+WHERE building.eup_myeon_dong_id = :eupMyeonDongId;
+
+countByUserId:
+SELECT COUNT(1)
+FROM building_accessibility
+WHERE user_id = :userId;

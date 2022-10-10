@@ -6,5 +6,5 @@ import club.staircrusher.stdlib.domain.repository.EntityRepository
 
 interface BuildingAccessibilityUpvoteRepository : EntityRepository<BuildingAccessibilityUpvote, String> {
     fun findByUserAndBuildingAccessibilityAndNotDeleted(userId: String, buildingAccessibility: BuildingAccessibility): BuildingAccessibilityUpvote?
-    fun getTotalUpvoteCount(buildingId: String): Int
+    fun getTotalUpvoteCount(userId: String): Int
 }

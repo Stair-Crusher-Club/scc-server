@@ -14,7 +14,7 @@ class NoopBuildingAccessibilityUpvoteRepository : BuildingAccessibilityUpvoteRep
         return  null
     }
 
-    override fun getTotalUpvoteCount(buildingId: String): Int {
+    override fun getTotalUpvoteCount(userId: String): Int {
         return 0
     }
 

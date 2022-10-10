@@ -1,0 +1,32 @@
+CREATE TABLE `place_accessibility_comment` (
+  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `place_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `comment` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  PRIMARY KEY (`id`)
+);
+CREATE INDEX `IDX_place_accessibility_comment_1` ON place_accessibility_comment(`place_id`);
+CREATE INDEX `IDX_place_accessibility_comment_2` ON place_accessibility_comment(`user_id`);
+
+save:
+INSERT INTO place_accessibility_comment
+VALUES :place_accessibility_comment
+ON CONFLICT(id) DO UPDATE SET
+    place_id = EXCLUDED.place_id,
+    user_id = EXCLUDED.user_id,
+    comment = EXCLUDED.comment,
+    created_at = EXCLUDED.created_at;
+
+removeAll:
+DELETE FROM place_accessibility_comment;
+
+findById:
+SELECT *
+FROM place_accessibility_comment
+WHERE place_accessibility_comment.id = :id;
+
+findByPlaceId:
+SELECT *
+FROM place_accessibility_comment
+WHERE place_id = :placeId;
