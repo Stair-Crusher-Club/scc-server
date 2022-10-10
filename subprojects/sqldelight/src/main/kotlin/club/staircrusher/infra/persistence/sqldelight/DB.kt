@@ -31,4 +31,5 @@ class DB(dataSource: DataSource) {
     val buildingAccessibilityUpvoteQueries = stairCrusherClub.buildingAccessibilityUpvoteQueries
     val placeAccessibilityQueries = stairCrusherClub.placeAccessibilityQueries
     val placeAccessibilityCommentQueries = stairCrusherClub.placeAccessibilityCommentQueries
+    val userQueries = stairCrusherClub.userQueries
 }
