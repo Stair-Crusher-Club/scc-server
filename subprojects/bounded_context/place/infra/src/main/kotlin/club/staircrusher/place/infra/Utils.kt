@@ -1,9 +1,9 @@
 package club.staircrusher.place.infra
 
+import club.staircrusher.infra.persistence.sqldelight.place.Building
+import club.staircrusher.infra.persistence.sqldelight.place.FindById
+import club.staircrusher.infra.persistence.sqldelight.place.Place
 import club.staircrusher.place.domain.model.BuildingAddress
-import club.staircrusher.place.infra.db.Building
-import club.staircrusher.place.infra.db.FindById
-import club.staircrusher.place.infra.db.Place
 import club.staircrusher.stdlib.geography.Location
 
 fun Building.toBuilding(): club.staircrusher.place.domain.model.Building {

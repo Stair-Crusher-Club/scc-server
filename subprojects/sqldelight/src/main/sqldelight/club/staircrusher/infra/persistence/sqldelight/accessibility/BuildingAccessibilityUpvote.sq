@@ -1,0 +1,48 @@
+CREATE TABLE `building_accessibility_upvote` (
+  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `building_accessibility_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  `deleted_at` TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+CREATE INDEX `IDX_building_accessibility_upvote_1` ON building_accessibility_upvote(`user_id`);
+CREATE INDEX `IDX_building_accessibility_upvote_2` ON building_accessibility_upvote(`building_accessibility_id`);
+
+save:
+INSERT INTO building_accessibility_upvote
+VALUES :building_accessibility_upvote
+ON CONFLICT(id) DO UPDATE SET
+    user_id = EXCLUDED.user_id,
+    building_accessibility_id = EXCLUDED.building_accessibility_id,
+    created_at = EXCLUDED.created_at,
+    deleted_at = EXCLUDED.deleted_at;
+
+removeAll:
+DELETE FROM building_accessibility_upvote;
+
+buildingAccessibilityUpvoteFindById:
+SELECT *
+FROM building_accessibility_upvote
+    JOIN building_accessibility ON building_accessibility.id = building_accessibility_upvote.building_accessibility_id
+WHERE building_accessibility_upvote.id = :id;
+
+buildingAccessibilityUpvoteFindByBuildingId:
+SELECT *
+FROM building_accessibility_upvote
+    JOIN building_accessibility ON building_accessibility.id = building_accessibility_upvote.building_accessibility_id
+WHERE building_id = :buildingId;
+
+findByUserAndBuildingAccessibilityAndNotDeleted:
+SELECT *
+FROM building_accessibility_upvote
+    JOIN building_accessibility ON building_accessibility.id = building_accessibility_upvote.building_accessibility_id
+WHERE
+    building_accessibility_upvote.user_id = :userId
+    AND building_accessibility_upvote.building_accessibility_id = :buildingAccessibilityId
+    AND deleted_at IS NOT NULL;
+
+getTotalUpvoteCount:
+SELECT COUNT(1)
+FROM building_accessibility_upvote
+WHERE user_id = :userId;
