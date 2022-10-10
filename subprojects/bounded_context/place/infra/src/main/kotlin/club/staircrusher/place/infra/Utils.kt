@@ -1,8 +1,8 @@
 package club.staircrusher.place.infra
 
-import club.staircrusher.infra.persistence.sqldelight.place.Building
-import club.staircrusher.infra.persistence.sqldelight.place.FindById
-import club.staircrusher.infra.persistence.sqldelight.place.Place
+import club.staircrusher.infra.persistence.sqldelight.migration.Building
+import club.staircrusher.infra.persistence.sqldelight.migration.Place
+import club.staircrusher.infra.persistence.sqldelight.query.place.FindById
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.stdlib.geography.Location
 

@@ -2,7 +2,7 @@ package club.staircrusher.infra.persistence.sqldelight
 
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.driver.jdbc.asJdbcDriver
-import club.staircrusher.infra.persistence.sqldelight.place.Place
+import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.place.PlaceCategory
 import javax.sql.DataSource

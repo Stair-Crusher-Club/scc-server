@@ -1,15 +1,15 @@
-import club.staircrusher.stdlib.place.PlaceCategory;
-
-CREATE TABLE place (
-    id VARCHAR(256) NOT NULL PRIMARY KEY,
-    name VARCHAR(256) NOT NULL,
-    location_x FLOAT8 NOT NULL,
-    location_y FLOAT8 NOT NULL,
-    building_id VARCHAR(256) NULL,
-    si_gun_gu_id VARCHAR(256) NULL,
-    eup_myeon_dong_id VARCHAR(256) NULL,
-    category VARCHAR(256) AS PlaceCategory NULL
-);
+-- import club.staircrusher.stdlib.place.PlaceCategory;
+--
+-- CREATE TABLE place (
+--     id VARCHAR(256) NOT NULL PRIMARY KEY,
+--     name VARCHAR(256) NOT NULL,
+--     location_x FLOAT8 NOT NULL,
+--     location_y FLOAT8 NOT NULL,
+--     building_id VARCHAR(256) NULL,
+--     si_gun_gu_id VARCHAR(256) NULL,
+--     eup_myeon_dong_id VARCHAR(256) NULL,
+--     category VARCHAR(256) AS PlaceCategory NULL
+-- );
 
 save:
 INSERT INTO place
