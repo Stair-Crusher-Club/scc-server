@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 
 @ConfigurationProperties("scc.kakao")
-data class KakaoProperties (
-  val apiKey: String,
+data class KakaoProperties(
+    val apiKey: String,
 )

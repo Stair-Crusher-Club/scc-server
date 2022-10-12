@@ -17,7 +17,7 @@ class DB(dataSource: DataSource) {
         override fun encode(value: PlaceCategory): String = value.name
     }
 
-    private val scc = scc(
+    internal val scc = scc(
         driver = dataSource.asJdbcDriver(),
         placeAdapter = Place.Adapter(
             categoryAdapter = placeCategoryStringColumnAdapter,

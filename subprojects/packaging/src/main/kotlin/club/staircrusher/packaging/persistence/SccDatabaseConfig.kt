@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import javax.sql.DataSource
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 open class SccDatabaseConfig {
     @Bean
     open fun databaseMigrator(dataSource: DataSource) = ApplicationRunner {
