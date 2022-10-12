@@ -17,19 +17,19 @@ class DB(dataSource: DataSource) {
         override fun encode(value: PlaceCategory): String = value.name
     }
 
-    private val stairCrusherClub = StairCrusherClub(
+    private val scc = scc(
         driver = dataSource.asJdbcDriver(),
         placeAdapter = Place.Adapter(
             categoryAdapter = placeCategoryStringColumnAdapter,
         ),
     )
 
-    val buildingQueries = stairCrusherClub.buildingQueries
-    val placeQueries = stairCrusherClub.placeQueries
-    val buildingAccessibilityQueries = stairCrusherClub.buildingAccessibilityQueries
-    val buildingAccessibilityCommentQueries = stairCrusherClub.buildingAccessibilityCommentQueries
-    val buildingAccessibilityUpvoteQueries = stairCrusherClub.buildingAccessibilityUpvoteQueries
-    val placeAccessibilityQueries = stairCrusherClub.placeAccessibilityQueries
-    val placeAccessibilityCommentQueries = stairCrusherClub.placeAccessibilityCommentQueries
-    val userQueries = stairCrusherClub.userQueries
+    val buildingQueries = scc.buildingQueries
+    val placeQueries = scc.placeQueries
+    val buildingAccessibilityQueries = scc.buildingAccessibilityQueries
+    val buildingAccessibilityCommentQueries = scc.buildingAccessibilityCommentQueries
+    val buildingAccessibilityUpvoteQueries = scc.buildingAccessibilityUpvoteQueries
+    val placeAccessibilityQueries = scc.placeAccessibilityQueries
+    val placeAccessibilityCommentQueries = scc.placeAccessibilityCommentQueries
+    val userQueries = scc.userQueries
 }

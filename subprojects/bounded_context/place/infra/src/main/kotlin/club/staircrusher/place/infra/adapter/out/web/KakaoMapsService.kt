@@ -2,8 +2,9 @@ package club.staircrusher.place.infra.adapter.out.web
 
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.stdlib.place.PlaceCategory
+import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
+import club.staircrusher.stdlib.place.PlaceCategory
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
@@ -16,7 +17,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.json.KotlinSerializationJsonDecoder
-import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.support.WebClientAdapter
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class KakaoMapsService(
-    kakaoProperties: Any,
+    kakaoProperties: KakaoProperties,
 ): MapsService {
     private val logger = KotlinLogging.logger {}
     private val kakaoService: KakaoService by lazy {
