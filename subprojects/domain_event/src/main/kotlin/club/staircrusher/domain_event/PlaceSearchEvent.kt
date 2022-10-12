@@ -6,6 +6,4 @@ import club.staircrusher.stdlib.domain.event.DomainEvent
 // FIXME: maybe we should not expose domain model to event
 data class PlaceSearchEvent(
     val searchResult: List<PlaceDTO>
-) : DomainEvent {
-
-}
+) : DomainEvent

@@ -1,0 +1,21 @@
+complexity:
+  ComplexCondition:
+    active: false
+  LongParameterList:
+    active: false
+style:
+  ForbiddenComment:
+    active: false
+  MaxLineLength:
+    active: false
+  UnusedImports:
+    active: true
+naming:
+  PackageNaming:
+    active: false
+  InvalidPackageDeclaration:
+    active: false
+performance:
+  SpreadOperator:
+    active: false
+

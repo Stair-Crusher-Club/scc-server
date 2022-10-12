@@ -13,12 +13,18 @@ class BuildingAccessibilityUpvoteApplicationService(
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val buildingAccessibilityUpvoteService: BuildingAccessibilityUpvoteService,
 ) {
-    fun giveUpvote(authUser: AuthUser, buildingAccessibilityId: String) = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    fun giveUpvote(
+        authUser: AuthUser,
+        buildingAccessibilityId: String,
+    ) = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
         val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId)
         buildingAccessibilityUpvoteService.giveUpvote(authUser, buildingAccessibility)
     }
 
-    fun cancelUpvote(authUser: AuthUser, buildingAccessibilityId: String) = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    fun cancelUpvote(
+        authUser: AuthUser,
+        buildingAccessibilityId: String,
+    ) = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
         val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId)
         buildingAccessibilityUpvoteService.cancelUpvote(authUser, buildingAccessibility)
     }

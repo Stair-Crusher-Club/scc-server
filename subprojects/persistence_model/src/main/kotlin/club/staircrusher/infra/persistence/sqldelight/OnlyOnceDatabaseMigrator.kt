@@ -1,6 +1,5 @@
 package club.staircrusher.infra.persistence.sqldelight
 
-import app.cash.sqldelight.driver.jdbc.asJdbcDriver
 import mu.KotlinLogging
 import org.flywaydb.core.Flyway
 import javax.sql.DataSource
@@ -11,7 +10,7 @@ class OnlyOnceDatabaseMigrator(
     private val flyway = Flyway.configure().dataSource(dataSource).load()
     private var finished = false
 
-    fun migrate(fromVersion: Int = 0) {
+    fun migrate() {
         if (finished) {
             return
         }

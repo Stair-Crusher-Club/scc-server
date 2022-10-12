@@ -5,7 +5,6 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.domain.exception.UserAuthenticationException
 import club.staircrusher.user.domain.repository.UserRepository
 import club.staircrusher.user.domain.service.UserAuthService
-import java.sql.SQLException
 
 @Component
 class UserAuthApplicationService(
@@ -17,11 +16,7 @@ class UserAuthApplicationService(
     fun verify(accessToken: String?): String = transactionManager.doInTransaction {
         accessToken ?: throw UserAuthenticationException()
         val userId = userAuthService.verifyAccessToken(accessToken).userId
-        try {
-            userRepository.findById(userId)
-        } catch (e: SQLException) {
-            throw UserAuthenticationException()
-        }
+        userRepository.findByIdOrNull(userId) ?: throw UserAuthenticationException()
         userId
     }
 }

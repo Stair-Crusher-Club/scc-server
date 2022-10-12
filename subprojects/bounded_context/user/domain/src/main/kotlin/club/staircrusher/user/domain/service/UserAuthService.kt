@@ -30,7 +30,7 @@ class UserAuthService(
     fun verifyAccessToken(token: String): UserAccessTokenPayload {
         return try {
             tokenManager.verify(token, UserAccessTokenPayload::class)
-        } catch (e: TokenVerificationException) {
+        } catch (_: TokenVerificationException) {
             throw UserAuthenticationException()
         }
     }

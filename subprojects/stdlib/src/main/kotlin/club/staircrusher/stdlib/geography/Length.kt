@@ -4,7 +4,9 @@ data class Length(
    val meter: Double,
 ) {
     companion object {
+
         fun ofMeters(meters: Double) = Length(meters)
+        @Suppress("MagicNumber")
         fun ofKilometers(kilometers: Double) = Length(kilometers * 1000)
     }
 

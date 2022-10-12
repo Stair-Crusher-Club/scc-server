@@ -1,9 +1,11 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     kotlin("jvm")
     id("org.springframework.boot")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 repositories {
@@ -13,13 +15,14 @@ repositories {
 group = "club.staircrusher"
 version = "1.0.0-SNAPSHOT"
 
+val generatedProject = listOf(project(":admin-api"), project("api"))
 subprojects {
     apply(plugin = "kotlin")
 
     repositories {
         maven(url = "https://repo.osgeo.org/repository/release/") // for org.geotools
-        mavenCentral()
         maven(url = "https://repo.spring.io/milestone/")
+        mavenCentral()
     }
 
     dependencies {
@@ -41,6 +44,27 @@ subprojects {
 
     tasks.withType<BootJar>() {
         enabled = false
+    }
+
+    if (this !in generatedProject) {
+        apply(plugin = "io.gitlab.arturbosch.detekt")
+
+        detekt {
+            config = files("$rootDir/detekt-config.yml")
+            source = objects.fileCollection().from(
+                io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_SRC_DIR_KOTLIN,
+                io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_TEST_SRC_DIR_KOTLIN,
+            )
+            autoCorrect = true
+            buildUponDefaultConfig = true
+        }
+
+        tasks.withType<Detekt>().configureEach {
+            reports {
+                html.required.set(true)
+                md.required.set(true)
+            }
+        }
     }
 }
 

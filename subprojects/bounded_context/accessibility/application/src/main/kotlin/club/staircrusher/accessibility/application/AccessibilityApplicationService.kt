@@ -15,11 +15,10 @@ import club.staircrusher.accessibility.domain.service.BuildingAccessibilityUpvot
 import club.staircrusher.accessibility.domain.service.PlaceAccessibilityCommentService
 import club.staircrusher.accessibility.domain.service.PlaceAccessibilityService
 import club.staircrusher.accessibility.domain.service.PlaceService
-import club.staircrusher.stdlib.auth.AuthUser
+import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.user.UserApplicationService
-import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class AccessibilityApplicationService(
@@ -96,12 +95,12 @@ class AccessibilityApplicationService(
     }
 
     fun getPlaceAccessibility(placeId: String): PlaceAccessibility? = transactionManager.doInTransaction {
-        val place = placeService.findPlace(placeId) ?: throw IllegalArgumentException("Cannot find place with $placeId")
+        placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         placeAccessibilityRepository.findByPlaceId(placeId)
     }
 
     fun getBuildingAccessibility(placeId: String): BuildingAccessibility? = transactionManager.doInTransaction {
-        val place = placeService.findPlace(placeId) ?: throw IllegalArgumentException("Cannot find place with $placeId")
+        val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         buildingAccessibilityRepository.findByBuildingId(place.buildingId)
     }
 

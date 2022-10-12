@@ -4,7 +4,6 @@ import club.staircrusher.api.spec.dto.LoginPostRequest
 import club.staircrusher.api.spec.dto.SignUpPostRequest
 import club.staircrusher.spring_web.authentication.SccSecurityFilterChainConfig
 import club.staircrusher.user.application.user.UserApplicationService
-import org.springframework.http.HttpRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,7 +27,7 @@ class AuthController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginPostRequest, httpRequest: HttpRequest): ResponseEntity<Unit> {
+    fun login(@RequestBody request: LoginPostRequest): ResponseEntity<Unit> {
         val result = userApplicationService.login(
             nickname = request.nickname,
             password = request.password,

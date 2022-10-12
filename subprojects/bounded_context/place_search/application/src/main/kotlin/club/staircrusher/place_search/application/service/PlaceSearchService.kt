@@ -23,6 +23,7 @@ class PlaceSearchService(
         val distanceMeters: Length? = null,
     )
 
+    @Suppress("UnusedPrivateMember")
     suspend fun searchPlaces(
         searchText: String,
         currentLocation: Location?,

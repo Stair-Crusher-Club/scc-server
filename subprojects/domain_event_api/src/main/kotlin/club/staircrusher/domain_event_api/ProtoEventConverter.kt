@@ -17,7 +17,7 @@ class ProtoEventConverter {
               )
           }
            else -> {
-               throw RuntimeException("can not handle this message type ${proto.javaClass}")
+               throw error("can not handle this message type ${proto.javaClass}")
            }
        }
     }
@@ -28,7 +28,7 @@ class ProtoEventConverter {
                PlaceSearchEvent(search_result = event.searchResult.map(PlaceDTO::toProto))
            }
            else -> {
-               throw RuntimeException("can not handle this message type ${event.javaClass}")
+               throw error("can not handle this message type ${event.javaClass}")
            }
        }
     }

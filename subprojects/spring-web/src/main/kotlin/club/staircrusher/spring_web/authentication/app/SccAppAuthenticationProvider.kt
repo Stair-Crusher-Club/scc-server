@@ -23,7 +23,7 @@ class SccAppAuthenticationProvider(
         val userId = try {
             userAuthApplicationService.verify(accessToken)
         } catch (e: TokenVerificationException) {
-            throw BadCredentialsException("Invalid access token.")
+            throw BadCredentialsException("Invalid access token.", e)
         }
 
         val user = transactionManager.doInTransaction {
