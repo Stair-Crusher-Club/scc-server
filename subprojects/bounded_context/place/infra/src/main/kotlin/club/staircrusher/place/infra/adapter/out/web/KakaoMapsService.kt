@@ -30,16 +30,21 @@ import java.util.concurrent.TimeUnit
 class KakaoMapsService(
     kakaoProperties: KakaoProperties,
 ): MapsService {
+    companion object {
+        private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
+        private val READ_TIMEOUT = Duration.ofSeconds(10)
+        private val WRITE_TIMEOUT = Duration.ofSeconds(10)
+    }
     private val logger = KotlinLogging.logger {}
     private val kakaoService: KakaoService by lazy {
         // FIXME: extract configurable parameters to kakaoProperties
         val httpClient = HttpClient.create()
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT.toMillis().toInt())
             .compress(true)
             .followRedirect(true)
             .doOnConnected {
-                it.addHandlerLast(ReadTimeoutHandler(10, TimeUnit.SECONDS))
-                it.addHandlerLast(WriteTimeoutHandler(10, TimeUnit.SECONDS))
+                it.addHandlerLast(ReadTimeoutHandler(READ_TIMEOUT.toSeconds(), TimeUnit.SECONDS))
+                it.addHandlerLast(WriteTimeoutHandler(WRITE_TIMEOUT.toSeconds(), TimeUnit.SECONDS))
             }
             .responseTimeout(Duration.ofSeconds(2))
 
@@ -63,6 +68,7 @@ class KakaoMapsService(
         factory.createClient(KakaoService::class.java)
     }
 
+    @Suppress("FunctionParameterNaming")
     interface KakaoService {
         @GetExchange(
             url = "/v2/local/search/keyword.json",
@@ -233,6 +239,7 @@ class KakaoMapsService(
                 PM9, //	약국
                 ;
 
+                @Suppress("ComplexMethod")
                 fun toPlaceCategory(): PlaceCategory {
                     return when (this) {
                         MT1 -> PlaceCategory.MARKET
@@ -257,6 +264,7 @@ class KakaoMapsService(
                 }
 
                 companion object {
+                    @Suppress("ComplexMethod")
                     fun fromPlaceCategory(placeCategory: PlaceCategory): Category {
                         return when (placeCategory) {
                             PlaceCategory.MARKET -> MT1

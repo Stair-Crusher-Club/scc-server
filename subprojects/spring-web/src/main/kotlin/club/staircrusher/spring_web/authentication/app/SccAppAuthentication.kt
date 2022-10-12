@@ -16,7 +16,7 @@ class SccAppAuthentication(
     }
 
     override fun getCredentials(): String {
-        throw IllegalStateException("Do not call this method. Credential is erased.")
+        throw error("Do not call this method. Credential is erased.")
     }
 
     override fun getDetails(): AuthUser {

@@ -18,11 +18,12 @@ internal class BeforeAuthSccAuthentication(
         return accessToken
     }
 
-    override fun getDetails() {
+    override fun getDetails(): Any {
+        TODO("Not yet implemented")
     }
 
     override fun getPrincipal(): String {
-        throw IllegalStateException("Not authenticated yet.")
+        error("Not authenticated yet.")
     }
 
     override fun isAuthenticated(): Boolean {
@@ -30,6 +31,6 @@ internal class BeforeAuthSccAuthentication(
     }
 
     override fun setAuthenticated(isAuthenticated: Boolean) {
-        throw IllegalStateException("Do not call this method. Create a new SccAuthentication instead.")
+        error("Do not call this method. Create a new SccAuthentication instead.")
     }
 }

@@ -15,6 +15,9 @@ class JWTTokenManager(
     secret: String = "secret",
     private val clock: Clock,
 ) : TokenManager {
+    companion object {
+        private val TOKEN_EXPIRATION = Duration.ofDays(30)
+    }
     private val objectMapper = jacksonObjectMapper()
 
     private val jwtAlgorithm = Algorithm.HMAC512(secret)
@@ -25,7 +28,7 @@ class JWTTokenManager(
         return JWT.create()
             .withIssuer(issuer)
             .withClaim(bodyKey, objectMapper.writeValueAsString(content))
-            .withExpiresAt(Date((clock.instant() + Duration.ofDays(30)).toEpochMilli()))
+            .withExpiresAt(Date((clock.instant() + TOKEN_EXPIRATION).toEpochMilli()))
             .sign(jwtAlgorithm)
     }
 

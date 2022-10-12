@@ -19,6 +19,7 @@ data class CategoryGroup(
     }
 }
 
+@Suppress("LongMethod")
 fun main() {
     val regionInfos = listOf(
         QuestTargetRegionInfo(name = "강남역", lng = 127.0276309, lat = 37.4978948),
@@ -33,6 +34,7 @@ fun main() {
         QuestTargetRegionInfo(name = "압구정역", lng = 127.028513, lat = 37.52633),
         QuestTargetRegionInfo(name = "압구정로데오역", lng = 127.040572, lat = 37.527394),
     )
+    @Suppress("MagicNumber")
     val radiusMetersList = listOf(500, 750, 1000)
     val targetCategoryGroups = listOf(
         CategoryGroup(name = "음식점", code = "FD6"),
@@ -42,6 +44,7 @@ fun main() {
         CategoryGroup(name = "편의점", code = "CS2"),
     )
 
+    @Suppress("MagicNumber")
     val rows = regionInfos.flatMap { regionInfo ->
         radiusMetersList.map { radiusMeters ->
             val placeCounts = targetCategoryGroups.joinToString(",") { categoryGroup ->

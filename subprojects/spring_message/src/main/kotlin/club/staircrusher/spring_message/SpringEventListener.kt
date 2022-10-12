@@ -13,6 +13,7 @@ class SpringEventListener(
 ): ApplicationListener<ProtoSpringEvent> {
     private val logger = KotlinLogging.logger {}
 
+    @Suppress("TooGenericExceptionCaught")
     override fun onApplicationEvent(springEvent: ProtoSpringEvent) {
         val event = protoEventConverter.convertProtoToEvent(springEvent.proto)
         domainEventSubscribers.forEach {

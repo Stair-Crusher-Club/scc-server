@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight
 
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility

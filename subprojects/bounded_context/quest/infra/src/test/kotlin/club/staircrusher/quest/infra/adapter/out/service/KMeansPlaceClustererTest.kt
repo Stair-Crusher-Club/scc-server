@@ -17,14 +17,10 @@ class KMeansPlaceClustererTest {
         repeat(100) {
             val result = KMeansPlaceClusterer().clusterPlaces(locations, 2)
             val sortedResult = result.toList().sortedBy { it.first.lng }
-            try {
-                assertEquals(1.05, sortedResult[0].first.lng, 0.00001)
-                assertEquals(1.05, sortedResult[0].first.lat, 0.00001)
-                assertEquals(2.05, sortedResult[1].first.lng, 0.00001)
-                assertEquals(2.05, sortedResult[1].first.lat, 0.00001)
-            } catch (t: Throwable) {
-                throw t
-            }
+            assertEquals(1.05, sortedResult[0].first.lng, 0.00001)
+            assertEquals(1.05, sortedResult[0].first.lat, 0.00001)
+            assertEquals(2.05, sortedResult[1].first.lng, 0.00001)
+            assertEquals(2.05, sortedResult[1].first.lat, 0.00001)
         }
     }
 }
