@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
  * 각 bounded context에서 이 타입의 bean을 등록하면, [SccSecurityFilterChainConfig]는 이 bean들에 정의된 구성을 모두 합쳐
  * 하나의 SecurityFilterChain을 bean으로 등록한다.
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 open class SccSecurityFilterChainConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)

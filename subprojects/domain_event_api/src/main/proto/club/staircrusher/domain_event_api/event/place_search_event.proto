@@ -8,5 +8,5 @@ package staircrusher.event;
 import "club/staircrusher/domain_event_api/place.proto";
 
 message PlaceSearchEvent {
-   repeated Place search_result = 1;
+    repeated Place search_result = 1;
 }
