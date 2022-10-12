@@ -13,9 +13,7 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibil
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility_comment
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.BuildingAccessibilityUpvoteFindById
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserAndBuildingAccessibilityAndNotDeleted
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import club.staircrusher.stdlib.time.toOffsetDateTime
 
 fun Building_accessibility.toDomainModel() = BuildingAccessibility(
     id = id,
@@ -36,7 +34,8 @@ fun BuildingAccessibility.toPersistenceModel() = Building_accessibility(
     has_elevator = hasElevator,
     elevator_stair_info = elevatorStairInfo.name,
     user_id = userId,
-    created_at = createdAt.toLocalDateTime(),
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = createdAt.toOffsetDateTime(),
 )
 
 fun Building_accessibility_comment.toDomainModel() = BuildingAccessibilityComment(
@@ -52,7 +51,8 @@ fun BuildingAccessibilityComment.toPersistenceModel() = Building_accessibility_c
     building_id = buildingId,
     user_id = userId,
     comment = comment,
-    created_at = createdAt.toLocalDateTime(),
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = createdAt.toOffsetDateTime(),
 )
 
 fun BuildingAccessibilityUpvoteFindById.toDomainModel(): BuildingAccessibilityUpvote {
@@ -99,8 +99,9 @@ fun BuildingAccessibilityUpvote.toPersistenceModel() = Building_accessibility_up
     id = id,
     user_id = userId,
     building_accessibility_id = buildingAccessibility.id,
-    created_at = createdAt.toLocalDateTime(),
-    deleted_at = deletedAt?.toLocalDateTime(),
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = createdAt.toOffsetDateTime(),
+    deleted_at = deletedAt?.toOffsetDateTime(),
 )
 
 fun Place_accessibility.toDomainModel() = PlaceAccessibility(
@@ -120,7 +121,8 @@ fun PlaceAccessibility.toPersistenceModel() = Place_accessibility(
     stair_info = stairInfo.name,
     has_slope = hasSlope,
     user_id = userId,
-    created_at = createdAt.toLocalDateTime(),
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = createdAt.toOffsetDateTime(),
 )
 
 fun Place_accessibility_comment.toDomainModel() = PlaceAccessibilityComment(
@@ -136,8 +138,6 @@ fun PlaceAccessibilityComment.toPersistenceModel() = Place_accessibility_comment
     place_id = placeId,
     user_id = userId,
     comment = comment,
-    created_at = createdAt.toLocalDateTime(),
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = createdAt.toOffsetDateTime(),
 )
-
-private fun LocalDateTime.toInstant() = toInstant(ZoneOffset.UTC)
-private fun Instant.toLocalDateTime() = atOffset(ZoneOffset.UTC).toLocalDateTime()

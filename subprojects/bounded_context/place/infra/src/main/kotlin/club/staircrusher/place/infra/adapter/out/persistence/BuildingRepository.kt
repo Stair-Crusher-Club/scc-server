@@ -3,7 +3,8 @@ package club.staircrusher.place.infra.adapter.out.persistence
 import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.infra.toBuilding
+import club.staircrusher.place.infra.toDomainModel
+import club.staircrusher.place.infra.toPersistenceModel
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
@@ -20,17 +21,17 @@ class BuildingRepository(db: DB): BuildingRepository{
     }
 
     override fun findByIdIn(ids: Collection<String>): List<Building> {
-        return buildingQueries.findByIdIn(ids).executeAsList().map { it.toBuilding() }
+        return buildingQueries.findByIdIn(ids).executeAsList().map { it.toDomainModel() }
     }
 
     override fun save(entity: Building): Building {
-        buildingQueries.save(entity.toBuilding())
+        buildingQueries.save(entity.toPersistenceModel())
         return entity
     }
 
     override fun saveAll(entity: Collection<Building>): Building {
         entity.forEach {
-            buildingQueries.save(it.toBuilding())
+            buildingQueries.save(it.toPersistenceModel())
         }
 
         return entity.first()
@@ -41,10 +42,10 @@ class BuildingRepository(db: DB): BuildingRepository{
     }
 
     override fun findById(id: String): Building {
-        return buildingQueries.findById(id).executeAsOne().toBuilding()
+        return buildingQueries.findById(id).executeAsOne().toDomainModel()
     }
 
     override fun findByIdOrNull(id: String): Building? {
-        return buildingQueries.findById(id).executeAsOneOrNull()?.toBuilding()
+        return buildingQueries.findById(id).executeAsOneOrNull()?.toDomainModel()
     }
 }

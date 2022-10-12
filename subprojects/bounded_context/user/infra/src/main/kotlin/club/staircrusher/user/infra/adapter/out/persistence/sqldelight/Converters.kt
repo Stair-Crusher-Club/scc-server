@@ -1,11 +1,9 @@
 package club.staircrusher.user.infra.adapter.out.persistence.sqldelight
 
-import club.staircrusher.infra.persistence.sqldelight.migration.User_table
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import club.staircrusher.infra.persistence.sqldelight.migration.Scc_user
+import club.staircrusher.stdlib.time.toOffsetDateTime
 
-fun User_table.toDomainModel() = club.staircrusher.user.domain.entity.User(
+fun Scc_user.toDomainModel() = club.staircrusher.user.domain.entity.User(
     id = id,
     nickname = nickname,
     encryptedPassword = encrypted_password,
@@ -13,13 +11,11 @@ fun User_table.toDomainModel() = club.staircrusher.user.domain.entity.User(
     createdAt = created_at.toInstant(),
 )
 
-fun club.staircrusher.user.domain.entity.User.toPersistenceModel() = User_table(
+fun club.staircrusher.user.domain.entity.User.toPersistenceModel() = Scc_user(
     id = id,
     nickname = nickname,
     encrypted_password = encryptedPassword,
     instagram_id = instagramId,
-    created_at = createdAt.toLocalDateTime(),
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = createdAt.toOffsetDateTime(),
 )
-
-private fun LocalDateTime.toInstant() = toInstant(ZoneOffset.UTC)
-private fun Instant.toLocalDateTime() = atOffset(ZoneOffset.UTC).toLocalDateTime()

@@ -5,22 +5,22 @@ import club.staircrusher.domain_event.dto.BuildingDTO
 import club.staircrusher.domain_event.dto.PlaceDTO
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory
-import club.stairsrusher.domain_event_api.dto.Building
-import club.stairsrusher.domain_event_api.dto.BuildingAddress
-import club.stairsrusher.domain_event_api.dto.Place
+import club.stairsrusher.domain_event_api.proto.Building
+import club.stairsrusher.domain_event_api.proto.BuildingAddress
+import club.stairsrusher.domain_event_api.proto.Place
 
-fun PlaceCategory.toPlaceCategory(): club.stairsrusher.domain_event_api.dto.PlaceCategory {
-    return club.stairsrusher.domain_event_api.dto.PlaceCategory.valueOf(this.name)
+fun PlaceCategory.toProto(): club.stairsrusher.domain_event_api.proto.PlaceCategory {
+    return club.stairsrusher.domain_event_api.proto.PlaceCategory.valueOf(this.name)
 }
 
-fun Location.toLocation(): club.stairsrusher.domain_event_api.dto.Location {
-    return club.stairsrusher.domain_event_api.dto.Location(
+fun Location.toProto(): club.stairsrusher.domain_event_api.proto.Location {
+    return club.stairsrusher.domain_event_api.proto.Location(
         lng = this.lng,
         lat = this.lat,
     )
 }
 
-fun BuildingAddressDTO.toBuildingAddress(): BuildingAddress {
+fun BuildingAddressDTO.toProto(): BuildingAddress {
     return BuildingAddress(
         si_do = this.siDo,
         si_gun_gu = this.siGunGu,
@@ -32,41 +32,41 @@ fun BuildingAddressDTO.toBuildingAddress(): BuildingAddress {
     )
 }
 
-fun BuildingDTO.toBuilding(): Building {
+fun BuildingDTO.toProto(): Building {
     return Building(
         id = this.id,
         name = this.name,
-        location = this.location.toLocation(),
-        address = this.address.toBuildingAddress(),
+        location = this.location.toProto(),
+        address = this.address.toProto(),
         si_gun_gu_id = this.siGunGuId,
         eup_myeon_dong_id = this.eupMyeonDongId,
     )
 }
 
-fun PlaceDTO.toPlace(): Place {
+fun PlaceDTO.toProto(): Place {
     return Place(
         id = this.id,
         name = this.name,
-        location = this.location.toLocation(),
-        building = this.building?.toBuilding(),
+        location = this.location.toProto(),
+        building = this.building?.toProto(),
         si_gun_gu_id = this.siGunGuId,
         eup_myeon_dong_id = this.eupMyeonDongId,
-        category = this.category?.toPlaceCategory(),
+        category = this.category?.toProto(),
     )
 }
 
-fun club.stairsrusher.domain_event_api.dto.PlaceCategory.toPlaceCategory(): PlaceCategory {
+fun club.stairsrusher.domain_event_api.proto.PlaceCategory.toDTO(): PlaceCategory {
     return PlaceCategory.valueOf(this.name)
 }
 
-fun club.stairsrusher.domain_event_api.dto.Location.toLocation(): Location {
+fun club.stairsrusher.domain_event_api.proto.Location.toDTO(): Location {
     return Location(
         lng = this.lng,
         lat = this.lat,
     )
 }
 
-fun BuildingAddress.toBuildingAddressDTO(): BuildingAddressDTO {
+fun BuildingAddress.toDTO(): BuildingAddressDTO {
     return BuildingAddressDTO(
         siDo = this.si_do,
         siGunGu = this.si_gun_gu,
@@ -78,25 +78,25 @@ fun BuildingAddress.toBuildingAddressDTO(): BuildingAddressDTO {
     )
 }
 
-fun Building.toBuildingDTO(): BuildingDTO {
+fun Building.toDTO(): BuildingDTO {
     return BuildingDTO(
         id = this.id,
         name = this.name,
-        location = this.location!!.toLocation(),
-        address = this.address!!.toBuildingAddressDTO(),
+        location = this.location!!.toDTO(),
+        address = this.address!!.toDTO(),
         siGunGuId = this.si_gun_gu_id,
         eupMyeonDongId = this.eup_myeon_dong_id,
     )
 }
 
-fun Place.toPlaceDTO(): PlaceDTO {
+fun Place.toDTO(): PlaceDTO {
     return PlaceDTO(
         id = this.id,
         name = this.name,
-        location = this.location!!.toLocation(),
-        building = this.building?.toBuildingDTO(),
+        location = this.location!!.toDTO(),
+        building = this.building?.toDTO(),
         siGunGuId = this.si_gun_gu_id,
         eupMyeonDongId = this.eup_myeon_dong_id,
-        category = this.category?.toPlaceCategory(),
+        category = this.category?.toDTO(),
     )
 }
