@@ -29,7 +29,7 @@ sqldelight {
     val sqlDelightVersion: String by project
 
     // FIXME: need to determine database name
-    database("StairCrusherClub") {
+    database("scc") {
         packageName = "club.staircrusher.infra.persistence.sqldelight"
         dialect("app.cash.sqldelight:postgresql-dialect:$sqlDelightVersion")
         verifyMigrations = false
@@ -48,5 +48,5 @@ sqldelight {
 // generateMainStairCrusherClubMigrations은 아닌 듯하다. 그래서 의존성을 손으로 추가해준다.
 // refs: https://cashapp.github.io/sqldelight/jvm_postgresql/migrations/
 tasks.compileKotlin {
-    dependsOn("generateMainStairCrusherClubMigrations")
+    dependsOn("generateMainsccMigrations")
 }
