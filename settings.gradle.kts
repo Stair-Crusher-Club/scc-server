@@ -24,6 +24,7 @@ pluginManagement {
     val sqlDelightVersion: String by settings
     val springDependencyManagementVersion: String by settings
     val wireVersion: String by settings
+    val kspVersion: String by settings
 
     plugins {
         kotlin("jvm") version kotlinVersion
@@ -33,6 +34,7 @@ pluginManagement {
         id("org.springframework.boot") version springBootVersion
         id("app.cash.sqldelight") version sqlDelightVersion
         id("com.squareup.wire") version wireVersion
+        id("com.google.devtools.ksp") version kspVersion
 
         id("io.spring.dependency-management") version springDependencyManagementVersion
     }
