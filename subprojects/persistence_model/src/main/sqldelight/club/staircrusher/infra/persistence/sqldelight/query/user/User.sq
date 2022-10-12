@@ -1,6 +1,6 @@
 save:
-INSERT INTO user_table
-VALUES :user_table
+INSERT INTO scc_user
+VALUES :scc_user
 ON CONFLICT(id) DO UPDATE SET
     id = EXCLUDED.id,
     nickname = EXCLUDED.nickname,
@@ -9,19 +9,19 @@ ON CONFLICT(id) DO UPDATE SET
     created_at = EXCLUDED.created_at;
 
 removeAll:
-DELETE FROM user_table;
+DELETE FROM scc_user;
 
 findById:
 SELECT *
-FROM user_table
-WHERE user_table.id = :id;
+FROM scc_user
+WHERE scc_user.id = :id;
 
 findByNickname:
 SELECT *
-FROM user_table
-WHERE user_table.nickname = :nickname;
+FROM scc_user
+WHERE scc_user.nickname = :nickname;
 
 findByIdIn:
 SELECT *
-FROM user_table
-WHERE user_table.id IN :ids;
+FROM scc_user
+WHERE scc_user.id IN :ids;

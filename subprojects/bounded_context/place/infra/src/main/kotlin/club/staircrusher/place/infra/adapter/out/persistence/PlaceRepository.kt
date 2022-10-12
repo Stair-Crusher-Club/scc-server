@@ -4,7 +4,8 @@ import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.place.infra.toPlace
+import club.staircrusher.place.infra.toPersistenceModel
+import club.staircrusher.place.infra.toDomainModel
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
@@ -20,14 +21,14 @@ class PlaceRepository(
         val buildingIds = places.mapNotNull { it.building_id }
         val buildings = buildingRepository.findByIdIn(buildingIds).associateBy { it.id }
 
-        return places.map { it.toPlace(buildings[it.building_id]!!) }
+        return places.map { it.toDomainModel(buildings[it.building_id]!!) }
     }
 
     override fun findByBuildingId(buildingId: String): List<Place> {
         val places = placeQueries.findByBuildingId(buildingId).executeAsList()
         val building = buildingRepository.findById(buildingId)
 
-        return places.map { it.toPlace(building) }
+        return places.map { it.toDomainModel(building) }
     }
 
     override fun findByIdIn(ids: Collection<String>): List<Place> {
@@ -35,7 +36,7 @@ class PlaceRepository(
         val buildingIds = places.mapNotNull { it.building_id }
         val buildings = buildingRepository.findByIdIn(buildingIds).associateBy { it.id }
 
-        return places.map { it.toPlace(buildings[it.building_id]!!) }
+        return places.map { it.toDomainModel(buildings[it.building_id]!!) }
     }
 
     override fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int {
@@ -47,12 +48,12 @@ class PlaceRepository(
     }
 
     override fun save(entity: Place): Place {
-        placeQueries.save(entity.toPlace())
+        placeQueries.save(entity.toPersistenceModel())
         return entity
     }
 
     override fun saveAll(entity: Collection<Place>): Place {
-        entity.forEach { placeQueries.save(it.toPlace()) }
+        entity.forEach { placeQueries.save(it.toPersistenceModel()) }
         return entity.first()
     }
 
@@ -61,10 +62,10 @@ class PlaceRepository(
     }
 
     override fun findById(id: String): Place {
-        return placeQueries.findById(id).executeAsOne().toPlace()
+        return placeQueries.findById(id).executeAsOne().toDomainModel()
     }
 
     override fun findByIdOrNull(id: String): Place? {
-        return placeQueries.findById(id).executeAsOneOrNull()?.toPlace()
+        return placeQueries.findById(id).executeAsOneOrNull()?.toDomainModel()
     }
 }

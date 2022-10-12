@@ -8,6 +8,14 @@ idea {
         sourceDirs.plusAssign(file("$projectDir/src/main/proto"))
     }
 }
+sourceSets {
+    main {
+        java {
+            srcDir("build/generated/source/wire")
+        }
+    }
+}
+
 
 wire {
     kotlin {}

@@ -5,8 +5,10 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.query.place.FindById
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.stdlib.geography.Location
+import club.staircrusher.stdlib.time.toOffsetDateTime
+import java.time.Instant
 
-fun Building.toBuilding(): club.staircrusher.place.domain.model.Building {
+fun Building.toDomainModel(): club.staircrusher.place.domain.model.Building {
     val address = BuildingAddress(
         siDo = address_si_do,
         siGunGu = address_si_gun_gu,
@@ -27,7 +29,7 @@ fun Building.toBuilding(): club.staircrusher.place.domain.model.Building {
     )
 }
 
-fun club.staircrusher.place.domain.model.Building.toBuilding(): Building {
+fun club.staircrusher.place.domain.model.Building.toPersistenceModel(): Building {
     return Building(
         id = id,
         name = name,
@@ -42,10 +44,12 @@ fun club.staircrusher.place.domain.model.Building.toBuilding(): Building {
         address_sub_building_number = address.subBuildingNumber,
         si_gun_gu_id = siGunGuId,
         eup_myeon_dong_id = eupMyeonDongId,
+        created_at = Instant.now().toOffsetDateTime(),
+        updated_at = Instant.now().toOffsetDateTime(),
     )
 }
 
-fun Place.toPlace(
+fun Place.toDomainModel(
     building: club.staircrusher.place.domain.model.Building,
 ): club.staircrusher.place.domain.model.Place {
     return club.staircrusher.place.domain.model.Place(
@@ -59,7 +63,7 @@ fun Place.toPlace(
     )
 }
 
-fun FindById.toPlace(): club.staircrusher.place.domain.model.Place {
+fun FindById.toDomainModel(): club.staircrusher.place.domain.model.Place {
     val address = BuildingAddress(
         siDo = address_si_do,
         siGunGu = address_si_gun_gu,
@@ -89,7 +93,7 @@ fun FindById.toPlace(): club.staircrusher.place.domain.model.Place {
     )
 }
 
-fun club.staircrusher.place.domain.model.Place.toPlace(): Place {
+fun club.staircrusher.place.domain.model.Place.toPersistenceModel(): Place {
     return Place(
         id = id,
         name = name,
@@ -99,5 +103,7 @@ fun club.staircrusher.place.domain.model.Place.toPlace(): Place {
         si_gun_gu_id = siGunGuId,
         eup_myeon_dong_id = eupMyeonDongId,
         category = category,
+        created_at = Instant.now().toOffsetDateTime(),
+        updated_at = Instant.now().toOffsetDateTime(),
     )
 }
