@@ -15,7 +15,7 @@ repositories {
 group = "club.staircrusher"
 version = "1.0.0-SNAPSHOT"
 
-val generatedProject = listOf(project(":admin-api"), project("api"))
+val generatedProject = listOf(project(":admin_api"), project("api"))
 subprojects {
     apply(plugin = "kotlin")
 
@@ -30,7 +30,7 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter:$jUnitJupiterVersion")
 
         if (project.name == "infra") {
-            implementation(project(":spring-web"))
+            implementation(project(":spring_web"))
         }
     }
 
