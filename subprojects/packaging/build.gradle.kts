@@ -1,6 +1,9 @@
+import com.google.cloud.tools.jib.api.buildplan.ImageFormat.Docker
+
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    id("com.google.cloud.tools.jib")
 }
 
 dependencies {
@@ -18,4 +21,42 @@ dependencies {
     implementation(projects.persistenceModel)
 }
 
-tasks.bootJar { enabled = false }
+jib {
+    extraDirectories {
+        paths {
+            path {
+                this.setFrom("$rootDir/scripts")
+                into = "/app"
+            }
+        }
+        permissions.put("/app/run-java.sh", "755")
+    }
+    from {
+        image = "openjdk:19"
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
+    }
+    to {
+        image = "public.ecr.aws/q0g6g7m8/scc-server"
+        credHelper.helper = "ecr-login"
+        tags = setOf("latest")
+    }
+    container {
+        entrypoint = listOf("./app/run-java.sh")
+        environment = mapOf(
+            "JAVA_MAIN_CLASS" to "club.staircrusher.packaging.SccServerApplicationKt",
+            "JAVA_LIB_DIR" to "/app/libs/*:/app/classes:/app/resources",
+        )
+        mainClass = "club.staircrusher.packaging.SccServerApplicationKt"
+        ports = listOf("8080", "18080")
+        format = Docker
+    }
+}
