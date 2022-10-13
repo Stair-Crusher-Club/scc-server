@@ -1,6 +1,6 @@
 package club.staircrusher.place_search.infra.adapter.out.web
 
-import club.staircrusher.accessibility.application.AccessibilityApplicationService
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
 import club.staircrusher.place_search.domain.model.BuildingAccessibility
 import club.staircrusher.place_search.domain.model.Place
 import club.staircrusher.place_search.domain.model.PlaceAccessibility

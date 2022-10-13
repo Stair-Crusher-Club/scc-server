@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.domain.repository
+package club.staircrusher.accessibility.application.port.out.persistence
 
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote

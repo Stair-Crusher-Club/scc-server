@@ -6,8 +6,8 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
-import club.staircrusher.accessibility.domain.service.BuildingAccessibilityService
-import club.staircrusher.accessibility.domain.service.PlaceAccessibilityService
+import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
+import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestBuildingAccessibilityParams
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestPlaceAccessibilityParams
@@ -37,14 +37,15 @@ fun BuildingAccessibility.toDTO(
     registeredUserName = registeredUserName,
 )
 
-fun RegisterAccessibilityPostRequestBuildingAccessibilityParams.toModel(userId: String?) = BuildingAccessibilityService.CreateParams(
-    buildingId = buildingId,
-    entranceStairInfo = entranceStairInfo.toModel(),
-    hasSlope = hasSlope,
-    hasElevator = hasElevator,
-    elevatorStairInfo = elevatorStairInfo.toModel(),
-    userId = userId,
-)
+fun RegisterAccessibilityPostRequestBuildingAccessibilityParams.toModel(userId: String?) =
+    BuildingAccessibilityRepository.CreateParams(
+        buildingId = buildingId,
+        entranceStairInfo = entranceStairInfo.toModel(),
+        hasSlope = hasSlope,
+        hasElevator = hasElevator,
+        elevatorStairInfo = elevatorStairInfo.toModel(),
+        userId = userId,
+    )
 
 fun PlaceAccessibilityComment.toDTO(userInfo: UserInfo?) = club.staircrusher.api.spec.dto.PlaceAccessibilityComment(
     id = id,
@@ -79,13 +80,14 @@ fun StairInfo.toDTO() = when (this) {
     StairInfo.OVER_SIX -> club.staircrusher.api.spec.dto.StairInfo.oVERSIX
 }
 
-fun RegisterAccessibilityPostRequestPlaceAccessibilityParams.toModel(userId: String?) = PlaceAccessibilityService.CreateParams(
-    placeId = placeId,
-    isFirstFloor = isFirstFloor,
-    stairInfo = stairInfo.toModel(),
-    hasSlope = hasSlope,
-    userId = userId,
-)
+fun RegisterAccessibilityPostRequestPlaceAccessibilityParams.toModel(userId: String?) =
+    PlaceAccessibilityRepository.CreateParams(
+        placeId = placeId,
+        isFirstFloor = isFirstFloor,
+        stairInfo = stairInfo.toModel(),
+        hasSlope = hasSlope,
+        userId = userId,
+    )
 
 fun UserInfo.toDTO() = User(
     id = userId,
