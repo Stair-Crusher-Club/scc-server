@@ -7,12 +7,15 @@ plugins {
 }
 
 dependencies {
+    val postgresqlVersion: String by project
+
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework:spring-jdbc")
 
+    implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("com.zaxxer:HikariCP")
-    val postgresqlVersion: String by project
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
 
     implementation(project(":spring-web"))
