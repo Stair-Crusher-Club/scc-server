@@ -19,7 +19,7 @@ class UserApplicationService(
         nickname: String,
         password: String,
         instagramId: String?
-    ): LoginResult = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    ): LoginResult = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val user = userService.createUser(
             UserService.CreateUserParams(
                 nickname = nickname,
@@ -49,7 +49,7 @@ class UserApplicationService(
         userId: String,
         nickname: String,
         instagramId: String?
-    ): User = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    ): User = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val user = userRepository.findById(userId)
         userService.updateUserInfo(user, nickname, instagramId)
     }

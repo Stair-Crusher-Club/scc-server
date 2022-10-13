@@ -117,7 +117,7 @@ class AccessibilityApplicationService(
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentService.CreateParams?,
         createBuildingAccessibilityParams: BuildingAccessibilityService.CreateParams?,
         createBuildingAccessibilityCommentParams: BuildingAccessibilityCommentService.CreateParams?,
-    ): RegisterAccessibilityResult = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    ): RegisterAccessibilityResult = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val placeAccessibility = placeAccessibilityService.create(createPlaceAccessibilityParams)
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let { placeAccessibilityCommentService.create(it) }
         val buildingAccessibility = createBuildingAccessibilityParams?.let { buildingAccessibilityService.create(it) }
@@ -135,7 +135,7 @@ class AccessibilityApplicationService(
 
     fun registerBuildingAccessibilityComment(
         params: BuildingAccessibilityCommentService.CreateParams,
-    ): WithUserInfo<BuildingAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    ): WithUserInfo<BuildingAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val comment = buildingAccessibilityCommentService.create(params)
         WithUserInfo(
             value = comment,
@@ -145,7 +145,7 @@ class AccessibilityApplicationService(
 
     fun registerPlaceAccessibilityComment(
         params: PlaceAccessibilityCommentService.CreateParams,
-    ): WithUserInfo<PlaceAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
+    ): WithUserInfo<PlaceAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val comment = placeAccessibilityCommentService.create(params)
         WithUserInfo(
             value = comment,
