@@ -9,7 +9,7 @@ import club.staircrusher.stdlib.di.annotation.Component
  */
 @Component
 class InMemoryPlaceService2(
-    private val placeService: club.staircrusher.place.application.service.PlaceService,
+    private val placeService: club.staircrusher.place.application.port.`in`.PlaceService,
 ) : PlaceService {
     override fun findPlace(placeId: String): Place? {
         return placeService.findPlace(placeId)?.let { Place(

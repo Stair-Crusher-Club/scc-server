@@ -3,10 +3,10 @@ package club.staircrusher.spring_web.authentication.app
 import club.staircrusher.spring_web.authentication.BeforeAuthSccAuthentication
 import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.persistence.TransactionManager
-import club.staircrusher.user.application.user.UserApplicationService
-import club.staircrusher.user.application.user.UserAuthApplicationService
-import club.staircrusher.user.domain.entity.User
-import club.staircrusher.user.domain.service.TokenVerificationException
+import club.staircrusher.user.application.port.`in`.UserApplicationService
+import club.staircrusher.user.application.port.`in`.UserAuthApplicationService
+import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.exception.TokenVerificationException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication

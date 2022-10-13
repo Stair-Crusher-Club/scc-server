@@ -3,7 +3,6 @@ package club.staircrusher.accessibility.infra.adapter.`in`.controller
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
-import club.staircrusher.accessibility.infra.adapter.`in`.toDTO
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPost200Response
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPostRequest
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityCommentPost200Response

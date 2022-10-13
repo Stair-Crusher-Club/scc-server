@@ -18,7 +18,7 @@ import club.staircrusher.stdlib.domain.DomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
-import club.staircrusher.user.application.user.UserApplicationService
+import club.staircrusher.user.application.port.`in`.UserApplicationService
 import java.time.Clock
 
 @Component

@@ -5,8 +5,7 @@ import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
-import club.staircrusher.place_search.application.service.PlaceSearchService
-import club.staircrusher.place_search.infra.adapter.`in`.converter.toDTO
+import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
 import club.staircrusher.stdlib.geography.Length
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

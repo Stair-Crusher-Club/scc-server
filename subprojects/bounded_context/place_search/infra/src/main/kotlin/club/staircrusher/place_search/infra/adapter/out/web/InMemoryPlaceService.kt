@@ -7,7 +7,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class InMemoryPlaceService(
-    private val placeService: club.staircrusher.place.application.service.PlaceService,
+    private val placeService: club.staircrusher.place.application.port.`in`.PlaceService,
 ) : PlaceService {
     override suspend fun findByKeyword(keyword: String): List<Place> {
         // Since `Place` class of place domain is not included in application layer,

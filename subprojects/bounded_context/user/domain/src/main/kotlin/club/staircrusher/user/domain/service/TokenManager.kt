@@ -1,5 +1,6 @@
 package club.staircrusher.user.domain.service
 
+import club.staircrusher.user.domain.exception.TokenVerificationException
 import kotlin.reflect.KClass
 
 interface TokenManager {
