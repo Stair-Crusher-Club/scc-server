@@ -5,6 +5,7 @@ import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.user.UserApplicationService
 import club.staircrusher.user.application.user.UserAuthApplicationService
+import club.staircrusher.user.domain.entity.User
 import club.staircrusher.user.domain.service.TokenVerificationException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
@@ -26,7 +27,7 @@ class SccAppAuthenticationProvider(
             throw BadCredentialsException("Invalid access token.", e)
         }
 
-        val user = transactionManager.doInTransaction {
+        val user: User = transactionManager.doInTransaction {
             userApplicationService.getUser(userId)
         } ?: throw BadCredentialsException("No User found with given credentials.")
 
