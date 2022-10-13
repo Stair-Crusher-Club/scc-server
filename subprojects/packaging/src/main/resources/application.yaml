@@ -12,6 +12,28 @@ spring:
       pool-name: writer
       maximum-pool-size: 16
 
+# actuator settings
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+        show-details: always
+        add-additional-paths: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: info,health,prometheus
+  metrics:
+    web:
+      server:
+        auto-time-requests: true
+        max-uri-tags: 1024
+  server:
+    port: 18080
+
 scc:
   kakao:
     api-key: test
+

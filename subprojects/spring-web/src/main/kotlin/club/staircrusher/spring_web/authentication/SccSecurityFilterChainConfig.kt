@@ -1,10 +1,12 @@
 package club.staircrusher.spring_web.authentication
 
+import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 
@@ -17,8 +19,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
  * 각 bounded context에서 이 타입의 bean을 등록하면, [SccSecurityFilterChainConfig]는 이 bean들에 정의된 구성을 모두 합쳐
  * 하나의 SecurityFilterChain을 bean으로 등록한다.
  */
+@Component
+@EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
-open class SccSecurityFilterChainConfig {
+class SccSecurityFilterChainConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     open fun sccCommonFilterChain(

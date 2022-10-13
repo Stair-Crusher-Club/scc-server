@@ -13,7 +13,6 @@ dependencyManagement {
 dependencies {
     val kotlinLoggingVersion: String by project
     val kotlinSerializationVersion: String by project
-    val sqlDelightVersion: String by project
 
     implementation(projects.stdlib)
     implementation(projects.persistenceModel)
