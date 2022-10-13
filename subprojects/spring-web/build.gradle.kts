@@ -13,5 +13,3 @@ dependencies {
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
-
-tasks.bootJar { enabled = false }
