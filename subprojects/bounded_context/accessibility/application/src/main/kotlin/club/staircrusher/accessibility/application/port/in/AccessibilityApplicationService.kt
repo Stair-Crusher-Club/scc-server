@@ -96,12 +96,11 @@ class AccessibilityApplicationService(
     }
 
     fun getPlaceAccessibility(placeId: String): PlaceAccessibility? = transactionManager.doInTransaction {
-        placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         placeAccessibilityRepository.findByPlaceId(placeId)
     }
 
     fun getBuildingAccessibility(placeId: String): BuildingAccessibility? = transactionManager.doInTransaction {
-        val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
+        val place = placeService.findPlace(placeId) ?: return@doInTransaction null
         buildingAccessibilityRepository.findByBuildingId(place.buildingId)
     }
 
