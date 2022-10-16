@@ -36,7 +36,7 @@ class BuildingAccessibilityUpvoteRepository(
         return queries.buildingAccessibilityUpvoteFindById(id = id).executeAsOneOrNull()?.toDomainModel()
     }
 
-    override fun findByUserAndBuildingAccessibilityAndNotDeleted(
+    override fun findExistingUpvote(
         userId: String,
         buildingAccessibility: BuildingAccessibility
     ): BuildingAccessibilityUpvote? {
@@ -46,7 +46,9 @@ class BuildingAccessibilityUpvoteRepository(
         ).executeAsOneOrNull()?.toDomainModel()
     }
 
-    override fun getTotalUpvoteCount(userId: String): Int {
-        return queries.getTotalUpvoteCount(userId = userId).executeAsOne().toInt()
+    override fun getTotalUpvoteCountOfBuildingAccessibility(buildingAccessibilityId: String): Int {
+        return queries.getTotalUpvoteCountOfBuildingAccessibility(buildingAccessibilityId = buildingAccessibilityId)
+            .executeAsOne()
+            .toInt()
     }
 }

@@ -67,11 +67,11 @@ class AccessibilityApplicationService(
         ).map { it.toDomainModel() }.associateBy { it.userId }
         val buildingAccessibilityUpvoteInfo = buildingAccessibility?.let {
             GetAccessibilityResult.BuildingAccessibilityUpvoteInfo(
-                isUpvoted = buildingAccessibilityUpvoteRepository.findByUserAndBuildingAccessibilityAndNotDeleted(
+                isUpvoted = buildingAccessibilityUpvoteRepository.findExistingUpvote(
                     userId,
                     it,
                 ) != null,
-                totalUpvoteCount = buildingAccessibilityUpvoteRepository.getTotalUpvoteCount(place.buildingId),
+                totalUpvoteCount = buildingAccessibilityUpvoteRepository.getTotalUpvoteCountOfBuildingAccessibility(buildingAccessibility.id),
             )
         }
 

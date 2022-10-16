@@ -1,4 +1,4 @@
-package club.staircrusher.packaging
+package club.staircrusher.spring_web.web
 
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.context.annotation.Configuration
@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Component
 @Configuration(proxyBeanMethods = false)
-class WebConfig : WebMvcConfigurer {
+class SccWebConfig : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry
             .addMapping("/**")

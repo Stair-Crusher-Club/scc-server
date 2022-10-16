@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    username: test
+    password: test
+    url: jdbc:postgresql://localhost:15432/scc_test
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 1000
+      data-source-properties.cachePrepStmts: true
+      data-source-properties.prepStmtCacheSize: 250
+      data-source-properties.prepStmtCacheSqlLimit: 2048
+      pool-name: writer
+      maximum-pool-size: 16
+
+scc:
+  kakao:
+    apiKey: test
+

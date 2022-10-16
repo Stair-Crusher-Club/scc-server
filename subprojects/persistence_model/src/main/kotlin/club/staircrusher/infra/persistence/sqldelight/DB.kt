@@ -38,14 +38,14 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelight
     val userQueries = scc.userQueries
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {
-        val driver = this.driver as SqlDelightJdbcDriver
-        check(driver.isolationLevel == null) {
-            """
-            Since SCC does not allow nested transaction, isolationLevel saved in
-            thread local must be null.
-            """.trimIndent()
-        }
-        return transactionWithResult(noEnclosing = true) {
+        // FIXME: 다른 bounded context의 기능을 호출하기 때문에 nested transaction이 반드시 발생한다.
+//        check(driver.isolationLevel == null) {
+//            """
+//            Since SCC does not allow nested transaction, isolationLevel saved in
+//            thread local must be null.
+//            """.trimIndent()
+//        }
+        return transactionWithResult(noEnclosing = false) {
             SqlDelightTransaction(this).block()
         }
     }
@@ -55,15 +55,16 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelight
         block: Transaction<T>.() -> T,
     ): T {
         val driver = this.driver as SqlDelightJdbcDriver
-        check(driver.isolationLevel == null) {
-            """
-            Since SCC does not allow nested transaction, isolationLevel saved in
-            thread local must be null.
-            """.trimIndent()
-        }
+        // FIXME: 다른 bounded context의 기능을 호출하기 때문에 nested transaction이 반드시 발생한다.
+//        check(driver.isolationLevel == null) {
+//            """
+//            Since SCC does not allow nested transaction, isolationLevel saved in
+//            thread local must be null.
+//            """.trimIndent()
+//        }
         driver.isolationLevel = isolationLevel.toConnectionIsolationLevel()
         return try {
-            transactionWithResult(noEnclosing = true) {
+            transactionWithResult(noEnclosing = false) {
                 SqlDelightTransaction(this).block()
             }
         } finally {

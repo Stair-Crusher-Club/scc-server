@@ -1,11 +1,9 @@
-package club.staircrusher.packaging
+package club.staircrusher.testing.spring_it.base
 
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
-import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.ComponentScan.Filter
 import org.springframework.context.annotation.FilterType
 
 @SpringBootApplication(
@@ -15,11 +13,7 @@ import org.springframework.context.annotation.FilterType
 @ComponentScan(
     basePackages = ["club.staircrusher"],
     includeFilters = [
-        Filter(type = FilterType.ANNOTATION, classes = [Component::class]),
+        ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [Component::class]),
     ],
 )
-open class SccServerApplication
-
-fun main(args: Array<String>) {
-    runApplication<SccServerApplication>(*args)
-}
+open class SccSpringITApplication

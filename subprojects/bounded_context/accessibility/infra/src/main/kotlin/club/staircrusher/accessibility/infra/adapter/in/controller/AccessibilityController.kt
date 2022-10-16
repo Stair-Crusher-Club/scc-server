@@ -26,7 +26,7 @@ class AccessibilityController(
             buildingAccessibility = result.buildingAccessibility?.let {
                 it.value.toDTO(
                     isUpvoted = result.buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
-                    totalUpvoteCount = result.buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0, // TODO: 제대로 채우기
+                    totalUpvoteCount = result.buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0,
                     registeredUserName = it.userInfo?.nickname,
                 )
             },
@@ -84,7 +84,7 @@ class AccessibilityController(
             placeAccessibilityComments = listOfNotNull(result.placeAccessibilityComment).map {
                 it.toDTO(userInfo = result.userInfo)
             },
-            registeredUserOrder = 0,
+            registeredUserOrder = 0, // TODO: 올바르게 채워주기
         )
     }
 }
