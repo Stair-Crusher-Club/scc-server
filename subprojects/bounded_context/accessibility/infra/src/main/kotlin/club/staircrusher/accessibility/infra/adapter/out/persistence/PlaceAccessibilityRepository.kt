@@ -20,9 +20,8 @@ class PlaceAccessibilityRepository(
         return entity
     }
 
-    override fun saveAll(entity: Collection<PlaceAccessibility>): PlaceAccessibility {
-        entity.forEach(::save)
-        return entity.first()
+    override fun saveAll(entities: Collection<PlaceAccessibility>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {

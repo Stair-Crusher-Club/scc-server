@@ -248,7 +248,7 @@ class AccessibilityApplicationService(
 
     fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
         val placeAccessibilities = placeAccessibilityRepository.findByUserId(userId)
-        val buildingAccessibilities = buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.id })
+        val buildingAccessibilities = buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.placeId })
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 }

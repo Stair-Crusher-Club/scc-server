@@ -19,9 +19,8 @@ class BuildingAccessibilityUpvoteRepository(
         return entity
     }
 
-    override fun saveAll(entity: Collection<BuildingAccessibilityUpvote>): BuildingAccessibilityUpvote {
-        entity.forEach(::save)
-        return entity.first()
+    override fun saveAll(entities: Collection<BuildingAccessibilityUpvote>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {
