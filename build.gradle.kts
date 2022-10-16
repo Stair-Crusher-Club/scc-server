@@ -12,6 +12,8 @@ repositories {
     mavenCentral()
 }
 
+tasks.bootJar { enabled = false }
+
 group = "club.staircrusher"
 version = "1.0.0-SNAPSHOT"
 
@@ -142,6 +144,66 @@ subprojects {
         project.tasks.jar.get().apply {
             archiveBaseName.set(boundedContextName)
             archiveAppendix.set(layerName)
+        }
+    }
+}
+
+/**
+ * 테스트 계층화 세팅.
+ * 모든 gradle subprojects의 테스트를 unitTest와 integrationTest로 나눈다.
+ * unitTest에서는 @SpringBootTest를 사용하지 않도록 강제한다.
+ */
+val testLayerNames = listOf("unitTest", "integrationTest") // 낮은 위계에서 높은 위계 순으로 작성되어야 함.
+testLayerNames.forEachIndexed { idx, testLayerName ->
+    val rootProjectTestTask = tasks.register<Task>(testLayerName)
+    tasks.test {
+        dependsOn(rootProjectTestTask)
+    }
+
+    subprojects {
+        sourceSets.create(testLayerName) {
+            /**
+             * main과 test, 그리고 하위 테스트 계층 source set의 컴파일 결과가 compileClasspath / runtimeClasspath에 추가되도록 한다.
+             */
+            val mainSourceSet = sourceSets["main"]
+            val testSourceSet = sourceSets["test"]
+            compileClasspath += mainSourceSet.output + testSourceSet.output
+            runtimeClasspath += mainSourceSet.output + testSourceSet.output
+
+            testLayerNames.take(idx).forEach { lowerLayerTestSourceSetName ->
+                val lowerLayerTestSourceSet = sourceSets[lowerLayerTestSourceSetName]
+                compileClasspath += lowerLayerTestSourceSet.output
+                runtimeClasspath += lowerLayerTestSourceSet.output
+            }
+
+            /**
+             * main과 test source set의 의존성에 같이 의존하게 한다.
+             */
+            configurations {
+                getByName("${testLayerName}Implementation") {
+                    extendsFrom(configurations["implementation"])
+                    extendsFrom(configurations["testImplementation"])
+                }
+
+                getByName("${testLayerName}RuntimeOnly") {
+                    extendsFrom(configurations["runtimeOnly"])
+                    extendsFrom(configurations["testRuntimeOnly"])
+                }
+            }
+        }
+
+        val subprojectTestTask = tasks.register<Test>(testLayerName) {
+            val testSourceSet = sourceSets[testLayerName]
+            testClassesDirs = testSourceSet.output.classesDirs
+            classpath = testSourceSet.runtimeClasspath
+
+            useJUnitPlatform()
+        }
+        rootProjectTestTask {
+            dependsOn(subprojectTestTask)
+        }
+        tasks.test {
+            dependsOn(subprojectTestTask)
         }
     }
 }

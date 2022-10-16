@@ -2,7 +2,7 @@ package club.staircrusher.spring_web
 
 import club.staircrusher.spring_web.authentication.SccSecurityFilterChainConfig
 import club.staircrusher.user.domain.model.User
-import club.staircrusher.user.domain.repository.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.service.UserAuthService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

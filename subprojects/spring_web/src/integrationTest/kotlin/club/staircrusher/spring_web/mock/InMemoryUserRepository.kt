@@ -1,7 +1,7 @@
 package club.staircrusher.spring_web.mock
 
 import club.staircrusher.user.domain.model.User
-import club.staircrusher.user.domain.repository.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.stdlib.di.annotation.Component
 import org.junit.jupiter.api.Order
 import org.springframework.core.Ordered
