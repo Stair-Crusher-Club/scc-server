@@ -1,6 +1,6 @@
-package club.staircrusher.spring_web.authentication.app
+package club.staircrusher.spring_web.security.app
 
-import club.staircrusher.spring_web.authentication.BeforeAuthSccAuthentication
+import club.staircrusher.spring_web.security.BeforeAuthSccAuthentication
 import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.UserAuthApplicationService

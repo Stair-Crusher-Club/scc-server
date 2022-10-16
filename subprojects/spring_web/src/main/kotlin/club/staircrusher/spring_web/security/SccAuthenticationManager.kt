@@ -1,6 +1,6 @@
-package club.staircrusher.spring_web.authentication
+package club.staircrusher.spring_web.security
 
-import club.staircrusher.spring_web.authentication.app.SccAppAuthenticationProvider
+import club.staircrusher.spring_web.security.app.SccAppAuthenticationProvider
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.UserAuthApplicationService
 import org.springframework.security.authentication.ProviderManager

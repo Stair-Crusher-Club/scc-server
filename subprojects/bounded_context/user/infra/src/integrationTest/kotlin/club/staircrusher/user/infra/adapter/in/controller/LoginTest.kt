@@ -1,7 +1,7 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.LoginPostRequest
-import club.staircrusher.spring_web.authentication.SccSecurityFilterChainConfig
+import club.staircrusher.spring_web.security.SccSecurityFilterChainConfig
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
 import org.junit.jupiter.api.Test
 import kotlin.random.Random

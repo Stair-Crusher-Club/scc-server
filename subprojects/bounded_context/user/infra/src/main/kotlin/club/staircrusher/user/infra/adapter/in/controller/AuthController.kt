@@ -2,7 +2,7 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.LoginPostRequest
 import club.staircrusher.api.spec.dto.SignUpPostRequest
-import club.staircrusher.spring_web.authentication.SccSecurityFilterChainConfig
+import club.staircrusher.spring_web.security.SccSecurityFilterChainConfig
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

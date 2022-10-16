@@ -1,6 +1,5 @@
-package club.staircrusher.spring_web
+package club.staircrusher.spring_web.security
 
-import club.staircrusher.spring_web.authentication.SccSecurityFilterChainConfig
 import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.service.UserAuthService

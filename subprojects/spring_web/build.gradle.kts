@@ -8,6 +8,8 @@ dependencies {
     implementation(project(":bounded_context:user:application"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     api("org.springframework.boot:spring-boot-starter-security")
+    val kotlinLoggingVersion: String by project
+    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
     val jacksonModuleKotlinVersion: String by project
     integrationTestImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")

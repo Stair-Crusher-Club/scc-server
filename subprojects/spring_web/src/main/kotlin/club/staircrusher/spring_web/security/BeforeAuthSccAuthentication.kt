@@ -1,4 +1,4 @@
-package club.staircrusher.spring_web.authentication
+package club.staircrusher.spring_web.security
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority

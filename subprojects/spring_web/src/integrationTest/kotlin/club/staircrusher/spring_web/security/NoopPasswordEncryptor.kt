@@ -1,4 +1,4 @@
-package club.staircrusher.spring_web
+package club.staircrusher.spring_web.security
 
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.user.domain.service.PasswordEncryptor

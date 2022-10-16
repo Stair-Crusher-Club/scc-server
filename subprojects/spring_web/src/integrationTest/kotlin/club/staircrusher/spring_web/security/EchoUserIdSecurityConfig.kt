@@ -1,6 +1,5 @@
-package club.staircrusher.spring_web
+package club.staircrusher.spring_web.security
 
-import club.staircrusher.spring_web.authentication.SccSecurityConfig
 import org.springframework.stereotype.Component
 
 @Component
