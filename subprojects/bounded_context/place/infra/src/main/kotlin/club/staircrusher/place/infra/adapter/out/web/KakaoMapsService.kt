@@ -54,7 +54,7 @@ class KakaoMapsService(
             .baseUrl("https://dapi.kakao.com")
             .clientConnector(ReactorClientHttpConnector(httpClient))
             .codecs { it.defaultCodecs().kotlinSerializationJsonDecoder(decoder) }
-            .defaultHeaders { it.add(HttpHeaders.AUTHORIZATION, "KakaoAK $kakaoProperties") }
+            .defaultHeaders { it.add(HttpHeaders.AUTHORIZATION, "KakaoAK ${kakaoProperties.apiKey}") }
             .defaultStatusHandler(HttpStatusCode::isError) { response ->
                 response
                     .bodyToMono(KakaoError::class.java)
