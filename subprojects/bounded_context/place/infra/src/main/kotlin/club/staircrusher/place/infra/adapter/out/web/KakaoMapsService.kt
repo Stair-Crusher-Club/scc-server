@@ -174,6 +174,7 @@ class KakaoMapsService(
             if (it.categoryGroupCode == null) {
                 return@mapNotNull null // 운중천과 같이 점포가 아닌 곳도 내려온다. 이런 경우를 필터링해준다.
             }
+            @Suppress("TooGenericExceptionCaught", "SwallowedException")
             try {
                 Place(
                     id = it.id,
@@ -238,10 +239,11 @@ class KakaoMapsService(
             val location: Location
                 get() = Location(lng = x.toDouble(), lat = y.toDouble())
 
+            @Suppress("SwallowedException")
             val categoryGroupCode: Category?
                 get() = try {
                     Category.valueOf(rawCategoryGroupCode)
-                } catch (t: Throwable) {
+                } catch (_: IllegalArgumentException) {
                     null
                 }
 
