@@ -213,7 +213,7 @@ class KakaoMapsService(
             @SerialName("address_name")
             val addressName: String,
             @SerialName("category_group_code")
-            val categoryGroupCode: Category,
+            private val rawCategoryGroupCode: String,
             @SerialName("category_group_name")
             val categoryGroupName: String,
             @SerialName("category_name")
@@ -237,6 +237,13 @@ class KakaoMapsService(
         ) {
             val location: Location
                 get() = Location(lng = x.toDouble(), lat = y.toDouble())
+
+            val categoryGroupCode: Category?
+                get() = try {
+                    Category.valueOf(rawCategoryGroupCode)
+                } catch (t: Throwable) {
+                    null
+                }
 
             @Serializable
             enum class Category {
