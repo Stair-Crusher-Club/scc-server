@@ -163,6 +163,44 @@ paths:
                   - placeAccessibilityComments
                   - hasOtherPlacesToRegisterInBuilding
 
+  /getImageUploadUrls:
+    post:
+      summary: 점포 정보 등록 등의 상황에서 이미지를 업로드하기 위한 URL을 받아 온다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+                  description: 업로드할 이미지 수.
+                filenameExtension:
+                  type: string
+                  description: 업로드할 이미지의 확장자. '.'을 붙이지 말아야 한다. e.g. png, jpeg 등.
+              required:
+                - count
+                - filenameExtension
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                    expiryMillis:
+                      type: integer
+                      format: int64
+                      description: url의 만료까지 남은 밀리초.
+                  required:
+                    - url
+                    - expiryMillis
+
   /registerAccessibility:
     post:
       summary: 건물 & 점포의 접근성 정보를 등록한다.
@@ -187,6 +225,10 @@ paths:
                       type: boolean
                     elevatorStairInfo:
                       $ref: '#/components/schemas/StairInfo'
+                    imageUrls:
+                      type: array
+                      items:
+                        type: string
                     comment:
                       type: string
                   required:
@@ -195,6 +237,7 @@ paths:
                     - hasSlope
                     - hasElevator
                     - elevatorStairInfo
+                    - imageUrls
                 placeAccessibilityParams:
                   type: object
                   properties:
@@ -206,6 +249,10 @@ paths:
                       $ref: '#/components/schemas/StairInfo'
                     hasSlope:
                       type: boolean
+                    imageUrls:
+                      type: array
+                      items:
+                        type: string
                     comment:
                       type: string
                   required:
@@ -213,6 +260,7 @@ paths:
                     - isFirstFloor
                     - stairInfo
                     - hasSlope
+                    - imageUrls
               required:
                 - placeAccessibilityParams
       responses:
@@ -533,6 +581,10 @@ components:
           $ref: '#/components/schemas/StairInfo'
         hasSlope:
           type: boolean
+        imageUrls:
+          type: array
+          items:
+            type: string
         placeId:
           type: string
         registeredUserName:
@@ -544,6 +596,7 @@ components:
         - stairInfo
         - hasSlope
         - placeId
+        - imageUrls
 
     PlaceAccessibilityComment:
       description: 점포에 대한 의견.
@@ -578,6 +631,10 @@ components:
           type: boolean
         elevatorStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        imageUrls:
+          type: array
+          items:
+            type: string
         buildingId:
           type: string
         registeredUserName:
@@ -595,6 +652,7 @@ components:
         - hasSlope
         - hasElevator
         - elevatorStairInfo
+        - imageUrls
         - buildingId
         - isUpvoted
         - totalUpvoteCount
