@@ -129,6 +129,7 @@ class AccessibilityApplicationService(
                 isFirstFloor = createPlaceAccessibilityParams.isFirstFloor,
                 stairInfo = createPlaceAccessibilityParams.stairInfo,
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
+                imageUrls = createPlaceAccessibilityParams.imageUrls,
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = clock.instant(),
             )
@@ -166,6 +167,7 @@ class AccessibilityApplicationService(
                     hasSlope = it.hasSlope,
                     hasElevator = it.hasElevator,
                     elevatorStairInfo = it.elevatorStairInfo,
+                    imageUrls = it.imageUrls,
                     userId = it.userId,
                     createdAt = clock.instant(),
                 )

@@ -1,10 +1,13 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.accessibility.application.port.out.FileManagementService
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
+import club.staircrusher.api.spec.dto.GetImageUploadUrlsPost200ResponseInner
+import club.staircrusher.api.spec.dto.GetImageUploadUrlsPostRequest
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class AccessibilityController(
+    private val fileManagementService: FileManagementService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
     @PostMapping("/getAccessibility")
@@ -43,6 +47,19 @@ class AccessibilityController(
             },
             hasOtherPlacesToRegisterInBuilding = result.hasOtherPlacesToRegisterInSameBuilding,
         )
+    }
+
+    @PostMapping("/getImageUploadUrls")
+    fun getImageUploadUrls(@RequestBody request: GetImageUploadUrlsPostRequest): List<GetImageUploadUrlsPost200ResponseInner> {
+        val uploadUrls = (0 until request.count).map {
+            fileManagementService.getFileUploadUrl(request.filenameExtension)
+        }
+        return uploadUrls.map {
+            GetImageUploadUrlsPost200ResponseInner(
+                it.url,
+                it.expiryDuration.toMillis(),
+            )
+        }
     }
 
     @PostMapping("/registerAccessibility")

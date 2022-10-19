@@ -17,6 +17,8 @@ import club.staircrusher.infra.persistence.sqldelight.query.accessibility.Buildi
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserAndBuildingAccessibilityAndNotDeleted
 import club.staircrusher.stdlib.time.toOffsetDateTime
 
+private val imageUrlSeparator = ",,"
+
 fun Building_accessibility.toDomainModel() = BuildingAccessibility(
     id = id,
     buildingId = building_id,
@@ -24,6 +26,7 @@ fun Building_accessibility.toDomainModel() = BuildingAccessibility(
     hasSlope = has_slope,
     hasElevator = has_elevator,
     elevatorStairInfo = StairInfo.valueOf(elevator_stair_info),
+    imageUrls = image_urls.split(imageUrlSeparator),
     userId = user_id,
     createdAt = created_at.toInstant(),
 )
@@ -35,6 +38,7 @@ fun BuildingAccessibility.toPersistenceModel() = Building_accessibility(
     has_slope = hasSlope,
     has_elevator = hasElevator,
     elevator_stair_info = elevatorStairInfo.name,
+    image_urls = imageUrls.joinToString(imageUrlSeparator),
     user_id = userId,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = createdAt.toOffsetDateTime(),
@@ -65,6 +69,7 @@ fun BuildingAccessibilityUpvoteFindById.toDomainModel(): BuildingAccessibilityUp
         hasSlope = has_slope,
         hasElevator = has_elevator,
         elevatorStairInfo = StairInfo.valueOf(elevator_stair_info),
+        imageUrls = image_urls.split(imageUrlSeparator),
         userId = user_id_,
         createdAt = created_at_.toInstant(),
     )
@@ -85,6 +90,7 @@ fun FindByUserAndBuildingAccessibilityAndNotDeleted.toDomainModel(): BuildingAcc
         hasSlope = has_slope,
         hasElevator = has_elevator,
         elevatorStairInfo = StairInfo.valueOf(elevator_stair_info),
+        imageUrls = image_urls.split(imageUrlSeparator),
         userId = user_id_,
         createdAt = created_at_.toInstant(),
     )
@@ -112,6 +118,7 @@ fun Place_accessibility.toDomainModel() = PlaceAccessibility(
     isFirstFloor = is_first_floor,
     stairInfo = StairInfo.valueOf(stair_info),
     hasSlope = has_slope,
+    imageUrls = image_urls.split(imageUrlSeparator),
     userId = user_id,
     createdAt = created_at.toInstant(),
 )
@@ -122,6 +129,7 @@ fun PlaceAccessibility.toPersistenceModel() = Place_accessibility(
     is_first_floor = isFirstFloor,
     stair_info = stairInfo.name,
     has_slope = hasSlope,
+    image_urls = imageUrls.joinToString(imageUrlSeparator),
     user_id = userId,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = createdAt.toOffsetDateTime(),

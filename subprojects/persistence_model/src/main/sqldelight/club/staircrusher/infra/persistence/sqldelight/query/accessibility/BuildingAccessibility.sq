@@ -7,6 +7,7 @@ ON CONFLICT(id) DO UPDATE SET
     has_slope = EXCLUDED.has_slope,
     has_elevator = EXCLUDED.has_elevator,
     elevator_stair_info = EXCLUDED.elevator_stair_info,
+    image_urls = EXCLUDED.image_urls,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at;
 
