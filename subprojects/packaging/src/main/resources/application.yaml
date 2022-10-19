@@ -37,3 +37,8 @@ scc:
   kakao:
     api-key: test
 
+  s3:
+    imageUpload:
+      bucketName: test
+      accessKey: test
+      secretKey: test

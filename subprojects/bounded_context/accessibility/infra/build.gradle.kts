@@ -11,4 +11,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     integrationTestImplementation(projects.testing.springIt)
+
+    val awsSdkVersion: String by project
+    implementation("software.amazon.awssdk:s3:$awsSdkVersion")
 }
