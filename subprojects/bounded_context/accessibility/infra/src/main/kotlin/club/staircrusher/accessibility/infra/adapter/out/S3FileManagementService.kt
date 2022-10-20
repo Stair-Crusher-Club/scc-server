@@ -2,6 +2,7 @@ package club.staircrusher.accessibility.infra.adapter.out
 
 import club.staircrusher.accessibility.application.port.out.FileManagementService
 import club.staircrusher.stdlib.di.annotation.Component
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
@@ -26,6 +27,7 @@ internal class S3FileManagementService(
             .bucket(properties.bucketName)
             .key(generateObjectKey(normalizedFilenameExtension))
             .contentType(Files.probeContentType(Path.of("dummy.${normalizedFilenameExtension}")))
+            .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
 
         val s3PresignRequest: PutObjectPresignRequest = PutObjectPresignRequest.builder()
