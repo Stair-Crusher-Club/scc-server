@@ -3,7 +3,7 @@ package club.staircrusher.infra.persistence.sqldelight
 import app.cash.sqldelight.TransactionWithReturn
 import club.staircrusher.stdlib.persistence.Transaction
 
-class Transaction<T>(
+class SqlDelightTransaction<T>(
     private val transaction: TransactionWithReturn<T>
 ) : Transaction<T> {
     override fun afterCommit(block: () -> Unit) {

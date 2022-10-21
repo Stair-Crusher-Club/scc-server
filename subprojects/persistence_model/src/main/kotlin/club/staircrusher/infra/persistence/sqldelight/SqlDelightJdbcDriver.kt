@@ -5,7 +5,7 @@ import app.cash.sqldelight.driver.jdbc.JdbcDriver
 import java.sql.Connection
 import javax.sql.DataSource
 
-class JdbcDriver(
+class SqlDelightJdbcDriver(
     private val dataSource: DataSource,
 ): JdbcDriver() {
     private val _isolationLevel = ThreadLocal<Int>()
