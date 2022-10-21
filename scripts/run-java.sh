@@ -1,4 +1,5 @@
 #!/bin/sh
+# from https://github.com/fabric8io-images/run-java-sh
 # ===================================================================================
 # Generic startup script for running arbitrary Java applications with
 # being optimized for running in containers
