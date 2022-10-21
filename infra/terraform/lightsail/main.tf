@@ -25,3 +25,9 @@ data "sops_file" "secret_data" {
   source_file = "secret.yaml"
 }
 
+data "terraform_remote_state" "s3" {
+  backend = "local"
+  config = {
+    path = "../s3/terraform.tfstate"
+  }
+}
