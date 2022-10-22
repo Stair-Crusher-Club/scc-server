@@ -28,16 +28,15 @@ subprojects {
     }
 
     dependencies {
-        val jUnitJupiterVersion: String by project
-        testImplementation("org.junit.jupiter:junit-jupiter:$jUnitJupiterVersion")
-
         if (project.name == "infra") {
             implementation(project(":spring_web"))
         }
     }
 
     tasks.test {
-        useJUnitPlatform()
+        useJUnitPlatform {
+            includeEngines("junit-jupiter")
+        }
     }
 
     tasks.withType<KotlinCompile> {
@@ -197,7 +196,9 @@ testLayerNames.forEachIndexed { idx, testLayerName ->
             testClassesDirs = testSourceSet.output.classesDirs
             classpath = testSourceSet.runtimeClasspath
 
-            useJUnitPlatform()
+            useJUnitPlatform {
+                includeEngines("junit-jupiter")
+            }
         }
         rootProjectTestTask {
             dependsOn(subprojectTestTask)
