@@ -11,6 +11,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Clock
 import java.time.Duration
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Component
@@ -46,9 +48,12 @@ internal class S3FileManagementService(
         )
     }
 
+    private val objectKeyTimestampPrefixFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
     private fun generateObjectKey(extension: String?): String {
         return buildString {
-            append(UUID.randomUUID().toString())
+            append(objectKeyTimestampPrefixFormat.format(clock.instant().atOffset(ZoneOffset.UTC)))
+            append("_")
+            append(UUID.randomUUID().toString().take(16))
             extension?.let { append(".$extension") }
         }
     }
