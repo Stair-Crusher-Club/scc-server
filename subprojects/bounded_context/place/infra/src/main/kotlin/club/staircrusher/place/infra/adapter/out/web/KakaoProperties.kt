@@ -1,10 +1,9 @@
 package club.staircrusher.place.infra.adapter.out.web
 
-import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConfigurationProperties("scc.kakao")
-@Component
-class KakaoProperties {
-    var apiKey: String = ""
-}
+data class KakaoProperties @ConstructorBinding constructor(
+    val apiKey: String,
+)

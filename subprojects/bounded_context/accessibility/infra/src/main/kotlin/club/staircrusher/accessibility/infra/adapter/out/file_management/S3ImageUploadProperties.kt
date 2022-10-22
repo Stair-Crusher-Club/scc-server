@@ -1,17 +1,16 @@
 package club.staircrusher.accessibility.infra.adapter.out.file_management
 
-import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.AwsCredentials
 
-@Component
 @ConfigurationProperties("scc.s3.image-upload")
-internal class S3ImageUploadProperties {
-    var bucketName: String = ""
-    var accessKey: String = ""
-    var secretKey: String = ""
-
+internal data class S3ImageUploadProperties @ConstructorBinding constructor(
+    val bucketName: String,
+    val accessKey: String,
+    val secretKey: String,
+) {
     fun getAwsCredentials(): AwsCredentials {
         return AwsBasicCredentials.create(accessKey, secretKey)
     }
