@@ -21,8 +21,9 @@ internal class S3FileManagementService(
     private val properties: S3ImageUploadProperties,
 ) : FileManagementService {
     private val s3Presigner = S3Presigner.builder()
-        .credentialsProvider {
-            properties.getAwsCredentials()
+        .apply {
+            // IRSA가 동작하지 않는 로컬에서 테스트 가능하도록, crendential이 있는 경우에는 credential을 넣고, 아닌 경우에는 넣지 않는다.
+            properties.getAwsCredentials()?.let { credentialsProvider { it } }
         }
         .build()
 
