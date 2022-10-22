@@ -4,6 +4,7 @@ import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplic
 import club.staircrusher.accessibility.application.port.out.FileManagementService
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
+import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetImageUploadUrlsPost200ResponseInner
@@ -57,7 +58,7 @@ class AccessibilityController(
         return uploadUrls.map {
             GetImageUploadUrlsPost200ResponseInner(
                 it.url,
-                it.expiryDuration.toMillis(),
+                it.expireAt.toDTO(),
             )
         }
     }

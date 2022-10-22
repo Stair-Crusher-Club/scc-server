@@ -193,13 +193,12 @@ paths:
                   properties:
                     url:
                       type: string
-                    expiryMillis:
-                      type: integer
-                      format: int64
-                      description: url의 만료까지 남은 밀리초.
+                    expireAt:
+                      $ref: '#/components/schemas/EpochMillisTimestamp'
+                      description: url의 만료 시각.
                   required:
                     - url
-                    - expiryMillis
+                    - expireAt
 
   /registerAccessibility:
     post:

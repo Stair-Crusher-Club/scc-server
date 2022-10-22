@@ -8,11 +8,13 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Clock
 import java.time.Duration
 import java.util.UUID
 
 @Component
 internal class S3FileManagementService(
+    private val clock: Clock,
     private val properties: S3ImageUploadProperties,
 ) : FileManagementService {
     private val s3Presigner = S3Presigner.builder()
@@ -38,7 +40,7 @@ internal class S3FileManagementService(
         val presignedRequest = s3Presigner.presignPutObject(s3PresignRequest)
         return FileManagementService.UploadUrl(
             url = presignedRequest.url().toString(),
-            expiryDuration = presignedUrlExpiryDuration,
+            expireAt = clock.instant() + presignedUrlExpiryDuration,
         )
     }
 
