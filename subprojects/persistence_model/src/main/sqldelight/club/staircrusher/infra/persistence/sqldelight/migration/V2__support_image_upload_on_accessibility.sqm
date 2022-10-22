@@ -1,0 +1,4 @@
+import kotlin.collections.List;
+
+ALTER TABLE building_accessibility ADD COLUMN image_urls TEXT AS List<String> NOT NULL DEFAULT '';
+ALTER TABLE place_accessibility ADD COLUMN image_urls TEXT AS List<String> NOT NULL DEFAULT '';

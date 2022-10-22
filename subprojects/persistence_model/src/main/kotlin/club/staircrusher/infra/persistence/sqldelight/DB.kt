@@ -1,31 +1,31 @@
 package club.staircrusher.infra.persistence.sqldelight
 
-import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.TransacterImpl
 import app.cash.sqldelight.driver.jdbc.asJdbcDriver
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
+import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
+import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.Transaction
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
-import club.staircrusher.stdlib.place.PlaceCategory
 import javax.sql.DataSource
 
 @Component
 class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelightJdbcDriver(dataSource)) {
-    private val placeCategoryStringColumnAdapter = object : ColumnAdapter<PlaceCategory, String> {
-        override fun decode(databaseValue: String): PlaceCategory {
-            return PlaceCategory.valueOf(databaseValue)
-        }
-
-        override fun encode(value: PlaceCategory): String = value.name
-    }
-
     private val scc = scc(
         driver = dataSource.asJdbcDriver(),
         placeAdapter = Place.Adapter(
-            categoryAdapter = placeCategoryStringColumnAdapter,
+            categoryAdapter = PlaceCategoryStringColumnAdapter,
         ),
+        place_accessibilityAdapter = Place_accessibility.Adapter(
+            image_urlsAdapter = StringListToTextColumnAdapter
+        ),
+        building_accessibilityAdapter = Building_accessibility.Adapter(
+            image_urlsAdapter = StringListToTextColumnAdapter
+        )
     )
 
     val buildingQueries = scc.buildingQueries

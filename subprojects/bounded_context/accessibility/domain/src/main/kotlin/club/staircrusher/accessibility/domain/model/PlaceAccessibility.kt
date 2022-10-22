@@ -8,6 +8,7 @@ data class PlaceAccessibility(
     val isFirstFloor: Boolean,
     val stairInfo: StairInfo,
     val hasSlope: Boolean,
+    val imageUrls: List<String>,
     val userId: String?,
     val createdAt: Instant,
 )

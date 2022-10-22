@@ -50,6 +50,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     entranceStairInfo = StairInfo.NONE.toDTO(),
                     hasSlope = true,
                     hasElevator = true,
+                    imageUrls = listOf("buildingAccessibilityImage"),
                     elevatorStairInfo = StairInfo.TWO_TO_FIVE.toDTO(),
                     comment = "건물 코멘트",
                 ),
@@ -57,6 +58,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     placeId = place.id,
                     isFirstFloor = false,
                     stairInfo = StairInfo.ONE.toDTO(),
+                    imageUrls = emptyList(),
                     hasSlope = true,
                     comment = "장소 코멘트",
                 ),
@@ -71,6 +73,8 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     assertTrue(buildingAccessibility.hasSlope)
                     assertTrue(buildingAccessibility.hasElevator)
                     assertEquals(StairInfo.TWO_TO_FIVE, buildingAccessibility.elevatorStairInfo.toModel())
+                    assertEquals(1, buildingAccessibility.imageUrls.size)
+                    assertEquals("buildingAccessibilityImage", buildingAccessibility.imageUrls[0])
                     assertFalse(buildingAccessibility.isUpvoted)
                     assertEquals(0, buildingAccessibility.totalUpvoteCount)
 
@@ -84,6 +88,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     assertFalse(placeAccessibility.isFirstFloor)
                     assertEquals(StairInfo.ONE, placeAccessibility.stairInfo.toModel())
                     assertTrue(placeAccessibility.hasSlope)
+                    assertTrue(placeAccessibility.imageUrls.isEmpty())
 
                     assertEquals(1, result.placeAccessibilityComments.size)
                     assertEquals(place.id, result.placeAccessibilityComments[0].placeId)

@@ -17,6 +17,7 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
         val hasSlope: Boolean,
         val hasElevator: Boolean,
         val elevatorStairInfo: StairInfo,
+        val imageUrls: List<String>,
         val userId: String?,
     )
 }

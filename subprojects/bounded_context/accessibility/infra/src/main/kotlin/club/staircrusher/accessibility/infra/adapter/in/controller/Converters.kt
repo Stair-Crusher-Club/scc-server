@@ -31,6 +31,7 @@ fun BuildingAccessibility.toDTO(
     hasSlope = hasSlope,
     hasElevator = hasElevator,
     elevatorStairInfo = elevatorStairInfo.toDTO(),
+    imageUrls = imageUrls,
     buildingId = buildingId,
     isUpvoted = isUpvoted,
     totalUpvoteCount = totalUpvoteCount,
@@ -44,6 +45,7 @@ fun RegisterAccessibilityPostRequestBuildingAccessibilityParams.toModel(userId: 
         hasSlope = hasSlope,
         hasElevator = hasElevator,
         elevatorStairInfo = elevatorStairInfo.toModel(),
+        imageUrls = imageUrls,
         userId = userId,
     )
 
@@ -60,6 +62,7 @@ fun PlaceAccessibility.toDTO(registeredUserName: String?) = club.staircrusher.ap
     isFirstFloor = isFirstFloor,
     stairInfo = stairInfo.toDTO(),
     hasSlope = hasSlope,
+    imageUrls = imageUrls,
     placeId = placeId,
     registeredUserName = registeredUserName,
 )
@@ -86,6 +89,7 @@ fun RegisterAccessibilityPostRequestPlaceAccessibilityParams.toModel(userId: Str
         isFirstFloor = isFirstFloor,
         stairInfo = stairInfo.toModel(),
         hasSlope = hasSlope,
+        imageUrls = imageUrls,
         userId = userId,
     )
 

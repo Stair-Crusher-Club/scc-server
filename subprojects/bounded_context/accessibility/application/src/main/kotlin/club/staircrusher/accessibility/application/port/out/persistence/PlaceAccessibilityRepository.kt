@@ -19,5 +19,6 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         val stairInfo: StairInfo,
         val hasSlope: Boolean,
         val userId: String?,
+        val imageUrls: List<String>,
     )
 }

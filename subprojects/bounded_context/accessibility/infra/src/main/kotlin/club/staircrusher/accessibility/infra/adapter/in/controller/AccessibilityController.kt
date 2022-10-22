@@ -1,10 +1,14 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.accessibility.application.port.`in`.GetImageUploadUrlsUseCase
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
+import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
+import club.staircrusher.api.spec.dto.GetImageUploadUrlsPost200ResponseInner
+import club.staircrusher.api.spec.dto.GetImageUploadUrlsPostRequest
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AccessibilityController(
     private val accessibilityApplicationService: AccessibilityApplicationService,
+    private val getImageUploadUrlsUseCase: GetImageUploadUrlsUseCase,
 ) {
     @PostMapping("/getAccessibility")
     fun getAccessibility(
@@ -43,6 +48,19 @@ class AccessibilityController(
             },
             hasOtherPlacesToRegisterInBuilding = result.hasOtherPlacesToRegisterInSameBuilding,
         )
+    }
+
+    @PostMapping("/getImageUploadUrls")
+    fun getImageUploadUrls(@RequestBody request: GetImageUploadUrlsPostRequest): List<GetImageUploadUrlsPost200ResponseInner> {
+        return getImageUploadUrlsUseCase.handle(
+            urlCount = request.count,
+            filenameExtension = request.filenameExtension,
+        ).map {
+            GetImageUploadUrlsPost200ResponseInner(
+                it.url,
+                it.expireAt.toDTO(),
+            )
+        }
     }
 
     @PostMapping("/registerAccessibility")
