@@ -1,10 +1,13 @@
 package club.staircrusher.place.infra.adapter.out.web
 
 import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place.domain.model.Building
+import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory
+import club.staircrusher.stdlib.util.Hashing
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
@@ -167,19 +170,35 @@ class KakaoMapsService(
     }
 
     private fun SearchResult.convertToModel(): List<Place> {
-        return documents.map {
-            Place(
-                id = it.id,
-                name = it.placeName,
-                location = Location(
-                    lng = it.x.toDouble(),
-                    lat = it.y.toDouble(),
-                ),
-                building = null,
-                siGunGuId = null,
-                eupMyeonDongId = null,
-                category = it.categoryGroupCode.toPlaceCategory(),
-            )
+        return documents.mapNotNull {
+            if (it.categoryGroupCode == null) {
+                return@mapNotNull null // 운중천과 같이 점포가 아닌 곳도 내려온다. 이런 경우를 필터링해준다.
+            }
+            @Suppress("TooGenericExceptionCaught", "SwallowedException")
+            try {
+                Place(
+                    id = it.id,
+                    name = it.placeName,
+                    location = it.location,
+                    building = Building(
+                        id = Hashing.getHash(
+                            it.roadAddressName,
+                            length = 36
+                        ), // TODO: 정책 제대로 정하기; 근데 어차피 주소로 unique key를 만들어내긴 해야 할 듯.
+                        name = it.roadAddressName,
+                        location = it.location,
+                        address = it.parseToBuildingAddress(),
+                        siGunGuId = "temp", // TODO: 제대로 채우기
+                        eupMyeonDongId = "temp",
+                    ),
+                    siGunGuId = null,
+                    eupMyeonDongId = null,
+                    category = it.categoryGroupCode?.toPlaceCategory(),
+                )
+            } catch (t: Throwable) {
+                logger.warn { "Cannot convert document to model: $it" }
+                null
+            }
         }
     }
 
@@ -195,7 +214,7 @@ class KakaoMapsService(
             @SerialName("address_name")
             val addressName: String,
             @SerialName("category_group_code")
-            val categoryGroupCode: Category,
+            private val rawCategoryGroupCode: String,
             @SerialName("category_group_name")
             val categoryGroupName: String,
             @SerialName("category_name")
@@ -217,6 +236,17 @@ class KakaoMapsService(
             @SerialName("y")
             val y: String,
         ) {
+            val location: Location
+                get() = Location(lng = x.toDouble(), lat = y.toDouble())
+
+            @Suppress("SwallowedException")
+            val categoryGroupCode: Category?
+                get() = try {
+                    Category.valueOf(rawCategoryGroupCode)
+                } catch (_: IllegalArgumentException) {
+                    null
+                }
+
             @Serializable
             enum class Category {
                 MT1, //	대형마트
@@ -312,6 +342,35 @@ class KakaoMapsService(
                 val selectedRegion: String,
             )
         }
+    }
+
+    @Suppress("MagicNumber")
+    fun SearchResult.Document.parseToBuildingAddress(): BuildingAddress {
+        checkNotNull(categoryGroupCode) {
+            "Should not reach here! Strange search result: $this"
+        }
+        val addressNameTokens = addressName.split(" ")
+        val siDo = addressNameTokens[0]
+        val siGunGu = addressNameTokens[1]
+        val eupMyeonDong = addressNameTokens[2]
+        val li = addressNameTokens[3].takeIf { it.endsWith("리") } ?: ""
+
+        val (roadName, buildingNumber) = roadAddressName.split(" ").takeLast(2)
+        val buildingNumberTokens = buildingNumber.split("-")
+        val (mainBuildingNumber, subBuildingNumber) = if (buildingNumberTokens.size == 1) {
+            Pair(buildingNumberTokens[0], "")
+        } else {
+            Pair(buildingNumberTokens[0], buildingNumberTokens[1])
+        }
+        return BuildingAddress(
+            siDo = siDo,
+            siGunGu = siGunGu,
+            eupMyeonDong = eupMyeonDong,
+            li = li,
+            roadName = roadName,
+            mainBuildingNumber = mainBuildingNumber,
+            subBuildingNumber = subBuildingNumber,
+        )
     }
 
     @Serializable

@@ -15,8 +15,20 @@ class SccExceptionHandler {
     @ExceptionHandler(Throwable::class)
     fun handleThrowable(t: Throwable): ResponseEntity<String> {
         logger.error(t) { t.message }
+        val errorMessage = buildString {
+            var cause: Throwable? = t
+            var isInitial = true
+            while (cause != null) {
+                if (!isInitial) {
+                    append("  Caused by ")
+                }
+                appendLine("${cause::class.simpleName}: ${cause.message}")
+                cause = cause.cause
+                isInitial = false
+            }
+        }
         return ResponseEntity
             .badRequest()
-            .body(t.message)
+            .body(errorMessage)
     }
 }

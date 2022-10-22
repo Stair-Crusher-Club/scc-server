@@ -7,7 +7,7 @@ data class BuildingAddress(
     val li: String,
     val roadName: String,
     val mainBuildingNumber: String,
-    val subBuildingNumber: String
+    val subBuildingNumber: String,
 ) {
     override fun toString(): String {
         // refs: https://www.juso.go.kr/CommonPageLink.do?link=/street/GuideBook
