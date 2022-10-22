@@ -53,6 +53,6 @@ internal class S3FileManagementService(
     }
 
     companion object {
-        private val presignedUrlExpiryDuration = Duration.ofMinutes(1)
+        private val presignedUrlExpiryDuration = Duration.ofMinutes(5)
     }
 }
