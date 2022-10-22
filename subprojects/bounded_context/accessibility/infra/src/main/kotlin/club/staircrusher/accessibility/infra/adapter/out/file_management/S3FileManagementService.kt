@@ -24,6 +24,7 @@ internal class S3FileManagementService(
         }
         .build()
 
+    // TODO: 유저별 rate limit 걸기. 위치는 여기가 아니라 application service여야 할 수도 있을 듯.
     override fun getFileUploadUrl(filenameExtension: String): UploadUrl {
         val normalizedFilenameExtension = filenameExtension.replace(Regex("^\\."), "")
         val objectRequest = PutObjectRequest.builder()
