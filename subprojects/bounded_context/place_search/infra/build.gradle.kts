@@ -6,8 +6,7 @@ plugins {
 dependencies {
     implementation(project(":bounded_context:place:application"))
     implementation(project(":bounded_context:accessibility:application"))
-    val kotlinxCoroutinesReactorVersion: String by project
-    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinxCoroutinesReactorVersion")
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     api(project(":api"))
     implementation("org.springframework.boot:spring-boot-starter-web")
