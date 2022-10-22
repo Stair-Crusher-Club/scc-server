@@ -20,7 +20,7 @@ class PlaceCacher(
     override fun onDomainEvent(event: PlaceSearchEvent) {
         transactionManager.doInTransaction {
             placeRepository.saveAll(event.searchResult.map(PlaceDTO::toPlace))
-            buildingRepository.saveAll(event.searchResult.mapNotNull { it.building?.toBuilding() })
+            buildingRepository.saveAll(event.searchResult.mapNotNull { it.building?.toBuilding() }.toSet())
         }
     }
 
