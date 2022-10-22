@@ -10,15 +10,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 // TODO: 센트리 연동
 @ControllerAdvice
 class SccExceptionHandler {
+    private val logger = KotlinLogging.logger {}
+
     @ExceptionHandler(Throwable::class)
     fun handleThrowable(t: Throwable): ResponseEntity<String> {
         logger.error(t) { t.message }
         return ResponseEntity
             .badRequest()
             .body(t.message)
-    }
-
-    companion object {
-        private val logger = KotlinLogging.logger {}
     }
 }
