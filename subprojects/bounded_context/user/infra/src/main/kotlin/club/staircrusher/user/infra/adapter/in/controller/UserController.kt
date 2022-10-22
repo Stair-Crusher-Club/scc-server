@@ -2,7 +2,7 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
-import club.staircrusher.spring_web.authentication.app.SccAppAuthentication
+import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import org.springframework.web.bind.annotation.PostMapping

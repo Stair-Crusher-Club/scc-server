@@ -1,4 +1,4 @@
-package club.staircrusher.spring_web.authentication
+package club.staircrusher.spring_web.security
 
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.context.annotation.Bean

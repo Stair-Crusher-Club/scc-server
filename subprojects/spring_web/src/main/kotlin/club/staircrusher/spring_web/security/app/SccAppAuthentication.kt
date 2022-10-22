@@ -1,4 +1,4 @@
-package club.staircrusher.spring_web.authentication.app
+package club.staircrusher.spring_web.security.app
 
 import club.staircrusher.stdlib.auth.AuthUser
 import org.springframework.security.core.Authentication

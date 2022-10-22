@@ -1,4 +1,4 @@
-package club.staircrusher.spring_web.authentication
+package club.staircrusher.spring_web.security
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

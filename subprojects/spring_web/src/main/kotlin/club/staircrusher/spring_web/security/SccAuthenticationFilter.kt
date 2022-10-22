@@ -1,4 +1,4 @@
-package club.staircrusher.spring_web.authentication
+package club.staircrusher.spring_web.security
 
 import org.springframework.security.web.authentication.AuthenticationConverter
 import org.springframework.security.web.authentication.AuthenticationFilter

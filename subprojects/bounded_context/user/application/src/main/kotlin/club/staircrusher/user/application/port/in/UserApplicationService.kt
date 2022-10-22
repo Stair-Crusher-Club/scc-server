@@ -1,7 +1,7 @@
 package club.staircrusher.user.application.port.`in`
 
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.domain.DomainException
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -31,10 +31,10 @@ class UserApplicationService(
         )
         val normalizedNickname = params.nickname.trim()
         if (normalizedNickname.length < 2) {
-            throw DomainException("최소 2자 이상의 닉네임을 설정해주세요.")
+            throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
         }
         if (userRepository.findByNickname(normalizedNickname) != null) {
-            throw DomainException("${normalizedNickname}은 이미 사용 중인 닉네임입니다.")
+            throw SccDomainException("${normalizedNickname}은 이미 사용 중인 닉네임입니다.")
         }
         val user = userRepository.save(
             User(
@@ -53,9 +53,9 @@ class UserApplicationService(
         nickname: String,
         password: String
     ): LoginResult = transactionManager.doInTransaction {
-        val user = userRepository.findByNickname(nickname) ?: throw DomainException("잘못된 계정 아이디입니다.")
+        val user = userRepository.findByNickname(nickname) ?: throw SccDomainException("잘못된 계정 아이디입니다.")
         if (!passwordEncryptor.verify(password, user.encryptedPassword)) {
-            throw DomainException("잘못된 비밀번호입니다.")
+            throw SccDomainException("잘못된 비밀번호입니다.")
         }
         val accessToken = userAuthService.issueAccessToken(user)
         LoginResult(user, accessToken)
@@ -75,10 +75,10 @@ class UserApplicationService(
         user.nickname = run {
             val normalizedNickname = nickname.trim()
             if (normalizedNickname.length < 2) {
-                throw DomainException("최소 2자 이상의 닉네임을 설정해주세요.")
+                throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
             }
             if (userRepository.findByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
-                throw DomainException("${normalizedNickname}은 이미 사용 중인 닉네임입니다.")
+                throw SccDomainException("${normalizedNickname}은 이미 사용 중인 닉네임입니다.")
             }
             normalizedNickname
         }

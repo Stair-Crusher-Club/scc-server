@@ -14,7 +14,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.domain.DomainException
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -121,7 +121,7 @@ class AccessibilityApplicationService(
         createBuildingAccessibilityCommentParams: BuildingAccessibilityCommentRepository.CreateParams?,
     ): RegisterAccessibilityResult = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
-            throw DomainException("이미 접근성 정보가 등록된 장소입니다.")
+            throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
         }
         val result = placeAccessibilityRepository.save(
             PlaceAccessibility(
@@ -137,7 +137,7 @@ class AccessibilityApplicationService(
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
             val normalizedComment = it.comment.trim()
             if (normalizedComment.isBlank()) {
-                throw DomainException("한 글자 이상의 의견을 제출해주세요.")
+                throw SccDomainException("한 글자 이상의 의견을 제출해주세요.")
             }
             placeAccessibilityCommentRepository.save(
                 PlaceAccessibilityComment(
@@ -151,13 +151,13 @@ class AccessibilityApplicationService(
         }
         val buildingAccessibility = createBuildingAccessibilityParams?.let {
             if (buildingAccessibilityRepository.findByBuildingId(it.buildingId) != null) {
-                throw DomainException("이미 접근성 정보가 등록된 건물입니다.")
+                throw SccDomainException("이미 접근성 정보가 등록된 건물입니다.")
             }
             if (
                 it.hasElevator && it.elevatorStairInfo == StairInfo.UNDEFINED ||
                 !it.hasElevator && it.elevatorStairInfo != StairInfo.UNDEFINED
             ) {
-                throw DomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.") // TODO: 테스트 추가
+                throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.") // TODO: 테스트 추가
             }
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
@@ -175,7 +175,7 @@ class AccessibilityApplicationService(
         val buildingAccessibilityComment = createBuildingAccessibilityCommentParams?.let {
             val normalizedComment = it.comment.trim()
             if (normalizedComment.isBlank()) {
-                throw DomainException("한 글자 이상의 의견을 제출해주세요.")
+                throw SccDomainException("한 글자 이상의 의견을 제출해주세요.")
             }
             buildingAccessibilityCommentRepository.save(
                 BuildingAccessibilityComment(
@@ -203,7 +203,7 @@ class AccessibilityApplicationService(
     ): WithUserInfo<BuildingAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val normalizedComment = params.comment.trim()
         if (normalizedComment.isBlank()) {
-            throw DomainException("한 글자 이상의 의견을 제출해주세요.")
+            throw SccDomainException("한 글자 이상의 의견을 제출해주세요.")
         }
         val comment = buildingAccessibilityCommentRepository.save(
             BuildingAccessibilityComment(
@@ -225,7 +225,7 @@ class AccessibilityApplicationService(
     ): WithUserInfo<PlaceAccessibilityComment> = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val normalizedComment = params.comment.trim()
         if (normalizedComment.isBlank()) {
-            throw DomainException("한 글자 이상의 의견을 제출해주세요.")
+            throw SccDomainException("한 글자 이상의 의견을 제출해주세요.")
         }
         val comment = placeAccessibilityCommentRepository.save(
             PlaceAccessibilityComment(
