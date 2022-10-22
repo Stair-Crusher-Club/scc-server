@@ -1,7 +1,7 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
-import club.staircrusher.accessibility.application.port.out.FileManagementService
+import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.api.converter.toDTO

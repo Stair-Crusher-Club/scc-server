@@ -1,6 +1,6 @@
-package club.staircrusher.accessibility.infra.adapter.out
+package club.staircrusher.accessibility.infra.adapter.out.file_management
 
-import club.staircrusher.accessibility.application.port.out.FileManagementService
+import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.stdlib.di.annotation.Component
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL
 import software.amazon.awssdk.services.s3.model.PutObjectRequest

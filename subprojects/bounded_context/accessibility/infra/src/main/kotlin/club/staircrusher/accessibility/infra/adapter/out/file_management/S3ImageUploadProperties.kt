@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.infra.adapter.out
+package club.staircrusher.accessibility.infra.adapter.out.file_management
 
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.boot.context.properties.ConfigurationProperties
