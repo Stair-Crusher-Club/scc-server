@@ -29,9 +29,9 @@ FROM building_accessibility_upvote
 WHERE
     building_accessibility_upvote.user_id = :userId
     AND building_accessibility_upvote.building_accessibility_id = :buildingAccessibilityId
-    AND deleted_at IS NOT NULL;
+    AND deleted_at IS NULL;
 
-getTotalUpvoteCount:
+countUpvotes:
 SELECT COUNT(1)
 FROM building_accessibility_upvote
-WHERE user_id = :userId;
+WHERE building_accessibility_id = :buildingAccessibilityId;

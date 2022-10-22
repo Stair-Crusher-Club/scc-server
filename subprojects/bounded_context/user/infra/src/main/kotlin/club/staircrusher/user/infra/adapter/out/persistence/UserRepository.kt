@@ -16,9 +16,8 @@ class UserRepository(
         return entity
     }
 
-    override fun saveAll(entity: Collection<User>): User {
-        entity.forEach(::save)
-        return entity.first()
+    override fun saveAll(entities: Collection<User>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {

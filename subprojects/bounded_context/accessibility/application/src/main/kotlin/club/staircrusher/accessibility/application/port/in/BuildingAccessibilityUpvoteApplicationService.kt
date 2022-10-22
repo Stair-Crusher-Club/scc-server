@@ -22,7 +22,7 @@ class BuildingAccessibilityUpvoteApplicationService(
         buildingAccessibilityId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId)
-        val existingUpvote = buildingAccessibilityUpvoteRepository.findByUserAndBuildingAccessibilityAndNotDeleted(
+        val existingUpvote = buildingAccessibilityUpvoteRepository.findExistingUpvote(
             user.id,
             buildingAccessibility,
         )
@@ -42,7 +42,7 @@ class BuildingAccessibilityUpvoteApplicationService(
         buildingAccessibilityId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId)
-        val upvote = buildingAccessibilityUpvoteRepository.findByUserAndBuildingAccessibilityAndNotDeleted(
+        val upvote = buildingAccessibilityUpvoteRepository.findExistingUpvote(
             user.id,
             buildingAccessibility,
         ) ?: return@doInTransaction

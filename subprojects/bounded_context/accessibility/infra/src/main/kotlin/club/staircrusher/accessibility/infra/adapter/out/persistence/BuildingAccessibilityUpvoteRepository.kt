@@ -19,9 +19,8 @@ class BuildingAccessibilityUpvoteRepository(
         return entity
     }
 
-    override fun saveAll(entity: Collection<BuildingAccessibilityUpvote>): BuildingAccessibilityUpvote {
-        entity.forEach(::save)
-        return entity.first()
+    override fun saveAll(entities: Collection<BuildingAccessibilityUpvote>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {
@@ -36,7 +35,7 @@ class BuildingAccessibilityUpvoteRepository(
         return queries.buildingAccessibilityUpvoteFindById(id = id).executeAsOneOrNull()?.toDomainModel()
     }
 
-    override fun findByUserAndBuildingAccessibilityAndNotDeleted(
+    override fun findExistingUpvote(
         userId: String,
         buildingAccessibility: BuildingAccessibility
     ): BuildingAccessibilityUpvote? {
@@ -46,7 +45,9 @@ class BuildingAccessibilityUpvoteRepository(
         ).executeAsOneOrNull()?.toDomainModel()
     }
 
-    override fun getTotalUpvoteCount(userId: String): Int {
-        return queries.getTotalUpvoteCount(userId = userId).executeAsOne().toInt()
+    override fun countUpvotes(buildingAccessibilityId: String): Int {
+        return queries.countUpvotes(buildingAccessibilityId = buildingAccessibilityId)
+            .executeAsOne()
+            .toInt()
     }
 }

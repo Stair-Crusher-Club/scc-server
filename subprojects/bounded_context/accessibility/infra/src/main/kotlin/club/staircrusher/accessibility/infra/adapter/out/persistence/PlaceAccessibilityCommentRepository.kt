@@ -18,9 +18,8 @@ class PlaceAccessibilityCommentRepository(
         return entity
     }
 
-    override fun saveAll(entity: Collection<PlaceAccessibilityComment>): PlaceAccessibilityComment {
-        entity.forEach(::save)
-        return entity.first()
+    override fun saveAll(entities: Collection<PlaceAccessibilityComment>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {

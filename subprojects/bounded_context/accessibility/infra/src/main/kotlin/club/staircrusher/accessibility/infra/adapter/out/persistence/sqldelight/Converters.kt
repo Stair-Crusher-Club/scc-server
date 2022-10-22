@@ -93,7 +93,7 @@ fun FindByUserAndBuildingAccessibilityAndNotDeleted.toDomainModel(): BuildingAcc
         userId = user_id,
         buildingAccessibility = buildingAccessibility,
         createdAt = created_at.toInstant(),
-        deletedAt = deleted_at.toInstant(),
+        deletedAt = deleted_at?.toInstant(),
     )
 }
 

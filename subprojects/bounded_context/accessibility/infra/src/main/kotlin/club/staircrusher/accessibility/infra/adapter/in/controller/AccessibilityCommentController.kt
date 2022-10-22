@@ -19,12 +19,12 @@ class AccessibilityCommentController(
     @PostMapping("/registerBuildingAccessibilityComment")
     fun registerBuildingAccessibilityComment(
         @RequestBody request: RegisterBuildingAccessibilityCommentPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): RegisterBuildingAccessibilityCommentPost200Response {
         val result = accessibilityApplicationService.registerBuildingAccessibilityComment(
             BuildingAccessibilityCommentRepository.CreateParams(
                 buildingId = request.buildingId,
-                userId = authentication.principal,
+                userId = authentication?.principal,
                 comment = request.comment,
             )
         )
@@ -36,12 +36,12 @@ class AccessibilityCommentController(
     @PostMapping("/registerPlaceAccessibilityComment")
     fun registerPlaceAccessibilityComment(
         @RequestBody request: RegisterPlaceAccessibilityCommentPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): RegisterPlaceAccessibilityCommentPost200Response {
         val result = accessibilityApplicationService.registerPlaceAccessibilityComment(
             PlaceAccessibilityCommentRepository.CreateParams(
                 placeId = request.placeId,
-                userId = authentication.principal,
+                userId = authentication?.principal,
                 comment = request.comment,
             )
         )

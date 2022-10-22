@@ -27,12 +27,8 @@ class BuildingRepository(db: DB): BuildingRepository{
         return entity
     }
 
-    override fun saveAll(entity: Collection<Building>): Building {
-        entity.forEach {
-            buildingQueries.save(it.toPersistenceModel())
-        }
-
-        return entity.first()
+    override fun saveAll(entities: Collection<Building>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {

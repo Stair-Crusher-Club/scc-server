@@ -9,7 +9,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     api("org.springframework.boot:spring-boot-starter-security")
 
-//    testImplementation(project(":bounded_context:user:infra"))
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    val jacksonModuleKotlinVersion: String by project
+    integrationTestImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
+    integrationTestImplementation("org.springframework.boot:spring-boot-starter-test")
 }

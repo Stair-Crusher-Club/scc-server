@@ -50,9 +50,8 @@ class PlaceRepository(
         return entity
     }
 
-    override fun saveAll(entity: Collection<Place>): Place {
-        entity.forEach { placeQueries.save(it.toPersistenceModel()) }
-        return entity.first()
+    override fun saveAll(entities: Collection<Place>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {

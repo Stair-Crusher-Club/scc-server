@@ -1,7 +1,7 @@
 package club.staircrusher.spring_web.mock
 
 import club.staircrusher.user.domain.model.User
-import club.staircrusher.user.domain.repository.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.stdlib.di.annotation.Component
 import org.junit.jupiter.api.Order
 import org.springframework.core.Ordered
@@ -23,9 +23,8 @@ class InMemoryUserRepository : UserRepository {
         return entity
     }
 
-    override fun saveAll(entity: Collection<User>): User {
-        entity.forEach { save(it) }
-        return entity.first()
+    override fun saveAll(entities: Collection<User>) {
+        entities.forEach(::save)
     }
 
     override fun removeAll() {

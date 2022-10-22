@@ -67,11 +67,11 @@ class AccessibilityApplicationService(
         ).map { it.toDomainModel() }.associateBy { it.userId }
         val buildingAccessibilityUpvoteInfo = buildingAccessibility?.let {
             GetAccessibilityResult.BuildingAccessibilityUpvoteInfo(
-                isUpvoted = buildingAccessibilityUpvoteRepository.findByUserAndBuildingAccessibilityAndNotDeleted(
+                isUpvoted = buildingAccessibilityUpvoteRepository.findExistingUpvote(
                     userId,
                     it,
                 ) != null,
-                totalUpvoteCount = buildingAccessibilityUpvoteRepository.getTotalUpvoteCount(place.buildingId),
+                totalUpvoteCount = buildingAccessibilityUpvoteRepository.countUpvotes(buildingAccessibility.id),
             )
         }
 
@@ -248,7 +248,7 @@ class AccessibilityApplicationService(
 
     fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
         val placeAccessibilities = placeAccessibilityRepository.findByUserId(userId)
-        val buildingAccessibilities = buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.id })
+        val buildingAccessibilities = buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.placeId })
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 }

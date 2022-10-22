@@ -2,7 +2,6 @@ package club.staircrusher.spring_web.authentication.app
 
 import club.staircrusher.spring_web.authentication.BeforeAuthSccAuthentication
 import club.staircrusher.stdlib.auth.AuthUser
-import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.UserAuthApplicationService
 import club.staircrusher.user.domain.model.User
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component
 class SccAppAuthenticationProvider(
     private val userAuthApplicationService: UserAuthApplicationService,
     private val userApplicationService: UserApplicationService,
-    private val transactionManager: TransactionManager,
 ) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication): Authentication {
         val beforeAuthSccAuthentication = authentication as BeforeAuthSccAuthentication
@@ -27,9 +25,8 @@ class SccAppAuthenticationProvider(
             throw BadCredentialsException("Invalid access token.", e)
         }
 
-        val user: User = transactionManager.doInTransaction {
-            userApplicationService.getUser(userId)
-        } ?: throw BadCredentialsException("No User found with given credentials.")
+        val user: User = userApplicationService.getUser(userId)
+            ?: throw BadCredentialsException("No User found with given credentials.")
 
         return SccAppAuthentication(
             AuthUser(
