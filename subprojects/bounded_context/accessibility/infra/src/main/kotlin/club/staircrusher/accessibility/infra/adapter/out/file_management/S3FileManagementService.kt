@@ -53,7 +53,13 @@ internal class S3FileManagementService(
         return buildString {
             append(objectKeyTimestampPrefixFormat.format(clock.instant().atOffset(ZoneOffset.UTC)))
             append("_")
-            @Suppress("MagicNumber") append(UUID.randomUUID().toString().take(16))
+            @Suppress("MagicNumber")
+            UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .take(16)
+                .uppercase()
+                .let { append(it) }
             extension?.let { append(".$extension") }
         }
     }
