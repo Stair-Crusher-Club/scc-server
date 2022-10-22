@@ -1,3 +1,3 @@
 dependencies {
-    implementation(project(":bounded_context:user:application"))
+    implementation(projects.boundedContext.user.application)
 }

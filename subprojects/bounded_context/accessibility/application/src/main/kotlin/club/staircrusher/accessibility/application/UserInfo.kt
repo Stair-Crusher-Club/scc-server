@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.application
 
-import club.staircrusher.user.domain.entity.User
+import club.staircrusher.user.domain.model.User
 
 data class UserInfo(
     val userId: String,

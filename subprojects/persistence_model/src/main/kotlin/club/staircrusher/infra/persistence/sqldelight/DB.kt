@@ -12,7 +12,7 @@ import club.staircrusher.stdlib.place.PlaceCategory
 import javax.sql.DataSource
 
 @Component
-class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(JdbcDriver(dataSource)) {
+class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelightJdbcDriver(dataSource)) {
     private val placeCategoryStringColumnAdapter = object : ColumnAdapter<PlaceCategory, String> {
         override fun decode(databaseValue: String): PlaceCategory {
             return PlaceCategory.valueOf(databaseValue)
@@ -38,7 +38,7 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(JdbcDriver
     val userQueries = scc.userQueries
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {
-        val driver = this.driver as JdbcDriver
+        val driver = this.driver as SqlDelightJdbcDriver
         check(driver.isolationLevel == null) {
             """
             Since SCC does not allow nested transaction, isolationLevel saved in
@@ -46,7 +46,7 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(JdbcDriver
             """.trimIndent()
         }
         return transactionWithResult(noEnclosing = true) {
-            Transaction(this).block()
+            SqlDelightTransaction(this).block()
         }
     }
 
@@ -54,7 +54,7 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(JdbcDriver
         isolationLevel: TransactionIsolationLevel,
         block: Transaction<T>.() -> T,
     ): T {
-        val driver = this.driver as JdbcDriver
+        val driver = this.driver as SqlDelightJdbcDriver
         check(driver.isolationLevel == null) {
             """
             Since SCC does not allow nested transaction, isolationLevel saved in
@@ -64,7 +64,7 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(JdbcDriver
         driver.isolationLevel = isolationLevel.toConnectionIsolationLevel()
         return try {
             transactionWithResult(noEnclosing = true) {
-                Transaction(this).block()
+                SqlDelightTransaction(this).block()
             }
         } finally {
             driver.isolationLevel = null

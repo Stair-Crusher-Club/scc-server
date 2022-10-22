@@ -1,7 +1,7 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
-import club.staircrusher.quest.domain.service.PlaceClusterer
-import club.staircrusher.quest.domain.vo.ClubQuestTargetPlace
+import club.staircrusher.quest.application.port.out.web.PlaceClusterer
+import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 import club.staircrusher.quest.infra.kmeans.EuclideanDistance
 import club.staircrusher.quest.infra.kmeans.KMeans
 import club.staircrusher.quest.infra.kmeans.Record

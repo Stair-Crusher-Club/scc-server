@@ -1,7 +1,7 @@
 package club.staircrusher.quest.infra.adapter.`in`.converter
 
 import club.staircrusher.admin.api.dto.ClubQuestTargetPlaceDTO
-import club.staircrusher.quest.domain.vo.ClubQuestTargetPlace
+import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 
 object ClubQuestTargetPlaceConverter {
     fun convertToModel(dto: ClubQuestTargetPlaceDTO): ClubQuestTargetPlace {

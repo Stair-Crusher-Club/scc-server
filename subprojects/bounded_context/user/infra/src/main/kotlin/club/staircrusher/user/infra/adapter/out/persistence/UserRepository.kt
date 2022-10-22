@@ -1,11 +1,9 @@
 package club.staircrusher.user.infra.adapter.out.persistence
 
 import club.staircrusher.infra.persistence.sqldelight.DB
-import club.staircrusher.user.domain.entity.User
-import club.staircrusher.user.domain.repository.UserRepository
+import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.user.infra.adapter.out.persistence.sqldelight.toDomainModel
-import club.staircrusher.user.infra.adapter.out.persistence.sqldelight.toPersistenceModel
 
 @Component
 class UserRepository(

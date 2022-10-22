@@ -3,8 +3,6 @@ package club.staircrusher.place.infra.adapter.out.persistence
 import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.infra.toDomainModel
-import club.staircrusher.place.infra.toPersistenceModel
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 

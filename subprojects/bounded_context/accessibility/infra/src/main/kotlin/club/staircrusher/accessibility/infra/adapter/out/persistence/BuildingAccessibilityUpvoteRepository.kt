@@ -1,8 +1,8 @@
 package club.staircrusher.accessibility.infra.adapter.out.persistence
 
+import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
-import club.staircrusher.accessibility.domain.repository.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toDomainModel
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
 import club.staircrusher.infra.persistence.sqldelight.DB

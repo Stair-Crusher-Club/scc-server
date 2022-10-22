@@ -5,9 +5,9 @@ plugins {
 
 
 dependencies {
-    implementation(project(":bounded_context:place:application"))
-    implementation(project(":bounded_context:accessibility:application"))
-    api(project(":admin-api"))
+    implementation(projects.boundedContext.place.application)
+    implementation(projects.boundedContext.accessibility.application)
+    api(projects.adminApi)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
 }

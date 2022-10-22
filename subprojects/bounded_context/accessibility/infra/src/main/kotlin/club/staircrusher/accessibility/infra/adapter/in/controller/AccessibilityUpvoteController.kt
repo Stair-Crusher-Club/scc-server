@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.BuildingAccessibilityUpvoteApplicationService
+import club.staircrusher.accessibility.application.port.`in`.BuildingAccessibilityUpvoteApplicationService
 import club.staircrusher.api.spec.dto.GiveBuildingAccessibilityUpvotePostRequest
 import club.staircrusher.spring_web.authentication.app.SccAppAuthentication
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,7 @@ class AccessibilityUpvoteController(
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         buildingAccessibilityUpvoteApplicationService.giveUpvote(
-            authUser = authentication.details,
+            user = authentication.details,
             buildingAccessibilityId = request.buildingAccessibilityId,
         )
         return ResponseEntity
@@ -32,7 +32,7 @@ class AccessibilityUpvoteController(
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         buildingAccessibilityUpvoteApplicationService.cancelUpvote(
-            authUser = authentication.details,
+            user = authentication.details,
             buildingAccessibilityId = request.buildingAccessibilityId,
         )
         return ResponseEntity

@@ -1,9 +1,9 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
 import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.application.service.PlaceService
-import club.staircrusher.quest.domain.service.ClubQuestTargetPlacesSearcher
-import club.staircrusher.quest.domain.vo.ClubQuestTargetPlace
+import club.staircrusher.place.application.port.`in`.PlaceService
+import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
+import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory
 import kotlinx.coroutines.async

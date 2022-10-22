@@ -3,7 +3,7 @@ package club.staircrusher.quest.infra.adapter.`in`.controller
 import club.staircrusher.admin.api.dto.ClubQuestCreateDryRunResultItemDTO
 import club.staircrusher.admin.api.dto.ClubQuestsCreateDryRunPostRequest
 import club.staircrusher.admin.api.dto.ClubQuestsCreatePostRequest
-import club.staircrusher.quest.application.ClubQuestCreateAplService
+import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.infra.adapter.`in`.converter.ClubQuestCreateDryRunResultItemConverter
 import club.staircrusher.quest.infra.adapter.`in`.converter.LocationConverter
 import org.springframework.http.ResponseEntity

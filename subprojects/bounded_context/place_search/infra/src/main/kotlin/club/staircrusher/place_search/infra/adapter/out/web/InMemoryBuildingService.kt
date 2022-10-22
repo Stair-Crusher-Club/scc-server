@@ -6,7 +6,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
 class InMemoryBuildingService(
-    private val buildingService: club.staircrusher.place.application.service.BuildingService,
+    private val buildingService: club.staircrusher.place.application.port.`in`.BuildingService,
 ) : BuildingService {
     override fun getById(buildingId: String): Building? {
        return buildingService.getById(buildingId)?.let {

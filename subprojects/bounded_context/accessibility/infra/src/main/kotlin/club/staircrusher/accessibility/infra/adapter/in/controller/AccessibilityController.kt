@@ -1,10 +1,8 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.AccessibilityApplicationService
-import club.staircrusher.accessibility.domain.service.BuildingAccessibilityCommentService
-import club.staircrusher.accessibility.domain.service.PlaceAccessibilityCommentService
-import club.staircrusher.accessibility.infra.adapter.`in`.toDTO
-import club.staircrusher.accessibility.infra.adapter.`in`.toModel
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
+import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
@@ -56,7 +54,7 @@ class AccessibilityController(
         val result = accessibilityApplicationService.register(
             createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = userId),
             createBuildingAccessibilityCommentParams = request.buildingAccessibilityParams?.comment?.let {
-                BuildingAccessibilityCommentService.CreateParams(
+                BuildingAccessibilityCommentRepository.CreateParams(
                     buildingId = request.buildingAccessibilityParams!!.buildingId,
                     userId = userId,
                     comment = it,
@@ -64,7 +62,7 @@ class AccessibilityController(
             },
             createPlaceAccessibilityParams = request.placeAccessibilityParams.toModel(userId = userId),
             createPlaceAccessibilityCommentParams = request.placeAccessibilityParams.comment?.let {
-                PlaceAccessibilityCommentService.CreateParams(
+                PlaceAccessibilityCommentRepository.CreateParams(
                     placeId = request.placeAccessibilityParams.placeId,
                     userId = userId,
                     comment = it,

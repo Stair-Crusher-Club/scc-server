@@ -18,9 +18,9 @@ dependencies {
     implementation("com.zaxxer:HikariCP")
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
 
-    implementation(project(":spring-web"))
-    implementation(project(":spring_message"))
-    implementation(project(":stdlib"))
+    implementation(projects.springWeb)
+    implementation(projects.springMessage)
+    implementation(projects.stdlib)
     implementation(projects.persistenceModel)
 }
 

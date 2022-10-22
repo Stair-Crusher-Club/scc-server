@@ -1,7 +1,7 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
-import club.staircrusher.accessibility.application.AccessibilityApplicationService
-import club.staircrusher.quest.domain.service.AccessibilityService
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.quest.application.port.out.web.AccessibilityService
 import club.staircrusher.stdlib.di.annotation.Component
 
 /**

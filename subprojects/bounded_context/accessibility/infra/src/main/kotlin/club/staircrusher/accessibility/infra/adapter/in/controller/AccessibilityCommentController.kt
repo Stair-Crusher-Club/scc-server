@@ -1,9 +1,8 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.AccessibilityApplicationService
-import club.staircrusher.accessibility.domain.service.BuildingAccessibilityCommentService
-import club.staircrusher.accessibility.domain.service.PlaceAccessibilityCommentService
-import club.staircrusher.accessibility.infra.adapter.`in`.toDTO
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
+import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPost200Response
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPostRequest
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityCommentPost200Response
@@ -23,7 +22,7 @@ class AccessibilityCommentController(
         authentication: SccAppAuthentication,
     ): RegisterBuildingAccessibilityCommentPost200Response {
         val result = accessibilityApplicationService.registerBuildingAccessibilityComment(
-            BuildingAccessibilityCommentService.CreateParams(
+            BuildingAccessibilityCommentRepository.CreateParams(
                 buildingId = request.buildingId,
                 userId = authentication.principal,
                 comment = request.comment,
@@ -40,7 +39,7 @@ class AccessibilityCommentController(
         authentication: SccAppAuthentication,
     ): RegisterPlaceAccessibilityCommentPost200Response {
         val result = accessibilityApplicationService.registerPlaceAccessibilityComment(
-            PlaceAccessibilityCommentService.CreateParams(
+            PlaceAccessibilityCommentRepository.CreateParams(
                 placeId = request.placeId,
                 userId = authentication.principal,
                 comment = request.comment,

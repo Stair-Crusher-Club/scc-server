@@ -1,7 +1,7 @@
 package club.staircrusher.quest.infra.adapter.`in`.converter
 
 import club.staircrusher.admin.api.dto.ClubQuestCreateDryRunResultItemDTO
-import club.staircrusher.quest.domain.vo.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 
 object ClubQuestCreateDryRunResultItemConverter {
     fun convertToModel(dto: ClubQuestCreateDryRunResultItemDTO): ClubQuestCreateDryRunResultItem {
