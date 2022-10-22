@@ -45,8 +45,8 @@ class BuildingAccessibilityUpvoteRepository(
         ).executeAsOneOrNull()?.toDomainModel()
     }
 
-    override fun getTotalUpvoteCountOfBuildingAccessibility(buildingAccessibilityId: String): Int {
-        return queries.getTotalUpvoteCountOfBuildingAccessibility(buildingAccessibilityId = buildingAccessibilityId)
+    override fun countUpvotes(buildingAccessibilityId: String): Int {
+        return queries.countUpvotes(buildingAccessibilityId = buildingAccessibilityId)
             .executeAsOne()
             .toInt()
     }

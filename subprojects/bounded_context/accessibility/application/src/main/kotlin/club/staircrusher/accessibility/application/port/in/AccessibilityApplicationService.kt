@@ -71,7 +71,7 @@ class AccessibilityApplicationService(
                     userId,
                     it,
                 ) != null,
-                totalUpvoteCount = buildingAccessibilityUpvoteRepository.getTotalUpvoteCountOfBuildingAccessibility(buildingAccessibility.id),
+                totalUpvoteCount = buildingAccessibilityUpvoteRepository.countUpvotes(buildingAccessibility.id),
             )
         }
 

@@ -6,5 +6,5 @@ import club.staircrusher.stdlib.domain.repository.EntityRepository
 
 interface BuildingAccessibilityUpvoteRepository : EntityRepository<BuildingAccessibilityUpvote, String> {
     fun findExistingUpvote(userId: String, buildingAccessibility: BuildingAccessibility): BuildingAccessibilityUpvote?
-    fun getTotalUpvoteCountOfBuildingAccessibility(buildingAccessibilityId: String): Int
+    fun countUpvotes(buildingAccessibilityId: String): Int
 }
