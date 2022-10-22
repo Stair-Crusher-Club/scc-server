@@ -1,6 +1,7 @@
 package club.staircrusher.accessibility.infra.adapter.out.file_management
 
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
+import club.staircrusher.accessibility.application.port.out.file_management.UploadUrl
 import club.staircrusher.stdlib.di.annotation.Component
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
@@ -23,7 +24,7 @@ internal class S3FileManagementService(
         }
         .build()
 
-    override fun getFileUploadUrl(filenameExtension: String): FileManagementService.UploadUrl {
+    override fun getFileUploadUrl(filenameExtension: String): UploadUrl {
         val normalizedFilenameExtension = filenameExtension.replace(Regex("^\\."), "")
         val objectRequest = PutObjectRequest.builder()
             .bucket(properties.bucketName)
@@ -38,7 +39,7 @@ internal class S3FileManagementService(
             .build()
 
         val presignedRequest = s3Presigner.presignPutObject(s3PresignRequest)
-        return FileManagementService.UploadUrl(
+        return UploadUrl(
             url = presignedRequest.url().toString(),
             expireAt = clock.instant() + presignedUrlExpiryDuration,
         )
