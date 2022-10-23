@@ -5,16 +5,18 @@ resource "aws_lightsail_key_pair" "scc_key_pair" {
 locals {
   control_plane_userdata = <<USERDATA
 #!/bin/bash
-mkdir -p /home/ubuntu/oidc
-echo '${data.sops_file.secret_data.data["k3s.service_account_key_file"]}' > /home/ubuntu/oidc/service_account_key_file
-echo '${data.sops_file.secret_data.data["k3s.service_account_signing_key_file"]}' > /home/ubuntu/oidc/service_account_signing_key_file
+mkdir -p /var/lib/rancher/k3s/server/manifests
+NODE_PORT=${var.node_port}
+echo "${data.sops_file.secret_data.data["k3s.traefik-config"]}" > /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
 curl -sfL https://get.k3s.io | sh -s - server \
   --write-kubeconfig-mode "0644" \
   --token ${data.sops_file.secret_data.data["k3s.token"]} \
-  --kube-apiserver-arg service-account-key-file=/home/ubuntu/oidc/service_account_key_file \
-  --kube-apiserver-arg service-account-signing-key-file=/home/ubuntu/oidc/service_account_signing_key_file \
-  --kube-apiserver-arg api-audiences=sts.amazonaws.com \
-  --kube-apiserver-arg service-account-issuer=https://${data.terraform_remote_state.s3.outputs.k3s_oidc_endpoint}
+  --kube-apiserver-arg service-account-issuer=https://k3s.staircrusher.club \
+  --kube-apiserver-arg service-account-jwks-uri=https://k3s.staircrusher.club/openid/v1/jwks \
+  --kube-apiserver-arg anonymous-auth=true \
+  --https-listen-port 443 \
+  --disable servicelb
+kubectl create clusterrolebinding oidc-reviewer --clusterrole=system:service-account-issuer-discovery --group=system:unauthenticated
 USERDATA
 }
 
@@ -42,8 +44,15 @@ resource "aws_lightsail_instance_public_ports" "k3s_control_plane" {
 
   port_info {
     protocol  = "tcp"
-    from_port = 6443
-    to_port   = 6443
+    from_port = var.node_port
+    to_port   = var.node_port
+    cidrs     = ["0.0.0.0/0"]
+  }
+
+  port_info {
+    protocol  = "tcp"
+    from_port = 443
+    to_port   = 443
     cidrs     = ["0.0.0.0/0"]
   }
 
@@ -72,7 +81,7 @@ locals {
   data_plane_userdata = <<USERDATA
 #!/bin/bash
 curl -sfL https://get.k3s.io | sh -s - agent \
-  --server https://${aws_lightsail_instance.k3s_control_plane.private_ip_address}:6443 \
+  --server https://${aws_lightsail_instance.k3s_control_plane.private_ip_address} \
   --token ${data.sops_file.secret_data.data["k3s.token"]}
 USERDATA
 }
@@ -101,9 +110,16 @@ resource "aws_lightsail_instance_public_ports" "k3s_data_plane" {
 
   port_info {
     protocol  = "tcp"
-    from_port = 6443
-    to_port   = 6443
+    from_port = var.node_port
+    to_port   = var.node_port
     cidrs     = ["0.0.0.0/0"]
+  }
+
+  port_info {
+    protocol  = "tcp"
+    from_port = 443
+    to_port   = 443
+    cidrs     = ["172.26.0.0/20"]
   }
 
   port_info {

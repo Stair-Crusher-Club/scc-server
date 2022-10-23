@@ -3,9 +3,18 @@ provider "aws" {
 }
 
 terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+    external = {
+      source = "hashicorp/external"
+    }
+  }
+
   backend "s3" {
     bucket = "scc-tf-remote-state"
-    key    = "lightsail.domain.tfstate"
+    key    = "k3s.domain.tfstate"
     region = "ap-northeast-2"
   }
 }
@@ -14,7 +23,7 @@ data "terraform_remote_state" "lightsail" {
   backend = "s3"
   config = {
     bucket = "scc-tf-remote-state"
-    key    = "lightsail.tfstate"
+    key    = "k3s.tfstate"
     region = "ap-northeast-2"
   }
 }
