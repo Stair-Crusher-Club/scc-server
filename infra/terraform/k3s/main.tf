@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket = "scc-tf-remote-state"
-    key    = "lightsail.tfstate"
+    key    = "k3s.tfstate"
     region = "ap-northeast-2"
   }
 }

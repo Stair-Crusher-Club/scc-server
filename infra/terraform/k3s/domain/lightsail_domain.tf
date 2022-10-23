@@ -55,8 +55,12 @@ resource "aws_lightsail_domain_entry" "api" {
   domain_name = aws_lightsail_domain.staircrusher_club.domain_name
   name        = "api"
   type        = "A"
-  target      = data.terraform_remote_state.lightsail.outputs.lb_dns_name
+  target      = "our-map-lb-890445987.ap-northeast-2.elb.amazonaws.com"
   is_alias    = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 resource "aws_lightsail_domain_entry" "dev_api" {
@@ -65,5 +69,9 @@ resource "aws_lightsail_domain_entry" "dev_api" {
   type        = "A"
   target      = data.terraform_remote_state.lightsail.outputs.lb_dns_name
   is_alias    = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
