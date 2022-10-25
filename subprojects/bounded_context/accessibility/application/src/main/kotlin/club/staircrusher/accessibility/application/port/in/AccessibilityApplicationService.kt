@@ -53,7 +53,7 @@ class AccessibilityApplicationService(
         val userInfo: UserInfo?
     )
 
-    fun getAccessibility(placeId: String, userId: String): GetAccessibilityResult = transactionManager.doInTransaction {
+    fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult = transactionManager.doInTransaction {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.buildingId)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.buildingId)
@@ -67,10 +67,10 @@ class AccessibilityApplicationService(
         ).map { it.toDomainModel() }.associateBy { it.userId }
         val buildingAccessibilityUpvoteInfo = buildingAccessibility?.let {
             GetAccessibilityResult.BuildingAccessibilityUpvoteInfo(
-                isUpvoted = buildingAccessibilityUpvoteRepository.findExistingUpvote(
+                isUpvoted = userId?.let { buildingAccessibilityUpvoteRepository.findExistingUpvote(
                     userId,
-                    it,
-                ) != null,
+                    buildingAccessibility,
+                ) } != null,
                 totalUpvoteCount = buildingAccessibilityUpvoteRepository.countUpvotes(buildingAccessibility.id),
             )
         }

@@ -24,9 +24,9 @@ class AccessibilityController(
     @PostMapping("/getAccessibility")
     fun getAccessibility(
         @RequestBody request: GetAccessibilityPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): GetAccessibilityPost200Response {
-        val result = accessibilityApplicationService.getAccessibility(request.placeId, authentication.details.id)
+        val result = accessibilityApplicationService.getAccessibility(request.placeId, authentication?.details?.id)
         return GetAccessibilityPost200Response(
             buildingAccessibility = result.buildingAccessibility?.let {
                 it.value.toDTO(
