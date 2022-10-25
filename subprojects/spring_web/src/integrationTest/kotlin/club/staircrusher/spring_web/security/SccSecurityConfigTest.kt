@@ -56,6 +56,9 @@ class SccSecurityConfigTest {
         mvc.get("/echoUserId") {
             header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
         }.andExpect {
+            status {
+                isOk()
+            }
             content {
                 string(userId)
             }
