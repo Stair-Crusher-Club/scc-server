@@ -30,6 +30,12 @@ class PlaceRepository(
     }
 
     override fun findByIdIn(ids: Collection<String>): List<Place> {
+        if (ids.isEmpty()) {
+            // empty list로 쿼리를 할 경우 sqldelight가 제대로 처리하지 못하는 문제가 있다.
+            // select * from entity where entity.id in (); <- 이런 식으로 쿼리를 날리는데, () 부분이 syntax error이다.
+            // 따라서 ids가 empty면 early return을 해준다.
+            return emptyList()
+        }
         val places = placeQueries.findByIdIn(ids).executeAsList()
         val buildingIds = places.mapNotNull { it.building_id }
         val buildings = buildingRepository.findByIdIn(buildingIds).associateBy { it.id }
