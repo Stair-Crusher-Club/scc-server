@@ -41,6 +41,12 @@ class UserRepository(
     }
 
     override fun findByIdIn(ids: Collection<String>): List<User> {
+        if (ids.isEmpty()) {
+            // empty list로 쿼리를 할 경우 sqldelight가 제대로 처리하지 못하는 문제가 있다.
+            // select * from entity where entity.id in (); <- 이런 식으로 쿼리를 날리는데, () 부분이 syntax error이다.
+            // 따라서 ids가 empty면 early return을 해준다.
+            return emptyList()
+        }
         return queries.findByIdIn(ids = ids)
             .executeAsList()
             .map { it.toDomainModel() }
