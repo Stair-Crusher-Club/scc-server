@@ -20,9 +20,10 @@ class SccExceptionHandler {
             var isInitial = true
             while (cause != null) {
                 if (!isInitial) {
+                    appendLine()
                     append("  Caused by ")
                 }
-                appendLine("${cause::class.simpleName}: ${cause.message}")
+                append("${cause::class.simpleName}: ${cause.message}")
                 cause = cause.cause
                 isInitial = false
             }
