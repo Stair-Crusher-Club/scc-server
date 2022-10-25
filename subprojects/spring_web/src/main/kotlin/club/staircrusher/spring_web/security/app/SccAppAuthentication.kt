@@ -12,7 +12,7 @@ class SccAppAuthentication(
     }
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return listOf(GrantedAuthority { authority })
+        return listOf(GrantedAuthority { "ROLE_$authority" })
     }
 
     override fun getCredentials(): String {

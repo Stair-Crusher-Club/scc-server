@@ -12,4 +12,8 @@ class SccAuthenticationFilter(
         val accessToken = request.getHeader(HttpHeaders.AUTHORIZATION)?.replace("Bearer ", "")
         accessToken?.let { BeforeAuthSccAuthentication(it) }
     }
-)
+) {
+    init {
+        successHandler = SccAuthenticationSuccessHandler()
+    }
+}
