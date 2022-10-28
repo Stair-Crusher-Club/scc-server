@@ -108,7 +108,7 @@ class KakaoMapsService(
     override suspend fun findByKeyword(keyword: String): List<Place> {
         val result = kakaoService.searchByKeyword(keyword).awaitFirstOrNull()
         logger.debug { result }
-        return result?.convertToModel() ?: emptyList()
+        return (result?.convertToModel() ?: emptyList()).removeDuplicates()
     }
 
     override suspend fun findByCategory(category: PlaceCategory): List<Place> {
@@ -130,7 +130,7 @@ class KakaoMapsService(
             nextPage += 1
             result += apiResult.convertToModel()
         }
-        return result
+        return result.removeDuplicates()
     }
 
     // TODO: 한 번에 한 페이지만 조회하는 대신 동시에 여러 페이지 조회하기
@@ -166,7 +166,7 @@ class KakaoMapsService(
             nextPage += 1
             result += apiResult.convertToModel()
         }
-        return result
+        return result.removeDuplicates()
     }
 
     private fun SearchResult.convertToModel(): List<Place> {
@@ -380,4 +380,8 @@ class KakaoMapsService(
         @SerialName("msg")
         val msg: String,
     )
+
+    private fun List<Place>.removeDuplicates(): List<Place> {
+        return associateBy { it.id }.values.toList()
+    }
 }
