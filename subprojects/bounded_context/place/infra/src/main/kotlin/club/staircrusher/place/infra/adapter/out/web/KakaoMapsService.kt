@@ -171,36 +171,35 @@ class KakaoMapsService(
     }
 
     private fun SearchResult.convertToModel(): List<Place> {
-        return documents.mapNotNull {
-            if (it.categoryGroupCode == null) {
-                return@mapNotNull null // 운중천과 같이 점포가 아닌 곳도 내려온다. 이런 경우를 필터링해준다.
-            }
-            @Suppress("TooGenericExceptionCaught", "SwallowedException")
-            try {
-                Place(
-                    id = it.id,
-                    name = it.placeName,
-                    location = it.location,
-                    building = Building(
-                        id = Hashing.getHash(
-                            it.roadAddressName,
-                            length = 36
-                        ), // TODO: 정책 제대로 정하기; 근데 어차피 주소로 unique key를 만들어내긴 해야 할 듯.
-                        name = it.roadAddressName,
+        return documents
+            .filterNot { it.isNonPlaceResult() }
+            .mapNotNull {
+                @Suppress("TooGenericExceptionCaught", "SwallowedException")
+                try {
+                    Place(
+                        id = it.id,
+                        name = it.placeName,
                         location = it.location,
-                        address = it.parseToBuildingAddress(),
-                        siGunGuId = "temp", // TODO: 제대로 채우기
-                        eupMyeonDongId = "temp",
-                    ),
-                    siGunGuId = null,
-                    eupMyeonDongId = null,
-                    category = it.categoryGroupCode?.toPlaceCategory(),
-                )
-            } catch (t: Throwable) {
-                logger.warn { "Cannot convert document to model: $it" }
-                null
+                        building = Building(
+                            id = Hashing.getHash(
+                                it.roadAddressName,
+                                length = 36
+                            ), // TODO: 정책 제대로 정하기; 근데 어차피 주소로 unique key를 만들어내긴 해야 할 듯.
+                            name = it.roadAddressName,
+                            location = it.location,
+                            address = it.parseToBuildingAddress(),
+                            siGunGuId = "temp", // TODO: 제대로 채우기
+                            eupMyeonDongId = "temp",
+                        ),
+                        siGunGuId = null,
+                        eupMyeonDongId = null,
+                        category = it.categoryGroupCode?.toPlaceCategory(),
+                    )
+                } catch (t: Throwable) {
+                    logger.warn(t) { "Cannot convert document to model: $it" }
+                    null
+                }
             }
-        }
     }
 
     @Serializable
@@ -320,6 +319,14 @@ class KakaoMapsService(
                     }
                 }
             }
+
+            /**
+             * 일부 검색 결과는 점포가 아닌 경우가 있다. 해당 경우들은 검색 결과로 보여주지 않아야 한다.
+             * - case 1. "운중천" - roadAddressName이 empty string으로 내려온다.
+             */
+            fun isNonPlaceResult(): Boolean {
+                return roadAddressName.isBlank()
+            }
         }
 
         @Serializable
@@ -347,9 +354,6 @@ class KakaoMapsService(
 
     @Suppress("MagicNumber")
     fun SearchResult.Document.parseToBuildingAddress(): BuildingAddress {
-        checkNotNull(categoryGroupCode) {
-            "Should not reach here! Strange search result: $this"
-        }
         val addressNameTokens = addressName.split(" ")
         val siDo = addressNameTokens[0]
         val siGunGu = addressNameTokens[1]
