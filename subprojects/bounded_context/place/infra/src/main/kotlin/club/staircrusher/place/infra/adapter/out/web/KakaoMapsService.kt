@@ -121,7 +121,7 @@ class KakaoMapsService(
         var nextPage = 1
         var pageablePage: Int? = null
         while (pageablePage == null || nextPage <= pageablePage) {
-            val apiResult = kakaoService.searchByKeyword(keyword).awaitFirstOrNull()
+            val apiResult = kakaoService.searchByKeyword(keyword, page = nextPage).awaitFirstOrNull()
             logger.debug { apiResult }
             if (apiResult == null) {
                 break
@@ -147,6 +147,7 @@ class KakaoMapsService(
                         x = region.centerLocation.lng.toString(),
                         y = region.centerLocation.lat.toString(),
                         radius = region.radiusMeters,
+                        page = nextPage,
                     )
                 }
                 is MapsService.SearchOption.RectangleRegion -> {
