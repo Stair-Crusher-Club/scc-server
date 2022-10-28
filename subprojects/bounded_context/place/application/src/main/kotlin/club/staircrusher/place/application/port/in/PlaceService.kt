@@ -21,12 +21,18 @@ class PlaceService(
 
     // TODO: support filter
     suspend fun findByKeyword(keyword: String): List<Place> {
+        if (keyword.isBlank()) {
+            return emptyList()
+        }
         val places = mapsService.findByKeyword(keyword)
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
 
     suspend fun findAllByKeyword(keyword: String): List<Place> {
+        if (keyword.isBlank()) {
+            return emptyList()
+        }
         val places = mapsService.findAllByKeyword(keyword)
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
