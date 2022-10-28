@@ -1,0 +1,7 @@
+POST http://localhost:8080/searchPlaces
+Content-Type: application/json
+
+{
+  "searchText": "운중천",
+  "distanceMetersLimit": 10000
+}
