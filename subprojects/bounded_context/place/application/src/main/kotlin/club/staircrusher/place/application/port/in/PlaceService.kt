@@ -24,7 +24,7 @@ class PlaceService(
         if (keyword.isBlank()) {
             return emptyList()
         }
-        val places = mapsService.findByKeyword(keyword)
+        val places = mapsService.findAllByKeyword(keyword)
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
