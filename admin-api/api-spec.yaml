@@ -7,7 +7,28 @@ info:
 
 defaultContentType: application/json
 
+# TODO: pagination
 paths:
+  /clubQuests:
+    get:
+      summary: 퀘스트 전체 목록을 반환한다.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                  required:
+                    - id
+                    - name
+
   /clubQuests/create/dryRun:
     post:
       summary: 주어진 조건(중심 위치, 반경, 퀘스트 분할 숫자 등)으로 퀘스트를 생성하면 어떻게 생성될지 시뮬레이션하여 미리 확인한다.
@@ -58,6 +79,22 @@ paths:
       responses:
         '204': {}
 
+  /clubQuests/{clubQuestId}:
+    get:
+      summary: dryRun 생성 결과를 받아서 실제로 퀘스트를 생성한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubQuestDTO'
+
 components:
   # Reusable schemas (data models)
   schemas:
@@ -80,27 +117,77 @@ components:
       properties:
         questCenterLocation:
           $ref: '#/components/schemas/LocationDTO'
-        targetPlaces:
+        targetBuildings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubQuestTargetBuildingDTO'
+      required:
+        - questCenterLocation
+        - targetBuildings
+
+    ClubQuestDTO:
+      description: 퀘스트.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        buildings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubQuestTargetBuildingDTO'
+      required:
+        - id
+        - name
+        - buildings
+
+    ClubQuestTargetBuildingDTO:
+      description: 퀘스트 대상이 되는 건물 정보.
+      properties:
+        buildingId:
+          type: string
+        name:
+          type: string
+        location:
+          $ref: '#/components/schemas/LocationDTO'
+        places:
           type: array
           items:
             $ref: '#/components/schemas/ClubQuestTargetPlaceDTO'
       required:
-        - questCenterLocation
-        - targetPlaces
+        - buildingId
+        - name
+        - location
+        - places
 
     ClubQuestTargetPlaceDTO:
       description: 퀘스트 대상이 되는 점포 정보.
       properties:
+        placeId:
+          type: string
+          description: 점포의 ID.
+        buildingId:
+          type: string
+          description: 건물의 ID.
         name:
           type: string
           description: 점포의 human-readable한 이름.
         location:
           $ref: '#/components/schemas/LocationDTO'
-          description: 점포의 위경도 좌표.
-        placeId:
-          type: string
-          description: 점포의 ID.
+        isConquered:
+          type: boolean
+          description: 장소가 정복됐는지 여부.
+        isClosed:
+          type: boolean
+          description: 장소가 폐업됐는지 여부.
+        isNotAccessible:
+          type: boolean
+          description: 장소에 접근 가능한지 여부.
       required:
         - name
         - location
         - placeId
+        - buildingId
+        - isConquered
+        - isClosed
+        - isNotAccessible
