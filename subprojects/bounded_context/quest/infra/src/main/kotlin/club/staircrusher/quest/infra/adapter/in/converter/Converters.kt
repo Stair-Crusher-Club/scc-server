@@ -4,6 +4,7 @@ import club.staircrusher.admin.api.dto.ClubQuestCreateDryRunResultItemDTO
 import club.staircrusher.admin.api.dto.ClubQuestDTO
 import club.staircrusher.admin.api.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin.api.dto.ClubQuestTargetPlaceDTO
+import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
@@ -21,10 +22,10 @@ fun ClubQuestCreateDryRunResultItem.toDTO(conqueredPlaceIds: Set<String>) =
         targetBuildings = targetBuildings.map { it.toDTO(conqueredPlaceIds) }
     )
 
-fun ClubQuest.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestDTO(
-    id = id,
-    name = name,
-    buildings = targetBuildings.map { it.toDTO(conqueredPlaceIds) }
+fun ClubQuestWithDtoInfo.toDTO() = ClubQuestDTO(
+    id = quest.id,
+    name = quest.name,
+    buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds) }
 )
 
 fun ClubQuestTargetBuildingDTO.toModel() = ClubQuestTargetBuilding(

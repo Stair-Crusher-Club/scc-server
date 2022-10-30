@@ -10,6 +10,7 @@ import club.staircrusher.admin.api.dto.ClubQuestsGet200ResponseInner
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
+import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.quest.infra.adapter.`in`.converter.toModel
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AdminClubQuestController(
     private val clubQuestCreateAplService: ClubQuestCreateAplService,
+    private val getClubQuestUseCase: GetClubQuestUseCase,
     private val clubQuestSetIsClosedUseCase: ClubQuestSetIsClosedUseCase,
     private val clubQuestSetIsNotAccessibleUseCase: ClubQuestSetIsNotAccessibleUseCase,
     private val clubQuestRepository: ClubQuestRepository,
@@ -46,7 +48,7 @@ class AdminClubQuestController(
             radiusMeters = request.radiusMeters,
             clusterCount = request.clusterCount,
         )
-        return result.map { it.toDTO(conqueredPlaceIds = emptySet()) } // TODO: conqueredPlaceIds 제대로 채우기
+        return result.map { it.toDTO(conqueredPlaceIds = emptySet()) }
     }
 
     @PostMapping("/admin/clubQuests/create")
@@ -62,7 +64,7 @@ class AdminClubQuestController(
 
     @GetMapping("/admin/clubQuests/{clubQuestId}")
     fun getClubQuest(@PathVariable clubQuestId: String): ClubQuestDTO {
-        return clubQuestRepository.findById(clubQuestId).toDTO(conqueredPlaceIds = emptySet()) // TODO: conqueredPlaceIds 제대로 채우기
+        return getClubQuestUseCase.handle(clubQuestId).toDTO()
     }
 
     @DeleteMapping("/admin/clubQuests/{clubQuestId}")
@@ -80,7 +82,7 @@ class AdminClubQuestController(
             request.buildingId,
             request.placeId,
             request.isClosed,
-        ).toDTO(conqueredPlaceIds = emptySet()) // TODO: conqueredPlaceIds 제대로 채우기
+        ).toDTO()
     }
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/isNotAccessible")
@@ -90,6 +92,6 @@ class AdminClubQuestController(
             request.buildingId,
             request.placeId,
             request.isNotAccessible,
-        ).toDTO(conqueredPlaceIds = emptySet()) // TODO: conqueredPlaceIds 제대로 채우기
+        ).toDTO()
     }
 }
