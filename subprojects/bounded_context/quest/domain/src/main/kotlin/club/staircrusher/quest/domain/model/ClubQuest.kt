@@ -10,7 +10,27 @@ class ClubQuest(
     val createdAt: Instant,
 ) {
     val questCenterLocation: Location = dryRunResultItem.questCenterLocation
-    val targetBuildings: List<ClubQuestTargetBuilding> = dryRunResultItem.targetBuildings
+    var targetBuildings: List<ClubQuestTargetBuilding> = dryRunResultItem.targetBuildings
+        internal set
+
+    fun setIsClosed(buildingId: String, placeId: String, value: Boolean) {
+        targetBuildings = targetBuildings.replaced({ it.buildingId == buildingId }) { building ->
+            building.copy(
+                places = building.places.replaced({ it.placeId == placeId }) { place ->
+                    place.copy(isClosed = value)
+                },
+            )
+        }
+    }
+    fun setIsNotAccessible(buildingId: String, placeId: String, value: Boolean) {
+        targetBuildings = targetBuildings.replaced({ it.buildingId == buildingId }) { building ->
+            building.copy(
+                places = building.places.replaced({ it.placeId == placeId }) { place ->
+                    place.copy(isNotAccessible = value)
+                },
+            )
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         return other is ClubQuest && other.id == id
@@ -20,5 +40,12 @@ class ClubQuest(
         return id.hashCode()
     }
 
-    companion object
+    private fun <T> List<T>.replaced(predicateBlock: (T) -> Boolean, convertBlock: (T) -> T): List<T> {
+        val mutableList = this.toMutableList()
+        val matchingItemIdx = indexOfFirst(predicateBlock)
+        val newItem = convertBlock(this[matchingItemIdx])
+        mutableList.removeAt(matchingItemIdx)
+        mutableList.add(matchingItemIdx, newItem)
+        return mutableList.toList()
+    }
 }

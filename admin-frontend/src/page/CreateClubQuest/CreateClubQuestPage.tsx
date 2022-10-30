@@ -77,8 +77,8 @@ function CreateClubQuestPage() {
     } else if (questCenter && questRadius) {
       const markerImage = new window.kakao.maps.MarkerImage(
         '/centerLocation.jpg',
-        new window.kakao.maps.Size(12, 12),
-        { offset: new window.kakao.maps.Point(6, 6) },
+        new window.kakao.maps.Size(20, 20),
+        { offset: new window.kakao.maps.Point(10, 10) },
       );
       const marker = new window.kakao.maps.Marker({
         position: questCenter,

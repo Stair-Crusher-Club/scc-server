@@ -32,4 +32,8 @@ class InMemoryClubQuestRepository : ClubQuestRepository {
     override fun findAllOrderByCreatedAtDesc(): List<ClubQuest> {
         return clubQuestById.values.toList().sortedByDescending { it.createdAt }
     }
+
+    override fun remove(clubQuestId: String) {
+        clubQuestById.remove(clubQuestId)
+    }
 }

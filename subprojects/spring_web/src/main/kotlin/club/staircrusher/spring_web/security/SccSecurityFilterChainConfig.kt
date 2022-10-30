@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
 
 /**
  * FilterChainProxy의 구현 상 한 API 요청 당 사용되는 SecurityFilterChain은 한 개이다.
@@ -50,6 +51,14 @@ class SccSecurityFilterChainConfig {
                     .permitAll()
             }
             .csrf().disable()
+            .cors().configurationSource {
+                CorsConfiguration().apply {
+                    addAllowedMethod("*")
+                    addAllowedMethod("*")
+                    addAllowedHeader("*")
+                    addAllowedOrigin("*")
+                }
+            }.and()
             .build()
     }
 

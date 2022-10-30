@@ -30,12 +30,18 @@ function ClubQuestsPage() {
   }
 
   function onClubQuestDeleteBtnClick(clubQuest: ClubQuestsGet200ResponseInner) {
-    return (e: React.MouseEvent) => {
+    return async (e: React.MouseEvent) => {
       e.stopPropagation();
       if (!window.confirm(`정말 ${clubQuest.name} 퀘스트를 삭제하시겠습니까?`)) {
         return;
       }
-      // TODO: 퀘스트 삭제
+      await withLoading(
+        AdminApi.clubQuestsClubQuestIdDelete(clubQuest.id)
+      );
+      alert('삭제를 완료했습니다.');
+      
+      const res = await AdminApi.clubQuestsGet()
+      setClubQuests(res.data);
     };
   }
 

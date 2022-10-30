@@ -94,6 +94,82 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClubQuestDTO'
+    delete:
+      summary: 퀘스트를 삭제한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204': {}
+
+  /clubQuests/{clubQuestId}/isClosed:
+    put:
+      summary: 점포의 폐점 여부를 저장한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                buildingId:
+                  type: string
+                placeId:
+                  type: string
+                isClosed:
+                  type: boolean
+              required:
+                - buildingId
+                - placeId
+                - isClosed
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubQuestDTO'
+
+  /clubQuests/{clubQuestId}/isNotAccessible:
+    put:
+      summary: 점포의 접근 가능 여부를 저장한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                buildingId:
+                  type: string
+                placeId:
+                  type: string
+                isNotAccessible:
+                  type: boolean
+              required:
+                - buildingId
+                - placeId
+                - isNotAccessible
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubQuestDTO'
 
 components:
   # Reusable schemas (data models)

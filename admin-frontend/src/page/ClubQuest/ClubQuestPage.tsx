@@ -122,20 +122,28 @@ function ClubQuestPage() {
   }
 
   const onPlaceIsClosedChange = (place: ClubQuestTargetPlaceDTO) => {
-    return () => {
-      // withLoading(
-      //   apiController.setPlaceIsClosed(clubQuest!.id, target, place)
-      //     .then((clubQuest) => setClubQuest(clubQuest))
-      // );
+    return (event: React.FormEvent<HTMLElement>) => {
+      withLoading(
+        AdminApi.clubQuestsClubQuestIdIsClosedPut(clubQuest!.id, {
+          buildingId: place.buildingId,
+          placeId: place.placeId,
+          isClosed: (event.target as HTMLInputElement).checked,
+        })
+          .then((res) => setClubQuest(res.data))
+      );
     };
   }
 
   const onPlaceIsNotAccessibleChange = (place: ClubQuestTargetPlaceDTO) => {
-    return () => {
-      // withLoading(
-      //   apiController.setPlaceIsNotAccessible(clubQuest!.id, target, place)
-      //     .then((clubQuest) => setClubQuest(clubQuest))
-      // );
+    return (event: React.FormEvent<HTMLElement>) => {
+      withLoading(
+        AdminApi.clubQuestsClubQuestIdIsNotAccessiblePut(clubQuest!.id, {
+          buildingId: place.buildingId,
+          placeId: place.placeId,
+          isNotAccessible: (event.target as HTMLInputElement).checked,
+        })
+          .then((res) => setClubQuest(res.data))
+      );
     };
   }
 
