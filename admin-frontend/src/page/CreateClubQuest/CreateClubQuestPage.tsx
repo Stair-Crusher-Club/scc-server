@@ -110,10 +110,10 @@ function CreateClubQuestPage() {
         marker.setMap(null);
       });
     });
-    const newQuestClustersMarkers = dryRunResult.map((targetPlaces) => {
-      return targetPlaces.targetPlaces.map((targetPlace) => {
+    const newQuestClustersMarkers = dryRunResult.map((item) => {
+      return item.targetBuildings.map((targetBuilding) => {
         const marker = new window.kakao.maps.Marker({
-          position: new kakao.maps.LatLng(targetPlace.location.lat, targetPlace.location.lng),
+          position: new kakao.maps.LatLng(targetBuilding.location.lat, targetBuilding.location.lng),
         });
         marker.setMap(map);
         return marker

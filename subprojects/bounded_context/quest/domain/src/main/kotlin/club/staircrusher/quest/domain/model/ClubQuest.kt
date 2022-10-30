@@ -8,7 +8,7 @@ class ClubQuest(
     dryRunResultItem: ClubQuestCreateDryRunResultItem,
 ) {
     val questCenterLocation: Location = dryRunResultItem.questCenterLocation
-    val targetPlaces: List<ClubQuestTargetPlace> = dryRunResultItem.targetPlaces
+    val targetBuildings: List<ClubQuestTargetBuilding> = dryRunResultItem.targetBuildings
 
     override fun equals(other: Any?): Boolean {
         return other is ClubQuest && other.id == id

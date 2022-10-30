@@ -1,7 +1,7 @@
-import { AnchorButton, Button, ButtonGroup } from '@blueprintjs/core';
+import { Button, ButtonGroup } from '@blueprintjs/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ClubQuestDTO } from '../../type';
+import { ClubQuestDTO } from '../../api';
 
 import './ClubQuestsPage.scss';
 
@@ -18,7 +18,7 @@ function ClubQuestsPage() {
   function onClubQuestDeleteBtnClick(clubQuest: ClubQuestDTO) {
     return (e: React.MouseEvent) => {
       e.stopPropagation();
-      if (!window.confirm(`정말 ${clubQuest.title} 퀘스트를 삭제하시겠습니까?`)) {
+      if (!window.confirm(`정말 ${clubQuest.name} 퀘스트를 삭제하시겠습니까?`)) {
         return;
       }
       // TODO: 퀘스트 삭제
@@ -44,7 +44,7 @@ function ClubQuestsPage() {
           {clubQuests.map((clubQuest) => {
             return (
               <tr onClick={onClubQuestClick(clubQuest)}>
-                <td>{clubQuest.title}</td>
+                <td>{clubQuest.name}</td>
                 <td><Button icon="trash" disabled={isLoading} onClick={onClubQuestDeleteBtnClick(clubQuest)} /></td>
               </tr>
             )
