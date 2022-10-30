@@ -24,7 +24,8 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelight
             image_urlsAdapter = StringListToTextColumnAdapter
         ),
         building_accessibilityAdapter = Building_accessibility.Adapter(
-            image_urlsAdapter = StringListToTextColumnAdapter
+            entrance_image_urlsAdapter = StringListToTextColumnAdapter,
+            elevator_image_urlsAdapter = StringListToTextColumnAdapter,
         )
     )
 

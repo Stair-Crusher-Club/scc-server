@@ -164,10 +164,11 @@ class AccessibilityApplicationService(
                     id = EntityIdGenerator.generateRandom(),
                     buildingId = it.buildingId,
                     entranceStairInfo = it.entranceStairInfo,
+                    entranceImageUrls = it.entranceImageUrls,
                     hasSlope = it.hasSlope,
                     hasElevator = it.hasElevator,
                     elevatorStairInfo = it.elevatorStairInfo,
-                    imageUrls = it.imageUrls,
+                    elevatorImageUrls = it.elevatorImageUrls,
                     userId = it.userId,
                     createdAt = clock.instant(),
                 )

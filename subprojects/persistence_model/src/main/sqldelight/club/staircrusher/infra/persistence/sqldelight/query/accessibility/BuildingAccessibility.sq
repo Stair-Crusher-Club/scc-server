@@ -4,10 +4,11 @@ VALUES :building_accessibility
 ON CONFLICT(id) DO UPDATE SET
     building_id = EXCLUDED.building_id,
     entrance_stair_info = EXCLUDED.entrance_stair_info,
+    entrance_image_urls = EXCLUDED.entrance_image_urls,
     has_slope = EXCLUDED.has_slope,
     has_elevator = EXCLUDED.has_elevator,
     elevator_stair_info = EXCLUDED.elevator_stair_info,
-    image_urls = EXCLUDED.image_urls,
+    elevator_image_urls = EXCLUDED.elevator_image_urls,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at;
 

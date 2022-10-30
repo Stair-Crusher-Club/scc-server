@@ -16,3 +16,6 @@ scc:
   kakao:
     apiKey: test
 
+  s3:
+    imageUpload:
+      bucketName: test

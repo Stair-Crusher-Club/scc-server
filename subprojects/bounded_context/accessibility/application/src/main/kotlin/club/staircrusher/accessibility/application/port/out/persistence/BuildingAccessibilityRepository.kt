@@ -14,10 +14,11 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
     data class CreateParams(
         val buildingId: String,
         val entranceStairInfo: StairInfo,
+        val entranceImageUrls: List<String>,
         val hasSlope: Boolean,
         val hasElevator: Boolean,
         val elevatorStairInfo: StairInfo,
-        val imageUrls: List<String>,
+        val elevatorImageUrls: List<String>,
         val userId: String?,
     )
 }

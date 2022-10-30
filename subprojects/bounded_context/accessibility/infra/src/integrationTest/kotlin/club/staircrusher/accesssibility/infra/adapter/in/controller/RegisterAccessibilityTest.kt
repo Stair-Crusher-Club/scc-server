@@ -48,10 +48,14 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 buildingAccessibilityParams = RegisterAccessibilityPostRequestBuildingAccessibilityParams(
                     buildingId = place.building!!.id,
                     entranceStairInfo = StairInfo.NONE.toDTO(),
+                    entranceImageUrls = listOf("buildingAccessibilityEntranceImage"),
                     hasSlope = true,
                     hasElevator = true,
-                    imageUrls = listOf("buildingAccessibilityImage"),
                     elevatorStairInfo = StairInfo.TWO_TO_FIVE.toDTO(),
+                    elevatorImageUrls = listOf(
+                        "buildingAccessibilityElevatorImage1",
+                        "buildingAccessibilityElevatorImage2",
+                    ),
                     comment = "건물 코멘트",
                 ),
                 placeAccessibilityParams = RegisterAccessibilityPostRequestPlaceAccessibilityParams(
@@ -70,11 +74,14 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     val buildingAccessibility = result.buildingAccessibility!!
                     assertEquals(place.building!!.id, buildingAccessibility.buildingId)
                     assertEquals(StairInfo.NONE, buildingAccessibility.entranceStairInfo.toModel())
+                    assertEquals(1, buildingAccessibility.entranceImageUrls.size)
+                    assertEquals("buildingAccessibilityEntranceImage", buildingAccessibility.entranceImageUrls[0])
                     assertTrue(buildingAccessibility.hasSlope)
                     assertTrue(buildingAccessibility.hasElevator)
                     assertEquals(StairInfo.TWO_TO_FIVE, buildingAccessibility.elevatorStairInfo.toModel())
-                    assertEquals(1, buildingAccessibility.imageUrls.size)
-                    assertEquals("buildingAccessibilityImage", buildingAccessibility.imageUrls[0])
+                    assertEquals(2, buildingAccessibility.elevatorImageUrls.size)
+                    assertEquals("buildingAccessibilityElevatorImage1", buildingAccessibility.elevatorImageUrls[0])
+                    assertEquals("buildingAccessibilityElevatorImage2", buildingAccessibility.elevatorImageUrls[1])
                     assertFalse(buildingAccessibility.isUpvoted)
                     assertEquals(0, buildingAccessibility.totalUpvoteCount)
 

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActionsDsl
@@ -40,7 +41,7 @@ open class SccSpringITBase {
             accept = MediaType.APPLICATION_JSON_UTF8
             if (user != null) {
                 val accessToken = userAuthService.issueAccessToken(user)
-                header(SccSecurityFilterChainConfig.accessTokenHeader, accessToken)
+                header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
             }
         }
     }
