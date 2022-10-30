@@ -10,11 +10,13 @@ import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.stdlib.geography.Location
 import kotlinx.coroutines.runBlocking
 import club.staircrusher.stdlib.di.annotation.Component
+import java.time.Clock
 import java.util.UUID
 
 // TODO: 트랜잭션 처리
 @Component
 class ClubQuestCreateAplService(
+    private val clock: Clock,
     private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
     private val accessibilityService: AccessibilityService,
     private val clubQuestRepository: ClubQuestRepository,
@@ -60,6 +62,7 @@ class ClubQuestCreateAplService(
                 id = UUID.randomUUID().toString(), // TODO: entity id 생성 전략 수립
                 name = "$questNamePrefix $idx",
                 dryRunResultItem = dryRunResultItem,
+                createdAt = clock.instant(),
             ))
         }
     }

@@ -14,7 +14,12 @@ class KMeansPlaceClusterer : PlaceClusterer {
         private const val REPEAT_NUM = 100
         private const val MAX_ITERATION = 1000
     }
+
+    @Suppress("ReturnCount")
     override fun clusterPlaces(places: List<ClubQuestTargetPlace>, clusterCount: Int): Map<Location, List<ClubQuestTargetPlace>> {
+        if (clusterCount <= 0) {
+            return emptyMap()
+        }
         val placesById = places.associateBy { it.placeId }
         val records = places.map {
             Record(
@@ -24,6 +29,11 @@ class KMeansPlaceClusterer : PlaceClusterer {
                     "lat" to it.location.lat,
                 )
             )
+        }
+        if (clusterCount == 1) {
+            val centerLng = places.sumOf { it.location.lng } / places.count()
+            val centerLat = places.sumOf { it.location.lat } / places.count()
+            return mapOf(Location(centerLng, centerLat) to places)
         }
         repeat(REPEAT_NUM) { _ ->
             val result = KMeans.fit(records, clusterCount, EuclideanDistance(), MAX_ITERATION)
