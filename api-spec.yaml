@@ -228,13 +228,17 @@ paths:
                       type: string
                     entranceStairInfo:
                       $ref: '#/components/schemas/StairInfo'
+                    entranceImageUrls:
+                      type: array
+                      items:
+                        type: string
                     hasSlope:
                       type: boolean
                     hasElevator:
                       type: boolean
                     elevatorStairInfo:
                       $ref: '#/components/schemas/StairInfo'
-                    imageUrls:
+                    elevatorImageUrls:
                       type: array
                       items:
                         type: string
@@ -243,10 +247,11 @@ paths:
                   required:
                     - buildingId
                     - entranceStairInfo
+                    - entranceImageUrls
                     - hasSlope
                     - hasElevator
                     - elevatorStairInfo
-                    - imageUrls
+                    - elevatorImageUrls
                 placeAccessibilityParams:
                   type: object
                   properties:
@@ -634,13 +639,17 @@ components:
           type: string
         entranceStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        entranceImageUrls:
+          type: array
+          items:
+            type: string
         hasSlope:
           type: boolean
         hasElevator:
           type: boolean
         elevatorStairInfo:
           $ref: '#/components/schemas/StairInfo'
-        imageUrls:
+        elevatorImageUrls:
           type: array
           items:
             type: string
@@ -658,10 +667,11 @@ components:
       required:
         - id
         - entranceStairInfo
+        - entranceImageUrls
         - hasSlope
         - hasElevator
         - elevatorStairInfo
-        - imageUrls
+        - elevatorImageUrls
         - buildingId
         - isUpvoted
         - totalUpvoteCount
