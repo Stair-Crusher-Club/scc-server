@@ -50,7 +50,6 @@ jib {
     to {
         image = "public.ecr.aws/q0g6g7m8/scc-server"
         credHelper.helper = "ecr-login"
-        credHelper.environment = mapOf("AWS_PROFILE" to "swann-scc")
         tags = setOf("latest")
     }
     container {
