@@ -1,9 +1,11 @@
 package club.staircrusher.quest.infra.adapter.`in`.converter
 
-import club.staircrusher.admin.api.dto.ClubQuestCreateDryRunResultItemDTO
-import club.staircrusher.admin.api.dto.ClubQuestDTO
-import club.staircrusher.admin.api.dto.ClubQuestTargetBuildingDTO
-import club.staircrusher.admin.api.dto.ClubQuestTargetPlaceDTO
+import club.staircrusher.admin_api.converter.toDTO
+import club.staircrusher.admin_api.converter.toModel
+import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
