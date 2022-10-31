@@ -37,6 +37,7 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelight
     val placeAccessibilityQueries = scc.placeAccessibilityQueries
     val placeAccessibilityCommentQueries = scc.placeAccessibilityCommentQueries
     val userQueries = scc.userQueries
+    val clubQuestQueries = scc.clubQuestQueries
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {
         // FIXME: 다른 bounded context의 기능을 호출하기 때문에 nested transaction이 반드시 발생한다.

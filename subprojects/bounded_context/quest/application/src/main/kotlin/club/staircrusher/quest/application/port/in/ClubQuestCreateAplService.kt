@@ -59,7 +59,6 @@ class ClubQuestCreateAplService(
     ) {
         dryRunResultItems.forEachIndexed { idx, dryRunResultItem ->
             clubQuestRepository.save(ClubQuest(
-                id = UUID.randomUUID().toString(), // TODO: entity id 생성 전략 수립
                 name = "$questNamePrefix $idx",
                 dryRunResultItem = dryRunResultItem,
                 createdAt = clock.instant(),

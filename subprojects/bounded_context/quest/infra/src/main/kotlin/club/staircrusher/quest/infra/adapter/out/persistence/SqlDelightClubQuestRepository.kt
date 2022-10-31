@@ -1,15 +1,18 @@
 package club.staircrusher.quest.infra.adapter.out.persistence
 
+import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
-class InMemoryClubQuestRepository : ClubQuestRepository {
-    private val clubQuestById = mutableMapOf<String, ClubQuest>()
+class SqlDelightClubQuestRepository(
+    db: DB,
+) : ClubQuestRepository {
+    private val queries = db.clubQuestQueries
 
     override fun save(entity: ClubQuest): ClubQuest {
-        clubQuestById[entity.id] = entity
+        queries.save(entity.toPersistenceModel())
         return entity
     }
 
@@ -18,22 +21,26 @@ class InMemoryClubQuestRepository : ClubQuestRepository {
     }
 
     override fun removeAll() {
-        clubQuestById.clear()
+        queries.removeAll()
     }
 
     override fun findById(id: String): ClubQuest {
-        return clubQuestById[id] ?: throw IllegalArgumentException("User of id $id does not exist.")
+        return findByIdOrNull(id) ?: throw IllegalArgumentException("User of id $id does not exist.")
     }
 
     override fun findByIdOrNull(id: String): ClubQuest? {
-        return clubQuestById[id]
+        return queries.findById(id = id)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
     }
 
     override fun findAllOrderByCreatedAtDesc(): List<ClubQuest> {
-        return clubQuestById.values.toList().sortedByDescending { it.createdAt }
+        return queries.findAllOrderByCreatedAtDesc()
+            .executeAsList()
+            .map { it.toDomainModel() }
     }
 
     override fun remove(clubQuestId: String) {
-        clubQuestById.remove(clubQuestId)
+        return queries.remove(clubQuestId)
     }
 }
