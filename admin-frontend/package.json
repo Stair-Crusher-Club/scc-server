@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^28.1.8",
     "axios": "^0.27.2",
+    "haversine": "^1.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
@@ -19,7 +20,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "echo 'Usage: npm run build:(dev|prod)'; exit 0",
+    "build:dev": "sh -ac '. .env.dev; react-scripts build'",
+    "build:prod": "sh -ac '. .env.prod; react-scripts build'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -42,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@types/haversine": "^1.1.5",
     "@types/node": "^18.7.13",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
