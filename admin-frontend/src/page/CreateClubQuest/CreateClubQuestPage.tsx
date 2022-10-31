@@ -18,7 +18,13 @@ interface QuestCenterIndicator {
 }
 
 function CreateClubQuestPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, _setIsLoading] = useState(false);
+  const isLoadingRef = useRef(isLoading);
+  function setIsLoading(newValue: boolean) {
+    isLoadingRef.current = newValue;
+    _setIsLoading(newValue);
+  }
+
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
 
   const [questCenter, setQuestCenter] = useState<kakao.maps.LatLng | null>(null);
@@ -63,7 +69,7 @@ function CreateClubQuestPage() {
   }
 
   function updateQuestCenterOnMapClick(mouseEvent: kakao.maps.event.MouseEvent) {
-    if (isLoading || questClustersMarkersRef.current.length > 0) {
+    if (isLoadingRef.current || questClustersMarkersRef.current.length > 0) {
       return; // dryRunCreate를 한 이후에는 지도 클릭 시 퀘스트 중심이 이동하지 않는 것이 좋다.
     }
     setQuestCenter(mouseEvent.latLng);
