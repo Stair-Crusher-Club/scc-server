@@ -1,7 +1,5 @@
 package club.staircrusher.infra.persistence.sqldelight
 
-import app.cash.sqldelight.TransacterImpl
-import app.cash.sqldelight.driver.jdbc.asJdbcDriver
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
@@ -21,9 +19,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javax.sql.DataSource
 
 @Component
-class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelightJdbcDriver(dataSource)) {
+class DB(dataSource: DataSource) : TransactionManager {
+    private val driver = SqlDelightJdbcDriver(dataSource)
     private val scc = scc(
-        driver = dataSource.asJdbcDriver(),
+        driver = driver,
         placeAdapter = Place.Adapter(
             categoryAdapter = PlaceCategoryStringColumnAdapter,
         ),
@@ -66,7 +65,7 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelight
 //            thread local must be null.
 //            """.trimIndent()
 //        }
-        return transactionWithResult(noEnclosing = false) {
+        return scc.transactionWithResult(noEnclosing = false) {
             SqlDelightTransaction(this).block()
         }
     }
@@ -75,7 +74,6 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelight
         isolationLevel: TransactionIsolationLevel,
         block: Transaction<T>.() -> T,
     ): T {
-        val driver = this.driver as SqlDelightJdbcDriver
         // FIXME: 다른 bounded context의 기능을 호출하기 때문에 nested transaction이 반드시 발생한다.
 //        check(driver.isolationLevel == null) {
 //            """
@@ -85,7 +83,7 @@ class DB(dataSource: DataSource) : TransactionManager, TransacterImpl(SqlDelight
 //        }
         driver.isolationLevel = isolationLevel.toConnectionIsolationLevel()
         return try {
-            transactionWithResult(noEnclosing = false) {
+            scc.transactionWithResult(noEnclosing = false) {
                 SqlDelightTransaction(this).block()
             }
         } finally {
