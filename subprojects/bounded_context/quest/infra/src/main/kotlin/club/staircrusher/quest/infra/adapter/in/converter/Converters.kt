@@ -5,7 +5,6 @@ import club.staircrusher.admin.api.dto.ClubQuestDTO
 import club.staircrusher.admin.api.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin.api.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
-import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
