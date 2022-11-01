@@ -50,8 +50,10 @@ function CreateClubQuestPage() {
   useEffect(installMapOnce, []);
   useEffect(() => {
     createOrUpdateQuestCenterIndicator();
-    setQuestClusterCount(Math.ceil((questRadius * questRadius - 1) / (300 * 300))); // 대략 300m x 300m 사이즈의 구역으로 나누는 걸 추천해준다.
   }, [questCenter, questRadius]);
+  useEffect(() => {
+    setQuestClusterCount(Math.ceil((questRadius * questRadius - 1) / (300 * 300))); // 대략 300m x 300m 사이즈의 구역으로 나누는 걸 추천해준다.
+  }, [questRadius]);
 
   function installMapOnce() {
     if (map) {
