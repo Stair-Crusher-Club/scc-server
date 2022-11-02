@@ -28,8 +28,9 @@ class ClubQuestCreateAplService(
         }
         return clubQuestTargetBuildings
             .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
-            .map { (questCenterLocation, targetBuildings) ->
+            .toList().mapIndexed { idx, (questCenterLocation, targetBuildings) ->
                 ClubQuestCreateDryRunResultItem(
+                    questNamePostfix = getQuestNamePostfix(idx),
                     questCenterLocation = questCenterLocation,
                     targetBuildings = targetBuildings,
                 )
@@ -42,10 +43,15 @@ class ClubQuestCreateAplService(
     ) {
         dryRunResultItems.forEachIndexed { idx, dryRunResultItem ->
             clubQuestRepository.save(ClubQuest(
-                name = "$questNamePrefix $idx",
+                name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
                 dryRunResultItem = dryRunResultItem,
                 createdAt = clock.instant(),
             ))
         }
+    }
+
+    private fun getQuestNamePostfix(idx: Int): String {
+        check(idx <= 25) { "최대 26개 지역으로만 분할 가능합니다." }
+        return "${"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[idx]}조"
     }
 }

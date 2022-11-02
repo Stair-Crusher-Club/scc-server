@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, NumericInput } from '@blueprintjs/core';
+import { Button, InputGroup, NumericInput } from '@blueprintjs/core';
 import { ClubQuestCreateDryRunResultItemDTO } from '../../api';
 import { AdminApi } from '../../AdminApi';
 
@@ -27,6 +27,7 @@ function CreateClubQuestPage() {
 
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
 
+  const [questNamePrefix, setQuestNamePrefix] = useState('');
   const [questCenter, setQuestCenter] = useState<kakao.maps.LatLng | null>(null);
   const [questRadius, setQuestRadius] = useState<number>(200);
   const [questCenterIndicator, setQuestCenterIndicator] = useState<QuestCenterIndicator | null>(null);
@@ -200,7 +201,7 @@ function CreateClubQuestPage() {
     withLoading((
       async () => {
         await AdminApi.clubQuestsCreatePost({
-          questNamePrefix: 'haha',
+          questNamePrefix,
           dryRunResults,
         });
         alert('퀘스트 생성을 완료했습니다.');
@@ -249,6 +250,15 @@ function CreateClubQuestPage() {
         <div id="map" className="body-item-fixed-height" />
         <div>
           <div className="input-group">
+            <span>퀘스트 이름 :&nbsp;</span>
+            <InputGroup
+              className="inline-flex"
+              value={questNamePrefix}
+              onChange={(event) => { setQuestNamePrefix(event.target.value); }}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="input-group">
             <span>퀘스트 지역 반경(m) :&nbsp;</span>
             <NumericInput
               className="inline-flex"
@@ -279,7 +289,7 @@ function CreateClubQuestPage() {
           <Button icon="trash" text="처음부터 다시하기" onClick={onClearDryRunResult} disabled={isLoading || dryRunResults.length === 0}></Button>
         </div>
         {
-          questClustersMarkers.length > 0
+          dryRunResults.length > 0
             ? (
               <div>
                 <p>※ 퀘스트 중심 위치를 변경하려면 [처음부터 다시하기] 버튼을 눌러주세요.</p>
@@ -288,8 +298,8 @@ function CreateClubQuestPage() {
                   <div className="dry-run-result-sidebar">
                     <Button className="cluster-button" text="전체 표시" onClick={onShowAllClusters} disabled={isLoading} />
                     {
-                      questClustersMarkers.map((_, idx) => (
-                        <Button className="cluster-button" key={idx} text={`클러스터 ${idx + 1}`} onClick={onShowCluster(idx)} disabled={isLoading} />
+                      dryRunResults.map((dryRunResult, idx) => (
+                        <Button className="cluster-button" key={idx} text={dryRunResult.questNamePostfix} onClick={onShowCluster(idx)} disabled={isLoading} />
                       ))
                     }
                   </div>
