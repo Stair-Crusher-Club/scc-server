@@ -19,4 +19,22 @@
   .inline-flex {
     display: inline-flex;
   }
+
+  .dry-run-result-container {
+    display: flex;
+
+    .dry-run-result-sidebar {
+      display: flex;
+      flex-direction: column;
+      
+      .cluster-button {
+        display: block;
+        text-align: center;
+      }
+    }
+  
+    .dry-run-result-body {
+
+    }
+  }
 }
