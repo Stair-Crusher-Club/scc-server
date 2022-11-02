@@ -1,7 +1,7 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
-import club.staircrusher.quest.application.port.out.web.PlaceClusterer
-import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
+import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
+import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.infra.kmeans.EuclideanDistance
 import club.staircrusher.quest.infra.kmeans.KMeans
 import club.staircrusher.quest.infra.kmeans.Record
@@ -9,21 +9,21 @@ import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
-class KMeansPlaceClusterer : PlaceClusterer {
+class KMeansClubQuestTargetBuildingClusterer : ClubQuestTargetBuildingClusterer {
     companion object {
         private const val REPEAT_NUM = 100
         private const val MAX_ITERATION = 1000
     }
 
     @Suppress("ReturnCount")
-    override fun clusterPlaces(places: List<ClubQuestTargetPlace>, clusterCount: Int): Map<Location, List<ClubQuestTargetPlace>> {
+    override fun clusterBuildings(buildings: List<ClubQuestTargetBuilding>, clusterCount: Int): Map<Location, List<ClubQuestTargetBuilding>> {
         if (clusterCount <= 0) {
             return emptyMap()
         }
-        val placesById = places.associateBy { it.placeId }
-        val records = places.map {
+        val buildingById = buildings.associateBy { it.buildingId }
+        val records = buildings.map {
             Record(
-                it.placeId,
+                it.buildingId,
                 mapOf(
                     "lng" to it.location.lng,
                     "lat" to it.location.lat,
@@ -31,9 +31,9 @@ class KMeansPlaceClusterer : PlaceClusterer {
             )
         }
         if (clusterCount == 1) {
-            val centerLng = places.sumOf { it.location.lng } / places.count()
-            val centerLat = places.sumOf { it.location.lat } / places.count()
-            return mapOf(Location(centerLng, centerLat) to places)
+            val centerLng = buildings.sumOf { it.location.lng } / buildings.count()
+            val centerLat = buildings.sumOf { it.location.lat } / buildings.count()
+            return mapOf(Location(centerLng, centerLat) to buildings)
         }
         repeat(REPEAT_NUM) { _ ->
             val result = KMeans.fit(records, clusterCount, EuclideanDistance(), MAX_ITERATION)
@@ -45,7 +45,7 @@ class KMeansPlaceClusterer : PlaceClusterer {
                         lng = centroid.coordinates["lng"]!!,
                         lat = centroid.coordinates["lat"]!!,
                     )
-                    val belongingPlaces = records.map { placesById[it.description]!! }
+                    val belongingPlaces = records.map { buildingById[it.description]!! }
                     clusterCenterLocation to belongingPlaces
                 }.toMap()
             }

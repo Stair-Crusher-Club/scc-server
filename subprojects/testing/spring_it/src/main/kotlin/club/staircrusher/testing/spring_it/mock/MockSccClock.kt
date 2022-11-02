@@ -1,12 +1,14 @@
 package club.staircrusher.testing.spring_it.mock
 
 import club.staircrusher.stdlib.di.annotation.Component
+import org.springframework.context.annotation.Primary
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 
 @Component
+@Primary
 class MockSccClock : Clock() {
     private var zone: ZoneId
     private var instant: Instant
