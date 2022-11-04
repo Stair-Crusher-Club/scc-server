@@ -1,3 +1,3 @@
 package club.staircrusher.spring_web.security.admin
 
-class AdminAuthenticationException : RuntimeException()
+class AdminAuthenticationException(msg: String) : RuntimeException(msg)
