@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import club.staircrusher.stdlib.di.annotation.Component
+import com.auth0.jwt.exceptions.JWTDecodeException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import java.time.Clock
 import java.time.Duration
 import java.util.Date
@@ -23,6 +25,10 @@ class JWTTokenManager(
     private val bodyKey = "_b"
     private val issuer = "our-map-server"
 
+    private val verifier = JWT.require(jwtAlgorithm)
+        .withIssuer(issuer)
+        .build()
+
     override fun issueToken(content: Any): String {
         return JWT.create()
             .withIssuer(issuer)
@@ -31,11 +37,17 @@ class JWTTokenManager(
             .sign(jwtAlgorithm)
     }
 
+    @Suppress("SwallowedException")
     override fun <T : Any> verify(token: String, contentClass: KClass<T>): T {
-        val verifier = JWT.require(jwtAlgorithm)
-            .withIssuer(issuer)
-            .build()
-        val jwt = verifier.verify(token)
-        return objectMapper.readValue(jwt.getClaim(bodyKey).asString(), contentClass.java)
+        val jwt = try {
+            verifier.verify(token)
+        } catch (e: JWTDecodeException) {
+            throw TokenVerificationException(e.message ?: "")
+        }
+        return try {
+            objectMapper.readValue(jwt.getClaim(bodyKey).asString(), contentClass.java)
+        } catch (e: MismatchedInputException) {
+            throw TokenVerificationException(e.message ?: "")
+        }
     }
 }

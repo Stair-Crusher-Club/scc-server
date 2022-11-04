@@ -57,6 +57,7 @@ open class SccSecurityFilterChainConfig {
                     addAllowedMethod("*")
                     addAllowedHeader("*")
                     addAllowedOrigin("*")
+                    addExposedHeader(accessTokenHeader) // https://github.com/axios/axios/issues/1946
                 }
             }.and()
             .build()

@@ -1,39 +1,48 @@
 import { useState } from 'react';
 import { Button } from '@blueprintjs/core';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { ACCESS_TOKEN_HEADER, AdminApi } from '../../AdminApi';
+import { saveAccessToken } from '../../context/AuthContext';
 
 interface LoginPageProps {
-  isAuthenticated: boolean;
-  setIsAuthenticated: (value: boolean) => void;
+  isAuthenticated: () => boolean;
 }
 
 function LoginPage(props: LoginPageProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [userId, setUserId] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   
   const [searchParams] = useSearchParams();
   const nextUrl = searchParams.get('nextUrl') || '/';
   const navigate = useNavigate();
 
-  if (props.isAuthenticated) {
-    return <Navigate to="/" />;
+  if (props.isAuthenticated()) {
+    return <Navigate to={nextUrl} />;
   }
 
-  function login() {
-    if (userId === 'admin' && password === '2022stair!') { // TODO: ㅋㅋㅋㅋ 완전 땜빵
-      props.setIsAuthenticated(true);
-      navigate(nextUrl);
-    } else {
-      alert('아이디나 패스워드가 잘못되었습니다.');
-    }
+  function withLoading(promise: Promise<any>): Promise<any> {
+    setIsLoading(true);
+    return promise.finally(() => setIsLoading(false));
+  }
+
+  async function login() {
+    return withLoading(
+      AdminApi.loginPost({
+        username,
+        password,
+      }).then((res) => {
+        saveAccessToken(res.headers[ACCESS_TOKEN_HEADER]);
+        navigate(nextUrl);
+      })
+    );
   }
 
   return (
     <div>
       <div>
         <span>아이디 :</span>
-        <input value={userId} onChange={({ target: { value }}) => setUserId(value)} />
+        <input value={username} onChange={({ target: { value }}) => setUsername(value)} />
       </div>
       <div>
         <span>패스워드 :</span>

@@ -5,7 +5,7 @@ import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.UserAuthApplicationService
 import club.staircrusher.user.domain.model.User
-import club.staircrusher.stdlib.token.TokenVerificationException
+import club.staircrusher.user.domain.exception.UserAuthenticationException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -21,7 +21,7 @@ class SccAppAuthenticationProvider(
         val accessToken = beforeAuthSccAuthentication.credentials
         val userId = try {
             userAuthApplicationService.verify(accessToken)
-        } catch (e: TokenVerificationException) {
+        } catch (e: UserAuthenticationException) {
             throw BadCredentialsException("Invalid access token.", e)
         }
 

@@ -1,7 +1,6 @@
 package club.staircrusher.spring_web.security.admin
 
 import club.staircrusher.spring_web.security.BeforeAuthSccAuthentication
-import club.staircrusher.stdlib.token.TokenVerificationException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -16,7 +15,7 @@ class SccAdminAuthenticationProvider(
         val accessToken = beforeAuthSccAuthentication.credentials
         try {
             adminAuthenticationService.verifyAccessToken(accessToken)
-        } catch (e: TokenVerificationException) {
+        } catch (e: AdminAuthenticationException) {
             throw BadCredentialsException("Invalid access token.", e)
         }
 
