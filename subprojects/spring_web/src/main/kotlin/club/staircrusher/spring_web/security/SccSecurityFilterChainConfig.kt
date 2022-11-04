@@ -23,18 +23,18 @@ import org.springframework.web.cors.CorsConfiguration
 @Component
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
-class SccSecurityFilterChainConfig {
+open class SccSecurityFilterChainConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     open fun sccCommonFilterChain(
         http: HttpSecurity,
         sccSecurityConfigs: List<SccSecurityConfig>,
-        sccAuthenticationManager: SccAuthenticationManager,
+        sccAuthenticationFilter: SccAuthenticationFilter,
         sccAuthenticationEntryPoint: SccAuthenticationEntryPoint,
     ): SecurityFilterChain {
         return http
             .addFilterBefore(
-                SccAuthenticationFilter(sccAuthenticationManager),
+                sccAuthenticationFilter,
                 BasicAuthenticationFilter::class.java,
             )
             .exceptionHandling {
@@ -43,7 +43,7 @@ class SccSecurityFilterChainConfig {
             .authorizeRequests {
                 sccSecurityConfigs.forEach { sccSecurityConfig ->
                     it
-                        .antMatchers(*sccSecurityConfig.getAuthenticatedUrls().toTypedArray())
+                        .requestMatchers(*sccSecurityConfig.requestMatchers().toTypedArray())
                         .authenticated()
                 }
                 it

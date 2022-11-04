@@ -1,6 +1,5 @@
-package club.staircrusher.user.infra.service
+package club.staircrusher.stdlib.token
 
-import club.staircrusher.user.domain.service.TokenManager
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

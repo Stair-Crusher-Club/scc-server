@@ -16,4 +16,4 @@ import org.springframework.context.annotation.FilterType
 @ConfigurationPropertiesScan(
     basePackages = ["club.staircrusher"],
 )
-open class SccAppSecurityConfigTestApplication
+open class SccSecurityConfigTestApplication

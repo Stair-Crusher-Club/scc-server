@@ -1,14 +1,11 @@
-package club.staircrusher.spring_web.security.app
+package club.staircrusher.spring_web.security.admin
 
-import club.staircrusher.stdlib.auth.AuthUser
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
-class SccAppAuthentication(
-    private val authUser: AuthUser,
-) : Authentication {
-    override fun getName(): String? {
-        return null
+class SccAdminAuthentication : Authentication {
+    override fun getName(): String {
+        return "Admin"
     }
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
@@ -19,12 +16,12 @@ class SccAppAuthentication(
         error("Do not call this method. Credential is erased.")
     }
 
-    override fun getDetails(): AuthUser {
-        return authUser
+    override fun getDetails() {
+        // No detail.
     }
 
-    override fun getPrincipal(): String {
-        return authUser.id
+    override fun getPrincipal() {
+        // No principal.
     }
 
     override fun isAuthenticated(): Boolean {
@@ -36,6 +33,6 @@ class SccAppAuthentication(
     }
 
     companion object {
-        const val authority = "SCC_APP_AUTH"
+        const val authority = "SCC_ADMIN_AUTH"
     }
 }
