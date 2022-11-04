@@ -51,7 +51,7 @@ class ClubQuestCreateAplService(
     }
 
     private fun getQuestNamePostfix(idx: Int): String {
-        check(idx <= 25) { "최대 26개 지역으로만 분할 가능합니다." }
+        @Suppress("MagicNumber") check(idx <= 25) { "최대 26개 지역으로만 분할 가능합니다." }
         return "${"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[idx]}조"
     }
 }
