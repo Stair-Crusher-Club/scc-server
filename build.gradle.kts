@@ -106,13 +106,11 @@ subprojects {
             }
         }
 
-        val springContextVersion: String by project
         val coroutineVersion: String by project
         listOfNotNull(domainProject, applicationProject, infraProject)
             .forEach {
                 it.dependencies {
                     implementation(project(":stdlib"))
-                    implementation("org.springframework:spring-context:$springContextVersion") // TODO: custom @Component가 동작하지 않아서 임시로 Spring의 @Component를 사용하기 위함임
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
                 }
             }
