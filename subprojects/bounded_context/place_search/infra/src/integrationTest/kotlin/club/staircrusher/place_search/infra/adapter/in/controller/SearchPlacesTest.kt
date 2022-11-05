@@ -1,38 +1,55 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
-// TODO: kakao 지도 사용하도록 변경한 로직에 맞게 테스트 컨버팅
-//class SearchPlacesTest : OurMapServerRouteTestBase() {
-//    @Test
-//    fun testSearchPlaces() = runRouteTest {
-//        val user = transactionManager.doInTransaction {
-//            testDataGenerator.createUser()
-//        }
-//        val testClient = getTestClient(user)
-//        val place = transactionManager.doInTransaction {
-//            testDataGenerator.createBuildingAndPlace(placeName = Random.nextBytes(32).toString())
-//        }
-//
-//        val params1 = SearchPlacesParams.newBuilder()
-//            .setSearchText(place.name.substring(2, 5))
-//            .setCurrentLocation(Model.Location.newBuilder().setLng(place.lng).setLat(place.lat))
-//            .build()
-//        testClient.request("/searchPlaces", params1).apply {
-//            val result = getResult(SearchPlacesResult::class)
-//            Assert.assertEquals(1, result.itemsList.size)
-//            Assert.assertEquals(place.id, result.itemsList[0].place.id)
-//            Assert.assertTrue(result.itemsList[0].hasDistanceMeters())
-//        }
-//
-//        val param2 = SearchPlacesParams.newBuilder()
-//            .setSearchText(place.name.substring(2, 5))
-//            .build()
-//        testClient.request("/searchPlaces", param2).apply {
-//            val result = getResult(SearchPlacesResult::class)
-//            Assert.assertEquals(1, result.itemsList.size)
-//            Assert.assertEquals(place.id, result.itemsList[0].place.id)
-//            Assert.assertFalse(result.itemsList[0].hasDistanceMeters())
-//        }
-//    }
-//
-//    // TODO: 유저 없는 경우도 테스트?
-//}
+import club.staircrusher.api.converter.toDTO
+import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
+import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
+import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place_search.infra.adapter.`in`.controller.base.PlaceSearchITBase
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.springframework.boot.test.mock.mockito.MockBean
+import kotlin.random.Random
+
+class SearchPlacesTest : PlaceSearchITBase() {
+    @MockBean
+    private lateinit var mapsService: MapsService
+
+    @Test
+    fun testSearchPlaces() = runBlocking {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = Random.nextBytes(32).toString())
+        }
+        val searchText = place.name.substring(2, 5)
+
+        Mockito.`when`(mapsService.findAllByKeyword(searchText)).thenReturn(listOf(place))
+
+        val params = SearchPlacesPostRequest(
+            searchText = searchText,
+            distanceMetersLimit = 500,
+            currentLocation = place.location.toDTO(),
+        )
+        mvc.sccRequest("/searchPlaces", params, user = user)
+            .apply {
+                val result = getResult(SearchPlacesPost200Response::class)
+                assertEquals(1, result.items!!.size)
+                assertEquals(place.id, result.items!![0].place.id)
+                assertNotNull(result.items!![0].distanceMeters)
+            }
+
+        // 로그인되어 있지 않아도 잘 동작한다.
+        mvc.sccRequest("/searchPlaces", params)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+
+        Unit
+    }
+}

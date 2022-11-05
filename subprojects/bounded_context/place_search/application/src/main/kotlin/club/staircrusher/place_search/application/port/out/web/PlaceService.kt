@@ -8,4 +8,5 @@ interface PlaceService {
     suspend fun findAllByKeyword(keyword: String): List<Place>
 
     fun findAllByIds(ids: Collection<String>): List<Place>
+    fun findByBuildingId(buildingId: String): List<Place>
 }
