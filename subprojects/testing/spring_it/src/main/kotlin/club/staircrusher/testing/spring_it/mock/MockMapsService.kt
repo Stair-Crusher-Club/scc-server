@@ -9,19 +9,11 @@ import org.springframework.context.annotation.Primary
 @Component
 @Primary
 class MockMapsService : MapsService {
-    override suspend fun findByKeyword(keyword: String): List<Place> {
+    override suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
         return emptyList()
     }
 
-    override suspend fun findAllByKeyword(keyword: String): List<Place> {
-        return emptyList()
-    }
-
-    override suspend fun findByCategory(category: PlaceCategory): List<Place> {
-        return emptyList()
-    }
-
-    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchOption): List<Place> {
+    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchByCategoryOption): List<Place> {
         return emptyList()
     }
 }

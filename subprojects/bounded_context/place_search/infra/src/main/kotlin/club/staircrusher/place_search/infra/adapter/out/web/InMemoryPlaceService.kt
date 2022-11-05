@@ -1,6 +1,7 @@
 package club.staircrusher.place_search.infra.adapter.out.web
 
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
+import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place_search.application.port.out.web.PlaceService
 import club.staircrusher.place_search.domain.model.Building
 import club.staircrusher.place_search.domain.model.Place
@@ -11,22 +12,14 @@ class InMemoryPlaceService(
     private val placeService: club.staircrusher.place.application.port.`in`.PlaceService,
     private val placeRepository: PlaceRepository,
 ) : PlaceService {
-    override suspend fun findByKeyword(keyword: String): List<Place> {
+    override suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
         // Since `Place` class of place domain is not included in application layer,
         // it is not easy to define extension function for converting from place.Place
         // to place_search.Place. Would it be better to define data transfer object in
         // application layer so that other source set depending on it can define extension
         // method easily?
-        return placeService.findByKeyword(keyword).map { it.toModel() }
-    }
-
-    override suspend fun findAllByKeyword(keyword: String): List<Place> {
-        // Since `Place` class of place domain is not included in application layer,
-        // it is not easy to define extension function for converting from place.Place
-        // to place_search.Place. Would it be better to define data transfer object in
-        // application layer so that other source set depending on it can define extension
-        // method easily?
-        return placeService.findAllByKeyword(keyword).map { it.toModel() }
+        return placeService.findAllByKeyword(keyword, option)
+            .map { it.toModel() }
     }
 
     override fun findAllByIds(ids: Collection<String>): List<Place> {

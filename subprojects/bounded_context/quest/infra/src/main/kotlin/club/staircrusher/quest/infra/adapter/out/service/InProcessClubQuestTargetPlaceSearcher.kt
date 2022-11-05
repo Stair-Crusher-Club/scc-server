@@ -32,8 +32,8 @@ class InProcessClubQuestTargetPlaceSearcher(
                 .map {
                     async {
                         placeService.findAllByCategory(
-                            it, MapsService.SearchOption(
-                                region = MapsService.SearchOption.CircleRegion(
+                            it, MapsService.SearchByCategoryOption(
+                                region = MapsService.SearchByCategoryOption.CircleRegion(
                                     centerLocation = centerLocation,
                                     radiusMeters = radiusMeters,
                                 ),

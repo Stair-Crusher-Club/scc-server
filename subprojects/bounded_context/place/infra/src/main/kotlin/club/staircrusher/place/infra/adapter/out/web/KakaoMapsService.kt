@@ -105,36 +105,45 @@ class KakaoMapsService(
         ): Mono<SearchResult>
     }
 
-    override suspend fun findByKeyword(keyword: String): List<Place> {
-        val result = kakaoService.searchByKeyword(keyword).awaitFirstOrNull()
-        logger.debug { result }
-        return (result?.convertToModel() ?: emptyList()).removeDuplicates()
+    override suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
+        return searchPlacesInParallel { page -> fetchPageForSearchByKeyword(keyword, option, page) }
     }
 
-    override suspend fun findByCategory(category: PlaceCategory): List<Place> {
-        TODO("Not yet implemented")
+    private fun fetchPageForSearchByKeyword(keyword: String, option: MapsService.SearchByKeywordOption, page: Int): Mono<SearchResult> {
+        return when (option.region) {
+            is MapsService.SearchByKeywordOption.CircleRegion -> {
+                val region = option.region as MapsService.SearchByKeywordOption.CircleRegion
+                kakaoService.searchByKeyword(
+                    query = keyword,
+                    x = region.centerLocation.lng.toString(),
+                    y = region.centerLocation.lat.toString(),
+                    radius = region.radiusMeters,
+                    page = page,
+                )
+            }
+            is MapsService.SearchByKeywordOption.RectangleRegion -> {
+                val region = option.region as MapsService.SearchByKeywordOption.RectangleRegion
+                kakaoService.searchByKeyword(
+                    query = keyword,
+                    rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" }
+                )
+            }
+            null -> kakaoService.searchByKeyword(query = keyword)
+        }
     }
 
-    override suspend fun findAllByKeyword(keyword: String): List<Place> {
-        return searchPlacesInParallel { page -> fetchPageForSearchByKeyword(keyword, page) }
-    }
-
-    private fun fetchPageForSearchByKeyword(keyword: String, page: Int): Mono<SearchResult> {
-        return kakaoService.searchByKeyword(keyword, page = page)
-    }
-
-    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchOption): List<Place> {
+    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchByCategoryOption): List<Place> {
         return searchPlacesInParallel { page -> fetchPageForSearchByCategory(category, option, page) }
     }
 
     private fun fetchPageForSearchByCategory(
         category: PlaceCategory,
-        option: MapsService.SearchOption,
+        option: MapsService.SearchByCategoryOption,
         page: Int,
     ): Mono<SearchResult> {
         return when (option.region) {
-            is MapsService.SearchOption.CircleRegion -> {
-                val region = option.region as MapsService.SearchOption.CircleRegion
+            is MapsService.SearchByCategoryOption.CircleRegion -> {
+                val region = option.region as MapsService.SearchByCategoryOption.CircleRegion
                 kakaoService.searchByCategory(
                     category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
                     x = region.centerLocation.lng.toString(),
@@ -143,8 +152,8 @@ class KakaoMapsService(
                     page = page,
                 )
             }
-            is MapsService.SearchOption.RectangleRegion -> {
-                val region = option.region as MapsService.SearchOption.RectangleRegion
+            is MapsService.SearchByCategoryOption.RectangleRegion -> {
+                val region = option.region as MapsService.SearchByCategoryOption.RectangleRegion
                 kakaoService.searchByCategory(
                     category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
                     rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" }

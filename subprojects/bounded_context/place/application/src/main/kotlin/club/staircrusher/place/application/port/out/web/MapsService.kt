@@ -5,25 +5,32 @@ import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory
 
 interface MapsService {
-    // TODO: support filters
-    suspend fun findByKeyword(
-        keyword: String,
-    ): List<Place>
-
     suspend fun findAllByKeyword(
         keyword: String,
-    ): List<Place>
-
-    suspend fun findByCategory(
-        category: PlaceCategory,
+        option: SearchByKeywordOption,
     ): List<Place>
 
     suspend fun findAllByCategory(
         category: PlaceCategory,
-        option: SearchOption,
+        option: SearchByCategoryOption,
     ): List<Place>
 
-    data class SearchOption(
+    data class SearchByKeywordOption(
+        val region: Region? = null,
+        val page: Int = 1,
+    ) {
+        sealed interface Region
+        data class CircleRegion(
+            val centerLocation: Location,
+            val radiusMeters: Int,
+        ) : Region
+        data class RectangleRegion(
+            val leftTopLocation: Location,
+            val rightBottomLocation: Location,
+        ) : Region
+    }
+
+    data class SearchByCategoryOption(
         val region: Region,
         val page: Int = 1,
     ) {

@@ -19,28 +19,18 @@ class PlaceService(
         return placeRepository.findByIdOrNull(placeId)
     }
 
-    // TODO: support filter
-    suspend fun findByKeyword(keyword: String): List<Place> {
+    suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
         if (keyword.isBlank()) {
             return emptyList()
         }
-        val places = mapsService.findAllByKeyword(keyword)
-        eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
-        return places
-    }
-
-    suspend fun findAllByKeyword(keyword: String): List<Place> {
-        if (keyword.isBlank()) {
-            return emptyList()
-        }
-        val places = mapsService.findAllByKeyword(keyword)
+        val places = mapsService.findAllByKeyword(keyword, option)
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
 
     suspend fun findAllByCategory(
         category: PlaceCategory,
-        option: MapsService.SearchOption
+        option: MapsService.SearchByCategoryOption
     ): List<Place> {
         val places = mapsService.findAllByCategory(category, option)
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))

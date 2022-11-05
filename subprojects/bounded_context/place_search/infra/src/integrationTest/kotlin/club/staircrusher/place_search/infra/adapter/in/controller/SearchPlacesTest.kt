@@ -26,12 +26,21 @@ class SearchPlacesTest : PlaceSearchITBase() {
             testDataGenerator.createBuildingAndPlace(placeName = Random.nextBytes(32).toString())
         }
         val searchText = place.name.substring(2, 5)
+        val radiusMeters = 500
 
-        Mockito.`when`(mapsService.findAllByKeyword(searchText)).thenReturn(listOf(place))
+        Mockito.`when`(mapsService.findAllByKeyword(
+            searchText,
+            MapsService.SearchByKeywordOption(
+                MapsService.SearchByKeywordOption.CircleRegion(
+                    centerLocation = place.location,
+                    radiusMeters = radiusMeters,
+                ),
+            ),
+        )).thenReturn(listOf(place))
 
         val params = SearchPlacesPostRequest(
             searchText = searchText,
-            distanceMetersLimit = 500,
+            distanceMetersLimit = radiusMeters,
             currentLocation = place.location.toDTO(),
         )
         mvc.sccRequest("/searchPlaces", params, user = user)

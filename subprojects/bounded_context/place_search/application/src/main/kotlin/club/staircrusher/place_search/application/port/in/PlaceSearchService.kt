@@ -1,5 +1,6 @@
 package club.staircrusher.place_search.application.port.`in`
 
+import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place_search.domain.model.Place
 import club.staircrusher.place_search.application.port.out.web.AccessibilityService
 import club.staircrusher.place_search.application.port.out.web.BuildingService
@@ -32,14 +33,24 @@ class PlaceSearchService(
         siGunGuId: String?,
         eupMyeonDongId: String?,
     ) : List<SearchPlacesResult> {
-        val places = placeService.findByKeyword(searchText) // TODO: 옵션 적용
+        val places = placeService.findAllByKeyword(
+            searchText,
+            option = MapsService.SearchByKeywordOption(
+                region = currentLocation?.let {
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = it,
+                        radiusMeters = distanceMetersLimit.meter.toInt(),
+                    )
+                }
+            ),
+        )
         return places.map { it.toSearchPlacesResult(currentLocation) }
     }
 
     suspend fun listPlacesInBuilding(buildingId: String): List<SearchPlacesResult> {
         val buildingAddress = buildingService.getById(buildingId)?.address
             ?: throw IllegalArgumentException("Building of id $buildingId does not exist.")
-        val placesBySearch = placeService.findAllByKeyword(buildingAddress)
+        val placesBySearch = placeService.findAllByKeyword(buildingAddress, MapsService.SearchByKeywordOption())
         val placesInPersistence = placeService.findByBuildingId(buildingId)
         return (placesBySearch + placesInPersistence)
             .removeDuplicates()
