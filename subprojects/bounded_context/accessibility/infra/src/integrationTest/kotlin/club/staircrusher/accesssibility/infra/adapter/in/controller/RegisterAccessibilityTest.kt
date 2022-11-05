@@ -11,8 +11,10 @@ import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestBuildingAccessibilityParams
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestPlaceAccessibilityParams
+import club.staircrusher.place.domain.model.Place
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,29 +46,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
             }
 
-            val params = RegisterAccessibilityPostRequest(
-                buildingAccessibilityParams = RegisterAccessibilityPostRequestBuildingAccessibilityParams(
-                    buildingId = place.building!!.id,
-                    entranceStairInfo = StairInfo.NONE.toDTO(),
-                    entranceImageUrls = listOf("buildingAccessibilityEntranceImage"),
-                    hasSlope = true,
-                    hasElevator = true,
-                    elevatorStairInfo = StairInfo.TWO_TO_FIVE.toDTO(),
-                    elevatorImageUrls = listOf(
-                        "buildingAccessibilityElevatorImage1",
-                        "buildingAccessibilityElevatorImage2",
-                    ),
-                    comment = "건물 코멘트",
-                ),
-                placeAccessibilityParams = RegisterAccessibilityPostRequestPlaceAccessibilityParams(
-                    placeId = place.id,
-                    isFirstFloor = false,
-                    stairInfo = StairInfo.ONE.toDTO(),
-                    imageUrls = emptyList(),
-                    hasSlope = true,
-                    comment = "장소 코멘트",
-                ),
-            )
+            val params = getDefaultRequestParams(place)
             mvc
                 .sccRequest("/registerAccessibility", params, user = user)
                 .apply {
@@ -108,5 +88,87 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
         }
     }
 
-    // TODO: 유저 없는 경우도 테스트?
+    @Test
+    fun `클라이언트에서 올려준 정보의 정합성이 맞지 않는 경우 에러가 난다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
+        }
+
+        val params1 = getDefaultRequestParams(place).let {
+            it.copy(
+                buildingAccessibilityParams = it.buildingAccessibilityParams!!.copy(
+                    hasElevator = false,
+                    elevatorStairInfo = StairInfo.TWO_TO_FIVE.toDTO(), // 엘리베이터가 없는데 계단 정보가 UNDEFINED가 아니다.
+                )
+            )
+        }
+        mvc
+            .sccRequest("/registerAccessibility", params1, user = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+
+        val params2 = getDefaultRequestParams(place).let {
+            it.copy(
+                buildingAccessibilityParams = it.buildingAccessibilityParams!!.copy(
+                    hasElevator = true,
+                    elevatorStairInfo = StairInfo.UNDEFINED.toDTO(), // 엘리베이터가 있는데 계단 정보가 UNDEFINED이다.
+                )
+            )
+        }
+        mvc
+            .sccRequest("/registerAccessibility", params2, user = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+    }
+
+    @Test
+    fun `로그인되어 있지 않아도 등록이 잘 된다`() {
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
+        }
+        mvc
+            .sccRequest("/registerAccessibility", getDefaultRequestParams(place))
+            .apply {
+                val result = getResult(RegisterAccessibilityPost200Response::class)
+                assertNull(result.buildingAccessibility!!.registeredUserName)
+                assertNull(result.placeAccessibility.registeredUserName)
+                assertNull(result.buildingAccessibilityComments[0].user)
+                assertNull(result.placeAccessibilityComments[0].user)
+            }
+    }
+
+    private fun getDefaultRequestParams(place: Place): RegisterAccessibilityPostRequest {
+        return RegisterAccessibilityPostRequest(
+            buildingAccessibilityParams = RegisterAccessibilityPostRequestBuildingAccessibilityParams(
+                buildingId = place.building!!.id,
+                entranceStairInfo = StairInfo.NONE.toDTO(),
+                entranceImageUrls = listOf("buildingAccessibilityEntranceImage"),
+                hasSlope = true,
+                hasElevator = true,
+                elevatorStairInfo = StairInfo.TWO_TO_FIVE.toDTO(),
+                elevatorImageUrls = listOf(
+                    "buildingAccessibilityElevatorImage1",
+                    "buildingAccessibilityElevatorImage2",
+                ),
+                comment = "건물 코멘트",
+            ),
+            placeAccessibilityParams = RegisterAccessibilityPostRequestPlaceAccessibilityParams(
+                placeId = place.id,
+                isFirstFloor = false,
+                stairInfo = StairInfo.ONE.toDTO(),
+                imageUrls = emptyList(),
+                hasSlope = true,
+                comment = "장소 코멘트",
+            ),
+        )
+    }
 }

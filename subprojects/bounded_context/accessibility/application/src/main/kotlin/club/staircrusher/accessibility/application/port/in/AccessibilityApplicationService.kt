@@ -157,7 +157,7 @@ class AccessibilityApplicationService(
                 it.hasElevator && it.elevatorStairInfo == StairInfo.UNDEFINED ||
                 !it.hasElevator && it.elevatorStairInfo != StairInfo.UNDEFINED
             ) {
-                throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.") // TODO: 테스트 추가
+                throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
