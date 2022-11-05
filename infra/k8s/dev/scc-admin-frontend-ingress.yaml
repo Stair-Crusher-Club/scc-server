@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: scc-admin-frontend
+  namespace: dev
+spec:
+  rules:
+    - host: admin.dev.staircrusher.club
+      http:
+        paths:
+          - backend:
+              service:
+                name: scc-admin-frontend
+                port:
+                  name: http
+            path: /
+            pathType: Prefix
