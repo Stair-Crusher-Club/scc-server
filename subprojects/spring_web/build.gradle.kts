@@ -4,8 +4,10 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":stdlib"))
-    implementation(project(":bounded_context:user:application"))
+    api(projects.adminApi)
+    implementation(projects.stdlib)
+    implementation(projects.boundedContext.user.application)
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     api("org.springframework.boot:spring-boot-starter-security")
     val kotlinLoggingVersion: String by project

@@ -7,7 +7,7 @@ function AuthGuard() {
   return (
     <AuthContext.Consumer>
       {
-        authContext => authContext.isAuthenticated
+        authContext => authContext.isAuthenticated()
           ? <Outlet />
           : <Navigate to={`/login?nextUrl=${location.pathname}`} replace />
       }

@@ -1,10 +1,11 @@
 package club.staircrusher.user.domain.service
 
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.token.TokenManager
 import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.model.UserAccessTokenPayload
 import club.staircrusher.user.domain.exception.UserAuthenticationException
-import club.staircrusher.user.domain.exception.TokenVerificationException
+import club.staircrusher.stdlib.token.TokenVerificationException
 
 @Component
 class UserAuthService(

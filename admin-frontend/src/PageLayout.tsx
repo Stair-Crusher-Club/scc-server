@@ -9,7 +9,7 @@ function PageLayout() {
         (authContext) => {
           return (
             <div>
-              {authContext.isAuthenticated ? <AppMenu /> : null}
+              {authContext.isAuthenticated() ? <AppMenu /> : null}
               <div className="app-body-container">
                 <div className="app-body">
                   <Outlet />

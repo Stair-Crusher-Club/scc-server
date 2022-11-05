@@ -7,8 +7,33 @@ info:
 
 defaultContentType: application/json
 
-# TODO: pagination
+
 paths:
+  /login:
+    post:
+      summary: 로그인을 한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '204':
+          description: |
+            빈 response body를 내려준다.
+            대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다.
+            클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
+
+  # TODO: pagination
   /clubQuests:
     get:
       summary: 퀘스트 전체 목록을 반환한다.

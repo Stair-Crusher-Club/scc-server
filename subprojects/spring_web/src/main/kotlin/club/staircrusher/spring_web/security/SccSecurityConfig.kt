@@ -1,5 +1,7 @@
 package club.staircrusher.spring_web.security
 
+import org.springframework.security.web.util.matcher.RequestMatcher
+
 interface SccSecurityConfig {
-    fun getAuthenticatedUrls(): List<String>
+    fun requestMatchers(): List<RequestMatcher>
 }
