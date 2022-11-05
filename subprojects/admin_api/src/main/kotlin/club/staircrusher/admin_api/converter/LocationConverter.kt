@@ -1,9 +1,8 @@
-package club.staircrusher.quest.infra.adapter.`in`.converter
+package club.staircrusher.admin_api.converter
 
-import club.staircrusher.admin.api.dto.LocationDTO
+import club.staircrusher.admin_api.spec.dto.LocationDTO
 import club.staircrusher.stdlib.geography.Location
 
-// TODO: admin-api로 옮기기
 fun LocationDTO.toModel(): Location {
     return Location(lng = lng, lat = lat)
 }

@@ -1,15 +1,19 @@
-val kotlinVersion = project.properties["kotlinVersion"] as String
+val kotlinVersion: String by project
 
 plugins {
     kotlin("jvm")
     id("org.openapi.generator") version "6.0.1"
 }
 
+dependencies {
+    implementation(project(":stdlib"))
+}
+
 openApiGenerate {
     inputSpec.set("${project.rootDir}/admin-api/api-spec.yaml")
-    packageName.set("club.staircrusher.admin.api")
-    apiPackage.set("club.staircrusher.admin.api")
-    modelPackage.set("club.staircrusher.admin.api.dto")
+    packageName.set("club.staircrusher.admin_api.spec")
+    apiPackage.set("club.staircrusher.admin_api.spec")
+    modelPackage.set("club.staircrusher.admin_api.spec.dto")
     outputDir.set("${buildDir.path}/generated-api")
     generatorName.set("kotlin")
     configOptions.put("sourceFolder", "src/main/kotlin")

@@ -1,12 +1,13 @@
 package club.staircrusher.quest.infra.adapter.`in`.controller
 
-import club.staircrusher.admin.api.dto.ClubQuestCreateDryRunResultItemDTO
-import club.staircrusher.admin.api.dto.ClubQuestDTO
-import club.staircrusher.admin.api.dto.ClubQuestsClubQuestsIdIsClosedPutRequest
-import club.staircrusher.admin.api.dto.ClubQuestsClubQuestsIdIsNotAccessiblePutRequest
-import club.staircrusher.admin.api.dto.ClubQuestsCreateDryRunPostRequest
-import club.staircrusher.admin.api.dto.ClubQuestsCreatePostRequest
-import club.staircrusher.admin.api.dto.ClubQuestsGet200ResponseInner
+import club.staircrusher.admin_api.converter.toModel
+import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsClosedPutRequest
+import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessiblePutRequest
+import club.staircrusher.admin_api.spec.dto.ClubQuestsCreateDryRunPostRequest
+import club.staircrusher.admin_api.spec.dto.ClubQuestsCreatePostRequest
+import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
@@ -76,7 +77,7 @@ class AdminClubQuestController(
     }
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/isClosed")
-    fun setIsClosed(@PathVariable clubQuestId: String, @RequestBody request: ClubQuestsClubQuestsIdIsClosedPutRequest): ClubQuestDTO {
+    fun setIsClosed(@PathVariable clubQuestId: String, @RequestBody request: ClubQuestsClubQuestIdIsClosedPutRequest): ClubQuestDTO {
         return clubQuestSetIsClosedUseCase.handle(
             clubQuestId,
             request.buildingId,
@@ -86,7 +87,7 @@ class AdminClubQuestController(
     }
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/isNotAccessible")
-    fun setIsNotAccessible(@PathVariable clubQuestId: String, @RequestBody request: ClubQuestsClubQuestsIdIsNotAccessiblePutRequest): ClubQuestDTO {
+    fun setIsNotAccessible(@PathVariable clubQuestId: String, @RequestBody request: ClubQuestsClubQuestIdIsNotAccessiblePutRequest): ClubQuestDTO {
         return clubQuestSetIsNotAccessibleUseCase.handle(
             clubQuestId,
             request.buildingId,
