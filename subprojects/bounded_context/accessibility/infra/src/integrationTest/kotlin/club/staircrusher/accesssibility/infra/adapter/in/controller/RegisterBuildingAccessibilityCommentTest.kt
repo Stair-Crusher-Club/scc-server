@@ -50,12 +50,10 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
         assertEquals(place.building!!.id, comments[0].buildingId)
         assertEquals("익명 코멘트", comments[0].comment)
         assertNull(comments[0].userId)
-        // TODO: clockMock이 제대로 주입되지 않아서 이 부분만 실패하고 있다.
         assertEquals(clock.millis(), comments[0].createdAt.toEpochMilli())
         assertEquals(place.building!!.id, comments[1].buildingId)
         assertEquals("실명 코멘트", comments[1].comment)
         assertEquals(user.id, comments[1].userId)
-        // TODO: clockMock이 제대로 주입되지 않아서 이 부분만 실패하고 있다.
         assertEquals((clock.instant() - Duration.ofSeconds(1)).toEpochMilli(), comments[1].createdAt.toEpochMilli())
     }
 }

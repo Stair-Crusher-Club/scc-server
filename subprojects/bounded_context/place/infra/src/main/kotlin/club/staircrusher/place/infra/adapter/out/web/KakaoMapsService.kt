@@ -184,7 +184,7 @@ class KakaoMapsService(
                             id = Hashing.getHash(
                                 it.roadAddressName,
                                 length = 36
-                            ), // TODO: 정책 제대로 정하기; 근데 어차피 주소로 unique key를 만들어내긴 해야 할 듯.
+                            ),
                             name = it.roadAddressName,
                             location = it.location,
                             address = it.parseToBuildingAddress(),
