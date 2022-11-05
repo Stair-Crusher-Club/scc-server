@@ -1,4 +1,4 @@
-package club.staircrusher.packaging
+package club.staircrusher.stdlib.clock
 
 import club.staircrusher.stdlib.di.annotation.Component
 import java.time.Clock
@@ -7,6 +7,10 @@ import java.time.ZoneId
 
 @Component
 class SccClock : Clock() {
+    init {
+        sccClockBean = this
+    }
+
     override fun instant(): Instant {
         return Instant.now()
     }
@@ -18,4 +22,13 @@ class SccClock : Clock() {
     override fun getZone(): ZoneId {
         TODO("Not yet implemented")
     }
+
+    companion object {
+        fun instant(): Instant {
+            checkNotNull(sccClockBean) { "Cannot use SccClock.instant() since SccClock bean is not initialized yet." }
+            return sccClockBean!!.instant()
+        }
+    }
 }
+
+private var sccClockBean: SccClock? = null

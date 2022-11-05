@@ -1,17 +1,36 @@
 package club.staircrusher.quest.domain.model
 
+import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.geography.Location
 import java.time.Instant
 
 class ClubQuest(
     val id: String,
     val name: String,
-    dryRunResultItem: ClubQuestCreateDryRunResultItem,
+    val questCenterLocation: Location,
+    targetBuildings: List<ClubQuestTargetBuilding>,
     val createdAt: Instant,
+    updatedAt: Instant,
 ) {
-    val questCenterLocation: Location = dryRunResultItem.questCenterLocation
-    var targetBuildings: List<ClubQuestTargetBuilding> = dryRunResultItem.targetBuildings
-        internal set
+    constructor(
+        name: String,
+        dryRunResultItem: ClubQuestCreateDryRunResultItem,
+        createdAt: Instant,
+    ) : this(
+        id = EntityIdGenerator.generateRandom(),
+        name = name,
+        questCenterLocation = dryRunResultItem.questCenterLocation,
+        targetBuildings = dryRunResultItem.targetBuildings,
+        createdAt = createdAt,
+        updatedAt = createdAt,
+    )
+
+    var targetBuildings: List<ClubQuestTargetBuilding> = targetBuildings
+        private set
+
+    var updatedAt: Instant = updatedAt
+        private set
 
     fun setIsClosed(buildingId: String, placeId: String, value: Boolean) {
         targetBuildings = targetBuildings.replaced({ it.buildingId == buildingId }) { building ->
@@ -21,6 +40,7 @@ class ClubQuest(
                 },
             )
         }
+        updatedAt = SccClock.instant()
     }
     fun setIsNotAccessible(buildingId: String, placeId: String, value: Boolean) {
         targetBuildings = targetBuildings.replaced({ it.buildingId == buildingId }) { building ->
@@ -30,6 +50,7 @@ class ClubQuest(
                 },
             )
         }
+        updatedAt = SccClock.instant()
     }
 
     override fun equals(other: Any?): Boolean {

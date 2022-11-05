@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(projects.boundedContext.place.application)
     implementation(projects.boundedContext.accessibility.application)
+    implementation(projects.persistenceModel)
     api(projects.adminApi)
 
     implementation("org.springframework.boot:spring-boot-starter-web")

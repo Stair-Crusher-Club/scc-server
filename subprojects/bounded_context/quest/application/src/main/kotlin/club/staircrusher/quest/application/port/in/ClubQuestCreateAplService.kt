@@ -11,7 +11,6 @@ import club.staircrusher.stdlib.geography.Location
 import kotlinx.coroutines.runBlocking
 import club.staircrusher.stdlib.di.annotation.Component
 import java.time.Clock
-import java.util.UUID
 
 // TODO: 트랜잭션 처리
 @Component
@@ -59,7 +58,6 @@ class ClubQuestCreateAplService(
     ) {
         dryRunResultItems.forEachIndexed { idx, dryRunResultItem ->
             clubQuestRepository.save(ClubQuest(
-                id = UUID.randomUUID().toString(), // TODO: entity id 생성 전략 수립
                 name = "$questNamePrefix $idx",
                 dryRunResultItem = dryRunResultItem,
                 createdAt = clock.instant(),

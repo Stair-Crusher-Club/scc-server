@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation(projects.stdlib)
+    implementation(projects.boundedContext.quest.domain)
 
     val sqlDelightVersion: String by project
     api("app.cash.sqldelight:runtime-jvm:$sqlDelightVersion")
@@ -17,6 +18,9 @@ dependencies {
 
     val flywayVersion: String by project
     implementation("org.flywaydb:flyway-core:$flywayVersion")
+
+    val jacksonModuleKotlinVersion: String by project
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
 }
 
 idea {
