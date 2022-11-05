@@ -13,12 +13,14 @@ import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 
 
 fun ClubQuestCreateDryRunResultItemDTO.toModel() = ClubQuestCreateDryRunResultItem(
+    questNamePostfix = questNamePostfix,
     questCenterLocation = questCenterLocation.toModel(),
     targetBuildings = targetBuildings.map { it.toModel() },
 )
 
 fun ClubQuestCreateDryRunResultItem.toDTO(conqueredPlaceIds: Set<String>) =
     ClubQuestCreateDryRunResultItemDTO(
+        questNamePostfix = questNamePostfix,
         questCenterLocation = questCenterLocation.toDTO(),
         targetBuildings = targetBuildings.map { it.toDTO(conqueredPlaceIds) }
     )

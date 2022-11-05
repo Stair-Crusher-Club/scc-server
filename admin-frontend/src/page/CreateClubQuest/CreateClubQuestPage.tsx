@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, NumericInput } from '@blueprintjs/core';
+import { Button, InputGroup, NumericInput } from '@blueprintjs/core';
 import { ClubQuestCreateDryRunResultItemDTO } from '../../api';
 import { AdminApi } from '../../AdminApi';
 
@@ -27,6 +27,7 @@ function CreateClubQuestPage() {
 
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
 
+  const [questNamePrefix, setQuestNamePrefix] = useState('');
   const [questCenter, setQuestCenter] = useState<kakao.maps.LatLng | null>(null);
   const [questRadius, setQuestRadius] = useState<number>(200);
   const [questCenterIndicator, setQuestCenterIndicator] = useState<QuestCenterIndicator | null>(null);
@@ -34,6 +35,7 @@ function CreateClubQuestPage() {
 
   const [questClustersMarkers, _setQuestClustersMarkers] = useState<kakao.maps.Marker[][]>([]);
   const [dryRunResults, setDryRunResults] = useState<ClubQuestCreateDryRunResultItemDTO[]>([]);
+  const [selectedDryRunResultIdx, setSelectedDryRunResultIdx] = useState<number | null>(null);
   const questClustersMarkersRef = useRef(questClustersMarkers);
   function setQuestClustersMarkers(newValue: Array<Array<kakao.maps.Marker>>) {
     questClustersMarkersRef.current = newValue;
@@ -50,8 +52,10 @@ function CreateClubQuestPage() {
   useEffect(installMapOnce, []);
   useEffect(() => {
     createOrUpdateQuestCenterIndicator();
-    setQuestClusterCount(Math.ceil((questRadius * questRadius - 1) / (300 * 300))); // 대략 300m x 300m 사이즈의 구역으로 나누는 걸 추천해준다.
   }, [questCenter, questRadius]);
+  useEffect(() => {
+    setQuestClusterCount(Math.ceil((questRadius * questRadius - 1) / (300 * 300))); // 대략 300m x 300m 사이즈의 구역으로 나누는 걸 추천해준다.
+  }, [questRadius]);
 
   function installMapOnce() {
     if (map) {
@@ -141,38 +145,53 @@ function CreateClubQuestPage() {
     )());
   }
 
-  function clearDryRunResult() {
+  function onClearDryRunResult() {
     setDryRunResults([]);
-    questClustersMarkers.forEach((questClusterMarkers, idx) => {
-      questClusterMarkers.forEach((marker) => {
-        marker.setMap(null);
-      });
-    });
+    hideAllClustersMarkers();
     setQuestClustersMarkers([]);
+    setSelectedDryRunResultIdx(null);
+  }
+
+  function onShowAllClusters() {
+    showAllClustersMarkers();
+    setSelectedDryRunResultIdx(null);
+  }
+
+  function onShowCluster(selectedIdx: number) {
+    return () => {
+      showClusterMarkers(selectedIdx);
+      setSelectedDryRunResultIdx(selectedIdx);
+    }
   }
 
   function showAllClustersMarkers() {
-    questClustersMarkers.forEach((questClusterMarkers, idx) => {
+    questClustersMarkers.forEach((questClusterMarkers) => {
       questClusterMarkers.forEach((marker) => {
         marker.setMap(map);
       });
     });
   }
 
-  function showOnlyClusterMarkers(selectedIdx: number) {
-    return () => {
-      questClustersMarkers.forEach((questClusterMarkers, idx) => {
-        if (idx === selectedIdx) {
-          questClusterMarkers.forEach((marker) => {
-            marker.setMap(map);
-          });
-        } else {
-          questClusterMarkers.forEach((marker) => {
-            marker.setMap(null);
-          });
-        }
+  function hideAllClustersMarkers() {
+    questClustersMarkers.forEach((questClusterMarkers) => {
+      questClusterMarkers.forEach((marker) => {
+        marker.setMap(null);
       });
-    };
+    });
+  }
+
+  function showClusterMarkers(selectedIdx: number) {
+    questClustersMarkers.forEach((questClusterMarkers, idx) => {
+      if (idx === selectedIdx) {
+        questClusterMarkers.forEach((marker) => {
+          marker.setMap(map);
+        });
+      } else {
+        questClusterMarkers.forEach((marker) => {
+          marker.setMap(null);
+        });
+      }
+    });
   }
 
   async function createClubQuest() {
@@ -182,7 +201,7 @@ function CreateClubQuestPage() {
     withLoading((
       async () => {
         await AdminApi.clubQuestsCreatePost({
-          questNamePrefix: 'haha',
+          questNamePrefix,
           dryRunResults,
         });
         alert('퀘스트 생성을 완료했습니다.');
@@ -191,12 +210,54 @@ function CreateClubQuestPage() {
     )());
   }
 
+  function showingTargetBuildings() {
+    if (selectedDryRunResultIdx !== null) {
+      return dryRunResults[selectedDryRunResultIdx].targetBuildings;
+    }
+    return dryRunResults.flatMap(it => it.targetBuildings);
+  }
+
+  function totalTargetBuildingsCount() {
+    let count = 0;
+    dryRunResults.forEach((dryRunResult, idx) => {
+      dryRunResult.targetBuildings.forEach(() => {
+        if (selectedDryRunResultIdx == null || selectedDryRunResultIdx === idx) {
+          count += 1;
+        }
+      });
+    });
+    return count;
+  }
+
+  function totalTargetPlacesCount() {
+    let count = 0;
+    dryRunResults.forEach((dryRunResult, idx) => {
+      dryRunResult.targetBuildings.forEach((targetBuilding) => {
+        targetBuilding.places.forEach(() => {
+          if (selectedDryRunResultIdx == null || selectedDryRunResultIdx === idx) {
+            count += 1;
+          }
+        });
+      });
+    });
+    return count;
+  }
+
   return (
     <div>
       <h1>퀘스트 생성하기</h1>
       <div className="create-club-quest-page-body">
         <div id="map" className="body-item-fixed-height" />
         <div>
+          <div className="input-group">
+            <span>퀘스트 이름 :&nbsp;</span>
+            <InputGroup
+              className="inline-flex"
+              value={questNamePrefix}
+              onChange={(event) => { setQuestNamePrefix(event.target.value); }}
+              disabled={isLoading}
+            />
+          </div>
           <div className="input-group">
             <span>퀘스트 지역 반경(m) :&nbsp;</span>
             <NumericInput
@@ -223,21 +284,50 @@ function CreateClubQuestPage() {
               disabled={isLoading}
             />
           </div>
-          <Button icon="refresh" text="퀘스트 분할하기" onClick={dryRunCreateClubQuest} disabled={isLoading || !questCenter || !questRadius || !questClusterCount}></Button>
-          <Button icon="trash" text="처음부터 다시하기" onClick={clearDryRunResult} disabled={isLoading || dryRunResults.length === 0}></Button>
+          <Button icon="refresh" text="장소 조회 & 분할하기" onClick={dryRunCreateClubQuest} disabled={isLoading || !questCenter || !questRadius || !questClusterCount}></Button>
           <Button icon="confirm" text="확정하기 (퀘스트 생성)" onClick={createClubQuest} disabled={isLoading || dryRunResults.length === 0}></Button>
+          <Button icon="trash" text="처음부터 다시하기" onClick={onClearDryRunResult} disabled={isLoading || dryRunResults.length === 0}></Button>
         </div>
         {
-          questClustersMarkers.length > 0
+          dryRunResults.length > 0
             ? (
               <div>
-                <p>분할 결과 :</p>
-                <Button text="전체 표시" onClick={showAllClustersMarkers} disabled={isLoading} />
-                {
-                  questClustersMarkers.map((_, idx) => (
-                    <Button key={idx} text={`클러스터 ${idx + 1}`} onClick={showOnlyClusterMarkers(idx)} disabled={isLoading} />
-                  ))
-                }
+                <p>※ 퀘스트 중심 위치를 변경하려면 [처음부터 다시하기] 버튼을 눌러주세요.</p>
+                <p>분할 결과 : 건물 {totalTargetBuildingsCount()}개 / 장소 {totalTargetPlacesCount()}개</p>
+                <div className="dry-run-result-container">
+                  <div className="dry-run-result-sidebar">
+                    <Button className="cluster-button" text="전체 표시" onClick={onShowAllClusters} disabled={isLoading} />
+                    {
+                      dryRunResults.map((dryRunResult, idx) => (
+                        <Button className="cluster-button" key={idx} text={dryRunResult.questNamePostfix} onClick={onShowCluster(idx)} disabled={isLoading} />
+                      ))
+                    }
+                  </div>
+                  <div className="dry-run-result-body">
+                    <table className="bp4-html-table bp4-html-table-bordered bp4-html-table-condensed bp4-interactive">
+                      <thead>
+                        <tr>
+                          <th className="title-column">건물</th>
+                          <th>점포 또는 매장</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          showingTargetBuildings().flatMap((building) => {
+                            return building.places.map((place, idx) => {
+                              return (
+                                <tr>
+                                  <td>{idx === 0 ? building.name : '상동'}</td>
+                                  <td>{place.name}</td>
+                                </tr>
+                              );
+                            });
+                          })
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             )
             : null

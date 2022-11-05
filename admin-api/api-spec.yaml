@@ -191,6 +191,8 @@ components:
     ClubQuestCreateDryRunResultItemDTO:
       description: 퀘스트 생성 시뮬레이션 결과. 각 퀘스트마다 1개의 아이템이 반환된다.
       properties:
+        questNamePostfix:
+          type: string
         questCenterLocation:
           $ref: '#/components/schemas/LocationDTO'
         targetBuildings:
@@ -198,6 +200,7 @@ components:
           items:
             $ref: '#/components/schemas/ClubQuestTargetBuildingDTO'
       required:
+        - questNamePostfix
         - questCenterLocation
         - targetBuildings
 

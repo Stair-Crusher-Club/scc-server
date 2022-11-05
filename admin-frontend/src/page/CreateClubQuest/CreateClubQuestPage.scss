@@ -13,10 +13,29 @@
   }
 
   .input-group {
-    margin: 3px 0;
+    display: inline-block;
+    margin: 3px 10px 3px 0;
   }
 
   .inline-flex {
     display: inline-flex;
+  }
+
+  .dry-run-result-container {
+    display: flex;
+
+    .dry-run-result-sidebar {
+      display: flex;
+      flex-direction: column;
+      
+      .cluster-button {
+        display: block;
+        text-align: center;
+      }
+    }
+  
+    .dry-run-result-body {
+
+    }
   }
 }
