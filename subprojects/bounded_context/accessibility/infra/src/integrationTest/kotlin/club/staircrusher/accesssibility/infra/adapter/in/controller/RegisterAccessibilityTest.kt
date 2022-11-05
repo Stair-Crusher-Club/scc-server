@@ -82,8 +82,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     assertEquals(user.id, result.placeAccessibilityComments[0].user!!.id)
                     assertEquals("장소 코멘트", result.placeAccessibilityComments[0].comment)
 
-                    // TODO: n번째 정복자 올바르게 채워주기
-//                    assertEquals(expectedRegisteredUserOrder, result.registeredUserOrder)
+                    assertEquals(expectedRegisteredUserOrder, result.registeredUserOrder)
                 }
         }
     }

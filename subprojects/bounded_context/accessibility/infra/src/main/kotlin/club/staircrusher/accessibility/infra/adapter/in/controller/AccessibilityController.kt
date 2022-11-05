@@ -102,7 +102,7 @@ class AccessibilityController(
             placeAccessibilityComments = listOfNotNull(result.placeAccessibilityComment).map {
                 it.toDTO(userInfo = result.userInfo)
             },
-            registeredUserOrder = 0, // TODO: 올바르게 채워주기
+            registeredUserOrder = result.registrationOrder,
         )
     }
 }

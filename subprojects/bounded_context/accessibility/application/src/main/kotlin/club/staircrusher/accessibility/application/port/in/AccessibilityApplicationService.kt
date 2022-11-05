@@ -110,6 +110,7 @@ class AccessibilityApplicationService(
         val buildingAccessibility: BuildingAccessibility?,
         val buildingAccessibilityComment: BuildingAccessibilityComment?,
         val userInfo: UserInfo?,
+        val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
     )
 
     @Suppress("LongMethod")
@@ -197,6 +198,7 @@ class AccessibilityApplicationService(
             buildingAccessibility = buildingAccessibility,
             buildingAccessibilityComment = buildingAccessibilityComment,
             userInfo = userInfo,
+            registrationOrder = placeAccessibilityRepository.countAll(),
         )
     }
 
