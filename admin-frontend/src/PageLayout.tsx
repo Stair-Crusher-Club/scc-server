@@ -1,15 +1,15 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import AppMenu from "./AppMenu";
-import AuthContext from './context/AuthContext';
+import AuthContext from "./context/AuthContext";
 
-function AuthenticatedPageLayout() {
+function PageLayout() {
   return (
     <AuthContext.Consumer>
       {
-        authContext => authContext.isAuthenticated
-          ? (
+        (authContext) => {
+          return (
             <div>
-              <AppMenu />
+              {authContext.isAuthenticated ? <AppMenu /> : null}
               <div className="app-body-container">
                 <div className="app-body">
                   <Outlet />
@@ -17,10 +17,10 @@ function AuthenticatedPageLayout() {
               </div>
             </div>
           )
-          : <Navigate to="/login" replace />
+        }
       }
     </AuthContext.Consumer>
   );
 }
 
-export default AuthenticatedPageLayout;
+export default PageLayout;

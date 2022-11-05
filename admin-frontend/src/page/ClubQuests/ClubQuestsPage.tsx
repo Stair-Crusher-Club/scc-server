@@ -1,27 +1,47 @@
-import { AnchorButton, Button, ButtonGroup } from '@blueprintjs/core';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ClubQuestDTO } from '../../type';
+import { Button, ButtonGroup } from '@blueprintjs/core';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AdminApi } from '../../AdminApi';
+import { ClubQuestsGet200ResponseInner } from '../../api';
 
 import './ClubQuestsPage.scss';
 
 function ClubQuestsPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [clubQuests, setClubQuests] = useState<ClubQuestDTO[]>([]);
+  const [clubQuests, setClubQuests] = useState<ClubQuestsGet200ResponseInner[]>([]);
+  const navigate = useNavigate();
 
-  // TODO: 페이지 접근 시 퀘스트 목록 로딩
-
-  function onClubQuestClick(clubQuest: ClubQuestDTO) {
-    return () => { /* TODO: 퀘스트 상세창으로 이동 */ };
+  function withLoading(promise: Promise<any>): Promise<any> {
+    setIsLoading(true);
+    return promise.finally(() => setIsLoading(false));
   }
 
-  function onClubQuestDeleteBtnClick(clubQuest: ClubQuestDTO) {
-    return (e: React.MouseEvent) => {
+  useEffect(() => {
+    withLoading(
+      AdminApi.clubQuestsGet()
+        .then(res => setClubQuests(res.data) )
+    );
+  }, []);
+
+  function onClubQuestClick(clubQuest: ClubQuestsGet200ResponseInner) {
+    return () => {
+      navigate(`/clubQuests/${clubQuest.id}`);
+    };
+  }
+
+  function onClubQuestDeleteBtnClick(clubQuest: ClubQuestsGet200ResponseInner) {
+    return async (e: React.MouseEvent) => {
       e.stopPropagation();
-      if (!window.confirm(`정말 ${clubQuest.title} 퀘스트를 삭제하시겠습니까?`)) {
+      if (!window.confirm(`정말 ${clubQuest.name} 퀘스트를 삭제하시겠습니까?`)) {
         return;
       }
-      // TODO: 퀘스트 삭제
+      await withLoading(
+        AdminApi.clubQuestsClubQuestIdDelete(clubQuest.id)
+      );
+      alert('삭제를 완료했습니다.');
+      
+      const res = await AdminApi.clubQuestsGet()
+      setClubQuests(res.data);
     };
   }
 
@@ -33,7 +53,7 @@ function ClubQuestsPage() {
           <Button text="새 퀘스트 생성" />
         </Link>
       </ButtonGroup>
-      <table className="club-quests bp3-html-table bp3-html-table-bordered bp3-html-table-condensed bp3-interactive">
+      <table className="club-quests bp4-html-table bp4-html-table-bordered bp4-html-table-condensed bp4-interactive">
         <thead>
           <tr>
             <th className="title-column">퀘스트 이름</th>
@@ -44,7 +64,7 @@ function ClubQuestsPage() {
           {clubQuests.map((clubQuest) => {
             return (
               <tr onClick={onClubQuestClick(clubQuest)}>
-                <td>{clubQuest.title}</td>
+                <td>{clubQuest.name}</td>
                 <td><Button icon="trash" disabled={isLoading} onClick={onClubQuestDeleteBtnClick(clubQuest)} /></td>
               </tr>
             )

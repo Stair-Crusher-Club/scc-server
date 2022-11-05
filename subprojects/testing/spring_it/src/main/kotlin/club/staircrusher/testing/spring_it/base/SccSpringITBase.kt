@@ -1,6 +1,5 @@
 package club.staircrusher.testing.spring_it.base
 
-import club.staircrusher.spring_web.security.SccSecurityFilterChainConfig
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.testing.spring_it.ITDataGenerator
 import club.staircrusher.user.domain.model.User

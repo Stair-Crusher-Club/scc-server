@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@blueprintjs/core';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 interface LoginPageProps {
   isAuthenticated: boolean;
@@ -11,6 +11,10 @@ function LoginPage(props: LoginPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [searchParams] = useSearchParams();
+  const nextUrl = searchParams.get('nextUrl') || '/';
+  const navigate = useNavigate();
 
   if (props.isAuthenticated) {
     return <Navigate to="/" />;
@@ -19,6 +23,7 @@ function LoginPage(props: LoginPageProps) {
   function login() {
     if (userId === 'admin' && password === '2022stair!') { // TODO: ㅋㅋㅋㅋ 완전 땜빵
       props.setIsAuthenticated(true);
+      navigate(nextUrl);
     } else {
       alert('아이디나 패스워드가 잘못되었습니다.');
     }

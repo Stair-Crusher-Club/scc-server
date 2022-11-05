@@ -12,7 +12,7 @@ import kotlinx.coroutines.coroutineScope
 import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
-class InMemoryClubQuestTargetPlaceSearcher(
+class InProcessClubQuestTargetPlaceSearcher(
     private val placeService: PlaceService,
 ) : ClubQuestTargetPlacesSearcher {
     private val targetPlaceCategories = listOf(
@@ -45,6 +45,9 @@ class InMemoryClubQuestTargetPlaceSearcher(
                             name = it.name,
                             location = it.location,
                             placeId = it.id,
+                            buildingId = it.building!!.id,
+                            isClosed = false,
+                            isNotAccessible = false,
                         )
                     }
                 }

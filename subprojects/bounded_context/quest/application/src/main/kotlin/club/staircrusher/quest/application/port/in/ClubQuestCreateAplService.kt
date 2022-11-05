@@ -6,14 +6,17 @@ import club.staircrusher.quest.application.port.out.web.AccessibilityService
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.application.port.out.web.PlaceClusterer
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.stdlib.geography.Location
 import kotlinx.coroutines.runBlocking
 import club.staircrusher.stdlib.di.annotation.Component
+import java.time.Clock
 import java.util.UUID
 
 // TODO: 트랜잭션 처리
 @Component
 class ClubQuestCreateAplService(
+    private val clock: Clock,
     private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
     private val accessibilityService: AccessibilityService,
     private val clubQuestRepository: ClubQuestRepository,
@@ -33,9 +36,19 @@ class ClubQuestCreateAplService(
             .let { placeClusterer.clusterPlaces(it, clusterCount) }
             .toList()
             .map { (questCenterLocation, belongingTargetPlaces) ->
+                val targetBuildings = belongingTargetPlaces
+                    .groupBy { it.buildingId }
+                    .map { (buildingId, places) ->
+                        ClubQuestTargetBuilding(
+                            buildingId = buildingId,
+                            name = buildingId, // FIXME
+                            location = places.first().location, // FIXME?
+                            places = places,
+                        )
+                    }
                 ClubQuestCreateDryRunResultItem(
                     questCenterLocation = questCenterLocation,
-                    targetPlaces = belongingTargetPlaces,
+                    targetBuildings = targetBuildings,
                 )
             }
     }
@@ -49,6 +62,7 @@ class ClubQuestCreateAplService(
                 id = UUID.randomUUID().toString(), // TODO: entity id 생성 전략 수립
                 name = "$questNamePrefix $idx",
                 dryRunResultItem = dryRunResultItem,
+                createdAt = clock.instant(),
             ))
         }
     }

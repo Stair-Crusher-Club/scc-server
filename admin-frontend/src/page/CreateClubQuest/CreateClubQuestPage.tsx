@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, NumericInput } from '@blueprintjs/core';
 import { ClubQuestCreateDryRunResultItemDTO } from '../../api';
 import { AdminApi } from '../../AdminApi';
@@ -17,7 +18,13 @@ interface QuestCenterIndicator {
 }
 
 function CreateClubQuestPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, _setIsLoading] = useState(false);
+  const isLoadingRef = useRef(isLoading);
+  function setIsLoading(newValue: boolean) {
+    isLoadingRef.current = newValue;
+    _setIsLoading(newValue);
+  }
+
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
 
   const [questCenter, setQuestCenter] = useState<kakao.maps.LatLng | null>(null);
@@ -32,6 +39,8 @@ function CreateClubQuestPage() {
     questClustersMarkersRef.current = newValue;
     _setQuestClustersMarkers(newValue);
   }
+
+  const navigate = useNavigate();
 
   function withLoading(promise: Promise<any>): Promise<any> {
     setIsLoading(true);
@@ -60,7 +69,7 @@ function CreateClubQuestPage() {
   }
 
   function updateQuestCenterOnMapClick(mouseEvent: kakao.maps.event.MouseEvent) {
-    if (questClustersMarkersRef.current.length > 0) {
+    if (isLoadingRef.current || questClustersMarkersRef.current.length > 0) {
       return; // dryRunCreate를 한 이후에는 지도 클릭 시 퀘스트 중심이 이동하지 않는 것이 좋다.
     }
     setQuestCenter(mouseEvent.latLng);
@@ -72,8 +81,14 @@ function CreateClubQuestPage() {
       questCenterIndicator.regionCircle.setPosition(questCenter!);
       questCenterIndicator.regionCircle.setRadius(questRadius);
     } else if (questCenter && questRadius) {
+      const markerImage = new window.kakao.maps.MarkerImage(
+        '/centerLocation.jpg',
+        new window.kakao.maps.Size(20, 20),
+        { offset: new window.kakao.maps.Point(10, 10) },
+      );
       const marker = new window.kakao.maps.Marker({
         position: questCenter,
+        image: markerImage,
       });
       marker.setMap(map);
       const regionCircle = new window.kakao.maps.Circle({
@@ -94,32 +109,36 @@ function CreateClubQuestPage() {
   }
 
   async function dryRunCreateClubQuest() {
-    const res = await AdminApi.clubQuestsCreateDryRunPost({
-      centerLocation: {
-        lng: questCenter!.getLng(),
-        lat: questCenter!.getLat(),
-      },
-      radiusMeters: questRadius,
-      clusterCount: questClusterCount,
-    });
-    const dryRunResult = res.data;
-    setDryRunResults(dryRunResult)
-
-    questClustersMarkers.forEach((questClusterMarkers) => {
-      questClusterMarkers.forEach((marker) => {
-        marker.setMap(null);
-      });
-    });
-    const newQuestClustersMarkers = dryRunResult.map((targetPlaces) => {
-      return targetPlaces.targetPlaces.map((targetPlace) => {
-        const marker = new window.kakao.maps.Marker({
-          position: new kakao.maps.LatLng(targetPlace.location.lat, targetPlace.location.lng),
+    withLoading((
+      async () => {
+        const res = await AdminApi.clubQuestsCreateDryRunPost({
+          centerLocation: {
+            lng: questCenter!.getLng(),
+            lat: questCenter!.getLat(),
+          },
+          radiusMeters: questRadius,
+          clusterCount: questClusterCount,
         });
-        marker.setMap(map);
-        return marker
-      });
-    });
-    setQuestClustersMarkers(newQuestClustersMarkers);
+        const dryRunResult = res.data;
+        setDryRunResults(dryRunResult)
+    
+        questClustersMarkers.forEach((questClusterMarkers) => {
+          questClusterMarkers.forEach((marker) => {
+            marker.setMap(null);
+          });
+        });
+        const newQuestClustersMarkers = dryRunResult.map((item) => {
+          return item.targetBuildings.map((targetBuilding) => {
+            const marker = new window.kakao.maps.Marker({
+              position: new kakao.maps.LatLng(targetBuilding.location.lat, targetBuilding.location.lng),
+            });
+            marker.setMap(map);
+            return marker
+          });
+        });
+        setQuestClustersMarkers(newQuestClustersMarkers);
+      }
+    )());
   }
 
   function clearDryRunResult() {
@@ -160,12 +179,16 @@ function CreateClubQuestPage() {
     if (!window.confirm('퀘스트를 생성하시겠습니까?')) {
       return;
     }
-    await AdminApi.clubQuestsCreatePost({
-      questNamePrefix: 'haha',
-      dryRunResults,
-    });
-    alert('퀘스트 생성을 완료했습니다.');
-    // TODO: 퀘스트 상세 페이지 혹은 퀘스트 목록 페이지로 이동
+    withLoading((
+      async () => {
+        await AdminApi.clubQuestsCreatePost({
+          questNamePrefix: 'haha',
+          dryRunResults,
+        });
+        alert('퀘스트 생성을 완료했습니다.');
+        navigate('/clubQuests');
+      }
+    )());
   }
 
   return (
@@ -185,6 +208,7 @@ function CreateClubQuestPage() {
               max={3000}
               value={questRadius}
               onValueChange={setQuestRadius}
+              disabled={isLoading}
             />
           </div>
           <div className="input-group">
@@ -196,21 +220,22 @@ function CreateClubQuestPage() {
               max={200}
               value={questClusterCount}
               onValueChange={setQuestClusterCount}
+              disabled={isLoading}
             />
           </div>
-          <Button icon="refresh" text="퀘스트 분할하기" onClick={dryRunCreateClubQuest} disabled={!questCenter || !questRadius || !questClusterCount}></Button>
-          <Button icon="trash" text="처음부터 다시하기" onClick={clearDryRunResult} disabled={dryRunResults.length === 0}></Button>
-          <Button icon="confirm" text="확정하기 (퀘스트 생성)" onClick={createClubQuest} disabled={dryRunResults.length === 0}></Button>
+          <Button icon="refresh" text="퀘스트 분할하기" onClick={dryRunCreateClubQuest} disabled={isLoading || !questCenter || !questRadius || !questClusterCount}></Button>
+          <Button icon="trash" text="처음부터 다시하기" onClick={clearDryRunResult} disabled={isLoading || dryRunResults.length === 0}></Button>
+          <Button icon="confirm" text="확정하기 (퀘스트 생성)" onClick={createClubQuest} disabled={isLoading || dryRunResults.length === 0}></Button>
         </div>
         {
           questClustersMarkers.length > 0
             ? (
               <div>
                 <p>분할 결과 :</p>
-                <Button text="전체 표시" onClick={showAllClustersMarkers} />
+                <Button text="전체 표시" onClick={showAllClustersMarkers} disabled={isLoading} />
                 {
                   questClustersMarkers.map((_, idx) => (
-                    <Button key={idx} text={`클러스터 ${idx + 1}`} onClick={showOnlyClusterMarkers(idx)} />
+                    <Button key={idx} text={`클러스터 ${idx + 1}`} onClick={showOnlyClusterMarkers(idx)} disabled={isLoading} />
                   ))
                 }
               </div>
