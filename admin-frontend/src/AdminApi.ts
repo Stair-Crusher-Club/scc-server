@@ -21,10 +21,12 @@ globalAxios.interceptors.request.use((request) => {
 globalAxios.interceptors.response.use((response) => response, (error) => {
   const res = error.response;
   if (res.status === 401) {
-    alert('잘못된 인증 정보입니다. 로그인 화면으로 이동합니다.');
-    clearSavedAccessToken();
-    window.location.pathname = '/login';
-    return;
+    if (window.location.pathname !== '/login') {
+      alert('잘못된 인증 정보입니다. 로그인 화면으로 이동합니다.');
+      clearSavedAccessToken();
+      window.location.pathname = '/login';
+      return;
+    }
   }
   if (res == null) {
     alert('알 수 없는 문제가 발생했습니다.');
