@@ -1,6 +1,7 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.`in`.BuildingAccessibilityUpvoteApplicationService
+import club.staircrusher.api.spec.dto.CancelBuildingAccessibilityUpvotePostRequest
 import club.staircrusher.api.spec.dto.GiveBuildingAccessibilityUpvotePostRequest
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.http.ResponseEntity
@@ -28,7 +29,7 @@ class AccessibilityUpvoteController(
 
     @PostMapping("/cancelBuildingAccessibilityUpvote")
     fun cancelBuildingAccessibilityUpvote(
-        @RequestBody request: GiveBuildingAccessibilityUpvotePostRequest, // TODO: CancelBuildingAccessibilityUpvotePostRequest가 왜 안 만들어지지...
+        @RequestBody request: CancelBuildingAccessibilityUpvotePostRequest,
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         buildingAccessibilityUpvoteApplicationService.cancelUpvote(
