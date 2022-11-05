@@ -1,7 +1,8 @@
 import { DefaultApi } from "./api/api";
 import globalAxios from 'axios';
 
-export const AdminApi = new DefaultApi(undefined, 'http://localhost:8080/admin');
+const basePath = process.env.REACT_APP_BASE_URL || 'http://localhost:8080/admin'
+export const AdminApi = new DefaultApi(undefined, basePath);
 globalAxios.interceptors.response.use((response) => response, (error) => {
   const res = error.response;
   if (res == null) {
