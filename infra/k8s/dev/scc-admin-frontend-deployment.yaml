@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: scc-admin-frontend
+  name: scc-admin-frontend
+  namespace: dev
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: scc-admin-frontend
+  template:
+    metadata:
+      labels:
+        app: scc-admin-frontend
+    spec:
+      containers:
+        - env:
+          image: public.ecr.aws/q0g6g7m8/scc-admin-frontend:latest-rc
+          imagePullPolicy: Always
+          name: scc-admin-frontend
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
