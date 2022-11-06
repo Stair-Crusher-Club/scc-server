@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "scc-server.fullname" . }}
+  labels:
+    {{- include "scc-server.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "scc-server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "scc-server.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "scc-server.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SPRING_CONFIG_LOCATION
+              value: "file:/app/conf/application.yaml,file:/app/secret/secret.yaml"
+            - name: MANAGEMENT_SERVER_PORT
+              value: "{{ .Values.service.metricsPort }}"
+            - name: AWS_STS_REGIONAL_ENDPOINTS
+              value: regional
+            - name: AWS_REGION
+              value: ap-northeast-2
+            - name: AWS_ROLE_ARN
+              value: "{{ .Values.aws.roleArn }}"
+            - name: AWS_WEB_IDENTITY_TOKEN_FILE
+              value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.service.metricsPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+          startupProbe:
+            httpGet:
+              path: /readyz
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: aws-iam-token
+              mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+              readOnly: true
+            - name: configVolume
+              mountPath: /app/conf
+              readOnly: true
+            - name: secretVolume
+              mountPath: /app/secret
+              readOnly: true
+      volumes:
+        - name: aws-iam-token
+          projected:
+            defaultMode: 420
+            sources:
+              - serviceAccountToken:
+                  audience: sts.amazonaws.com
+                  expirationSeconds: 86400
+                  path: token
+        - name: configVolume
+          configMap:
+            name: {{ include "scc-server.fullname" . }}
+        - name: secretVolume
+          secret:
+            secretName: {{ include "scc-server.fullname" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
