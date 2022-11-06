@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "external_secret_role_policy" {
     condition {
       test     = "StringEquals"
       variable = "k3s.staircrusher.club:sub"
-      values   = ["system:serviceaccount:external-secret:external-secret"]
+      values   = ["system:serviceaccount:dev:scc-server"]
     }
   }
 }
@@ -24,10 +24,6 @@ data "aws_iam_policy_document" "read_secret_manager" {
       "secretsmanager:ListSecretVersionIds",
     ]
     resources = [data.terraform_remote_state.secret_manager.outputs.scc_secret_manager_arn]
-  }
-  statement {
-    actions   = ["secretsmanager:ListSecrets"]
-    resources = ["*"]
   }
 }
 

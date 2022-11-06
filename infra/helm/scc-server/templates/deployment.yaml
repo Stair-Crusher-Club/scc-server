@@ -71,10 +71,10 @@ spec:
             - name: aws-iam-token
               mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
               readOnly: true
-            - name: configVolume
+            - name: config-volume
               mountPath: /app/conf
               readOnly: true
-            - name: secretVolume
+            - name: secret-volume
               mountPath: /app/secret
               readOnly: true
       volumes:
@@ -86,10 +86,10 @@ spec:
                   audience: sts.amazonaws.com
                   expirationSeconds: 86400
                   path: token
-        - name: configVolume
+        - name: config-volume
           configMap:
             name: {{ include "scc-server.fullname" . }}
-        - name: secretVolume
+        - name: secret-volume
           secret:
             secretName: {{ include "scc-server.fullname" . }}
       {{- with .Values.nodeSelector }}

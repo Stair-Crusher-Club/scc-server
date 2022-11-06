@@ -4,13 +4,13 @@
 
 replicaCount: 1
 
-filesDir: files/dev
+env: dev
 
 image:
   repository: public.ecr.aws/q0g6g7m8/scc-server
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: lastet
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
@@ -20,7 +20,8 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::833004893731:role/external_secret_role
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
@@ -34,7 +35,7 @@ securityContext:
   capabilities:
     drop:
     - ALL
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
   runAsNonRoot: true
   runAsUser: 1000
 
@@ -68,7 +69,7 @@ resources:
   #   cpu: 100m
   #   memory: 128Mi
   requests:
-    cpu: 1
+    cpu: 500m
     memory: 1Gi
 
 autoscaling:
@@ -85,4 +86,4 @@ tolerations: []
 affinity: {}
 
 aws:
-  roleArn: "arn:aws:iam::833004893731:role/test"
+  roleArn: arn:aws:iam::833004893731:role/test
