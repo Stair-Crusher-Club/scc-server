@@ -386,4 +386,3 @@ certController:
 
 # -- Specifies `dnsOptions` to deployment
 dnsConfig: {}
-
