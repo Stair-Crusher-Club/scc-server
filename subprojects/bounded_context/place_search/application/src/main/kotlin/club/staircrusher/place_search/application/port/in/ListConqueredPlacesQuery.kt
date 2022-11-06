@@ -23,7 +23,7 @@ class ListConqueredPlacesQuery(
                 place = place,
                 placeAccessibility = placeAccessibility,
                 buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id],
-                distanceMeters = null,
+                distance = null,
             )
         }
     }

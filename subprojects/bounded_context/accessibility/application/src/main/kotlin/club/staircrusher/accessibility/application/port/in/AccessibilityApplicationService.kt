@@ -110,6 +110,7 @@ class AccessibilityApplicationService(
         val buildingAccessibility: BuildingAccessibility?,
         val buildingAccessibilityComment: BuildingAccessibilityComment?,
         val userInfo: UserInfo?,
+        val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
     )
 
     @Suppress("LongMethod")
@@ -157,7 +158,7 @@ class AccessibilityApplicationService(
                 it.hasElevator && it.elevatorStairInfo == StairInfo.UNDEFINED ||
                 !it.hasElevator && it.elevatorStairInfo != StairInfo.UNDEFINED
             ) {
-                throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.") // TODO: 테스트 추가
+                throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
@@ -197,6 +198,7 @@ class AccessibilityApplicationService(
             buildingAccessibility = buildingAccessibility,
             buildingAccessibilityComment = buildingAccessibilityComment,
             userInfo = userInfo,
+            registrationOrder = placeAccessibilityRepository.countAll(),
         )
     }
 

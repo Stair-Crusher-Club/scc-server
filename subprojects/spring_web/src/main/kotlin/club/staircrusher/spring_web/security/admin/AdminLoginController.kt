@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-// TODO: bounded context 외에도 "어드민"이나 "앱" 이라는 관심사에 대한 모듈이 따로 존재해야 할 듯함.
-//       일단은 적절한 위치가 없어서 여기에 배치함.
-//       컨트롤러도 각 bounded context의 infra 모듈이 아니라 "어드민" / "앱" 모듈에 있어야 하나?
+// TODO: admin_auth 모듈로 쪼개져야 함.
 @RestController
 class AdminLoginController(
     private val adminAuthenticationService: AdminAuthenticationService,

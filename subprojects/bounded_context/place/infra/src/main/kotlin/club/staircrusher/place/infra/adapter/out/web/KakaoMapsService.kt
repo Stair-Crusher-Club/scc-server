@@ -105,68 +105,87 @@ class KakaoMapsService(
         ): Mono<SearchResult>
     }
 
-    override suspend fun findByKeyword(keyword: String): List<Place> {
-        val result = kakaoService.searchByKeyword(keyword).awaitFirstOrNull()
-        logger.debug { result }
-        return (result?.convertToModel() ?: emptyList()).removeDuplicates()
+    override suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
+        return searchPlacesInParallel { page -> fetchPageForSearchByKeyword(keyword, option, page) }
     }
 
-    override suspend fun findByCategory(category: PlaceCategory): List<Place> {
-        TODO("Not yet implemented")
-    }
-
-    // TODO: 한 번에 한 페이지만 조회하는 대신 동시에 여러 페이지 조회하기
-    override suspend fun findAllByKeyword(keyword: String): List<Place> {
-        val result = mutableListOf<Place>()
-        var nextPage = 1
-        var pageablePage: Int? = null
-        while (pageablePage == null || nextPage <= pageablePage) {
-            val apiResult = kakaoService.searchByKeyword(keyword, page = nextPage).awaitFirstOrNull()
-            logger.debug { apiResult }
-            if (apiResult == null) {
-                break
+    private fun fetchPageForSearchByKeyword(keyword: String, option: MapsService.SearchByKeywordOption, page: Int): Mono<SearchResult> {
+        return when (option.region) {
+            is MapsService.SearchByKeywordOption.CircleRegion -> {
+                val region = option.region as MapsService.SearchByKeywordOption.CircleRegion
+                kakaoService.searchByKeyword(
+                    query = keyword,
+                    x = region.centerLocation.lng.toString(),
+                    y = region.centerLocation.lat.toString(),
+                    radius = region.radiusMeters,
+                    page = page,
+                )
             }
-            pageablePage = apiResult.meta.pageableCount
-            nextPage += 1
-            result += apiResult.convertToModel()
+            is MapsService.SearchByKeywordOption.RectangleRegion -> {
+                val region = option.region as MapsService.SearchByKeywordOption.RectangleRegion
+                kakaoService.searchByKeyword(
+                    query = keyword,
+                    rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" }
+                )
+            }
+            null -> kakaoService.searchByKeyword(query = keyword)
         }
-        return result.removeDuplicates()
     }
 
-    // TODO: 한 번에 한 페이지만 조회하는 대신 동시에 여러 페이지 조회하기
-    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchOption): List<Place> {
-        val result = mutableListOf<Place>()
-        var nextPage = 1
-        var pageablePage: Int? = null
-        while (pageablePage == null || nextPage <= pageablePage) {
-            val mono = when (option.region) {
-                is MapsService.SearchOption.CircleRegion -> {
-                    val region = option.region as MapsService.SearchOption.CircleRegion
-                    kakaoService.searchByCategory(
-                        category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
-                        x = region.centerLocation.lng.toString(),
-                        y = region.centerLocation.lat.toString(),
-                        radius = region.radiusMeters,
-                        page = nextPage,
-                    )
-                }
-                is MapsService.SearchOption.RectangleRegion -> {
-                    val region = option.region as MapsService.SearchOption.RectangleRegion
-                    kakaoService.searchByCategory(
-                        category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
-                        rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" }
-                    )
-                }
+    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchByCategoryOption): List<Place> {
+        return searchPlacesInParallel { page -> fetchPageForSearchByCategory(category, option, page) }
+    }
+
+    private fun fetchPageForSearchByCategory(
+        category: PlaceCategory,
+        option: MapsService.SearchByCategoryOption,
+        page: Int,
+    ): Mono<SearchResult> {
+        return when (option.region) {
+            is MapsService.SearchByCategoryOption.CircleRegion -> {
+                val region = option.region as MapsService.SearchByCategoryOption.CircleRegion
+                kakaoService.searchByCategory(
+                    category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
+                    x = region.centerLocation.lng.toString(),
+                    y = region.centerLocation.lat.toString(),
+                    radius = region.radiusMeters,
+                    page = page,
+                )
             }
-            val apiResult = mono.awaitFirstOrNull()
-            logger.debug { apiResult }
-            if (apiResult == null) {
-                break
+            is MapsService.SearchByCategoryOption.RectangleRegion -> {
+                val region = option.region as MapsService.SearchByCategoryOption.RectangleRegion
+                kakaoService.searchByCategory(
+                    category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
+                    rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" }
+                )
             }
-            pageablePage = apiResult.meta.pageableCount
-            nextPage += 1
-            result += apiResult.convertToModel()
         }
+    }
+
+    @Suppress("MagicNumber") private val fetchChunkSize = 20
+    @Suppress("ReturnCount")
+    private suspend fun searchPlacesInParallel(fetchPageBlock: (page: Int) -> Mono<SearchResult>): List<Place> {
+        val firstPageResult = fetchPageBlock(1)
+            .awaitFirstOrNull()
+            ?: return emptyList()
+        val pageablePage = firstPageResult.meta.pageableCount
+
+        val result = firstPageResult.convertToModel().toMutableList()
+        if (pageablePage == 1) {
+            return result
+        }
+
+        (2 .. pageablePage)
+            .map { page -> fetchPageBlock(page) }
+            .chunked(fetchChunkSize)
+            .forEach { chunkedMonos ->
+                val searchedPlaces = Mono
+                    .zip(chunkedMonos) {
+                        it.flatMap { (it as SearchResult).convertToModel() }
+                    }
+                    .awaitFirstOrNull()
+                searchedPlaces?.let { result += it }
+            }
         return result.removeDuplicates()
     }
 
@@ -184,7 +203,7 @@ class KakaoMapsService(
                             id = Hashing.getHash(
                                 it.roadAddressName,
                                 length = 36
-                            ), // TODO: 정책 제대로 정하기; 근데 어차피 주소로 unique key를 만들어내긴 해야 할 듯.
+                            ),
                             name = it.roadAddressName,
                             location = it.location,
                             address = it.parseToBuildingAddress(),

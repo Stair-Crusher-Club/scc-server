@@ -94,5 +94,20 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
     }
 
-    // TODO: 유저 없는 경우도 테스트?
+    @Test
+    fun `로그인되어 있지 않아도 잘 동작한다`() {
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
+        }
+        val params = GetAccessibilityPostRequest(
+            placeId = place.id
+        )
+        mvc
+            .sccRequest("/getAccessibility", params)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
 }
