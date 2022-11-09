@@ -25,4 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
 
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+
+    val guavaVersion: String by project
+    implementation("com.google.guava:guava:$guavaVersion")
 }
