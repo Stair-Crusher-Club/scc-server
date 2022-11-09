@@ -17,7 +17,6 @@ interface MapsService {
 
     data class SearchByKeywordOption(
         val region: Region? = null,
-        val page: Int = 1,
     ) {
         sealed interface Region
         data class CircleRegion(
@@ -32,7 +31,6 @@ interface MapsService {
 
     data class SearchByCategoryOption(
         val region: Region,
-        val page: Int = 1,
     ) {
         sealed interface Region
         data class CircleRegion(
@@ -40,8 +38,8 @@ interface MapsService {
             val radiusMeters: Int,
         ) : Region
         data class RectangleRegion(
-            val leftTopLocation: Location,
-            val rightBottomLocation: Location,
+            val leftBottomLocation: Location,
+            val rightTopLocation: Location,
         ) : Region
     }
 }

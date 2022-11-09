@@ -19,6 +19,7 @@ interface QuestCenterIndicator {
 
 function CreateClubQuestPage() {
   const [isLoading, _setIsLoading] = useState(false);
+  const [isDryRunLoading, setIsDryRunLoading] = useState(false);
   const isLoadingRef = useRef(isLoading);
   function setIsLoading(newValue: boolean) {
     isLoadingRef.current = newValue;
@@ -115,32 +116,38 @@ function CreateClubQuestPage() {
   async function dryRunCreateClubQuest() {
     withLoading((
       async () => {
-        const res = await AdminApi.clubQuestsCreateDryRunPost({
-          centerLocation: {
-            lng: questCenter!.getLng(),
-            lat: questCenter!.getLat(),
-          },
-          radiusMeters: questRadius,
-          clusterCount: questClusterCount,
-        });
-        const dryRunResult = res.data;
-        setDryRunResults(dryRunResult)
-    
-        questClustersMarkers.forEach((questClusterMarkers) => {
-          questClusterMarkers.forEach((marker) => {
-            marker.setMap(null);
+        setIsDryRunLoading(true);
+        
+        try {
+          const res = await AdminApi.clubQuestsCreateDryRunPost({
+            centerLocation: {
+              lng: questCenter!.getLng(),
+              lat: questCenter!.getLat(),
+            },
+            radiusMeters: questRadius,
+            clusterCount: questClusterCount,
           });
-        });
-        const newQuestClustersMarkers = dryRunResult.map((item) => {
-          return item.targetBuildings.map((targetBuilding) => {
-            const marker = new window.kakao.maps.Marker({
-              position: new kakao.maps.LatLng(targetBuilding.location.lat, targetBuilding.location.lng),
+          const dryRunResult = res.data;
+          setDryRunResults(dryRunResult);
+      
+          questClustersMarkers.forEach((questClusterMarkers) => {
+            questClusterMarkers.forEach((marker) => {
+              marker.setMap(null);
             });
-            marker.setMap(map);
-            return marker
           });
-        });
-        setQuestClustersMarkers(newQuestClustersMarkers);
+          const newQuestClustersMarkers = dryRunResult.map((item) => {
+            return item.targetBuildings.map((targetBuilding) => {
+              const marker = new window.kakao.maps.Marker({
+                position: new kakao.maps.LatLng(targetBuilding.location.lat, targetBuilding.location.lng),
+              });
+              marker.setMap(map);
+              return marker
+            });
+          });
+          setQuestClustersMarkers(newQuestClustersMarkers);
+        } finally {
+          setIsDryRunLoading(false);
+        }
       }
     )());
   }
@@ -288,6 +295,7 @@ function CreateClubQuestPage() {
           <Button icon="confirm" text="확정하기 (퀘스트 생성)" onClick={createClubQuest} disabled={isLoading || dryRunResults.length === 0}></Button>
           <Button icon="trash" text="처음부터 다시하기" onClick={onClearDryRunResult} disabled={isLoading || dryRunResults.length === 0}></Button>
         </div>
+        {isDryRunLoading ? <p>장소를 조회하는 중입니다. 최대 수 분 정도 걸릴 수 있으니 페이지를 종료하지 마시고 기다려 주세요!</p> : null}
         {
           dryRunResults.length > 0
             ? (
