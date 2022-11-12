@@ -103,8 +103,6 @@ data "aws_iam_policy_document" "force_mfa" {
     effect = "Deny"
     not_actions = [
       "iam:*",
-      "s3:*",
-      "dynamodb:*",
     ]
     resources = [
       "*",
