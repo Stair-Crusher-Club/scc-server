@@ -42,4 +42,4 @@ management:
 scc:
   s3:
     imageUpload:
-      bucketname: scc-dev-accessibility-images
+      bucketname: scc-accessibility-images

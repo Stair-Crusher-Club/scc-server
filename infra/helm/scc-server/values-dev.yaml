@@ -22,7 +22,7 @@ serviceAccount:
   create: true
   # Annotations to add to the service account
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::833004893731:role/external_secret_role
+    eks.amazonaws.com/role-arn: arn:aws:iam::833004893731:role/external-secret
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
@@ -87,4 +87,4 @@ tolerations: []
 affinity: {}
 
 aws:
-  roleArn: arn:aws:iam::833004893731:role/test
+  roleArn: arn:aws:iam::833004893731:role/scc-dev
