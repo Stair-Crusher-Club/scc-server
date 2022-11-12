@@ -4,6 +4,7 @@
 
 replicaCount: 1
 
+filesDir: files/dev
 env: dev
 
 image:
