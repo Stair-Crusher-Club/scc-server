@@ -8,7 +8,7 @@ server:
 spring:
   datasource:
     username: scc
-    url: jdbc:postgresql://ls-bc95e3df47f37bbac5e8b2cc124446d197fe4c4b.cojudf9vatyk.ap-northeast-2.rds.amazonaws.com:5432/scc
+    url: jdbc:postgresql://ls-bc95e3df47f37bbac5e8b2cc124446d197fe4c4b.cojudf9vatyk.ap-northeast-2.rds.amazonaws.com:5432/scc-dev
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 1000
