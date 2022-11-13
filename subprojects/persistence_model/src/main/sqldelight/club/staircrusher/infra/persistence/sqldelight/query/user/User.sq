@@ -6,7 +6,8 @@ ON CONFLICT(id) DO UPDATE SET
     nickname = EXCLUDED.nickname,
     encrypted_password = EXCLUDED.encrypted_password,
     instagram_id = EXCLUDED.instagram_id,
-    created_at = EXCLUDED.created_at;
+    created_at = EXCLUDED.created_at,
+    deleted_at = EXCLUDED.deleted_at;
 
 removeAll:
 DELETE FROM scc_user;

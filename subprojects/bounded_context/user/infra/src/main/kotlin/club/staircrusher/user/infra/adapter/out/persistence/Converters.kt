@@ -9,8 +9,8 @@ fun Scc_user.toDomainModel() = club.staircrusher.user.domain.model.User(
     encryptedPassword = encrypted_password,
     instagramId = instagram_id,
     createdAt = created_at.toInstant(),
-).let {
-    it.deletedAt = deleted_at?.toInstant()
+).apply {
+    deletedAt = deleted_at?.toInstant()
 }
 
 fun club.staircrusher.user.domain.model.User.toPersistenceModel() = Scc_user(

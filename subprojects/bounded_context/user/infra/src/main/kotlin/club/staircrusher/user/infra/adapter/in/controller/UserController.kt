@@ -5,6 +5,7 @@ import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -29,7 +30,8 @@ class UserController(
     }
 
     @PostMapping("/deleteUser")
-    fun deleteUser(authentication: SccAppAuthentication) {
+    fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
         userApplicationService.deleteUser(authentication.principal)
+        return ResponseEntity.noContent().build()
     }
 }
