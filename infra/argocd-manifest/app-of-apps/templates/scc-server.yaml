@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/Stair-Crusher-Club/scc-server/
-    targetRevision: swann/deploy-with-argocd # FIXME: Change to main branch
+    targetRevision: main
     path: infra/helm/scc-server
     helm:
       releaseName: scc-server
