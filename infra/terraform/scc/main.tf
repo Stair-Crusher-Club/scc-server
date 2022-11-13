@@ -37,6 +37,15 @@ data "terraform_remote_state" "secret_manager" {
   }
 }
 
+data "terraform_remote_state" "kms" {
+  backend = "s3"
+  config = {
+    bucket = "scc-tf-remote-state"
+    key    = "kms.tfstate"
+    region = "ap-northeast-2"
+  }
+}
+
 data "sops_file" "secret_data" {
   source_file = "secret.yaml"
 }
