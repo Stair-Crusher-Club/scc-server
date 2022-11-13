@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: scc-server-{{ .Values.env }}
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: {{ .Values.env }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/Stair-Crusher-Club/scc-server/
+    targetRevision: swann/deploy-with-argocd # FIXME: Change to main branch
+    path: infra/helm/scc-server
+    helm:
+      releaseName: scc-server
+      valueFiles:
+        - values-{{ .Values.env }}.yaml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+    syncOptions:
+      - CreateNamespace=true
