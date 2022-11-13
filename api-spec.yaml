@@ -480,6 +480,12 @@ paths:
                 required:
                   - user
 
+  /deleteUser:
+    post:
+      summary: 계정을 삭제한다.
+      responses:
+        '204': {}
+
 components:
    # Reusable schemas (data models)
   schemas:
