@@ -27,4 +27,9 @@ class UserController(
             user = updatedUser.toDTO(),
         )
     }
+
+    @PostMapping("/deleteUser")
+    fun deleteUser(authentication: SccAppAuthentication) {
+        userApplicationService.deleteUser(authentication.principal)
+    }
 }

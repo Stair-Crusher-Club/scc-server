@@ -34,7 +34,7 @@ class UserApplicationService(
             throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
         }
         if (userRepository.findByNickname(normalizedNickname) != null) {
-            throw SccDomainException("${normalizedNickname}은 이미 사용 중인 닉네임입니다.")
+            throw SccDomainException("${normalizedNickname}은 이미 사용된 닉네임입니다.")
         }
         val user = userRepository.save(
             User(
@@ -53,7 +53,10 @@ class UserApplicationService(
         nickname: String,
         password: String
     ): LoginResult = transactionManager.doInTransaction {
-        val user = userRepository.findByNickname(nickname) ?: throw SccDomainException("잘못된 계정 아이디입니다.")
+        val user = userRepository.findByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
+        if (user.isDeleted) {
+            throw SccDomainException("잘못된 계정입니다.")
+        }
         if (!passwordEncryptor.verify(password, user.encryptedPassword)) {
             throw SccDomainException("잘못된 비밀번호입니다.")
         }
@@ -83,6 +86,14 @@ class UserApplicationService(
             normalizedNickname
         }
         user.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
+        userRepository.save(user)
+    }
+
+    fun deleteUser(
+        userId: String,
+    ) = transactionManager.doInTransaction (TransactionIsolationLevel.REPEATABLE_READ) {
+        val user = userRepository.findById(userId)
+        user.delete(clock.instant())
         userRepository.save(user)
     }
 

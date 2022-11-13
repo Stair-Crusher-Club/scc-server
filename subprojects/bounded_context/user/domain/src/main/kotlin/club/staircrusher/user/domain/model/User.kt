@@ -1,5 +1,6 @@
 package club.staircrusher.user.domain.model
 
+import club.staircrusher.stdlib.clock.SccClock
 import java.time.Instant
 
 data class User(
@@ -8,4 +9,13 @@ data class User(
     var encryptedPassword: String,
     var instagramId: String?,
     val createdAt: Instant,
-)
+) {
+    var deletedAt: Instant? = SccClock.instant() // private으로 둘 방법이 없을까? 지금은 persistence_model 모듈에서 써야 해서 안 된다.
+
+    val isDeleted: Boolean
+        get() = deletedAt != null
+
+    fun delete(deletedAt: Instant) {
+        this.deletedAt = deletedAt
+    }
+}

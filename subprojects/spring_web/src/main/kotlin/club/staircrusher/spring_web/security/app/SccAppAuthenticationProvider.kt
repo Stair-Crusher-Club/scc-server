@@ -27,6 +27,9 @@ class SccAppAuthenticationProvider(
 
         val user: User = userApplicationService.getUser(userId)
             ?: throw BadCredentialsException("No User found with given credentials.")
+        if (user.isDeleted) {
+            throw BadCredentialsException("No User found with given credentials.")
+        }
 
         return SccAppAuthentication(
             AuthUser(
