@@ -49,7 +49,7 @@ resource "aws_iam_role" "external_secret" {
 }
 
 resource "aws_iam_policy" "secret_manager_read" {
-  name   = "secret_manager_read"
+  name   = "secret-manager-read"
   policy = data.aws_iam_policy_document.secret_manager_read.json
 }
 
