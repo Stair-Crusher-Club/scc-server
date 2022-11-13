@@ -60,15 +60,14 @@ data "aws_iam_policy_document" "scc_deploy_secret_dev" {
   }
 }
 
-data "aws_iam_policy_document" "scc_deploy_secret_dev_kms_read_access" {
+data "aws_iam_policy_document" "scc_deploy_secret_dev_kms_access" {
   statement {
     actions = [
-      "kms:DescribeCustomKeyStores",
-      "kms:DescribeKey",
-      "kms:GetKeyPolicy",
-      "kms:GetKeyRotationStatus",
-      "kms:GetParametersForImport",
-      "kms:GetPublicKey"
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
     ]
     resources = [
       data.terraform_remote_state.kms.outputs.sops_kms_key_arn
@@ -81,12 +80,12 @@ resource "aws_iam_role" "scc_deploy_secret_dev" {
   assume_role_policy = data.aws_iam_policy_document.scc_deploy_secret_dev.json
 }
 
-resource "aws_iam_policy" "scc_deploy_secret_dev_kms_read_access" {
-  name   = "scc-deploy-secret-dev-kms-read-access"
-  policy = data.aws_iam_policy_document.scc_deploy_secret_dev_kms_read_access.json
+resource "aws_iam_policy" "scc_deploy_secret_dev_kms_access" {
+  name   = "scc-deploy-secret-dev-kms-access"
+  policy = data.aws_iam_policy_document.scc_deploy_secret_dev_kms_access.json
 }
 
 resource "aws_iam_role_policy_attachment" "scc_deploy_secret_dev_kms_read_access" {
-  role       = aws_iam_role.scc_dev.name
-  policy_arn = aws_iam_policy.scc_deploy_secret_dev_kms_read_access.arn
+  role       = aws_iam_role.scc_deploy_secret_dev.name
+  policy_arn = aws_iam_policy.scc_deploy_secret_dev_kms_access.arn
 }
