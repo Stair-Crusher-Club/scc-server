@@ -39,6 +39,12 @@ management:
       server:
         auto-time-requests: true
         max-uri-tags: 1024
+
+sentry:
+  logging:
+    enabled: true
+  environment: dev
+
 scc:
   s3:
     imageUpload:
