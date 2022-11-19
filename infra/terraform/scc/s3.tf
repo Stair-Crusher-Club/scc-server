@@ -3,5 +3,5 @@ resource "aws_s3_bucket" "dev_accessibility_images" {
 }
 
 resource "aws_s3_bucket" "accessibility_images" {
-  bucket = "scc-accrssibility-images"
+  bucket = "scc-accessibility-images"
 }
