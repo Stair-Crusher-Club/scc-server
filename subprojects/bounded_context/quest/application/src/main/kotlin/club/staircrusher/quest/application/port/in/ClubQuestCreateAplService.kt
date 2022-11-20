@@ -58,7 +58,10 @@ class ClubQuestCreateAplService(
                 )
             }
             .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
-            .toList().mapIndexed { idx, (questCenterLocation, targetBuildings) ->
+            .toList().map { (questCenterLocation, targetBuildings) ->
+                Pair(questCenterLocation, applyTargetPlacesCountLimitOfSingleQuest(targetBuildings))
+            }
+            .mapIndexed { idx, (questCenterLocation, targetBuildings) ->
                 ClubQuestCreateDryRunResultItem(
                     questNamePostfix = getQuestNamePostfix(idx),
                     questCenterLocation = questCenterLocation,
@@ -78,6 +81,22 @@ class ClubQuestCreateAplService(
                 createdAt = clock.instant(),
             ))
         }
+    }
+
+    @Suppress("MagicNumber") private val targetPlacesCountLimitOfSingleQuest = 50
+    private fun applyTargetPlacesCountLimitOfSingleQuest(targetBuildings: List<ClubQuestTargetBuilding>): List<ClubQuestTargetBuilding> {
+        val totalTargetPlaces = targetBuildings.sumOf { it.places.count() }
+        if (totalTargetPlaces <= targetPlacesCountLimitOfSingleQuest) {
+            return targetBuildings
+        }
+        return targetBuildings
+            .flatMap { targetBuilding -> targetBuilding.places.map { Pair(targetBuilding, it) } }
+            .shuffled()
+            .take(targetPlacesCountLimitOfSingleQuest)
+            .groupBy { it.first }
+            .map { (targetBuilding, pairs) ->
+                targetBuilding.copy(places = pairs.map { it.second })
+            }
     }
 
     private fun getBuildingName(idx: Int): String {
