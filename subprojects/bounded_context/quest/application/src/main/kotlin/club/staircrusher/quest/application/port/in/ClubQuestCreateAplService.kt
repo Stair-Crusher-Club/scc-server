@@ -40,10 +40,10 @@ class ClubQuestCreateAplService(
         return places
             .filter { it.id !in accessibilityExistingPlaceIds }
             .groupBy { it.building!!.id }
-            .map { (buildingId, places) ->
+            .toList().mapIndexed { buildingIdx, (buildingId, places) ->
                 ClubQuestTargetBuilding(
                     buildingId = buildingId,
-                    name = places.first().address.toString(),
+                    name = getBuildingName(buildingIdx),
                     location = places.first().location,
                     places = places.map {
                         ClubQuestTargetPlace(
@@ -78,6 +78,10 @@ class ClubQuestCreateAplService(
                 createdAt = clock.instant(),
             ))
         }
+    }
+
+    private fun getBuildingName(idx: Int): String {
+        return "${HumanReadablePrefixGenerator.generate(idx)} 건물"
     }
 
     private fun getQuestNamePostfix(idx: Int): String {
