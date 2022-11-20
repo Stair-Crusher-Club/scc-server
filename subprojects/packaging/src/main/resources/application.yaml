@@ -40,3 +40,6 @@ scc:
   s3:
     imageUpload:
       bucketName: test
+
+  admin:
+    password: test
