@@ -6,7 +6,6 @@ metadata:
     {{- include "scc-server.labels" . | nindent 4 }}
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-    checksum/secret: {{ include "scc-server.secretHash" . }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
