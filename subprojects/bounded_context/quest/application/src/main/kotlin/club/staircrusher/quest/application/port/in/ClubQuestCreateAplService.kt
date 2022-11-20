@@ -54,7 +54,7 @@ class ClubQuestCreateAplService(
                             isClosed = false,
                             isNotAccessible = false,
                         )
-                    },
+                    }.distinctBy { it.placeId },
                 )
             }
             .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
