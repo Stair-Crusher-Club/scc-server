@@ -8,6 +8,7 @@ import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingC
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
+import club.staircrusher.quest.util.HumanReadablePrefixGenerator
 import club.staircrusher.stdlib.geography.Location
 import kotlinx.coroutines.runBlocking
 import club.staircrusher.stdlib.di.annotation.Component
@@ -80,7 +81,6 @@ class ClubQuestCreateAplService(
     }
 
     private fun getQuestNamePostfix(idx: Int): String {
-        @Suppress("MagicNumber") check(idx <= 25) { "최대 26개 지역으로만 분할 가능합니다." }
-        return "${"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[idx]}조"
+        return "${HumanReadablePrefixGenerator.generate(idx)}조"
     }
 }
