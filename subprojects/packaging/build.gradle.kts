@@ -18,6 +18,10 @@ dependencies {
     implementation("com.zaxxer:HikariCP")
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
 
+    val sentryVersion: String by project
+    runtimeOnly("io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion")
+    runtimeOnly("io.sentry:sentry-logback:$sentryVersion")
+
     implementation(projects.springWeb)
     implementation(projects.springMessage)
     implementation(projects.stdlib)

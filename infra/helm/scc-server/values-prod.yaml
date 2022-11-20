@@ -2,6 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+deploySecret:
+  awsRoleArn: arn:aws:iam::833004893731:role/scc-deploy-secret
+
 replicaCount: 1
 
 filesDir: files/prod
