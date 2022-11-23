@@ -1,5 +1,6 @@
 package club.staircrusher.quest.application.port.`in`
 
+import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.web.AccessibilityService
@@ -39,6 +40,13 @@ class ClubQuestCreateAplService(
         }
         return places
             .filter { it.id !in accessibilityExistingPlaceIds }
+            .groupToClubQuestTargetBuildings()
+            .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
+            .convertToClubQuestCreateDryRunResultItems()
+    }
+
+    private fun List<Place>.groupToClubQuestTargetBuildings(): List<ClubQuestTargetBuilding> {
+        return this
             .groupBy { it.building!!.id }
             .toList().mapIndexed { buildingIdx, (buildingId, places) ->
                 ClubQuestTargetBuilding(
@@ -57,7 +65,10 @@ class ClubQuestCreateAplService(
                     }.distinctBy { it.placeId },
                 )
             }
-            .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
+    }
+
+    private fun Map<Location, List<ClubQuestTargetBuilding>>.convertToClubQuestCreateDryRunResultItems(): List<ClubQuestCreateDryRunResultItem> {
+        return this
             .toList().map { (questCenterLocation, targetBuildings) ->
                 Pair(questCenterLocation, applyTargetPlacesCountLimitOfSingleQuest(targetBuildings))
             }
@@ -68,19 +79,6 @@ class ClubQuestCreateAplService(
                     targetBuildings = targetBuildings,
                 )
             }
-    }
-
-    fun createFromDryRunResult(
-        questNamePrefix: String,
-        dryRunResultItems: List<ClubQuestCreateDryRunResultItem>
-    ) = transactionManager.doInTransaction {
-        dryRunResultItems.forEachIndexed { idx, dryRunResultItem ->
-            clubQuestRepository.save(ClubQuest(
-                name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
-                dryRunResultItem = dryRunResultItem,
-                createdAt = clock.instant(),
-            ))
-        }
     }
 
     @Suppress("MagicNumber") private val targetPlacesCountLimitOfSingleQuest = 50
@@ -97,6 +95,19 @@ class ClubQuestCreateAplService(
             .map { (targetBuilding, pairs) ->
                 targetBuilding.copy(places = pairs.map { it.second })
             }
+    }
+
+    fun createFromDryRunResult(
+        questNamePrefix: String,
+        dryRunResultItems: List<ClubQuestCreateDryRunResultItem>
+    ) = transactionManager.doInTransaction {
+        dryRunResultItems.forEachIndexed { idx, dryRunResultItem ->
+            clubQuestRepository.save(ClubQuest(
+                name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
+                dryRunResultItem = dryRunResultItem,
+                createdAt = clock.instant(),
+            ))
+        }
     }
 
     private fun getBuildingName(idx: Int): String {
