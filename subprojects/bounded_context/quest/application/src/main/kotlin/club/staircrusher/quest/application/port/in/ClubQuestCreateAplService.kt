@@ -123,10 +123,10 @@ class ClubQuestCreateAplService(
     }
 
     private fun getBuildingName(idx: Int): String {
-        return "${HumanReadablePrefixGenerator.generate(idx)} 건물"
+        return "${HumanReadablePrefixGenerator.generateByWord(idx)} 건물"
     }
 
     private fun getQuestNamePostfix(idx: Int): String {
-        return "${HumanReadablePrefixGenerator.generate(idx)}조"
+        return "${HumanReadablePrefixGenerator.generateByAlphabet(idx)}조"
     }
 }
