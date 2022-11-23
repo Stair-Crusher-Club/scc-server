@@ -38,11 +38,23 @@ class ClubQuestCreateAplService(
                 places.map { it.id }
             ).toSet()
         }
+        val invalidPlaceIds = transactionManager.doInTransaction {
+            getInvalidPlaceIds()
+        }
         return places
-            .filter { it.id !in accessibilityExistingPlaceIds }
+            .filter { it.id !in accessibilityExistingPlaceIds && it.id !in invalidPlaceIds }
             .groupToClubQuestTargetBuildings()
             .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
             .convertToClubQuestCreateDryRunResultItems()
+    }
+
+    private fun getInvalidPlaceIds(): Set<String> {
+        return clubQuestRepository.findAllOrderByCreatedAtDesc()
+            .flatMap { it.targetBuildings }
+            .flatMap { it.places }
+            .filter { it.isClosed || it.isNotAccessible }
+            .map { it.placeId }
+            .toSet()
     }
 
     private fun List<Place>.groupToClubQuestTargetBuildings(): List<ClubQuestTargetBuilding> {
