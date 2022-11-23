@@ -8,6 +8,7 @@ import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingC
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
+import club.staircrusher.quest.util.HumanReadablePrefixGenerator
 import club.staircrusher.stdlib.geography.Location
 import kotlinx.coroutines.runBlocking
 import club.staircrusher.stdlib.di.annotation.Component
@@ -39,10 +40,10 @@ class ClubQuestCreateAplService(
         return places
             .filter { it.id !in accessibilityExistingPlaceIds }
             .groupBy { it.building!!.id }
-            .map { (buildingId, places) ->
+            .toList().mapIndexed { buildingIdx, (buildingId, places) ->
                 ClubQuestTargetBuilding(
                     buildingId = buildingId,
-                    name = places.first().address.toString(),
+                    name = getBuildingName(buildingIdx),
                     location = places.first().location,
                     places = places.map {
                         ClubQuestTargetPlace(
@@ -53,11 +54,14 @@ class ClubQuestCreateAplService(
                             isClosed = false,
                             isNotAccessible = false,
                         )
-                    },
+                    }.distinctBy { it.placeId },
                 )
             }
             .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
-            .toList().mapIndexed { idx, (questCenterLocation, targetBuildings) ->
+            .toList().map { (questCenterLocation, targetBuildings) ->
+                Pair(questCenterLocation, applyTargetPlacesCountLimitOfSingleQuest(targetBuildings))
+            }
+            .mapIndexed { idx, (questCenterLocation, targetBuildings) ->
                 ClubQuestCreateDryRunResultItem(
                     questNamePostfix = getQuestNamePostfix(idx),
                     questCenterLocation = questCenterLocation,
@@ -79,8 +83,27 @@ class ClubQuestCreateAplService(
         }
     }
 
+    @Suppress("MagicNumber") private val targetPlacesCountLimitOfSingleQuest = 50
+    private fun applyTargetPlacesCountLimitOfSingleQuest(targetBuildings: List<ClubQuestTargetBuilding>): List<ClubQuestTargetBuilding> {
+        val totalTargetPlaces = targetBuildings.sumOf { it.places.count() }
+        if (totalTargetPlaces <= targetPlacesCountLimitOfSingleQuest) {
+            return targetBuildings
+        }
+        return targetBuildings
+            .flatMap { targetBuilding -> targetBuilding.places.map { Pair(targetBuilding, it) } }
+            .shuffled()
+            .take(targetPlacesCountLimitOfSingleQuest)
+            .groupBy { it.first }
+            .map { (targetBuilding, pairs) ->
+                targetBuilding.copy(places = pairs.map { it.second })
+            }
+    }
+
+    private fun getBuildingName(idx: Int): String {
+        return "${HumanReadablePrefixGenerator.generate(idx)} 건물"
+    }
+
     private fun getQuestNamePostfix(idx: Int): String {
-        @Suppress("MagicNumber") check(idx <= 25) { "최대 26개 지역으로만 분할 가능합니다." }
-        return "${"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[idx]}조"
+        return "${HumanReadablePrefixGenerator.generate(idx)}조"
     }
 }

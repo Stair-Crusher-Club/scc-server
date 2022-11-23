@@ -141,6 +141,17 @@ function CreateClubQuestPage() {
                 position: new kakao.maps.LatLng(targetBuilding.location.lat, targetBuilding.location.lng),
               });
               marker.setMap(map);
+              
+              const tooltip = new window.kakao.maps.InfoWindow({
+                content : `<div style="padding:5px;">${targetBuilding.name}</div>`,
+                removable: true
+              });
+              window.kakao.maps.event.addListener(marker, 'click', () => {
+                // TODO: 툴팁 누르면 스크롤 내려가게 하기; https://www.robinwieruch.de/react-scroll-to-item/
+                //       이거 할 때 state 정리도 한 번 하면 좋을 듯. 지금 마커랑 dry run result랑 따로 저장하고 있는데, 적절한 데이터 구조 만들어서 같이 저장?
+                tooltip.open(map, marker);
+              });
+
               return marker
             });
           });
@@ -324,7 +335,7 @@ function CreateClubQuestPage() {
                           showingTargetBuildings().flatMap((building) => {
                             return building.places.map((place, idx) => {
                               return (
-                                <tr>
+                                <tr key={place.placeId}>
                                   <td>{idx === 0 ? building.name : '상동'}</td>
                                   <td>{place.name}</td>
                                 </tr>
