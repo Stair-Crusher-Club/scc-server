@@ -45,6 +45,14 @@ class ClubQuestCreateAplService(
             .filter { it.id !in accessibilityExistingPlaceIds && it.id !in invalidPlaceIds }
             .groupToClubQuestTargetBuildings()
             .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
+            .toList().map { (questCenterLocation, targetBuildings) ->
+                Pair(
+                    questCenterLocation,
+                    applyTargetPlacesCountLimitOfSingleQuest(targetBuildings).mapIndexed { idx, targetBuilding ->
+                        targetBuilding.copy(name = getBuildingName(idx))
+                    },
+                )
+            }
             .convertToClubQuestCreateDryRunResultItems()
     }
 
@@ -63,7 +71,10 @@ class ClubQuestCreateAplService(
             .toList().mapIndexed { buildingIdx, (buildingId, places) ->
                 ClubQuestTargetBuilding(
                     buildingId = buildingId,
-                    name = getBuildingName(buildingIdx),
+                    // FIXME: 단어 목록이 부족해서 여기서 getBuildingName()을 하면 단어 목록 개수 제한으로 에러가 난다.
+                    //        따라서 여기서는 임시값을 넣어주고, applyTargetPlacesCountLimitOfSingleQuest()로
+                    //        퀘스트 당 건물 수를 제한한 이후에 getBuildingName()으로 건물 이름을 override 해준다.
+                    name = "temp",
                     location = places.first().location,
                     places = places.map {
                         ClubQuestTargetPlace(
@@ -79,11 +90,8 @@ class ClubQuestCreateAplService(
             }
     }
 
-    private fun Map<Location, List<ClubQuestTargetBuilding>>.convertToClubQuestCreateDryRunResultItems(): List<ClubQuestCreateDryRunResultItem> {
+    private fun List<Pair<Location, List<ClubQuestTargetBuilding>>>.convertToClubQuestCreateDryRunResultItems(): List<ClubQuestCreateDryRunResultItem> {
         return this
-            .toList().map { (questCenterLocation, targetBuildings) ->
-                Pair(questCenterLocation, applyTargetPlacesCountLimitOfSingleQuest(targetBuildings))
-            }
             .mapIndexed { idx, (questCenterLocation, targetBuildings) ->
                 ClubQuestCreateDryRunResultItem(
                     questNamePostfix = getQuestNamePostfix(idx),
