@@ -25,7 +25,7 @@ class SqlDelightClubQuestRepository(
     }
 
     override fun findById(id: String): ClubQuest {
-        return findByIdOrNull(id) ?: throw IllegalArgumentException("User of id $id does not exist.")
+        return findByIdOrNull(id) ?: throw IllegalArgumentException("ClubQuest of id $id does not exist.")
     }
 
     override fun findByIdOrNull(id: String): ClubQuest? {

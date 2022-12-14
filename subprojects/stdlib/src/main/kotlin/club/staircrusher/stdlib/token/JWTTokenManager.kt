@@ -4,7 +4,11 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import club.staircrusher.stdlib.di.annotation.Component
+import com.auth0.jwt.exceptions.AlgorithmMismatchException
+import com.auth0.jwt.exceptions.InvalidClaimException
 import com.auth0.jwt.exceptions.JWTDecodeException
+import com.auth0.jwt.exceptions.SignatureVerificationException
+import com.auth0.jwt.exceptions.TokenExpiredException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import java.time.Clock
 import java.time.Duration
@@ -37,12 +41,19 @@ class JWTTokenManager(
             .sign(jwtAlgorithm)
     }
 
-    @Suppress("SwallowedException")
+    @Suppress("SwallowedException", "TooGenericExceptionCaught")
     override fun <T : Any> verify(token: String, contentClass: KClass<T>): T {
         val jwt = try {
             verifier.verify(token)
-        } catch (e: JWTDecodeException) {
-            throw TokenVerificationException(e.message ?: "")
+        } catch (t: Throwable) {
+            when (t) {
+                is JWTDecodeException,
+                is AlgorithmMismatchException,
+                is SignatureVerificationException,
+                is TokenExpiredException,
+                is InvalidClaimException -> throw TokenVerificationException(t.message ?: "")
+                else -> throw t
+            }
         }
         return try {
             objectMapper.readValue(jwt.getClaim(bodyKey).asString(), contentClass.java)
