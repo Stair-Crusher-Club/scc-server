@@ -1,6 +1,7 @@
 package club.staircrusher.spring_web.web
 
 import club.staircrusher.stdlib.domain.SccDomainException
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -26,6 +27,7 @@ class SccExceptionHandler {
             is HttpRequestMethodNotSupportedException,
             is HttpMediaTypeNotSupportedException,
             is HttpMessageNotReadableException,
+            is MissingKotlinParameterException,
             -> {
                 logger.info(t) { "Bad Request: ${t.message}" }
                 return ResponseEntity
