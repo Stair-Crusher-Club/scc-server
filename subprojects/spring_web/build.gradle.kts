@@ -14,6 +14,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
     val jacksonModuleKotlinVersion: String by project
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
     integrationTestImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
     integrationTestImplementation("org.springframework.boot:spring-boot-starter-test")
 }
