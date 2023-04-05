@@ -12,6 +12,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int
     fun countByUserId(userId: String): Int
     fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean
+    fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
     fun countAll(): Int
     data class CreateParams(
         val placeId: String,

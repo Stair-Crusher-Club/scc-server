@@ -8,7 +8,9 @@ import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
+import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.user.domain.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -19,30 +21,7 @@ import org.junit.jupiter.api.Test
 class GetAccessibilityTest : AccessibilityITBase() {
     @Test
     fun getAccessibilityTest() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
-        }
-        val (place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment) = transactionManager.doInTransaction {
-            val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
-            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
-
-            repeat(2) {
-                testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility)
-            }
-            testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user)
-
-            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building!!, "건물 코멘트")
-            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
-
-            data class Result(
-                val place: Place,
-                val placeAccessibility: PlaceAccessibility,
-                val buildingAccessibility: BuildingAccessibility,
-                val placeAccessibilityComment: PlaceAccessibilityComment,
-                val buildingAccessibilityComment: BuildingAccessibilityComment,
-            )
-            Result(place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment)
-        }
+        val (user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment) = registerAccessibility()
 
         val params = GetAccessibilityPostRequest(
             placeId = place.id
@@ -72,6 +51,8 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertEquals(placeAccessibility.isFirstFloor, result.placeAccessibility!!.isFirstFloor)
                 assertEquals(placeAccessibility.stairInfo, result.placeAccessibility!!.stairInfo.toModel())
                 assertEquals(placeAccessibility.hasSlope, result.placeAccessibility!!.hasSlope)
+                assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
+
                 assertEquals(user.nickname, result.placeAccessibility!!.registeredUserName)
                 assertEquals(1, result.placeAccessibilityComments.size)
                 assertEquals(placeAccessibilityComment.id, result.placeAccessibilityComments[0].id)
@@ -81,6 +62,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertEquals(placeAccessibilityComment.createdAt.toEpochMilli(), result.placeAccessibilityComments[0].createdAt.value)
 
                 assertFalse(result.hasOtherPlacesToRegisterInBuilding)
+
             }
 
         transactionManager.doInTransaction {
@@ -90,24 +72,102 @@ class GetAccessibilityTest : AccessibilityITBase() {
             .sccRequest("/getAccessibility", params, user = user)
             .apply {
                 val result = getResult(GetAccessibilityPost200Response::class)
+                assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
                 assertTrue(result.hasOtherPlacesToRegisterInBuilding)
             }
     }
 
     @Test
     fun `로그인되어 있지 않아도 잘 동작한다`() {
-        val place = transactionManager.doInTransaction {
-            testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
-        }
+        val place = registerAccessibility().place
         val params = GetAccessibilityPostRequest(
             placeId = place.id
         )
         mvc
-            .sccRequest("/getAccessibility", params)
+            .sccRequest("/getAccessibility", params) // 인증 없이 요청한다.
             .andExpect {
                 status {
                     isOk()
                 }
             }
+            .apply {
+                val result = getResult(GetAccessibilityPost200Response::class)
+                assertNull(result.placeAccessibility!!.deletionInfo)
+            }
     }
+
+    @Test
+    fun `장소 정보를 등록한 본인이 아닌 사람이 접근성 조회를 조회하면 삭제 불가능하다`() {
+        val place = registerAccessibility().place
+        val params = GetAccessibilityPostRequest(
+            placeId = place.id
+        )
+        val otherUser = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        mvc
+            .sccRequest("/getAccessibility", params, user = otherUser) // 타인이 조회한다.
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(GetAccessibilityPost200Response::class)
+                assertNull(result.placeAccessibility!!.deletionInfo)
+            }
+    }
+
+    @Test
+    fun `한 건물에 두 개 이상의 장소 정보가 존재하면 삭제는 가능하지만 isLastInBuilding은 false이다`() {
+        val (user, place1) = registerAccessibility()
+        val building = place1.building!!
+        registerAccessibility(overridingBuilding = building)
+        val params = GetAccessibilityPostRequest(
+            placeId = place1.id
+        )
+        val otherUser = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        mvc
+            .sccRequest("/getAccessibility", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(GetAccessibilityPost200Response::class)
+                assertFalse(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
+            }
+    }
+
+    private fun registerAccessibility(overridingBuilding: Building? = null): RegisterAccessibilityResult {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        return transactionManager.doInTransaction {
+            val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = overridingBuilding)
+            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
+
+            repeat(2) {
+                testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility)
+            }
+            testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user)
+
+            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building!!, "건물 코멘트")
+            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
+
+            RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment)
+        }
+    }
+
+    private data class RegisterAccessibilityResult(
+        val user: User,
+        val place: Place,
+        val placeAccessibility: PlaceAccessibility,
+        val buildingAccessibility: BuildingAccessibility,
+        val placeAccessibilityComment: PlaceAccessibilityComment,
+        val buildingAccessibilityComment: BuildingAccessibilityComment,
+    )
 }

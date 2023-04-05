@@ -158,7 +158,7 @@ class ITDataGenerator {
     }
 
     fun registerBuildingAccessibility(building: Building, user: User? = null): BuildingAccessibility {
-        return buildingAccessibilityRepository.save(
+        return buildingAccessibilityRepository.findByBuildingId(building.id) ?: buildingAccessibilityRepository.save(
             BuildingAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 buildingId = building.id,

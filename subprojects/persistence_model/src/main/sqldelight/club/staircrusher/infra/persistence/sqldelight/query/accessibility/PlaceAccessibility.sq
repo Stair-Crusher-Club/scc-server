@@ -51,6 +51,13 @@ INNER JOIN building b ON b.id = :buildingId AND b.id = p.building_id
 LEFT OUTER JOIN place_accessibility pa ON p.id = pa.place_id
 WHERE pa.id IS NULL;
 
+findByBuildingId:
+SELECT pa.*
+FROM place_accessibility pa
+INNER JOIN place p ON p.id = pa.place_id
+INNER JOIN building b ON b.id = p.building_id
+WHERE b.id = :buildingId;
+
 countAll:
 SELECT COUNT(*)
 FROM place_accessibility pa;

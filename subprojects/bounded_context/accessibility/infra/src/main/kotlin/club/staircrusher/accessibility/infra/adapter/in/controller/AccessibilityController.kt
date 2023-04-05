@@ -37,7 +37,9 @@ class AccessibilityController(
             },
             placeAccessibility = result.placeAccessibility?.let {
                 it.value.toDTO(
-                    registeredUserName = it.userInfo?.nickname,
+                    registeredUserInfo = it.userInfo,
+                    authUser = authentication?.details,
+                    isLastInBuilding = result.isLastPlaceAccessibilityInBuilding,
                 )
             },
             buildingAccessibilityComments = result.buildingAccessibilityComments.map {
@@ -66,9 +68,9 @@ class AccessibilityController(
     @PostMapping("/registerAccessibility")
     fun registerAccessibility(
         @RequestBody request: RegisterAccessibilityPostRequest,
-        sccAppAuthentication: SccAppAuthentication?,
+        authentication: SccAppAuthentication?,
     ): RegisterAccessibilityPost200Response {
-        val userId = sccAppAuthentication?.principal
+        val userId = authentication?.principal
         val result = accessibilityApplicationService.register(
             createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = userId),
             createBuildingAccessibilityCommentParams = request.buildingAccessibilityParams?.comment?.let {
@@ -97,7 +99,9 @@ class AccessibilityController(
                 it.toDTO(userInfo = result.userInfo)
             },
             placeAccessibility = result.placeAccessibility.toDTO(
-                registeredUserName = result.userInfo?.nickname,
+                registeredUserInfo = result.userInfo,
+                authUser = authentication?.details,
+                isLastInBuilding = result.isLastPlaceAccessibilityInBuilding,
             ),
             placeAccessibilityComments = listOfNotNull(result.placeAccessibilityComment).map {
                 it.toDTO(userInfo = result.userInfo)

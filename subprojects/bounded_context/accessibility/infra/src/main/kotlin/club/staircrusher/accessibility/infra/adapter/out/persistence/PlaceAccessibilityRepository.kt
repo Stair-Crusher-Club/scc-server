@@ -69,6 +69,12 @@ class PlaceAccessibilityRepository(
             .executeAsOne()
     }
 
+    override fun findByBuildingId(buildingId: String): List<PlaceAccessibility> {
+        return queries.findByBuildingId(buildingId = buildingId)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun countAll(): Int {
         return queries.countAll()
             .executeAsOne()
