@@ -16,48 +16,62 @@ DELETE FROM place_accessibility;
 findById:
 SELECT *
 FROM place_accessibility
-WHERE place_accessibility.id = :id;
+WHERE place_accessibility.id = :id
+    AND deleted_at IS NOT NULL;
 
 findByPlaceIds:
 SELECT *
 FROM place_accessibility
-WHERE place_id IN :placeIds;
+WHERE place_id IN :placeIds
+    AND deleted_at IS NOT NULL;
 
 findByPlaceId:
 SELECT *
 FROM place_accessibility
-WHERE place_id = :placeId;
+WHERE place_id = :placeId
+    AND deleted_at IS NOT NULL;
 
 findByUserId:
 SELECT *
 FROM place_accessibility
-WHERE user_id = :userId;
+WHERE user_id = :userId
+    AND deleted_at IS NOT NULL;
 
 countByEupMyeonDong:
 SELECT COUNT(1)
 FROM place_accessibility
     JOIN place ON place.id = place_accessibility.place_id
-WHERE place.eup_myeon_dong_id = :eupMyeonDongId;
+WHERE place.eup_myeon_dong_id = :eupMyeonDongId
+    AND place_accessibility.deleted_at IS NOT NULL;
 
 countByUserId:
 SELECT COUNT(1)
 FROM place_accessibility
-WHERE user_id = :userId;
+WHERE user_id = :userId
+    AND deleted_at IS NOT NULL;
 
 hasAccessibilityNotRegisteredPlaceInBuilding:
 SELECT count(p.id) > 0
 FROM place p
 INNER JOIN building b ON b.id = :buildingId AND b.id = p.building_id
 LEFT OUTER JOIN place_accessibility pa ON p.id = pa.place_id
-WHERE pa.id IS NULL;
+WHERE pa.id IS NULL
+    AND pa.deleted_at IS NOT NULL;
 
 findByBuildingId:
 SELECT pa.*
 FROM place_accessibility pa
 INNER JOIN place p ON p.id = pa.place_id
 INNER JOIN building b ON b.id = p.building_id
-WHERE b.id = :buildingId;
+WHERE b.id = :buildingId
+    AND pa.deleted_at IS NOT NULL;
 
 countAll:
 SELECT COUNT(*)
-FROM place_accessibility pa;
+FROM place_accessibility pa
+WHERE pa.deleted_at IS NOT NULL;
+
+remove:
+UPDATE place_accessibility
+SET deleted_at = CURRENT_TIMESTAMP
+WHERE id = :id;

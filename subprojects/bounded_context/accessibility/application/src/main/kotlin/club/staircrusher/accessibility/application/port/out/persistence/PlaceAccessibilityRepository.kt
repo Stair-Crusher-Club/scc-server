@@ -14,6 +14,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean
     fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
     fun countAll(): Int
+    fun remove(id: String)
     data class CreateParams(
         val placeId: String,
         val isFirstFloor: Boolean,

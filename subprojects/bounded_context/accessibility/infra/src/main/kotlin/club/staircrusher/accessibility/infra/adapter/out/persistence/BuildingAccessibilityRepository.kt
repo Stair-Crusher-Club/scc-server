@@ -8,6 +8,7 @@ import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 
+@Suppress("TooManyFunctions")
 @Component
 class BuildingAccessibilityRepository(
     db: DB,
@@ -61,5 +62,9 @@ class BuildingAccessibilityRepository(
 
     override fun countByUserId(userId: String): Int {
         return queries.countByUserId(userId = userId).executeAsOne().toInt()
+    }
+
+    override fun remove(id: String) {
+        TODO("Not yet implemented")
     }
 }

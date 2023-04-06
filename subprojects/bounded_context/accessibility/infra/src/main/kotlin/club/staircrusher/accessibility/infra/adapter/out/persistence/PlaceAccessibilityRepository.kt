@@ -80,4 +80,8 @@ class PlaceAccessibilityRepository(
             .executeAsOne()
             .toInt()
     }
+
+    override fun remove(id: String) {
+        return queries.remove(id)
+    }
 }
