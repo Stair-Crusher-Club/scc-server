@@ -22,7 +22,7 @@ class SccExceptionHandlerTest {
                     isBadRequest()
                 }
                 content {
-                    string("SccDomainException: SccDomainException thrown.")
+                    string("SccDomainException thrown.")
                 }
             }
     }

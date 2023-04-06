@@ -14,67 +14,10 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessi
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility_comment
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.BuildingAccessibilityUpvoteFindById
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByBuildingIds
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByEupMyeonDong
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByPlaceId
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserAndBuildingAccessibilityAndNotDeleted
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserId
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.placeAccessibility.FindByBuildingId
 import club.staircrusher.stdlib.time.toOffsetDateTime
 
-fun club.staircrusher.infra.persistence.sqldelight.query.accessibility.buildingAccessibility.FindById.toDomainModel() = BuildingAccessibility(
-    id = id,
-    buildingId = building_id,
-    entranceStairInfo = StairInfo.valueOf(entrance_stair_info),
-    entranceImageUrls = entrance_image_urls,
-    hasSlope = has_slope,
-    hasElevator = has_elevator,
-    elevatorStairInfo = StairInfo.valueOf(elevator_stair_info),
-    elevatorImageUrls = elevator_image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun club.staircrusher.infra.persistence.sqldelight.query.accessibility.buildingAccessibility.FindByBuildingId.toDomainModel() = BuildingAccessibility(
-    id = id,
-    buildingId = building_id,
-    entranceStairInfo = StairInfo.valueOf(entrance_stair_info),
-    entranceImageUrls = entrance_image_urls,
-    hasSlope = has_slope,
-    hasElevator = has_elevator,
-    elevatorStairInfo = StairInfo.valueOf(elevator_stair_info),
-    elevatorImageUrls = elevator_image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun FindByBuildingIds.toDomainModel() = BuildingAccessibility(
-    id = id,
-    buildingId = building_id,
-    entranceStairInfo = StairInfo.valueOf(entrance_stair_info),
-    entranceImageUrls = entrance_image_urls,
-    hasSlope = has_slope,
-    hasElevator = has_elevator,
-    elevatorStairInfo = StairInfo.valueOf(elevator_stair_info),
-    elevatorImageUrls = elevator_image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun club.staircrusher.infra.persistence.sqldelight.query.accessibility.buildingAccessibility.FindByPlaceIds.toDomainModel() = BuildingAccessibility(
-    id = id,
-    buildingId = building_id,
-    entranceStairInfo = StairInfo.valueOf(entrance_stair_info),
-    entranceImageUrls = entrance_image_urls,
-    hasSlope = has_slope,
-    hasElevator = has_elevator,
-    elevatorStairInfo = StairInfo.valueOf(elevator_stair_info),
-    elevatorImageUrls = elevator_image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun FindByEupMyeonDong.toDomainModel() = BuildingAccessibility(
+fun Building_accessibility.toDomainModel() = BuildingAccessibility(
     id = id,
     buildingId = building_id,
     entranceStairInfo = StairInfo.valueOf(entrance_stair_info),
@@ -172,51 +115,7 @@ fun BuildingAccessibilityUpvote.toPersistenceModel() = Building_accessibility_up
     deleted_at = deletedAt?.toOffsetDateTime(),
 )
 
-fun club.staircrusher.infra.persistence.sqldelight.query.accessibility.placeAccessibility.FindById.toDomainModel() = PlaceAccessibility(
-    id = id,
-    placeId = place_id,
-    isFirstFloor = is_first_floor,
-    stairInfo = StairInfo.valueOf(stair_info),
-    hasSlope = has_slope,
-    imageUrls = image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun club.staircrusher.infra.persistence.sqldelight.query.accessibility.placeAccessibility.FindByPlaceIds.toDomainModel() = PlaceAccessibility(
-    id = id,
-    placeId = place_id,
-    isFirstFloor = is_first_floor,
-    stairInfo = StairInfo.valueOf(stair_info),
-    hasSlope = has_slope,
-    imageUrls = image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun FindByPlaceId.toDomainModel() = PlaceAccessibility(
-    id = id,
-    placeId = place_id,
-    isFirstFloor = is_first_floor,
-    stairInfo = StairInfo.valueOf(stair_info),
-    hasSlope = has_slope,
-    imageUrls = image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun FindByUserId.toDomainModel() = PlaceAccessibility(
-    id = id,
-    placeId = place_id,
-    isFirstFloor = is_first_floor,
-    stairInfo = StairInfo.valueOf(stair_info),
-    hasSlope = has_slope,
-    imageUrls = image_urls,
-    userId = user_id,
-    createdAt = created_at.toInstant(),
-)
-
-fun FindByBuildingId.toDomainModel() = PlaceAccessibility(
+fun Place_accessibility.toDomainModel() = PlaceAccessibility(
     id = id,
     placeId = place_id,
     isFirstFloor = is_first_floor,

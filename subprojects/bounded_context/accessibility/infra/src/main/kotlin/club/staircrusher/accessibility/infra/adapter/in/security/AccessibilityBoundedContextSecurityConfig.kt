@@ -9,5 +9,6 @@ class AccessibilityBoundedContextSecurityConfig : SccSecurityConfig {
     override fun requestMatchers() = listOf(
         "/giveBuildingAccessibilityUpvote",
         "/cancelBuildingAccessibilityUpvote",
+        "/deleteAccessibility",
     ).map { AntPathRequestMatcher(it) }
 }

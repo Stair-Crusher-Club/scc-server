@@ -3,9 +3,7 @@ package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
-import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
-import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.DeleteAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
@@ -96,7 +94,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest("/deleteAccessibility", params)
             .andExpect {
-                status { isBadRequest() }
+                status { isUnauthorized() }
             }
     }
 
