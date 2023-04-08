@@ -1,15 +1,16 @@
 package club.staircrusher.testing.spring_it.mock
 
+import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.clock.SccClockBeanHolder
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.context.annotation.Primary
-import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 
 @Component
 @Primary
-class MockSccClock : Clock() {
+class MockSccClock : SccClock() {
     private var zone: ZoneId
     private var instant: Instant
 
@@ -17,15 +18,11 @@ class MockSccClock : Clock() {
         val clock = systemUTC()
         zone = clock.zone
         instant = clock.instant()
+        SccClockBeanHolder.set(this)
     }
 
     override fun getZone(): ZoneId {
         return zone
-    }
-
-    override fun withZone(zone: ZoneId): Clock {
-        this.zone = zone
-        return this
     }
 
     override fun instant(): Instant {

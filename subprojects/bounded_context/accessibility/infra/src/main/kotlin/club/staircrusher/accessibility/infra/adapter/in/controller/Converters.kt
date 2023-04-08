@@ -73,7 +73,7 @@ fun PlaceAccessibility.toDTO(
     imageUrls = imageUrls,
     placeId = placeId,
     registeredUserName = registeredUserInfo?.nickname,
-    deletionInfo = if (registeredUserInfo != null && registeredUserInfo.userId == authUser?.id) {
+    deletionInfo = if (isDeletable(authUser?.id)) {
         PlaceAccessibilityDeletionInfo(
             isLastInBuilding = isLastInBuilding,
         )

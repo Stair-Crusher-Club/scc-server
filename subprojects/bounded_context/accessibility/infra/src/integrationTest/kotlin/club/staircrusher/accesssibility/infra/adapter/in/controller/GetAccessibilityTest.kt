@@ -10,6 +10,7 @@ import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.testing.spring_it.mock.MockSccClock
 import club.staircrusher.user.domain.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -17,8 +18,12 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 
 class GetAccessibilityTest : AccessibilityITBase() {
+    @Autowired
+    lateinit var mockSccClock: MockSccClock
+
     @Test
     fun getAccessibilityTest() {
         val (user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment) = registerAccessibility()
@@ -126,9 +131,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
         val params = GetAccessibilityPostRequest(
             placeId = place1.id
         )
-        val otherUser = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
-        }
         mvc
             .sccRequest("/getAccessibility", params, user = user)
             .andExpect {
@@ -139,6 +141,39 @@ class GetAccessibilityTest : AccessibilityITBase() {
             .apply {
                 val result = getResult(GetAccessibilityPost200Response::class)
                 assertFalse(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
+            }
+    }
+
+    @Test
+    fun `장소 정보는 등록한지 6시간까지만 삭제 가능하다`() {
+        val (user, place1) = registerAccessibility()
+        val params = GetAccessibilityPostRequest(
+            placeId = place1.id
+        )
+        mvc
+            .sccRequest("/getAccessibility", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(GetAccessibilityPost200Response::class)
+                assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
+            }
+
+        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration)
+
+        mvc
+            .sccRequest("/getAccessibility", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(GetAccessibilityPost200Response::class)
+                assertNull(result.placeAccessibility!!.deletionInfo)
             }
     }
 

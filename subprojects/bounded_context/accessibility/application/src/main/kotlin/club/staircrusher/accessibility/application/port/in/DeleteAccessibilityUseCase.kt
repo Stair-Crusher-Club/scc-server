@@ -24,8 +24,8 @@ class DeleteAccessibilityUseCase(
         placeAccessibilityId: String,
     ) : Unit = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
         val placeAccessibility = placeAccessibilityRepository.findById(placeAccessibilityId)
-        if (placeAccessibility.userId != userId) {
-            throw SccDomainException("직접 등록한 장소 정보가 아닙니다.")
+        if (!placeAccessibility.isDeletable(userId)) {
+            throw SccDomainException("삭제 가능한 장소 정보가 아닙니다.")
         }
         placeAccessibilityRepository.remove(placeAccessibilityId)
         placeAccessibilityCommentRepository.removeByPlaceId(placeAccessibility.placeId)

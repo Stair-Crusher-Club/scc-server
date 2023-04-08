@@ -10,6 +10,7 @@ import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.testing.spring_it.mock.MockSccClock
 import club.staircrusher.user.domain.model.User
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class DeleteAccessibilityTest : AccessibilityITBase() {
+    @Autowired
+    lateinit var mockSccClock: MockSccClock
+
     @Autowired
     lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
@@ -98,6 +102,19 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Test
+    fun `등록한지 6시간이 지난 장소 정보는 삭제할 수 없다`() {
+        val (user, _, placeAccessibility) = registerAccessibility()
+        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration)
+
+        val params = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
+        mvc
+            .sccRequest("/deleteAccessibility", params, user = user)
+            .andExpect {
+                status { isBadRequest() }
+            }
+    }
+
     private fun registerAccessibility(overridingUser: User? = null, overridingBuilding: Building? = null): RegisterAccessibilityResult {
         val user = overridingUser ?: transactionManager.doInTransaction {
             testDataGenerator.createUser()
@@ -106,8 +123,8 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = overridingBuilding)
             val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
 
-            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building!!, "건물 코멘트")
-            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
+            testDataGenerator.registerBuildingAccessibilityComment(place.building!!, "건물 코멘트")
+            testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
 
             RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility)
         }
