@@ -39,4 +39,8 @@ class PlaceAccessibilityCommentRepository(
             .executeAsList()
             .map { it.toDomainModel() }
     }
+
+    override fun removeByPlaceId(placeId: String) {
+        queries.removeByPlaceId(placeId)
+    }
 }

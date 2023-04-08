@@ -39,4 +39,8 @@ class BuildingAccessibilityCommentRepository(
             .executeAsList()
             .map { it.toDomainModel() }
     }
+
+    override fun removeByBuildingId(buildingId: String) {
+        queries.removeByBuildingId(buildingId)
+    }
 }

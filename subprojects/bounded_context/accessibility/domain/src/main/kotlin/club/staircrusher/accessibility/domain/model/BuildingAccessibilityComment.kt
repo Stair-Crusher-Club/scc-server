@@ -8,4 +8,5 @@ data class BuildingAccessibilityComment(
     val userId: String?,
     val comment: String,
     val createdAt: Instant,
+    val deletedAt: Instant? = null,
 )

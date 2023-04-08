@@ -51,6 +51,7 @@ fun Building_accessibility_comment.toDomainModel() = BuildingAccessibilityCommen
     userId = user_id,
     comment = comment,
     createdAt = created_at.toInstant(),
+    deletedAt = deleted_at?.toInstant(),
 )
 
 fun BuildingAccessibilityComment.toPersistenceModel() = Building_accessibility_comment(
@@ -60,6 +61,7 @@ fun BuildingAccessibilityComment.toPersistenceModel() = Building_accessibility_c
     comment = comment,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = createdAt.toOffsetDateTime(),
+    deleted_at = deletedAt?.toOffsetDateTime(),
 )
 
 fun BuildingAccessibilityUpvoteFindById.toDomainModel(): BuildingAccessibilityUpvote {
@@ -145,6 +147,7 @@ fun Place_accessibility_comment.toDomainModel() = PlaceAccessibilityComment(
     userId = user_id,
     comment = comment,
     createdAt = created_at.toInstant(),
+    deletedAt = deleted_at?.toInstant(),
 )
 
 fun PlaceAccessibilityComment.toPersistenceModel() = Place_accessibility_comment(
@@ -154,4 +157,5 @@ fun PlaceAccessibilityComment.toPersistenceModel() = Place_accessibility_comment
     comment = comment,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = createdAt.toOffsetDateTime(),
+    deleted_at = deletedAt?.toOffsetDateTime(),
 )
