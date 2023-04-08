@@ -65,6 +65,6 @@ class BuildingAccessibilityRepository(
     }
 
     override fun remove(id: String) {
-        TODO("Not yet implemented")
+        queries.remove(id)
     }
 }

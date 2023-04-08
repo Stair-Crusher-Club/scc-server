@@ -28,6 +28,7 @@ fun Building_accessibility.toDomainModel() = BuildingAccessibility(
     elevatorImageUrls = elevator_image_urls,
     userId = user_id,
     createdAt = created_at.toInstant(),
+    deletedAt = deleted_at?.toInstant(),
 )
 
 fun BuildingAccessibility.toPersistenceModel() = Building_accessibility(
@@ -126,6 +127,7 @@ fun Place_accessibility.toDomainModel() = PlaceAccessibility(
     imageUrls = image_urls,
     userId = user_id,
     createdAt = created_at.toInstant(),
+    deletedAt = deleted_at?.toInstant(),
 )
 
 fun PlaceAccessibility.toPersistenceModel() = Place_accessibility(

@@ -82,6 +82,6 @@ class PlaceAccessibilityRepository(
     }
 
     override fun remove(id: String) {
-        return queries.remove(id)
+        queries.remove(id)
     }
 }
