@@ -33,19 +33,19 @@ sqldelight {
     val sqlDelightVersion: String by project
 
     // FIXME: need to determine database name
-    database("scc") {
-        packageName = "club.staircrusher.infra.persistence.sqldelight"
+    this.databases.register("scc") {
+        packageName.set("club.staircrusher.infra.persistence.sqldelight")
         dialect("app.cash.sqldelight:postgresql-dialect:$sqlDelightVersion")
-        verifyMigrations = false
-        deriveSchemaFromMigrations = true
+        verifyMigrations.set(false)
+        deriveSchemaFromMigrations.set(true)
 
         // flyway migration을 위한 설정.
         // sqldelight는 자체적으로 마이그레이션을 실행하지 않는다. (refs: https://github.com/cashapp/sqldelight/issues/1962)
         // 따라서 flyway와 같은 파일을 통해 따로 마이그레이션을 실행해줘야 한다.
         // 아래 옵션을 켜주면 .sqm 파일들을 처리한 후 flyway가 사용할 .sql 마이그레이션 파일로 변경해준다.
         // flyway default는 db/migration 폴더를 스캔하는 것이므로 그 아래에 .sql 파일을 만들어준다.
-        migrationOutputDirectory = file("$buildDir/resources/main/db/migration")
-        migrationOutputFileFormat = ".sql"
+        migrationOutputDirectory.set(file("$buildDir/resources/main/db/migration"))
+        migrationOutputFileFormat.set(".sql")
     }
 }
 // generateMainStairCrusherClubInterface는 기본적으로 compileKotlin이 의존하는데,

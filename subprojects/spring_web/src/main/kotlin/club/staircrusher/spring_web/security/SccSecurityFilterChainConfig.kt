@@ -48,7 +48,7 @@ open class SccSecurityFilterChainConfig {
                         .authenticated()
                 }
                 it
-                    .antMatchers("/**")
+                    .anyRequest()
                     .permitAll()
             }
             .csrf().disable()
