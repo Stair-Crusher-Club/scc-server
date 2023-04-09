@@ -9,5 +9,5 @@ docker run \
   -p 15432:5432 \
   -e POSTGRES_USER=test \
   -e POSTGRES_PASSWORD=test \
-  -e POSTGRES_DB=scc \
+  -e POSTGRES_DB=scc_test \
   -d postgres:14.5-alpine
