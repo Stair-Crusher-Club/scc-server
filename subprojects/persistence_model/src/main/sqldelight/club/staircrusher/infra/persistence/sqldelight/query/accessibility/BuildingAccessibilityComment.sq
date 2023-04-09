@@ -25,6 +25,6 @@ WHERE building_id = :buildingId
 
 removeByBuildingId:
 UPDATE building_accessibility_comment
-SET deleted_at = CURRENT_TIMESTAMP
+SET deleted_at = :deletedAt
 WHERE building_id = :buildingId
     AND deleted_at IS NULL;

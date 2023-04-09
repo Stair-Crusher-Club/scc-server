@@ -25,6 +25,6 @@ WHERE place_id = :placeId
 
 removeByPlaceId:
 UPDATE place_accessibility_comment
-SET deleted_at = CURRENT_TIMESTAMP
+SET deleted_at = :deletedAt
 WHERE place_id = :placeId
     AND deleted_at IS NULL;

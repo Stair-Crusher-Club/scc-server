@@ -74,5 +74,5 @@ WHERE pa.deleted_at IS NULL;
 
 remove:
 UPDATE place_accessibility
-SET deleted_at = CURRENT_TIMESTAMP
+SET deleted_at = :deletedAt
 WHERE id = :id;

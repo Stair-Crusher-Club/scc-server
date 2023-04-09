@@ -5,7 +5,9 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toDomainModel
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
 import club.staircrusher.infra.persistence.sqldelight.DB
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.time.toOffsetDateTime
 
 @Component
 class BuildingAccessibilityCommentRepository(
@@ -41,6 +43,6 @@ class BuildingAccessibilityCommentRepository(
     }
 
     override fun removeByBuildingId(buildingId: String) {
-        queries.removeByBuildingId(buildingId)
+        queries.removeByBuildingId(SccClock.instant().toOffsetDateTime(), buildingId)
     }
 }

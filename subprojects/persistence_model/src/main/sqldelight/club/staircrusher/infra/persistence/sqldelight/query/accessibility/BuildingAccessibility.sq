@@ -57,5 +57,5 @@ WHERE user_id = :userId
 
 remove:
 UPDATE building_accessibility
-SET deleted_at = CURRENT_TIMESTAMP
+SET deleted_at = :deletedAt
 WHERE id = :id;
