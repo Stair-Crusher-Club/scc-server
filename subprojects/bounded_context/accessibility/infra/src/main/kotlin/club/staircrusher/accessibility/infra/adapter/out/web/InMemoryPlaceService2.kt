@@ -15,6 +15,7 @@ class InMemoryPlaceService2(
         return placeService.findPlace(placeId)?.let { Place(
             id = it.id,
             buildingId = it.building!!.id,
+            address = it.address.toString(),
         ) }
     }
 }

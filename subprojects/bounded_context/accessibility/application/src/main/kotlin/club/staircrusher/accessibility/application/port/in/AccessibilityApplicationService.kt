@@ -54,6 +54,12 @@ class AccessibilityApplicationService(
         val userInfo: UserInfo?
     )
 
+    fun isAccessibilityRegistrable(placeId: String): Boolean {
+        val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
+
+        return place.address.startsWith("서울") || place.address.startsWith("경기 성남시")
+    }
+
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult = transactionManager.doInTransaction {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.buildingId)

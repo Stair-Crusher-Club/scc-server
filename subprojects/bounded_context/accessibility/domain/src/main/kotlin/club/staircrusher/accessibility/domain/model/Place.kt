@@ -6,4 +6,5 @@ package club.staircrusher.accessibility.domain.model
 data class Place(
     val id: String,
     val buildingId: String,
+    val address: String,
 )
