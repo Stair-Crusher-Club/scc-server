@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.annotation.GetExchange
+import org.springframework.web.service.invoker.HttpServiceProxyFactory
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
 import java.time.Duration
@@ -69,8 +70,9 @@ class KakaoMapsService(
             }
             .build()
 
-        val factory = WebClientAdapter.createHttpServiceProxyFactory(client)
-        factory.afterPropertiesSet()
+        val factory = HttpServiceProxyFactory
+            .builder(WebClientAdapter.forClient(client))
+            .build()
         factory.createClient(KakaoService::class.java)
     }
 
