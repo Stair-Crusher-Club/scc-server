@@ -19,6 +19,8 @@ scc:
   s3:
     imageUpload:
       bucketName: test
+      accessKey: test
+      secretKey: test
 
   admin:
     password: adminPassword
