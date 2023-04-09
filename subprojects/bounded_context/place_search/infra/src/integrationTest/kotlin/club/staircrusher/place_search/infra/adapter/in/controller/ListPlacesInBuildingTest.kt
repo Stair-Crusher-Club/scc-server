@@ -20,7 +20,7 @@ class ListPlacesInBuildingTest : PlaceSearchITBase() {
         val accessibilityRegisteredPlaceIds = mutableSetOf<String>()
         val (building, places) = transactionManager.doInTransaction {
             val building = testDataGenerator.createBuilding()
-            testDataGenerator.registerBuildingAccessibility(building)
+            testDataGenerator.registerBuildingAccessibilityIfNotExists(building)
             val places = (1..placesCount).map {
                 val place = testDataGenerator.createPlace(placeName = Random.nextBytes(32).toString(), building = building)
                 if (it % 3 == 0) {
