@@ -25,6 +25,10 @@ class InMemoryAccessibilityService(
         )
     }
 
+    override fun isAccessibilityRegistrable(place: Place): Boolean {
+        return accessibilityApplicationService.isAccessibilityRegistrable(place.id)
+    }
+
     private fun club.staircrusher.accessibility.domain.model.PlaceAccessibility.toModel() = PlaceAccessibility(
         id = id,
         placeId = placeId,

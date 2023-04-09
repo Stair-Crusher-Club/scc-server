@@ -24,6 +24,7 @@ class ListConqueredPlacesQuery(
                 placeAccessibility = placeAccessibility,
                 buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id],
                 distance = null,
+                accessibilityRegistrable = accessibilityService.isAccessibilityRegistrable(place),
             )
         }
     }
