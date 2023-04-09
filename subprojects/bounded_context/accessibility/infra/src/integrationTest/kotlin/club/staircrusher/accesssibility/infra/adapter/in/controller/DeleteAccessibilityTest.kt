@@ -69,7 +69,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
                 }
             }
 
-        val getAccessibilityParamsw = GetAccessibilityPostRequest(placeId = place1.id)
+        val getAccessibilityParams2 = GetAccessibilityPostRequest(placeId = place1.id)
         mvc
             .sccRequest("/getAccessibility", getAccessibilityParamsw)
             .apply {
