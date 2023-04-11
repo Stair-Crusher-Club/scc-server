@@ -11,6 +11,7 @@ import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestBuildingAccessibilityParams
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestPlaceAccessibilityParams
+import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -142,6 +143,31 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 assertNull(result.placeAccessibility.registeredUserName)
                 assertNull(result.buildingAccessibilityComments[0].user)
                 assertNull(result.placeAccessibilityComments[0].user)
+            }
+    }
+
+    @Test
+    fun `서울, 성남외의 지역을 등록하려면 에러가 난다`() {
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(
+                placeName = "장소장소",
+                buildingAddress = BuildingAddress(
+                    siDo = "경기도",
+                    siGunGu = "수원시",
+                    eupMyeonDong = "영통동",
+                    li = "",
+                    roadName = "봉영로",
+                    mainBuildingNumber = "83",
+                    subBuildingNumber = "21",
+                ),
+            )
+        }
+        mvc
+            .sccRequest("/registerAccessibility", getDefaultRequestParams(place))
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
             }
     }
 
