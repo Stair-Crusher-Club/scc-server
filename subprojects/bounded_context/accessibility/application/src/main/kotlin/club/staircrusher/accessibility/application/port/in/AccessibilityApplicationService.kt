@@ -6,13 +6,13 @@ import club.staircrusher.accessibility.application.port.out.persistence.Building
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
-import club.staircrusher.accessibility.application.port.out.web.PlaceService
 import club.staircrusher.accessibility.application.toDomainModel
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.place.application.port.`in`.PlaceService
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
@@ -200,7 +200,7 @@ class AccessibilityApplicationService(
             )
         }
         val userInfo = createPlaceAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
-        val buildingId = placeService.findPlace(result.placeId)!!.buildingId
+        val buildingId = placeService.findPlace(result.placeId)!!.building!!.id
 
         RegisterAccessibilityResult(
             placeAccessibility = result,
