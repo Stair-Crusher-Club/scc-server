@@ -6,9 +6,9 @@ import java.time.Instant
 import java.time.ZoneId
 
 @Component
-class SccClock : Clock() {
+open class SccClock : Clock() {
     init {
-        sccClockBean = this
+        SccClockBeanHolder.setIfNull(this)
     }
 
     override fun instant(): Instant {
@@ -25,10 +25,9 @@ class SccClock : Clock() {
 
     companion object {
         fun instant(): Instant {
-            checkNotNull(sccClockBean) { "Cannot use SccClock.instant() since SccClock bean is not initialized yet." }
-            return sccClockBean!!.instant()
+            val globalSccClock = SccClockBeanHolder.get()
+            checkNotNull(globalSccClock) { "Cannot use SccClock.instant() since SccClock bean is not initialized yet." }
+            return globalSccClock.instant()
         }
     }
 }
-
-private var sccClockBean: SccClock? = null

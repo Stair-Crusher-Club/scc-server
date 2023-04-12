@@ -13,4 +13,5 @@ data class BuildingAccessibility(
     val elevatorImageUrls: List<String>,
     val userId: String?,
     val createdAt: Instant,
+    val deletedAt: Instant? = null,
 )

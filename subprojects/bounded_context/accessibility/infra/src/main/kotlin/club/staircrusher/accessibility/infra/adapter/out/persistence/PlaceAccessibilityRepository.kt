@@ -5,8 +5,10 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toDomainModel
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
 import club.staircrusher.infra.persistence.sqldelight.DB
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
+import club.staircrusher.stdlib.time.toOffsetDateTime
 
 @Suppress("TooManyFunctions")
 @Component
@@ -69,9 +71,19 @@ class PlaceAccessibilityRepository(
             .executeAsOne()
     }
 
+    override fun findByBuildingId(buildingId: String): List<PlaceAccessibility> {
+        return queries.findByBuildingId(buildingId = buildingId)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun countAll(): Int {
         return queries.countAll()
             .executeAsOne()
             .toInt()
+    }
+
+    override fun remove(id: String) {
+        queries.remove(SccClock.instant().toOffsetDateTime(), id)
     }
 }

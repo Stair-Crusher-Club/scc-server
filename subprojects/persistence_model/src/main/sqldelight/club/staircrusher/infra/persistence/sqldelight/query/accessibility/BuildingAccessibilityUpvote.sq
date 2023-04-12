@@ -29,7 +29,7 @@ FROM building_accessibility_upvote
 WHERE
     building_accessibility_upvote.user_id = :userId
     AND building_accessibility_upvote.building_accessibility_id = :buildingAccessibilityId
-    AND deleted_at IS NULL;
+    AND building_accessibility_upvote.deleted_at IS NULL;
 
 countUpvotes:
 SELECT COUNT(1)

@@ -10,7 +10,8 @@ ON CONFLICT(id) DO UPDATE SET
     elevator_stair_info = EXCLUDED.elevator_stair_info,
     elevator_image_urls = EXCLUDED.elevator_image_urls,
     user_id = EXCLUDED.user_id,
-    created_at = EXCLUDED.created_at;
+    created_at = EXCLUDED.created_at,
+    deleted_at = NULL;
 
 removeAll:
 DELETE FROM building_accessibility;
@@ -18,32 +19,43 @@ DELETE FROM building_accessibility;
 findById:
 SELECT *
 FROM building_accessibility
-WHERE building_accessibility.id = :id;
+WHERE building_accessibility.id = :id
+    AND deleted_at IS NULL;
 
 findByBuildingIds:
 SELECT *
 FROM building_accessibility
-WHERE building_id IN :buildingIds;
+WHERE building_id IN :buildingIds
+    AND deleted_at IS NULL;
 
 findByBuildingId:
 SELECT *
 FROM building_accessibility
-WHERE building_id = :buildingId;
+WHERE building_id = :buildingId
+    AND deleted_at IS NULL;
 
 findByPlaceIds:
 SELECT building_accessibility.*
 FROM building_accessibility
     JOIN building ON building.id = building_accessibility.building_id
     JOIN place ON place.building_id = building.id
-WHERE place.id IN :placeIds;
+WHERE place.id IN :placeIds
+    AND building_accessibility.deleted_at IS NULL;
 
 findByEupMyeonDong:
 SELECT building_accessibility.*
 FROM building_accessibility
     JOIN building ON building.id = building_accessibility.building_id
-WHERE building.eup_myeon_dong_id = :eupMyeonDongId;
+WHERE building.eup_myeon_dong_id = :eupMyeonDongId
+    AND building_accessibility.deleted_at IS NULL;
 
 countByUserId:
 SELECT COUNT(1)
 FROM building_accessibility
-WHERE user_id = :userId;
+WHERE user_id = :userId
+    AND deleted_at IS NULL;
+
+remove:
+UPDATE building_accessibility
+SET deleted_at = :deletedAt
+WHERE id = :id;

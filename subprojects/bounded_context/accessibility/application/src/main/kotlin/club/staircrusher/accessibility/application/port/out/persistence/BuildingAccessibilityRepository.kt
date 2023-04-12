@@ -11,6 +11,7 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
     fun findByPlaceIds(placeIds: Collection<String>): List<BuildingAccessibility>
     fun findByEupMyeonDong(eupMyeonDong: EupMyeonDong): List<BuildingAccessibility>
     fun countByUserId(userId: String): Int
+    fun remove(id: String)
     data class CreateParams(
         val buildingId: String,
         val entranceStairInfo: StairInfo,

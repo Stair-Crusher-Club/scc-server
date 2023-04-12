@@ -5,7 +5,8 @@ ON CONFLICT(id) DO UPDATE SET
     building_id = EXCLUDED.building_id,
     user_id = EXCLUDED.user_id,
     comment = EXCLUDED.comment,
-    created_at = EXCLUDED.created_at;
+    created_at = EXCLUDED.created_at,
+    deleted_at = NULL;
 
 removeAll:
 DELETE FROM building_accessibility_comment;
@@ -13,9 +14,17 @@ DELETE FROM building_accessibility_comment;
 findById:
 SELECT *
 FROM building_accessibility_comment
-WHERE building_accessibility_comment.id = :id;
+WHERE building_accessibility_comment.id = :id
+    AND deleted_at IS NULL;
 
 findByBuildingId:
 SELECT *
 FROM building_accessibility_comment
-WHERE building_id = :buildingId;
+WHERE building_id = :buildingId
+    AND deleted_at IS NULL;
+
+removeByBuildingId:
+UPDATE building_accessibility_comment
+SET deleted_at = :deletedAt
+WHERE building_id = :buildingId
+    AND deleted_at IS NULL;

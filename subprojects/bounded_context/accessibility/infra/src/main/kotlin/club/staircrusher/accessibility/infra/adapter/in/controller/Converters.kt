@@ -9,9 +9,11 @@ import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.api.converter.toDTO
+import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestBuildingAccessibilityParams
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestPlaceAccessibilityParams
 import club.staircrusher.api.spec.dto.User
+import club.staircrusher.stdlib.auth.AuthUser
 
 fun BuildingAccessibilityComment.toDTO(userInfo: UserInfo?) = club.staircrusher.api.spec.dto.BuildingAccessibilityComment(
     id = id,
@@ -59,14 +61,25 @@ fun PlaceAccessibilityComment.toDTO(userInfo: UserInfo?) = club.staircrusher.api
     user = userInfo?.toDTO(),
 )
 
-fun PlaceAccessibility.toDTO(registeredUserName: String?) = club.staircrusher.api.spec.dto.PlaceAccessibility(
+fun PlaceAccessibility.toDTO(
+    registeredUserInfo: UserInfo?,
+    authUser: AuthUser?,
+    isLastInBuilding: Boolean,
+) = club.staircrusher.api.spec.dto.PlaceAccessibility(
     id = id,
     isFirstFloor = isFirstFloor,
     stairInfo = stairInfo.toDTO(),
     hasSlope = hasSlope,
     imageUrls = imageUrls,
     placeId = placeId,
-    registeredUserName = registeredUserName,
+    registeredUserName = registeredUserInfo?.nickname,
+    deletionInfo = if (isDeletable(authUser?.id)) {
+        PlaceAccessibilityDeletionInfo(
+            isLastInBuilding = isLastInBuilding,
+        )
+    } else {
+        null
+    }
 )
 
 fun club.staircrusher.api.spec.dto.StairInfo.toModel() = when (this) {

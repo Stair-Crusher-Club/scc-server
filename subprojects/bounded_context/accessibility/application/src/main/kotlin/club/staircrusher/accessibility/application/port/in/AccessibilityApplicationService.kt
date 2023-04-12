@@ -41,6 +41,7 @@ class AccessibilityApplicationService(
         val placeAccessibility: WithUserInfo<PlaceAccessibility>?,
         val placeAccessibilityComments: List<WithUserInfo<PlaceAccessibilityComment>>,
         val hasOtherPlacesToRegisterInSameBuilding: Boolean,
+        val isLastPlaceAccessibilityInBuilding: Boolean,
     ) {
          data class BuildingAccessibilityUpvoteInfo(
              val isUpvoted: Boolean,
@@ -91,8 +92,15 @@ class AccessibilityApplicationService(
                     userInfo = userInfoById[it.userId],
                 )
             },
-            hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(place.buildingId)
+            hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(place.buildingId),
+            isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.buildingId) ?: false,
         )
+    }
+
+    private fun PlaceAccessibility.isLastPlaceAccessibilityInBuilding(buildingId: String): Boolean {
+        return placeAccessibilityRepository.findByBuildingId(buildingId).let {
+            it.size == 1 && it[0].id == this.id
+        }
     }
 
     fun getPlaceAccessibility(placeId: String): PlaceAccessibility? = transactionManager.doInTransaction {
@@ -111,6 +119,7 @@ class AccessibilityApplicationService(
         val buildingAccessibilityComment: BuildingAccessibilityComment?,
         val userInfo: UserInfo?,
         val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
+        val isLastPlaceAccessibilityInBuilding: Boolean,
     )
 
     @Suppress("LongMethod")
@@ -191,6 +200,7 @@ class AccessibilityApplicationService(
             )
         }
         val userInfo = createPlaceAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
+        val buildingId = placeService.findPlace(result.placeId)!!.buildingId
 
         RegisterAccessibilityResult(
             placeAccessibility = result,
@@ -199,6 +209,7 @@ class AccessibilityApplicationService(
             buildingAccessibilityComment = buildingAccessibilityComment,
             userInfo = userInfo,
             registrationOrder = placeAccessibilityRepository.countAll(),
+            isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId) ?: false,
         )
     }
 

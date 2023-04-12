@@ -5,6 +5,7 @@ import club.staircrusher.stdlib.domain.repository.EntityRepository
 
 interface PlaceAccessibilityCommentRepository : EntityRepository<PlaceAccessibilityComment, String> {
     fun findByPlaceId(placeId: String): List<PlaceAccessibilityComment>
+    fun removeByPlaceId(placeId: String)
     data class CreateParams(
         val placeId: String,
         val userId: String?,
