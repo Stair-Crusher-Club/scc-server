@@ -1,9 +1,9 @@
 package club.staircrusher.quest.application.port.`in`
 
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
-import club.staircrusher.quest.application.port.out.web.AccessibilityService
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
@@ -23,7 +23,7 @@ class ClubQuestCreateAplService(
     private val clubQuestRepository: ClubQuestRepository,
     private val clubQuestTargetBuildingClusterer: ClubQuestTargetBuildingClusterer,
     private val transactionManager: TransactionManager,
-    private val accessibilityService: AccessibilityService,
+    private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
     fun createDryRun(
         centerLocation: Location,
@@ -34,7 +34,7 @@ class ClubQuestCreateAplService(
             clubQuestTargetPlacesSearcher.searchPlaces(centerLocation, radiusMeters)
         }
         val accessibilityExistingPlaceIds = transactionManager.doInTransaction {
-            accessibilityService.filterAccessibilityExistingPlaceIds(
+            accessibilityApplicationService.filterAccessibilityExistingPlaceIds(
                 places.map { it.id }
             ).toSet()
         }
