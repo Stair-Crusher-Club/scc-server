@@ -81,7 +81,7 @@ class ClubQuestCreateAplService(
                             name = it.name,
                             location = it.location,
                             placeId = it.id,
-                            buildingId = it.building!!.id,
+                            buildingId = it.building.id,
                             isClosed = false,
                             isNotAccessible = false,
                         )

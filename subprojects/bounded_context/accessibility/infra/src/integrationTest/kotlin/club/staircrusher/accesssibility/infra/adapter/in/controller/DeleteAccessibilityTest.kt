@@ -32,7 +32,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
     fun `전반적인 테스트`() {
         // given: 한 건물에 두 개의 장소 정보를 등록한다.
         val (user, place1, placeAccessibility1, buildingAccessibility) = registerAccessibility()
-        val building = place1.building!!
+        val building = place1.building
         val (_, place2, placeAccessibility2) = registerAccessibility(overridingUser = user, overridingBuilding = building)
 
         // when: 첫 번째 장소 정보를 삭제한다.
@@ -71,7 +71,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
 
         val getAccessibilityParams2 = GetAccessibilityPostRequest(placeId = place1.id)
         mvc
-            .sccRequest("/getAccessibility", getAccessibilityParamsw)
+            .sccRequest("/getAccessibility", getAccessibilityParams2)
             .apply {
                 val result = getResult(GetAccessibilityPost200Response::class)
                 assertNull(result.placeAccessibility)
@@ -123,7 +123,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = overridingBuilding)
             val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
 
-            testDataGenerator.registerBuildingAccessibilityComment(place.building!!, "건물 코멘트")
+            testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
             testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
 
             RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility)

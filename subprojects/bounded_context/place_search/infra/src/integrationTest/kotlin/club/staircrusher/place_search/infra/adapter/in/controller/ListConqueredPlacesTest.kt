@@ -31,7 +31,7 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
                 assertEquals(registeredCount, result.size)
                 result.forEach { item ->
                     val place = places.find { it.id == item.place.id }!!
-                    assertEquals(place.building!!.id, item.building.id)
+                    assertEquals(place.building.id, item.building.id)
                     assertTrue(item.hasPlaceAccessibility)
                     assertTrue(item.hasBuildingAccessibility)
                     assertNull(item.distanceMeters)

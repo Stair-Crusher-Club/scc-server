@@ -22,7 +22,7 @@ class ListConqueredPlacesQuery(
             PlaceSearchService.SearchPlacesResult(
                 place = place,
                 placeAccessibility = placeAccessibility,
-                buildingAccessibility = buildingAccessibilityByBuildingId[place.building!!.id],
+                buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id],
                 distance = null,
             )
         }

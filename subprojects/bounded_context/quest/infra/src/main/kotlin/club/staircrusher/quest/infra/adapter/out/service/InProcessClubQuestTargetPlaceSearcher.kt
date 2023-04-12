@@ -105,7 +105,7 @@ class InProcessClubQuestTargetPlaceSearcher(
                 }
                 .let { awaitAll(*it.toTypedArray()) }
                 .flatten()
-                .map { it.building!! }
+                .map { it.building }
                 .removeDuplicates { it.id }
         }
     }

@@ -18,7 +18,7 @@ fun Building.toDTO() = club.staircrusher.api.spec.dto.Building(
 
 fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     place = place.toDTO(),
-    building = place.building!!.toDTO(),
+    building = place.building.toDTO(),
     hasBuildingAccessibility = buildingAccessibility != null,
     hasPlaceAccessibility = placeAccessibility != null,
     distanceMeters = distance?.meter?.toInt(),
