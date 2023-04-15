@@ -56,8 +56,8 @@ class AccessibilityApplicationService(
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult = transactionManager.doInTransaction {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
-        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building!!.id)
-        val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building!!.id)
+        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
+        val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
         val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
         val placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId)
         val userInfoById = userApplicationService.getUsers(
@@ -92,8 +92,8 @@ class AccessibilityApplicationService(
                     userInfo = userInfoById[it.userId],
                 )
             },
-            hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(place.building!!.id),
-            isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building!!.id) ?: false,
+            hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(place.building.id),
+            isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id) ?: false,
         )
     }
 
@@ -109,7 +109,7 @@ class AccessibilityApplicationService(
 
     fun getBuildingAccessibility(placeId: String): BuildingAccessibility? = transactionManager.doInTransaction {
         val place = placeService.findPlace(placeId) ?: return@doInTransaction null
-        buildingAccessibilityRepository.findByBuildingId(place.building!!.id)
+        buildingAccessibilityRepository.findByBuildingId(place.building.id)
     }
 
     data class RegisterAccessibilityResult(
@@ -200,7 +200,7 @@ class AccessibilityApplicationService(
             )
         }
         val userInfo = createPlaceAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
-        val buildingId = placeService.findPlace(result.placeId)!!.building!!.id
+        val buildingId = placeService.findPlace(result.placeId)!!.building.id
 
         RegisterAccessibilityResult(
             placeAccessibility = result,

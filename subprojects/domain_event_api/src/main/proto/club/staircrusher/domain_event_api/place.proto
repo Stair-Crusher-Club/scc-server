@@ -9,7 +9,7 @@ message Place {
     string id = 1;
     string name = 2;
     Location location = 3;
-    optional Building building = 4;
+    Building building = 4;
     optional string si_gun_gu_id = 5;
     optional string eup_myeon_dong_id = 6;
     optional PlaceCategory category = 7;

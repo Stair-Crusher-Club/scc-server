@@ -4,7 +4,7 @@ import club.staircrusher.accessibility.application.port.out.persistence.Building
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
-import club.staircrusher.accessibility.application.port.out.web.PlaceService
+import club.staircrusher.place.application.port.`in`.PlaceService
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
@@ -30,7 +30,7 @@ class DeleteAccessibilityUseCase(
         placeAccessibilityRepository.remove(placeAccessibilityId)
         placeAccessibilityCommentRepository.removeByPlaceId(placeAccessibility.placeId)
 
-        val buildingId = placeService.findPlace(placeAccessibility.placeId)!!.buildingId
+        val buildingId = placeService.findPlace(placeAccessibility.placeId)!!.building.id
         if (placeAccessibilityRepository.findByBuildingId(buildingId).isEmpty()) {
             val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(buildingId) ?: return@doInTransaction
             buildingAccessibilityRepository.remove(buildingAccessibility.id)
