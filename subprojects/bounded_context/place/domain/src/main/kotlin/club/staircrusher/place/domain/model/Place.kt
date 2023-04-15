@@ -7,13 +7,12 @@ data class Place(
     val id: String,
     val name: String,
     val location: Location,
-    // FIXME: make unnullable
-    val building: Building?,
+    val building: Building,
     val siGunGuId: String?,
     val eupMyeonDongId: String?,
     val category: PlaceCategory? = null,
 ) {
     val address: BuildingAddress
         // FIXME
-        get() = building!!.address
+        get() = building.address
 }

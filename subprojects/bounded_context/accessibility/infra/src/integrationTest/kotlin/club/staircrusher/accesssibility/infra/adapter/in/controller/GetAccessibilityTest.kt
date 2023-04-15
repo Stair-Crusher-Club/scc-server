@@ -71,7 +71,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
 
         transactionManager.doInTransaction {
-            testDataGenerator.createPlace(placeName = "장소장소 2", building = place.building!!)
+            testDataGenerator.createPlace(placeName = "장소장소 2", building = place.building)
         }
         mvc
             .sccRequest("/getAccessibility", params, user = user)
@@ -126,7 +126,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
     @Test
     fun `한 건물에 두 개 이상의 장소 정보가 존재하면 삭제는 가능하지만 isLastInBuilding은 false이다`() {
         val (user, place1) = registerAccessibility()
-        val building = place1.building!!
+        val building = place1.building
         registerAccessibility(overridingBuilding = building)
         val params = GetAccessibilityPostRequest(
             placeId = place1.id
@@ -190,7 +190,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
             testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user)
 
-            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building!!, "건물 코멘트")
+            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
             val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
 
             RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment)

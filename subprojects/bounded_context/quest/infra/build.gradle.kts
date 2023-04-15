@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     implementation(projects.boundedContext.place.application)
-    implementation(projects.boundedContext.accessibility.application)
     implementation(projects.persistenceModel)
     api(projects.adminApi)
 

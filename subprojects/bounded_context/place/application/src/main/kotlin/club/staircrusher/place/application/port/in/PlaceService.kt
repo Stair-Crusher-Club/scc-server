@@ -40,4 +40,8 @@ class PlaceService(
     fun findAllByIds(placeIds: Collection<String>): List<Place> {
         return placeRepository.findByIdIn(placeIds)
     }
+
+    fun findByBuildingId(buildingId: String): List<Place> {
+        return placeRepository.findByBuildingId(buildingId)
+    }
 }

@@ -7,14 +7,11 @@ data class PlaceDTO(
     val id: String,
     val name: String,
     val location: Location,
-    // FIXME: make unnullable
-    val building: BuildingDTO?,
+    val building: BuildingDTO,
     val siGunGuId: String?,
     val eupMyeonDongId: String?,
     val category: PlaceCategory? = null,
 ) {
     val address: BuildingAddressDTO
-        // FIXME
-        @Suppress("UnsafeCallOnNullableType")
-        get() = building!!.address
+        get() = building.address
 }

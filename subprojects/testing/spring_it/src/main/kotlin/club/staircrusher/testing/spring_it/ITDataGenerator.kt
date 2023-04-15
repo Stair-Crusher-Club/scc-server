@@ -178,7 +178,7 @@ class ITDataGenerator {
     fun registerBuildingAndPlaceAccessibility(place: Place, user: User? = null): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
             registerPlaceAccessibility(place, user),
-            registerBuildingAccessibilityIfNotExists(place.building!!, user),
+            registerBuildingAccessibilityIfNotExists(place.building, user),
         )
     }
 

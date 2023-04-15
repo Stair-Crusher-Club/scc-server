@@ -28,7 +28,7 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
 
         run {
             val params = RegisterBuildingAccessibilityCommentPostRequest(
-                buildingId = place.building!!.id,
+                buildingId = place.building.id,
                 comment = "실명 코멘트",
             )
             mvc.sccRequest("/registerBuildingAccessibilityComment", params, user = user).andReturn()
@@ -36,22 +36,22 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
         clock.advanceTime(Duration.ofSeconds(1))
         val result = run {
             val params = RegisterBuildingAccessibilityCommentPostRequest(
-                buildingId = place.building!!.id,
+                buildingId = place.building.id,
                 comment = "익명 코멘트",
             )
             mvc.sccRequest("/registerBuildingAccessibilityComment", params).andReturn()
         }
 
         val comments = transactionManager.doInTransaction {
-            buildingAccessibilityCommentRepository.findByBuildingId(place.building!!.id)
+            buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
         }.sortedByDescending { it.createdAt }
 
         assertEquals(2, comments.size)
-        assertEquals(place.building!!.id, comments[0].buildingId)
+        assertEquals(place.building.id, comments[0].buildingId)
         assertEquals("익명 코멘트", comments[0].comment)
         assertNull(comments[0].userId)
         assertEquals(clock.millis(), comments[0].createdAt.toEpochMilli())
-        assertEquals(place.building!!.id, comments[1].buildingId)
+        assertEquals(place.building.id, comments[1].buildingId)
         assertEquals("실명 코멘트", comments[1].comment)
         assertEquals(user.id, comments[1].userId)
         assertEquals((clock.instant() - Duration.ofSeconds(1)).toEpochMilli(), comments[1].createdAt.toEpochMilli())

@@ -53,7 +53,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 .apply {
                     val result = getResult(RegisterAccessibilityPost200Response::class)
                     val buildingAccessibility = result.buildingAccessibility!!
-                    assertEquals(place.building!!.id, buildingAccessibility.buildingId)
+                    assertEquals(place.building.id, buildingAccessibility.buildingId)
                     assertEquals(StairInfo.NONE, buildingAccessibility.entranceStairInfo.toModel())
                     assertEquals(1, buildingAccessibility.entranceImageUrls.size)
                     assertEquals("buildingAccessibilityEntranceImage", buildingAccessibility.entranceImageUrls[0])
@@ -67,7 +67,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     assertEquals(0, buildingAccessibility.totalUpvoteCount)
 
                     assertEquals(1, result.buildingAccessibilityComments.size)
-                    assertEquals(place.building!!.id, result.buildingAccessibilityComments[0].buildingId)
+                    assertEquals(place.building.id, result.buildingAccessibilityComments[0].buildingId)
                     assertEquals(user.id, result.buildingAccessibilityComments[0].user!!.id)
                     assertEquals("건물 코멘트", result.buildingAccessibilityComments[0].comment)
 
@@ -174,7 +174,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
     private fun getDefaultRequestParams(place: Place): RegisterAccessibilityPostRequest {
         return RegisterAccessibilityPostRequest(
             buildingAccessibilityParams = RegisterAccessibilityPostRequestBuildingAccessibilityParams(
-                buildingId = place.building!!.id,
+                buildingId = place.building.id,
                 entranceStairInfo = StairInfo.NONE.toDTO(),
                 entranceImageUrls = listOf("buildingAccessibilityEntranceImage"),
                 hasSlope = true,

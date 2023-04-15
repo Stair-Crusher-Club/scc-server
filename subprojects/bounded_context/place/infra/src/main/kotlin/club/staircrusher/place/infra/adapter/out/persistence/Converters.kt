@@ -99,7 +99,7 @@ fun club.staircrusher.place.domain.model.Place.toPersistenceModel(): Place {
         name = name,
         location_x = location.lng,
         location_y = location.lat,
-        building_id = building?.id,
+        building_id = building.id,
         si_gun_gu_id = siGunGuId,
         eup_myeon_dong_id = eupMyeonDongId,
         category = category,

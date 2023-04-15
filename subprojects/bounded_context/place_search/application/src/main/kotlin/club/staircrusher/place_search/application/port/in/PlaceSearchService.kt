@@ -1,12 +1,12 @@
 package club.staircrusher.place_search.application.port.`in`
 
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.accessibility.domain.model.BuildingAccessibility
+import club.staircrusher.accessibility.domain.model.PlaceAccessibility
+import club.staircrusher.place.application.port.`in`.BuildingService
+import club.staircrusher.place.application.port.`in`.PlaceService
 import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place_search.domain.model.Place
-import club.staircrusher.place_search.application.port.out.web.AccessibilityService
-import club.staircrusher.place_search.application.port.out.web.BuildingService
-import club.staircrusher.place_search.application.port.out.web.PlaceService
-import club.staircrusher.place_search.domain.model.BuildingAccessibility
-import club.staircrusher.place_search.domain.model.PlaceAccessibility
+import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.di.annotation.Component
@@ -16,7 +16,7 @@ import club.staircrusher.stdlib.geography.LocationUtils
 class PlaceSearchService(
     private val placeService: PlaceService,
     private val buildingService: BuildingService,
-    private val accessibilityService: AccessibilityService,
+    private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
     data class SearchPlacesResult(
         val place: Place,
@@ -49,7 +49,7 @@ class PlaceSearchService(
     }
 
     suspend fun listPlacesInBuilding(buildingId: String): List<SearchPlacesResult> {
-        val buildingAddress = buildingService.getById(buildingId)?.address
+        val buildingAddress = buildingService.getById(buildingId)?.address?.toString()
             ?: throw IllegalArgumentException("Building of id $buildingId does not exist.")
         val placesBySearch = placeService.findAllByKeyword(buildingAddress, MapsService.SearchByKeywordOption())
         val placesInPersistence = placeService.findByBuildingId(buildingId)
@@ -59,7 +59,8 @@ class PlaceSearchService(
     }
 
     private fun Place.toSearchPlacesResult(currentLocation: Location?): SearchPlacesResult {
-        val (placeAccessibility, buildingAccessibility) = accessibilityService.getAccessibility(this)
+        val placeAccessibility = accessibilityApplicationService.getPlaceAccessibility(id)
+        val buildingAccessibility = accessibilityApplicationService.getBuildingAccessibility(id)
         return SearchPlacesResult(
             place = this,
             buildingAccessibility = buildingAccessibility,
