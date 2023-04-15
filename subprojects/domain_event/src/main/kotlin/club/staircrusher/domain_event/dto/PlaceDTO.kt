@@ -13,7 +13,5 @@ data class PlaceDTO(
     val category: PlaceCategory? = null,
 ) {
     val address: BuildingAddressDTO
-        // FIXME
-        @Suppress("UnsafeCallOnNullableType")
         get() = building.address
 }
