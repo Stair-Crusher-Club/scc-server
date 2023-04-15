@@ -16,9 +16,13 @@ declare global {
 
 function ClubQuestPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [clubQuest, setClubQuest] = useState<ClubQuestDTO | null>(null);
+  const [clubQuest, _setClubQuest] = useState<ClubQuestDTO | null>(null);
   const [currentLocation, setCurrentLocation] = useState<LocationDTO | null>(null);
   const [map, setMap] = useState<any>(null);
+  function setClubQuest(clubQuest: ClubQuestDTO) {
+    _setClubQuest(clubQuest)
+    refreshBuildingMarkers(map, clubQuest)
+  }
 
   const { id: _rawClubQuestId } = useParams();
   const clubQuestId = _rawClubQuestId!
@@ -51,7 +55,31 @@ function ClubQuestPage() {
     return () => { clearTimeout(timeout); };
   }, [clubQuest]);
 
-  function installMap(clubQuest: ClubQuestDTO) {
+  const refreshBuildingMarkers = (map: any, clubQuest: ClubQuestDTO) => {
+    clubQuest.buildings.forEach((target) => {
+      const isAllPlaceConquered = target.places.every(it => it.isConquered || it.isClosed || it.isNotAccessible)
+      const finishedQuestMarkerImage = new window.kakao.maps.MarkerImage(
+          '/finishedQuestMarker.png',
+          new window.kakao.maps.Size(24, 36),
+      );
+      const marker = new window.kakao.maps.Marker({
+        position: new window.kakao.maps.LatLng(target.location.lat, target.location.lng),
+        image: isAllPlaceConquered ? finishedQuestMarkerImage : null,
+        clickable: true, // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다.
+      });
+      marker.setMap(map);
+
+      const tooltip = new window.kakao.maps.InfoWindow({
+        content : `<div style="padding:5px;">${target.name}</div>`,
+        removable: true
+      });
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        tooltip.open(map, marker);
+      });
+    });
+  }
+
+  const installMap = (clubQuest: ClubQuestDTO) => {
     if (clubQuest != null && map == null) {
       const container = document.getElementById('map');
       const center = determineCenter(clubQuest.buildings.map(it => it.location));
@@ -62,21 +90,7 @@ function ClubQuestPage() {
       const map = new window.kakao.maps.Map(container, options);
       setMap(map);
 
-      clubQuest.buildings.forEach((target) => {
-        const marker = new window.kakao.maps.Marker({
-          position: new window.kakao.maps.LatLng(target.location.lat, target.location.lng),
-          clickable: true, // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다.
-        });
-        marker.setMap(map);
-
-        const tooltip = new window.kakao.maps.InfoWindow({
-          content : `<div style="padding:5px;">${target.name}</div>`,
-          removable: true
-        });
-        window.kakao.maps.event.addListener(marker, 'click', () => {
-          tooltip.open(map, marker);
-        });
-      });
+      refreshBuildingMarkers(map, clubQuest)
 
       if (navigator.geolocation != null) {
         let currentLocationMarker: any = null;
@@ -160,6 +174,9 @@ function ClubQuestPage() {
         </div>
         <p className="body-item-fixed-height">
           ※ 폐업 여부는 '네이버 지도'로 검색해 확인하시면 편리합니다
+        </p>
+        <p className="body-item-fixed-height">
+          ※ 파란색 마커는 아직 정복할 장소가 남아 있는 건물이고, 회색 마커는 건물 안의 모든 장소가 정복 or 폐업 or 접근 불가인 건물입니다.
         </p>
         <div className="place-list">
           {
