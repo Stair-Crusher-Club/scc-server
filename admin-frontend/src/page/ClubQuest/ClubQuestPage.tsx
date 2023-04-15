@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, ButtonGroup, Checkbox } from '@blueprintjs/core';
 import { LocationDTO } from '../../type';
-import { ClubQuestTargetPlaceDTO, ClubQuestDTO } from '../../api';
+import { ClubQuestTargetPlaceDTO, ClubQuestDTO, ClubQuestTargetBuildingDTO } from '../../api';
 import { determineCenter, determineLevel } from '../../util/kakaoMap';
 import { AdminApi } from '../../AdminApi';
 
@@ -16,12 +16,25 @@ declare global {
 
 function ClubQuestPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [map, _setMap] = useState<any>(null);
+  const mapRef = useRef(map)
+  function setMap(newValue: kakao.maps.Map) {
+    _setMap(newValue);
+    mapRef.current = newValue;
+  }
   const [clubQuest, _setClubQuest] = useState<ClubQuestDTO | null>(null);
+  function setClubQuest(newValue: ClubQuestDTO) {
+    _setClubQuest(newValue)
+    if (mapRef.current) {
+      refreshBuildingMarkers(mapRef.current, newValue)
+    }
+  }
   const [currentLocation, setCurrentLocation] = useState<LocationDTO | null>(null);
-  const [map, setMap] = useState<any>(null);
-  function setClubQuest(clubQuest: ClubQuestDTO) {
-    _setClubQuest(clubQuest)
-    refreshBuildingMarkers(map, clubQuest)
+  const [markers, _setMarkers] = useState<kakao.maps.Marker[]>([]);
+  const markersRef = useRef(markers);
+  function setMarkers(newValue: kakao.maps.Marker[]) {
+    _setMarkers(newValue);
+    markersRef.current = newValue;
   }
 
   const { id: _rawClubQuestId } = useParams();
@@ -56,6 +69,9 @@ function ClubQuestPage() {
   }, [clubQuest]);
 
   const refreshBuildingMarkers = (map: any, clubQuest: ClubQuestDTO) => {
+    markersRef.current.forEach(it => it.setMap(null));
+
+    const newMarkers: kakao.maps.Marker[] = [];
     clubQuest.buildings.forEach((target) => {
       const isAllPlaceConquered = target.places.every(it => it.isConquered || it.isClosed || it.isNotAccessible)
       const finishedQuestMarkerImage = new window.kakao.maps.MarkerImage(
@@ -68,19 +84,22 @@ function ClubQuestPage() {
         clickable: true, // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다.
       });
       marker.setMap(map);
+      newMarkers.push(marker);
 
       const tooltip = new window.kakao.maps.InfoWindow({
-        content : `<div style="padding:5px;">${target.name}</div>`,
+        content: `<div style="padding:5px;">${target.name}</div>`,
         removable: true
       });
       window.kakao.maps.event.addListener(marker, 'click', () => {
         tooltip.open(map, marker);
       });
     });
+
+    setMarkers(newMarkers);
   }
 
   const installMap = (clubQuest: ClubQuestDTO) => {
-    if (clubQuest != null && map == null) {
+    if (mapRef.current == null) {
       const container = document.getElementById('map');
       const center = determineCenter(clubQuest.buildings.map(it => it.location));
       const options = {
@@ -89,7 +108,6 @@ function ClubQuestPage() {
       };
       const map = new window.kakao.maps.Map(container, options);
       setMap(map);
-
       refreshBuildingMarkers(map, clubQuest)
 
       if (navigator.geolocation != null) {
@@ -125,13 +143,13 @@ function ClubQuestPage() {
   const showQuestsOnMap = () => {
     if (clubQuest != null) {
       const center = determineCenter(clubQuest.buildings.map(it => it.location ));
-      map.setLevel(determineLevel(clubQuest.buildings.map(it => it.location)));
-      map.panTo(new window.kakao.maps.LatLng(center.lat, center.lng));
+      mapRef.current.setLevel(determineLevel(clubQuest.buildings.map(it => it.location)));
+      mapRef.current.panTo(new window.kakao.maps.LatLng(center.lat, center.lng));
     }
   };
   const showCurrentLocationOnMap = () => {
     if (clubQuest != null && currentLocation != null) {
-      map.panTo(new window.kakao.maps.LatLng(currentLocation?.lat, currentLocation?.lng));
+      mapRef.current.panTo(new window.kakao.maps.LatLng(currentLocation?.lat, currentLocation?.lng));
     }
   }
 
@@ -159,6 +177,11 @@ function ClubQuestPage() {
           .then((res) => setClubQuest(res.data))
       );
     };
+  }
+
+  const focusMap = (building: ClubQuestTargetBuildingDTO) => {
+    const latLng = new window.kakao.maps.LatLng(building.location.lat, building.location.lng);
+    mapRef.current.panTo(latLng);
   }
 
   return (
@@ -197,7 +220,7 @@ function ClubQuestPage() {
                       clubQuest.buildings.flatMap((building) => {
                         return building.places.map((place, idx) => {
                           return (
-                            <tr>
+                            <tr onClick={() => focusMap(building)}>
                               <td>{idx === 0 ? building.name : ''}</td>
                               <td>{place.name}</td>
                               <td><Checkbox checked={place.isConquered} disabled={true} large /></td>
