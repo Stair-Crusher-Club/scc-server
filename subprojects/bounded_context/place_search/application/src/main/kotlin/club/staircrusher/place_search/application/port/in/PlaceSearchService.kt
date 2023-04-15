@@ -66,7 +66,7 @@ class PlaceSearchService(
             buildingAccessibility = buildingAccessibility,
             placeAccessibility = placeAccessibility,
             distance = currentLocation?.let { LocationUtils.calculateDistance(it, location) },
-            isAccessibilityRegistrable = accessibilityService.isAccessibilityRegistrable(this),
+            isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(id),
         )
     }
 
