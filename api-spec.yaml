@@ -486,8 +486,30 @@ paths:
       responses:
         '204': {}
 
+  /deleteAccessibility:
+    post:
+      summary: |
+        등록한 접근성 정보를 삭제한다.
+        기본적으로는 장소 정보만 삭제하지만, 삭제하는 장소 정보가 해당 건물의 마지막 장소 정보일 경우 건물 정보도 함께 삭제한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placeAccessibilityId:
+                  type: string
+                  description: 삭제할 장소 정보의 아이디
+              required:
+                - placeAccessibilityId
+      responses:
+        '204': {}
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+
 components:
-   # Reusable schemas (data models)
+  # Reusable schemas (data models)
   schemas:
     EpochMillisTimestamp:
       description: 특정 시각을 표현하기 위한 모델.
@@ -610,6 +632,15 @@ components:
         registeredUserName:
           type: string
           description: 익명으로 등록되었으면 null.
+        deletionInfo:
+          type: object
+          description: 삭제 가능하면 non-null, 삭제 불가능하면 null.
+          properties:
+            isLastInBuilding:
+              type: boolean
+              description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
+          required:
+            - isLastInBuilding
       required:
         - id
         - isFirstFloor
@@ -721,3 +752,26 @@ components:
         - building
         - hasBuildingAccessibility
         - hasPlaceAccessibility
+
+    ApiErrorResponse:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: reason for error
+        code:
+          type: string # Do not change to integer. Jackson's @JsonProperty does not support number serialization.
+          x-enum-varnames:
+            - INTERNAL_FAILURE # -999999
+            - INVALID_AUTHENTICATION # 1
+          enum:
+            - -999999
+            - 1
+
+  responses:
+    ApiFailure:
+      description: failed to get response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
