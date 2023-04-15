@@ -54,6 +54,12 @@ class AccessibilityApplicationService(
         val userInfo: UserInfo?
     )
 
+    fun isAccessibilityRegistrable(placeId: String): Boolean {
+        val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
+
+        return place.isAccessibilityRegistrable
+    }
+
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult = transactionManager.doInTransaction {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
@@ -131,6 +137,9 @@ class AccessibilityApplicationService(
     ): RegisterAccessibilityResult = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
             throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
+        }
+        if (!isAccessibilityRegistrable(createPlaceAccessibilityParams.placeId)) {
+            throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
         }
         val result = placeAccessibilityRepository.save(
             PlaceAccessibility(

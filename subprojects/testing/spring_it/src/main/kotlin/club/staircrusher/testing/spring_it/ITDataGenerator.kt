@@ -122,20 +122,21 @@ class ITDataGenerator {
         building: Building? = null,
         eupMyeonDongId: String = eupMyeonDongById.keys.first(),
         siGunGuId: String = siGunGuById.keys.first(),
+        buildingAddress: BuildingAddress = BuildingAddress(
+            siDo = "서울특별시",
+            siGunGu = "성동구",
+            eupMyeonDong = "성수동",
+            li = "",
+            roadName = "왕십리로",
+            mainBuildingNumber = "83",
+            subBuildingNumber = "21",
+        )
     ): Place {
         val buildingToUse = building ?: buildingRepository.save(Building(
             id = EntityIdGenerator.generateRandom(),
             name = "건물건물",
             location = location,
-            address = BuildingAddress(
-                siDo = "서울특별시",
-                siGunGu = "성동구",
-                eupMyeonDong = "성수동",
-                li = "",
-                roadName = "왕십리로",
-                mainBuildingNumber = "83",
-                subBuildingNumber = "21",
-            ),
+            address = buildingAddress,
             siGunGuId = siGunGuId,
             eupMyeonDongId = eupMyeonDongId,
         ))

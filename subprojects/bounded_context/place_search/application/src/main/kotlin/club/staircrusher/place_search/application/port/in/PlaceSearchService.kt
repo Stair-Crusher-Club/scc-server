@@ -23,6 +23,7 @@ class PlaceSearchService(
         val buildingAccessibility: BuildingAccessibility?,
         val placeAccessibility: PlaceAccessibility?,
         val distance: Length? = null,
+        val isAccessibilityRegistrable: Boolean,
     )
 
     @Suppress("UnusedPrivateMember")
@@ -64,7 +65,8 @@ class PlaceSearchService(
             place = this,
             buildingAccessibility = buildingAccessibility,
             placeAccessibility = placeAccessibility,
-            distance = currentLocation?.let { LocationUtils.calculateDistance(it, location) }
+            distance = currentLocation?.let { LocationUtils.calculateDistance(it, location) },
+            isAccessibilityRegistrable = accessibilityService.isAccessibilityRegistrable(this),
         )
     }
 
