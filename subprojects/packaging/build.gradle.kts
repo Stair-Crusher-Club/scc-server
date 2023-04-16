@@ -55,11 +55,6 @@ jib {
         image = "public.ecr.aws/q0g6g7m8/scc-server"
         credHelper.helper = "ecr-login"
         val version = property("version") as? String ?: throw IllegalArgumentException("No property exists!")
-        val isProductionRelease = property("isProductionRelease") as? Boolean ?: false
-        when (isProductionRelease) {
-            false -> check(version.lowercase().endsWith("snapshot")) { "Version for a non-production release should end with `SNAPSHOT`." }
-            true -> check(!version.lowercase().endsWith("snapshot")) { "Version for a production release should not end with `SNAPSHOT`." }
-        }
         tags = setOf(version)
     }
     container {
