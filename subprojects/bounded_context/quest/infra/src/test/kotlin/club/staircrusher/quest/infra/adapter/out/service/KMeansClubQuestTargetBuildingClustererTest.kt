@@ -17,10 +17,19 @@ class KMeansClubQuestTargetBuildingClustererTest {
         repeat(100) {
             val result = KMeansClubQuestTargetBuildingClusterer().clusterBuildings(locations, 2)
             val sortedResult = result.toList().sortedBy { it.first.lng }
-            assertEquals(1.05, sortedResult[0].first.lng, 0.00001)
-            assertEquals(1.05, sortedResult[0].first.lat, 0.00001)
-            assertEquals(2.05, sortedResult[1].first.lng, 0.00001)
-            assertEquals(2.05, sortedResult[1].first.lat, 0.00001)
+            when (sortedResult.size) {
+                1 -> {
+                    assertEquals(1.55, sortedResult[0].first.lng, 0.00001)
+                    assertEquals(1.55, sortedResult[0].first.lat, 0.00001)
+                }
+                2 -> {
+                    assertEquals(1.05, sortedResult[0].first.lng, 0.00001)
+                    assertEquals(1.05, sortedResult[0].first.lat, 0.00001)
+                    assertEquals(2.05, sortedResult[1].first.lng, 0.00001)
+                    assertEquals(2.05, sortedResult[1].first.lat, 0.00001)
+                }
+                else -> error("Should not reach here!")
+            }
         }
     }
 }

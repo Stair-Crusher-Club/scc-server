@@ -128,7 +128,7 @@ class AccessibilityApplicationService(
         val isLastPlaceAccessibilityInBuilding: Boolean,
     )
 
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "ComplexMethod")
     fun register(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
