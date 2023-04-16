@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.domain.model
 
-data class AccessibilityRanking(
+data class AccessibilityRank(
     val id: String,
     val userId: String,
     val conquestCount: Int,
