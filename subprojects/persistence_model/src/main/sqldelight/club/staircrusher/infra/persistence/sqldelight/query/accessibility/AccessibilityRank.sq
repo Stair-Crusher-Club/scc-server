@@ -11,6 +11,11 @@ ON CONFLICT(id) DO UPDATE SET
 removeAll:
 DELETE FROM accessibility_rank;
 
+findById:
+SELECT *
+FROM accessibility_rank
+WHERE accessibility_rank.id = :id;
+
 findByUserId:
 SELECT *
 FROM accessibility_rank
