@@ -42,7 +42,8 @@ fun ClubQuestTargetBuilding.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTar
     buildingId = buildingId,
     name = name,
     location = location.toDTO(),
-    places = places.map { it.toDTO(isConquered = it.placeId in conqueredPlaceIds) },
+    places = places.map { it.toDTO(isConquered = it.placeId in conqueredPlaceIds) }
+        .map { if (buildingId.startsWith("0")) it.copy(isConquered = true) else it },
 )
 
 fun ClubQuestTargetPlaceDTO.toModel() = ClubQuestTargetPlace(
