@@ -1,0 +1,12 @@
+save:
+INSERT INTO accessibility_rank
+VALUES :accessibility_rank
+ON CONFLICT(id) DO UPDATE SET
+    user_id = EXCLUDED.user_id,
+    conquest_count = EXCLUDED.conquest_count,
+    rank = EXCLUDED.rank,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at;
+
+removeAll:
+DELETE FROM accessibility_rank;
