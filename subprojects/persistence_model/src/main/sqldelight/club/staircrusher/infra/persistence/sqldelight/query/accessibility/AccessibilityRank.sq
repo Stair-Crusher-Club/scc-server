@@ -10,3 +10,18 @@ ON CONFLICT(id) DO UPDATE SET
 
 removeAll:
 DELETE FROM accessibility_rank;
+
+findByUserId:
+SELECT *
+FROM accessibility_rank
+WHERE accessibility_rank.user_id = :user_id;
+
+findTopNUsers:
+SELECT *
+FROM accessibility_rank
+WHERE accessibility_rank.rank <= :n;
+
+findByRank:
+SELECT *
+FROM accessibility_rank
+WHERE accessibility_rank.rank = :rank;
