@@ -54,7 +54,7 @@ jib {
     to {
         image = "public.ecr.aws/q0g6g7m8/scc-server"
         credHelper.helper = "ecr-login"
-        val version = property("version") as? String ?: throw IllegalArgumentException("No property exists!")
+        val version = property("version") as? String ?: throw IllegalArgumentException("No property `version` exists!")
         tags = setOf(version)
     }
     container {
