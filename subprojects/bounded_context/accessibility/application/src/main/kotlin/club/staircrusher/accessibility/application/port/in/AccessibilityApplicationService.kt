@@ -1,6 +1,9 @@
 package club.staircrusher.accessibility.application.port.`in`
 
 import club.staircrusher.accessibility.application.UserInfo
+import club.staircrusher.accessibility.application.port.`in`.result.GetAccessibilityResult
+import club.staircrusher.accessibility.application.port.`in`.result.RegisterBuildingAccessibilityResult
+import club.staircrusher.accessibility.application.port.`in`.result.RegisterPlaceAccessibilityResult
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityUpvoteRepository
@@ -35,21 +38,6 @@ class AccessibilityApplicationService(
     private val userApplicationService: UserApplicationService,
     private val clock: Clock,
 ) {
-    data class GetAccessibilityResult(
-        val buildingAccessibility: WithUserInfo<BuildingAccessibility>?,
-        val buildingAccessibilityUpvoteInfo: BuildingAccessibilityUpvoteInfo?,
-        val buildingAccessibilityComments: List<WithUserInfo<BuildingAccessibilityComment>>,
-        val placeAccessibility: WithUserInfo<PlaceAccessibility>?,
-        val placeAccessibilityComments: List<WithUserInfo<PlaceAccessibilityComment>>,
-        val hasOtherPlacesToRegisterInSameBuilding: Boolean,
-        val isLastPlaceAccessibilityInBuilding: Boolean,
-    ) {
-         data class BuildingAccessibilityUpvoteInfo(
-             val isUpvoted: Boolean,
-             val totalUpvoteCount: Int,
-         )
-    }
-
     data class WithUserInfo<T>(
         val value: T,
         val userInfo: UserInfo?
@@ -62,6 +50,10 @@ class AccessibilityApplicationService(
     }
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult = transactionManager.doInTransaction {
+        doGetAccessibility(placeId, userId)
+    }
+
+    internal fun doGetAccessibility(placeId: String, userId: String?): GetAccessibilityResult  {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
@@ -83,7 +75,7 @@ class AccessibilityApplicationService(
             )
         }
 
-        GetAccessibilityResult(
+        return GetAccessibilityResult(
             buildingAccessibility = buildingAccessibility?.let { WithUserInfo(it, userInfoById[it.userId]) },
             buildingAccessibilityUpvoteInfo = buildingAccessibilityUpvoteInfo,
             buildingAccessibilityComments = buildingAccessibilityComments.map {
@@ -150,13 +142,7 @@ class AccessibilityApplicationService(
         )
     }
 
-    data class RegisterBuildingAccessibilityResult(
-        val buildingAccessibility: BuildingAccessibility?,
-        val buildingAccessibilityComment: BuildingAccessibilityComment?,
-        val userInfo: UserInfo?,
-    )
-
-    private fun doRegisterBuildingAccessibility(
+    internal fun doRegisterBuildingAccessibility(
         createBuildingAccessibilityParams: BuildingAccessibilityRepository.CreateParams,
         createBuildingAccessibilityCommentParams: BuildingAccessibilityCommentRepository.CreateParams?,
     ) : RegisterBuildingAccessibilityResult {
@@ -198,15 +184,7 @@ class AccessibilityApplicationService(
         )
     }
 
-    data class RegisterPlaceAccessibilityResult(
-        val placeAccessibility: PlaceAccessibility,
-        val placeAccessibilityComment: PlaceAccessibilityComment?,
-        val userInfo: UserInfo?,
-        val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
-        val isLastPlaceAccessibilityInBuilding: Boolean,
-    )
-
-    private fun doRegisterPlaceAccessibility(
+    internal fun doRegisterPlaceAccessibility(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
     ) : RegisterPlaceAccessibilityResult {

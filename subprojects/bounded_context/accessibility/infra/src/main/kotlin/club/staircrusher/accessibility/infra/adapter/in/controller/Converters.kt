@@ -1,6 +1,7 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.UserInfo
+import club.staircrusher.accessibility.application.port.`in`.result.GetAccessibilityResult
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
@@ -9,6 +10,7 @@ import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.api.converter.toDTO
+import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
@@ -39,6 +41,30 @@ fun BuildingAccessibility.toDTO(
     isUpvoted = isUpvoted,
     totalUpvoteCount = totalUpvoteCount,
     registeredUserName = registeredUserName,
+)
+
+fun GetAccessibilityResult.toDTO(authUser: AuthUser?) = AccessibilityInfoDto(
+    buildingAccessibility = buildingAccessibility?.let {
+        it.value.toDTO(
+            isUpvoted = buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
+            totalUpvoteCount = buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0,
+            registeredUserName = it.userInfo?.nickname,
+        )
+    },
+    placeAccessibility = placeAccessibility?.let {
+        it.value.toDTO(
+            registeredUserInfo = it.userInfo,
+            authUser = authUser,
+            isLastInBuilding = isLastPlaceAccessibilityInBuilding,
+        )
+    },
+    buildingAccessibilityComments = buildingAccessibilityComments.map {
+        it.value.toDTO(userInfo = it.userInfo)
+    },
+    placeAccessibilityComments = placeAccessibilityComments.map {
+        it.value.toDTO(userInfo = it.userInfo)
+    },
+    hasOtherPlacesToRegisterInBuilding = hasOtherPlacesToRegisterInSameBuilding,
 )
 
 fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
