@@ -21,6 +21,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import java.time.Clock
 
+@Suppress("TooManyFunctions")
 @Component
 class AccessibilityApplicationService(
     private val transactionManager: TransactionManager,
@@ -135,40 +136,31 @@ class AccessibilityApplicationService(
         createBuildingAccessibilityParams: BuildingAccessibilityRepository.CreateParams?,
         createBuildingAccessibilityCommentParams: BuildingAccessibilityCommentRepository.CreateParams?,
     ): RegisterAccessibilityResult = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
-            throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
-        }
-        if (!isAccessibilityRegistrable(createPlaceAccessibilityParams.placeId)) {
-            throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
-        }
-        val result = placeAccessibilityRepository.save(
-            PlaceAccessibility(
-                id = EntityIdGenerator.generateRandom(),
-                placeId = createPlaceAccessibilityParams.placeId,
-                isFirstFloor = createPlaceAccessibilityParams.isFirstFloor,
-                stairInfo = createPlaceAccessibilityParams.stairInfo,
-                hasSlope = createPlaceAccessibilityParams.hasSlope,
-                imageUrls = createPlaceAccessibilityParams.imageUrls,
-                userId = createPlaceAccessibilityParams.userId,
-                createdAt = clock.instant(),
-            )
+        val registerPlaceAccessibilityResult = doRegisterPlaceAccessibility(createPlaceAccessibilityParams, createPlaceAccessibilityCommentParams)
+        val registerBuildingAccessibilityResult = createBuildingAccessibilityParams?.let { doRegisterBuildingAccessibility(it, createBuildingAccessibilityCommentParams) }
+
+        RegisterAccessibilityResult(
+            placeAccessibility = registerPlaceAccessibilityResult.placeAccessibility,
+            placeAccessibilityComment = registerPlaceAccessibilityResult.placeAccessibilityComment,
+            buildingAccessibility = registerBuildingAccessibilityResult?.buildingAccessibility,
+            buildingAccessibilityComment = registerBuildingAccessibilityResult?.buildingAccessibilityComment,
+            userInfo = registerPlaceAccessibilityResult.userInfo,
+            registrationOrder = registerPlaceAccessibilityResult.registrationOrder,
+            isLastPlaceAccessibilityInBuilding = registerPlaceAccessibilityResult.isLastPlaceAccessibilityInBuilding,
         )
-        val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
-            val normalizedComment = it.comment.trim()
-            if (normalizedComment.isBlank()) {
-                throw SccDomainException("한 글자 이상의 의견을 제출해주세요.")
-            }
-            placeAccessibilityCommentRepository.save(
-                PlaceAccessibilityComment(
-                    id = EntityIdGenerator.generateRandom(),
-                    placeId = it.placeId,
-                    userId = it.userId,
-                    comment = normalizedComment,
-                    createdAt = clock.instant(),
-                )
-            )
-        }
-        val buildingAccessibility = createBuildingAccessibilityParams?.let {
+    }
+
+    data class RegisterBuildingAccessibilityResult(
+        val buildingAccessibility: BuildingAccessibility?,
+        val buildingAccessibilityComment: BuildingAccessibilityComment?,
+        val userInfo: UserInfo?,
+    )
+
+    private fun doRegisterBuildingAccessibility(
+        createBuildingAccessibilityParams: BuildingAccessibilityRepository.CreateParams,
+        createBuildingAccessibilityCommentParams: BuildingAccessibilityCommentRepository.CreateParams?,
+    ) : RegisterBuildingAccessibilityResult {
+        val buildingAccessibility = createBuildingAccessibilityParams.let {
             if (buildingAccessibilityRepository.findByBuildingId(it.buildingId) != null) {
                 throw SccDomainException("이미 접근성 정보가 등록된 건물입니다.")
             }
@@ -208,14 +200,68 @@ class AccessibilityApplicationService(
                 )
             )
         }
+
+        val userInfo = createBuildingAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
+
+        return RegisterBuildingAccessibilityResult(
+            buildingAccessibility = buildingAccessibility,
+            buildingAccessibilityComment = buildingAccessibilityComment,
+            userInfo = userInfo,
+        )
+    }
+
+    data class RegisterPlaceAccessibilityResult(
+        val placeAccessibility: PlaceAccessibility,
+        val placeAccessibilityComment: PlaceAccessibilityComment?,
+        val userInfo: UserInfo?,
+        val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
+        val isLastPlaceAccessibilityInBuilding: Boolean,
+    )
+
+    private fun doRegisterPlaceAccessibility(
+        createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
+        createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
+    ) : RegisterPlaceAccessibilityResult {
+        if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
+            throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
+        }
+        if (!isAccessibilityRegistrable(createPlaceAccessibilityParams.placeId)) {
+            throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
+        }
+        val result = placeAccessibilityRepository.save(
+            PlaceAccessibility(
+                id = EntityIdGenerator.generateRandom(),
+                placeId = createPlaceAccessibilityParams.placeId,
+                isFirstFloor = createPlaceAccessibilityParams.isFirstFloor,
+                stairInfo = createPlaceAccessibilityParams.stairInfo,
+                hasSlope = createPlaceAccessibilityParams.hasSlope,
+                imageUrls = createPlaceAccessibilityParams.imageUrls,
+                userId = createPlaceAccessibilityParams.userId,
+                createdAt = clock.instant(),
+            )
+        )
+        val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
+            val normalizedComment = it.comment.trim()
+            if (normalizedComment.isBlank()) {
+                throw SccDomainException("한 글자 이상의 의견을 제출해주세요.")
+            }
+            placeAccessibilityCommentRepository.save(
+                PlaceAccessibilityComment(
+                    id = EntityIdGenerator.generateRandom(),
+                    placeId = it.placeId,
+                    userId = it.userId,
+                    comment = normalizedComment,
+                    createdAt = clock.instant(),
+                )
+            )
+        }
+
         val userInfo = createPlaceAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
         val buildingId = placeService.findPlace(result.placeId)!!.building.id
 
-        RegisterAccessibilityResult(
+        return RegisterPlaceAccessibilityResult(
             placeAccessibility = result,
             placeAccessibilityComment = placeAccessibilityComment,
-            buildingAccessibility = buildingAccessibility,
-            buildingAccessibilityComment = buildingAccessibilityComment,
             userInfo = userInfo,
             registrationOrder = placeAccessibilityRepository.countAll(),
             isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId) ?: false,
