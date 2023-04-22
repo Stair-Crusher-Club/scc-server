@@ -9,8 +9,8 @@ import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
-import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestBuildingAccessibilityParams
-import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestPlaceAccessibilityParams
+import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
+import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -173,7 +173,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
 
     private fun getDefaultRequestParams(place: Place): RegisterAccessibilityPostRequest {
         return RegisterAccessibilityPostRequest(
-            buildingAccessibilityParams = RegisterAccessibilityPostRequestBuildingAccessibilityParams(
+            buildingAccessibilityParams = RegisterBuildingAccessibilityRequestDto(
                 buildingId = place.building.id,
                 entranceStairInfo = StairInfo.NONE.toDTO(),
                 entranceImageUrls = listOf("buildingAccessibilityEntranceImage"),
@@ -186,7 +186,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 ),
                 comment = "건물 코멘트",
             ),
-            placeAccessibilityParams = RegisterAccessibilityPostRequestPlaceAccessibilityParams(
+            placeAccessibilityParams = RegisterPlaceAccessibilityRequestDto(
                 placeId = place.id,
                 isFirstFloor = false,
                 stairInfo = StairInfo.ONE.toDTO(),

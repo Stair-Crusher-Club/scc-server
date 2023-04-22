@@ -5,8 +5,8 @@ import club.staircrusher.accessibility.application.port.out.persistence.PlaceAcc
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
+import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.DeleteAccessibilityPostRequest
-import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
@@ -50,7 +50,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest("/getAccessibility", getAccessibilityParams1)
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertNull(result.placeAccessibility)
                 assertTrue(result.placeAccessibilityComments.isEmpty())
                 assertNotNull(result.buildingAccessibility)
@@ -73,7 +73,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest("/getAccessibility", getAccessibilityParams2)
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertNull(result.placeAccessibility)
                 assertTrue(result.placeAccessibilityComments.isEmpty())
                 assertNull(result.buildingAccessibility)

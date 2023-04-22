@@ -5,7 +5,7 @@ import club.staircrusher.accessibility.application.port.`in`.GetImageUploadUrlsU
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.api.converter.toDTO
-import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
+import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetImageUploadUrlsPost200ResponseInner
 import club.staircrusher.api.spec.dto.GetImageUploadUrlsPostRequest
@@ -25,9 +25,9 @@ class AccessibilityController(
     fun getAccessibility(
         @RequestBody request: GetAccessibilityPostRequest,
         authentication: SccAppAuthentication?,
-    ): GetAccessibilityPost200Response {
+    ): AccessibilityInfoDto {
         val result = accessibilityApplicationService.getAccessibility(request.placeId, authentication?.details?.id)
-        return GetAccessibilityPost200Response(
+        return AccessibilityInfoDto(
             buildingAccessibility = result.buildingAccessibility?.let {
                 it.value.toDTO(
                     isUpvoted = result.buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,

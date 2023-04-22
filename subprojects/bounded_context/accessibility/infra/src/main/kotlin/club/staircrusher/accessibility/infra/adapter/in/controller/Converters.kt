@@ -10,8 +10,8 @@ import club.staircrusher.accessibility.application.port.out.persistence.Building
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
-import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestBuildingAccessibilityParams
-import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequestPlaceAccessibilityParams
+import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
+import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.User
 import club.staircrusher.stdlib.auth.AuthUser
 
@@ -41,7 +41,7 @@ fun BuildingAccessibility.toDTO(
     registeredUserName = registeredUserName,
 )
 
-fun RegisterAccessibilityPostRequestBuildingAccessibilityParams.toModel(userId: String?) =
+fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
     BuildingAccessibilityRepository.CreateParams(
         buildingId = buildingId,
         entranceStairInfo = entranceStairInfo.toModel(),
@@ -98,7 +98,7 @@ fun StairInfo.toDTO() = when (this) {
     StairInfo.OVER_SIX -> club.staircrusher.api.spec.dto.StairInfo.oVERSIX
 }
 
-fun RegisterAccessibilityPostRequestPlaceAccessibilityParams.toModel(userId: String?) =
+fun RegisterPlaceAccessibilityRequestDto.toModel(userId: String?) =
     PlaceAccessibilityRepository.CreateParams(
         placeId = placeId,
         isFirstFloor = isFirstFloor,

@@ -6,7 +6,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
-import club.staircrusher.api.spec.dto.GetAccessibilityPost200Response
+import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
@@ -34,7 +34,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest("/getAccessibility", params, user = user)
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertEquals(buildingAccessibility.id, result.buildingAccessibility!!.id)
                 assertEquals(buildingAccessibility.buildingId, result.buildingAccessibility!!.buildingId)
                 assertEquals(buildingAccessibility.entranceStairInfo, result.buildingAccessibility!!.entranceStairInfo.toModel())
@@ -76,7 +76,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest("/getAccessibility", params, user = user)
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
                 assertTrue(result.hasOtherPlacesToRegisterInBuilding)
             }
@@ -96,7 +96,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 }
             }
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertNull(result.placeAccessibility!!.deletionInfo)
             }
     }
@@ -118,7 +118,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 }
             }
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertNull(result.placeAccessibility!!.deletionInfo)
             }
     }
@@ -139,7 +139,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 }
             }
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertFalse(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
             }
     }
@@ -158,7 +158,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 }
             }
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
             }
 
@@ -172,7 +172,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 }
             }
             .apply {
-                val result = getResult(GetAccessibilityPost200Response::class)
+                val result = getResult(AccessibilityInfoDto::class)
                 assertNull(result.placeAccessibility!!.deletionInfo)
             }
     }
