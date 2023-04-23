@@ -29,4 +29,5 @@ WHERE accessibility_rank.rank <= :n;
 findByRank:
 SELECT *
 FROM accessibility_rank
-WHERE accessibility_rank.rank = :rank;
+WHERE accessibility_rank.rank = :rank
+LIMIT 1;
