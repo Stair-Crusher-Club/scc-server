@@ -2,12 +2,14 @@
 
 package club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight
 
+import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_rank
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility_comment
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility_upvote
@@ -160,4 +162,22 @@ fun PlaceAccessibilityComment.toPersistenceModel() = Place_accessibility_comment
     created_at = createdAt.toOffsetDateTime(),
     updated_at = createdAt.toOffsetDateTime(),
     deleted_at = deletedAt?.toOffsetDateTime(),
+)
+
+fun AccessibilityRank.toPersistenceModel() = Accessibility_rank(
+    id = id,
+    user_id = userId,
+    conquest_count = conquestCount,
+    rank = rank,
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = updatedAt.toOffsetDateTime(),
+)
+
+fun Accessibility_rank.toDomainModel() = AccessibilityRank(
+    id = id,
+    userId = user_id,
+    conquestCount = conquest_count,
+    rank = rank,
+    createdAt = created_at.toInstant(),
+    updatedAt = updated_at.toInstant(),
 )
