@@ -13,5 +13,6 @@ interface AccessibilityRankRepository: EntityRepository<AccessibilityRank, Strin
     fun findTopNUsers(n: Int): List<AccessibilityRank>
     fun findByUserId(userId: String): AccessibilityRank?
     fun findByRank(rank: Long): AccessibilityRank?
+    fun findByConquestCount(conquestCount: Int): AccessibilityRank?
     fun findAll(): List<AccessibilityRank>
 }
