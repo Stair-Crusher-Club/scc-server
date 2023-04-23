@@ -35,3 +35,9 @@ LIMIT 1;
 findAll:
 SELECT *
 FROM accessibility_rank;
+
+findByConquestCount:
+SELECT *
+FROM accessibility_rank
+WHERE accessibility_rank.conquest_count = :conquest_count
+LIMIT 1;
