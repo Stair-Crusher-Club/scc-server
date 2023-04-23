@@ -51,4 +51,8 @@ class UserRepository(
             .executeAsList()
             .map { it.toDomainModel() }
     }
+
+    override fun findAll(): List<User> {
+        return queries.findAll().executeAsList().map { it.toDomainModel() }
+    }
 }
