@@ -7,13 +7,15 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.domain.model.User
 
 @Component
 class UpdateRanksUseCase(
     private val accessibilityRankRepository: AccessibilityRankRepository,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
-    private val transactionManager: TransactionManager
+    private val userApplicationService: UserApplicationService,
+    private val transactionManager: TransactionManager,
 ) {
     /**
      * Get all users and update their rank
@@ -21,7 +23,9 @@ class UpdateRanksUseCase(
     fun handle() {
         // update accessibility rank with count first
         transactionManager.doInTransaction {
-            val users: List<User> = TODO()
+            val users: List<User> = userApplicationService.getAllUsers()
+            val now = SccClock.instant()
+
             users.forEach {
                 val conquestCount = placeAccessibilityRepository.countByUserId(it.id)
                 val accessibilityRank = accessibilityRankRepository.findByUserId(it.id) ?: AccessibilityRank(
@@ -29,20 +33,22 @@ class UpdateRanksUseCase(
                     userId = it.id,
                     conquestCount = conquestCount,
                     rank = null,
-                    createdAt = SccClock.instant(),
-                    updatedAt = SccClock.instant(),
+                    createdAt = now,
+                    updatedAt = now,
                 )
 
-                accessibilityRankRepository.save(accessibilityRank.copy(conquestCount = conquestCount))
+                accessibilityRankRepository.save(accessibilityRank.copy(
+                    conquestCount = conquestCount,
+                    updatedAt = now,
+                ))
             }
-        }
 
-        var previousRank = 0L
-        var currentRank = 1L
-        var currentConquestCount = -1
-        // get all accessibility rank and update its rank
-        transactionManager.doInTransaction {
-            val ranks: List<AccessibilityRank> = TODO()
+            var previousRank = 0L
+            var currentRank = 1L
+            var currentConquestCount = -1
+
+            // get all accessibility rank and update its rank
+            val ranks: List<AccessibilityRank> = accessibilityRankRepository.findAll()
             val countPerConquestCount = ranks
                 .groupBy { it.conquestCount }
                 .toSortedMap(compareByDescending { it })
@@ -50,18 +56,17 @@ class UpdateRanksUseCase(
             countPerConquestCount.forEach { (conquestCount, ranks) ->
                 val updatedRanks = if (conquestCount != currentConquestCount) {
                     previousRank = currentRank
-                    ranks.map { it.copy(rank = currentRank) }
+                    ranks.map { it.copy(rank = currentRank, updatedAt = now) }
                 } else {
                     // If the last conquest count in the previous batch is the same as the conquest
                     // count in the current batch, then they should have the same rank.
                     currentRank += ranks.size
-                    ranks.map { it.copy(rank = previousRank) }
+                    ranks.map { it.copy(rank = previousRank, updatedAt = now) }
                 }
                 currentRank += ranks.size
                 currentConquestCount = conquestCount
                 accessibilityRankRepository.saveAll(updatedRanks)
             }
-
         }
     }
 }

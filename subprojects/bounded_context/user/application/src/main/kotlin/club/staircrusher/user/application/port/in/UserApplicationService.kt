@@ -104,4 +104,8 @@ class UserApplicationService(
     fun getUsers(userIds: List<String>): List<User> = transactionManager.doInTransaction {
         userRepository.findByIdIn(userIds)
     }
+
+    fun getAllUsers(): List<User> {
+        return userRepository.findAll()
+    }
 }

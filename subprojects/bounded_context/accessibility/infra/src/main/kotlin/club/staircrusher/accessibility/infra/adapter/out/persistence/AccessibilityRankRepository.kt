@@ -27,6 +27,10 @@ class AccessibilityRankRepository(
         return queries.findByRank(rank).executeAsOneOrNull()?.toDomainModel()
     }
 
+    override fun findAll(): List<AccessibilityRank> {
+        return queries.findAll().executeAsList().map { it.toDomainModel() }
+    }
+
     override fun save(entity: AccessibilityRank): AccessibilityRank {
         queries.save(entity.toPersistenceModel())
         return entity
