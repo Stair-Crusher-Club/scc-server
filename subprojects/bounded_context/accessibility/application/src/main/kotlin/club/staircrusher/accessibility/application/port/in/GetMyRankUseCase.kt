@@ -2,14 +2,33 @@ package club.staircrusher.accessibility.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.out.persistence.AccessibilityRankRepository
 import club.staircrusher.accessibility.domain.model.AccessibilityRank
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
+import club.staircrusher.user.application.port.`in`.UserApplicationService
+import java.util.UUID
 
 @Component
 class GetMyRankUseCase(
     private val accessibilityRankRepository: AccessibilityRankRepository,
+    private val userApplicationService: UserApplicationService,
 ) {
     fun handle(userId: String): AccessibilityRank {
-        return accessibilityRankRepository.findByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
+        val accessibilityRank = accessibilityRankRepository.findByUserId(userId)
+        val now = SccClock.instant()
+
+        if (accessibilityRank == null) {
+            val user = userApplicationService.getUser(userId) ?: throw SccDomainException("잘못된 계정입니다.")
+            return AccessibilityRank(
+                id = UUID.randomUUID().toString(),
+                userId = user.id,
+                conquestCount = 0,
+                rank = null,
+                createdAt = now,
+                updatedAt = now,
+            )
+        }
+
+        return accessibilityRank
     }
 }
