@@ -9,7 +9,7 @@ import club.staircrusher.user.application.port.`in`.UserApplicationService
 import java.util.UUID
 
 @Component
-class GetMyRankUseCase(
+class GetRankUseCase(
     private val accessibilityRankRepository: AccessibilityRankRepository,
     private val userApplicationService: UserApplicationService,
 ) {
