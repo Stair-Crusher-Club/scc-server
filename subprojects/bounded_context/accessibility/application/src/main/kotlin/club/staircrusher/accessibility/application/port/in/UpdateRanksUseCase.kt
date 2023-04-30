@@ -24,36 +24,36 @@ class UpdateRanksUseCase(
         // update accessibility rank with count first
         transactionManager.doInTransaction {
             val users: List<User> = userApplicationService.getAllUsers()
-            val lastRank = accessibilityRankRepository.findByConquestCount(0)?.rank ?: 1
+            val lastRank = accessibilityRankRepository.findByConqueredCount(0)?.rank ?: 1
             val now = SccClock.instant()
 
             val ranks = users.map {
-                val conquestCount = placeAccessibilityRepository.countByUserId(it.id)
+                val conqueredCount = placeAccessibilityRepository.countByUserId(it.id)
                 val accessibilityRank = accessibilityRankRepository.findByUserId(it.id) ?: AccessibilityRank(
                     id = EntityIdGenerator.generateRandom(),
                     userId = it.id,
-                    conquestCount = conquestCount,
+                    conqueredCount = conqueredCount,
                     rank = lastRank,
                     createdAt = now,
                     updatedAt = now,
                 )
 
                 accessibilityRankRepository.save(accessibilityRank.copy(
-                    conquestCount = conquestCount,
+                    conqueredCount = conqueredCount,
                     updatedAt = now,
                 ))
             }
 
             var previousRank = 0L
             var currentRank = 1L
-            var currentConquestCount = -1
+            var currentConqueredCount = -1
 
-            val countPerConquestCount = ranks
-                .groupBy { it.conquestCount }
+            val countPerConqueredCount = ranks
+                .groupBy { it.conqueredCount }
                 .toSortedMap(compareByDescending { it })
 
-            countPerConquestCount.forEach { (conquestCount, ranks) ->
-                val updatedRanks = if (conquestCount != currentConquestCount) {
+            countPerConqueredCount.forEach { (conqueredCount, ranks) ->
+                val updatedRanks = if (conqueredCount != currentConqueredCount) {
                     previousRank = currentRank
                     ranks.map { it.copy(rank = currentRank, updatedAt = now) }
                 } else {
@@ -63,7 +63,7 @@ class UpdateRanksUseCase(
                     ranks.map { it.copy(rank = previousRank, updatedAt = now) }
                 }
                 currentRank += ranks.size
-                currentConquestCount = conquestCount
+                currentConqueredCount = conqueredCount
                 accessibilityRankRepository.saveAll(updatedRanks)
             }
         }

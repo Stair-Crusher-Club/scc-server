@@ -3,7 +3,7 @@ INSERT INTO accessibility_rank
 VALUES :accessibility_rank
 ON CONFLICT(id) DO UPDATE SET
     user_id = EXCLUDED.user_id,
-    conquest_count = EXCLUDED.conquest_count,
+    conquered_count = EXCLUDED.conquered_count,
     rank = EXCLUDED.rank,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
@@ -36,8 +36,8 @@ findAll:
 SELECT *
 FROM accessibility_rank;
 
-findByConquestCount:
+findByConqueredCount:
 SELECT *
 FROM accessibility_rank
-WHERE accessibility_rank.conquest_count = :conquest_count
+WHERE accessibility_rank.conquered_count = :conquered_count
 LIMIT 1;
