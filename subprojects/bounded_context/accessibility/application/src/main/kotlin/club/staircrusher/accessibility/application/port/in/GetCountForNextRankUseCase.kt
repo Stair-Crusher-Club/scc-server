@@ -12,13 +12,13 @@ class GetCountForNextRankUseCase(
 ) {
     fun handle(userId: String): Int?  = transactionManager.doInTransaction {
         val currentRank = accessibilityRankRepository.findByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
-        val rank = currentRank.rank ?: accessibilityRankRepository.findByConquestCount(currentRank.conquestCount)?.rank!!
+        val rank = currentRank.rank ?: accessibilityRankRepository.findByConqueredCount(currentRank.conqueredCount)?.rank!!
 
         if (rank == 1L) {
             null
         } else {
             val nextRank = accessibilityRankRepository.findByRank(rank - 1)!!
-            nextRank.conquestCount - currentRank.conquestCount
+            nextRank.conqueredCount - currentRank.conqueredCount
         }
     }
 }
