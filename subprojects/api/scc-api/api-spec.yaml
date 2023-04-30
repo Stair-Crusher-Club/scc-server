@@ -526,7 +526,7 @@ paths:
                 type: object
                 properties:
                   accessibilityRank:
-                    $ref: '#/components/schemas/AccessibilityRank'
+                    $ref: '#/components/schemas/AccessibilityRankDTO'
                 required:
                   - accessibilityRank
 
@@ -550,7 +550,7 @@ paths:
                   ranks:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AccessibilityRank'
+                      $ref: '#/components/schemas/AccessibilityRankDTO'
                 required:
                   - ranks
 
@@ -573,7 +573,6 @@ paths:
                 properties:
                   countForNextRank: # 다음 랭크로 올라가기 위해 필요한 점수
                     type: integer
-                    format: int64
                 required:
                   - countForNextRank
 
@@ -827,7 +826,7 @@ components:
         - hasPlaceAccessibility
         - isAccessibilityRegistrable
 
-    AccessibilityRank:
+    AccessibilityRankDTO:
       type: object
       properties:
         conqueredCount:
@@ -835,6 +834,7 @@ components:
           description: 접근성 정보를 등록한 장소의 수.
         rank:
           type: integer
+          format: int64
           description: 현재 나의 랭크. 1부터 시작.
       required:
         - conqueredCount

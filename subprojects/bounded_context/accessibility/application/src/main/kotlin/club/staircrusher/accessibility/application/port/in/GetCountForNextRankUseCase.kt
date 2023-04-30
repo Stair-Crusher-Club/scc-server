@@ -10,12 +10,12 @@ class GetCountForNextRankUseCase(
     private val accessibilityRankRepository: AccessibilityRankRepository,
     private val transactionManager: TransactionManager,
 ) {
-    fun handle(userId: String): Int?  = transactionManager.doInTransaction {
+    fun handle(userId: String): Int  = transactionManager.doInTransaction {
         val currentRank = accessibilityRankRepository.findByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         val rank = currentRank.rank ?: accessibilityRankRepository.findByConqueredCount(currentRank.conqueredCount)?.rank!!
 
         if (rank == 1L) {
-            null
+            0
         } else {
             val nextRank = accessibilityRankRepository.findByRank(rank - 1)!!
             nextRank.conqueredCount - currentRank.conqueredCount
