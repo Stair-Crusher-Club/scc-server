@@ -24,15 +24,16 @@ class UpdateRanksUseCase(
         // update accessibility rank with count first
         transactionManager.doInTransaction {
             val users: List<User> = userApplicationService.getAllUsers()
+            val lastRank = accessibilityRankRepository.findByConquestCount(0)?.rank ?: 1
             val now = SccClock.instant()
 
-            users.forEach {
+            val ranks = users.map {
                 val conquestCount = placeAccessibilityRepository.countByUserId(it.id)
                 val accessibilityRank = accessibilityRankRepository.findByUserId(it.id) ?: AccessibilityRank(
                     id = EntityIdGenerator.generateRandom(),
                     userId = it.id,
                     conquestCount = conquestCount,
-                    rank = null,
+                    rank = lastRank,
                     createdAt = now,
                     updatedAt = now,
                 )
@@ -47,8 +48,6 @@ class UpdateRanksUseCase(
             var currentRank = 1L
             var currentConquestCount = -1
 
-            // get all accessibility rank and update its rank
-            val ranks: List<AccessibilityRank> = accessibilityRankRepository.findAll()
             val countPerConquestCount = ranks
                 .groupBy { it.conquestCount }
                 .toSortedMap(compareByDescending { it })
