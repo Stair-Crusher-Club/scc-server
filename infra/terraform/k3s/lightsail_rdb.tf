@@ -6,6 +6,7 @@ resource "aws_lightsail_database" "scc_db" {
   master_username          = "scc"
   blueprint_id             = "postgres_12"
   bundle_id                = "micro_2_0"
-  skip_final_snapshot      = true
+  skip_final_snapshot      = false
+  final_snapshot_name      = "scc-final-snapshot"
 }
 
