@@ -27,6 +27,10 @@ class AccessibilityRankRepository(
         return queries.findByRank(rank).executeAsOneOrNull()?.toDomainModel()
     }
 
+    override fun findNextRank(rank: Long): AccessibilityRank? {
+        return queries.findNextRank(rank).executeAsOneOrNull()?.toDomainModel()
+    }
+
     override fun findByConqueredCount(conqueredCount: Int): AccessibilityRank? {
         return queries.findByConqueredCount(conqueredCount).executeAsOneOrNull()?.toDomainModel()
     }
