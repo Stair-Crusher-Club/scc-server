@@ -32,6 +32,13 @@ FROM accessibility_rank
 WHERE accessibility_rank.rank = :rank
 LIMIT 1;
 
+findNextRank:
+SELECT *
+FROM accessibility_rank
+WHERE accessibility_rank.rank < :rank
+ORDER BY accessibility_rank.rank DESC
+LIMIT 1;
+
 findAll:
 SELECT *
 FROM accessibility_rank;

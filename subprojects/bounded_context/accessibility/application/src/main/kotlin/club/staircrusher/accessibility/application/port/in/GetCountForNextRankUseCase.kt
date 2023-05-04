@@ -17,7 +17,7 @@ class GetCountForNextRankUseCase(
         if (rank == 1L) {
             0
         } else {
-            val nextRank = accessibilityRankRepository.findByRank(rank - 1)!!
+            val nextRank = accessibilityRankRepository.findNextRank(rank)!!
             nextRank.conqueredCount - currentRank.conqueredCount
         }
     }
