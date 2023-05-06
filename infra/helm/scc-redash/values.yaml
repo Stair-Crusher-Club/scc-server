@@ -1,3 +1,17 @@
+deploySecret:
+  awsRoleArn: arn:aws:iam::833004893731:role/scc-deploy-secret
+
+filesDir: files
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
 redash:
   ## Default values for Redash.
   ## This is a YAML-formatted file.
@@ -304,7 +318,7 @@ redash:
       # limits:
       #   cpu: 500m
       #   memory: 3Gi
-      # requests:
+    # requests:
     #   cpu: 100m
     #  memory: 500Mi
 
@@ -602,9 +616,8 @@ redash:
   externalPostgreSQL:
   # externalPostgreSQLSecret -- Read external PostgreSQL configuration from a secret. This should point at a secret file with a single key which specifies the connection string.
   externalPostgreSQLSecret:
-    { }
-  # name: redash-postgres
-  # key: connectionString
+    name: scc-redash-postgresql-secret
+    key: redisDatabaseUrl
 
   # envSecretName -- DEPRECIATED, use externalPostgreSQLSecret/externalRedisSecret instead. Contents of this secret will be loaded as environment variables into the container. Useful e.g. to set to set PostgreSQL password in externalPostgreSQL parameter: postgresql://user:$(POSTGRESQL_PASSWORD)@host:5432/database [ref](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#using-environment-variables-inside-of-your-config)
   # envSecretName:
@@ -612,7 +625,7 @@ redash:
   ## Configuration values for the postgresql dependency. This PostgreSQL instance is used by default for all Redash state storage [ref](https://github.com/kubernetes/charts/blob/master/stable/postgresql/README.md)
   postgresql:
     # postgresql.enabled -- Whether to deploy a PostgreSQL server to satisfy the applications database requirements. To use an external PostgreSQL set this to false and configure the externalPostgreSQL parameter.
-    enabled: true
+    enabled: false
     image:
       # postgresql.image.tag -- Bitnami supported version close to the one specified in Redash [setup docker-compose.yml](https://github.com/getredash/setup/blob/master/data/docker-compose.yml)
       tag: "9.6.17-debian-10-r3"
