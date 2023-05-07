@@ -32,9 +32,7 @@ class AccessibilityRankController(
     }
 
     @PostMapping("/getAccessibilityLeaderboard")
-    fun getAccessibilityLeaderboard(
-        authentication: SccAppAuthentication,
-    ): GetAccessibilityLeaderboardPost200Response {
+    fun getAccessibilityLeaderboard(): GetAccessibilityLeaderboardPost200Response {
         return GetAccessibilityLeaderboardPost200Response(
             ranks = getLeaderboardUseCase.handle().map { (rank, user) ->
                 rank.toDTO(user!!)

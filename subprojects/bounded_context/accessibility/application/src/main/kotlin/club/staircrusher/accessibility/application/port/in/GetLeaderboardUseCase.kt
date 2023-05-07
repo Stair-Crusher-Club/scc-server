@@ -20,8 +20,8 @@ class GetLeaderboardUseCase(
         val userIds = leaderboards.map { it.userId }
         val users = userApplicationService.getUsers(userIds)
 
-        return leaderboards.zip(users).map { (rank, user) ->
-            WithUserInfo(rank, user.toDomainModel())
+        return leaderboards.map { rank ->
+            WithUserInfo(rank, users.first { it.id == rank.userId }.toDomainModel())
         }
     }
 }

@@ -24,7 +24,8 @@ WHERE accessibility_rank.user_id = :user_id;
 findTopNUsers:
 SELECT *
 FROM accessibility_rank
-WHERE accessibility_rank.rank <= :n;
+ORDER BY accessibility_rank.rank ASC
+LIMIT :n;
 
 findByRank:
 SELECT *
