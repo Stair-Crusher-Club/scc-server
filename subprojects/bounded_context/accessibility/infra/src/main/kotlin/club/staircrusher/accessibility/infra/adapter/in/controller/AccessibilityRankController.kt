@@ -25,7 +25,9 @@ class AccessibilityRankController(
         authentication: SccAppAuthentication,
     ): GetAccessibilityRankPost200Response {
         return GetAccessibilityRankPost200Response(
-            accessibilityRank = getRankUseCase.handle(authentication.principal).toDTO()
+            accessibilityRank = getRankUseCase.handle(authentication.principal).let { (rank, user)  ->
+                rank.toDTO(user!!)
+            }
         )
     }
 
@@ -34,7 +36,9 @@ class AccessibilityRankController(
         authentication: SccAppAuthentication,
     ): GetAccessibilityLeaderboardPost200Response {
         return GetAccessibilityLeaderboardPost200Response(
-            ranks = getLeaderboardUseCase.handle().map { it.toDTO() }
+            ranks = getLeaderboardUseCase.handle().map { (rank, user) ->
+                rank.toDTO(user!!)
+            }
         )
     }
 
