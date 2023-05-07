@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.application.port.`in`
+package club.staircrusher.accessibility.application.port.`in`.result
 
 import club.staircrusher.accessibility.application.UserInfo
 

@@ -1,5 +1,6 @@
 package club.staircrusher.accessibility.application.port.`in`
 
+import club.staircrusher.accessibility.application.port.`in`.result.WithUserInfo
 import club.staircrusher.accessibility.application.port.out.persistence.AccessibilityRankRepository
 import club.staircrusher.accessibility.application.toDomainModel
 import club.staircrusher.accessibility.domain.model.AccessibilityRank
