@@ -4,7 +4,7 @@ import app.cash.sqldelight.ColumnAdapter
 
 abstract class ListToTextColumnAdapter<T> : ColumnAdapter<List<T>, String> {
     override fun decode(databaseValue: String): List<T> {
-        return databaseValue.split(delimiter).map(::convertElementFromTextColumn)
+        return databaseValue.split(delimiter).filter { it.isNotBlank() }.map(::convertElementFromTextColumn)
     }
 
     override fun encode(value: List<T>): String {

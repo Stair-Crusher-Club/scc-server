@@ -15,10 +15,4 @@ data class Place(
     val address: BuildingAddress
         // FIXME
         get() = building.address
-
-    val isAccessibilityRegistrable: Boolean
-        get() {
-            val addressStr = address.toString()
-            return addressStr.startsWith("서울") || addressStr.startsWith("경기 성남시")
-        }
 }

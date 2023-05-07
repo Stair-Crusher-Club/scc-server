@@ -6,6 +6,7 @@ import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place_search.infra.adapter.`in`.controller.base.PlaceSearchITBase
+import club.staircrusher.stdlib.testing.SccRandom
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.boot.test.mock.mockito.MockBean
-import kotlin.random.Random
 
 class SearchPlacesTest : PlaceSearchITBase() {
     @MockBean
@@ -26,7 +26,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
             testDataGenerator.createUser()
         }
         val place = transactionManager.doInTransaction {
-            testDataGenerator.createBuildingAndPlace(placeName = Random.nextBytes(32).toString())
+            testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32))
         }
         val searchText = place.name.substring(2, 5)
         val radiusMeters = 500
@@ -73,7 +73,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
         }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(
-                placeName = Random.nextBytes(32).toString(),
+                placeName = SccRandom.string(32),
                 buildingAddress = BuildingAddress(
                     siDo = "경기도",
                     siGunGu = "수원시",
