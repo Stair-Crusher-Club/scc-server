@@ -475,6 +475,74 @@ paths:
         '400':
           $ref: '#/components/responses/ApiFailure'
 
+  /getAccessibilityRank:
+    post:
+      summary: 내 현재 랭크를 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessibilityRank:
+                    $ref: '#/components/schemas/AccessibilityRankDTO'
+                required:
+                  - accessibilityRank
+
+  /getAccessibilityLeaderboard:
+    post:
+      summary: 현재 탑 랭커들을 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ranks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccessibilityRankDTO'
+                required:
+                  - ranks
+
+  /getCountForNextRank:
+    post:
+      summary: 다음 랭크로 올라가기 위한 점수를 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  countForNextRank: # 다음 랭크로 올라가기 위해 필요한 점수
+                    type: integer
+                required:
+                  - countForNextRank
+
 components:
   # Reusable schemas (data models)
   schemas:
@@ -807,6 +875,20 @@ components:
         - stairInfo
         - hasSlope
         - imageUrls
+
+    AccessibilityRankDTO:
+      type: object
+      properties:
+        conqueredCount:
+          type: integer
+          description: 접근성 정보를 등록한 장소의 수.
+        rank:
+          type: integer
+          format: int64
+          description: 현재 나의 랭크. 1부터 시작.
+      required:
+        - conqueredCount
+        - rank
 
     ApiErrorResponse:
       type: object

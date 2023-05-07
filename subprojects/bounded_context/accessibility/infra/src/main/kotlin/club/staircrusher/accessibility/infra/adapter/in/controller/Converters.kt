@@ -9,6 +9,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
+import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
@@ -138,4 +139,9 @@ fun UserInfo.toDTO() = User(
     id = userId,
     nickname = nickname,
     instagramId = instagramId,
+)
+
+fun AccessibilityRank.toDTO() = club.staircrusher.api.spec.dto.AccessibilityRankDTO(
+    rank = rank,
+    conqueredCount = conqueredCount,
 )

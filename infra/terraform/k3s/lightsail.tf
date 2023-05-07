@@ -86,9 +86,11 @@ curl -sfL https://get.k3s.io | sh -s - agent \
 USERDATA
 }
 
-resource "aws_lightsail_instance" "k3s_data_plane" {
-  name              = "k3s_data_plane_1"
-  availability_zone = "ap-northeast-2c"
+resource "aws_lightsail_instance" "k3s_data_planes" {
+  for_each = { for i in range(2) : i => i }
+
+  name              = "k3s_data_plane_${each.value}"
+  availability_zone = element(["ap-northeast-2a", "ap-northeast-2c"], each.value % 2)
   key_pair_name     = aws_lightsail_key_pair.scc_key_pair.name
   bundle_id         = "small_2_0"
   blueprint_id      = "ubuntu_20_04"
@@ -98,8 +100,10 @@ resource "aws_lightsail_instance" "k3s_data_plane" {
   }
 }
 
-resource "aws_lightsail_instance_public_ports" "k3s_data_plane" {
-  instance_name = aws_lightsail_instance.k3s_data_plane.name
+resource "aws_lightsail_instance_public_ports" "k3s_data_planes" {
+  for_each = aws_lightsail_instance.k3s_data_planes
+
+  instance_name = each.value.name
 
   port_info {
     protocol  = "tcp"
@@ -138,7 +142,7 @@ resource "aws_lightsail_instance_public_ports" "k3s_data_plane" {
 
   lifecycle {
     replace_triggered_by = [
-      aws_lightsail_instance.k3s_data_plane.id
+      aws_lightsail_instance.k3s_data_planes[each.key].id
     ]
   }
 }
