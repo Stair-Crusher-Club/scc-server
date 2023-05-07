@@ -829,6 +829,8 @@ components:
     AccessibilityRankDTO:
       type: object
       properties:
+        user:
+          $ref: '#/components/schemas/User'
         conqueredCount:
           type: integer
           description: 접근성 정보를 등록한 장소의 수.
@@ -837,6 +839,7 @@ components:
           format: int64
           description: 현재 나의 랭크. 1부터 시작.
       required:
+        - user
         - conqueredCount
         - rank
 

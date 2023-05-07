@@ -115,7 +115,8 @@ fun UserInfo.toDTO() = User(
     instagramId = instagramId,
 )
 
-fun AccessibilityRank.toDTO() = club.staircrusher.api.spec.dto.AccessibilityRankDTO(
+fun AccessibilityRank.toDTO(userInfo: UserInfo) = club.staircrusher.api.spec.dto.AccessibilityRankDTO(
+    user = userInfo.toDTO(),
     rank = rank,
     conqueredCount = conqueredCount,
 )

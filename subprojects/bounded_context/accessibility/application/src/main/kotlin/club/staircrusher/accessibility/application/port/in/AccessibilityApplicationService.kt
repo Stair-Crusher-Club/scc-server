@@ -49,11 +49,6 @@ class AccessibilityApplicationService(
          )
     }
 
-    data class WithUserInfo<T>(
-        val value: T,
-        val userInfo: UserInfo?
-    )
-
     fun isAccessibilityRegistrable(placeId: String): Boolean {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
 
