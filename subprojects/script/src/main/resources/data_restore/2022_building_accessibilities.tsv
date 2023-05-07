@@ -1,0 +1,930 @@
+건물 id	주소	출입구 계단 개수	출입구 경사로 유무	엘리베이터 유무	엘리베이터까지의 계단 개수	생성 시점	입력자 이름
+DRMywTrb4zhiKwxztsOUUuTdMZww/62ignb/	서울 성동구 왕십리광장로 17	0개	false	true	0개	2022-11-19 12:35:13	-
+h7MB4idyWW66H2Kbke6vjze9IrJ9B5m+Km4Z	서울 마포구 양화로 171	0개	false	true	0개	2022-11-19 14:23:13	leobit
+PD//eQGMnVoA2j7ubSyat/MwO4Osm70x42UD	서울 서대문구 신촌로 3	1개	false	false	-	2022-11-19 14:25:47	제니
+ieX4CQ5vNMw9xY3fX7mMM2K6c/zhabKkYA+M	서울 서초구 강남대로61길 10	1개	false	true	0개	2022-11-19 14:27:14	-
+Uc9cLvfY3Jm5CTavd50QIdQo9NIjrQuI9lgC	서울 마포구 양화로 165	2~5개	true	true	0개	2022-11-19 14:27:17	leobit
+8Q1Ug8vO5yGgh3rhcUjmTpCGsQXoohdsVyTj	서울 서초구 서초대로75길 23	2~5개	false	false	-	2022-11-19 14:30:58	-
+xVUuIpUYCgeW/g/i05ILoL8io2vAiloitvMH	서울 마포구 와우산로37길 46	0개	false	false	-	2022-11-19 14:34:27	Jin
+ctvjDBB1ERZpGchwJDf3GHmaKJwvd04q393V	서울 서초구 강남대로 455	0개	false	true	0개	2022-11-19 14:35:29	정의준
+mvQu0OHyCZ39AKDhTkgc161j3iKLBafesI0O	서울 서대문구 신촌로 9	1개	false	false	-	2022-11-19 14:36:06	제니
+iA96XQivS3E7jkXKLtft3lR0WwylPYjdmNqc	서울 서초구 서초대로77길 24	0개	false	true	0개	2022-11-19 14:36:09	-
+Dg48JL3FUe7YGSTImXGzz0vrhQaFJGys8Uy+	서울 마포구 와우산로37길 52	0개	false	false	-	2022-11-19 14:38:06	Jin
+dJg++euWBAg5HozrS92G7qBZePWB05s4nx6w	서울 강남구 테헤란로5길 29	6개 이상	false	false	-	2022-11-19 14:38:23	-
+wtM/7ZrKoFEZgFmaK2EjfC646nEw7IX9KL0Y	서울 마포구 동교로 222	1개	false	false	-	2022-11-19 14:38:56	heenaa
+UIoHCylQVMqtEJDAEgRz+slNfapw/e9dLF14	서울 마포구 동교로 220	6개 이상	false	false	-	2022-11-19 14:40:18	heenaa
+eQRVevxFp3wp0Rs2fkSxUNLtou8mZPFlxnm6	서울 서대문구 신촌로 1	6개 이상	true	true	0개	2022-11-19 14:40:44	kokjh1234
+SsA7WSKKr/ycW2SIEL3xeWQTuzGRiMK21u15	서울 마포구 동교로 220-3	0개	false	false	-	2022-11-19 14:41:40	heenaa
+Qz6tWGTYsatkV3zX37/gIy5wielJKV5eDcMO	서울 마포구 신촌로4길 22-6	0개	false	true	2~5개	2022-11-19 14:43:30	Jin
+MqcymglBPO0z6n0VhwCwwhVvXhXOkfPXWvG+	서울 강남구 강남대로96길 19	1개	false	true	2~5개	2022-11-19 14:43:35	-
+zFPjUSp0qIL1WASIYS9dZKqJai4ZGgzJ6aY1	서울 마포구 동교로 221	1개	false	false	-	2022-11-19 14:46:12	heenaa
+RWs8TxTOGOK2R2Y3YNs6Bugzj5ZxSAd/YpRb	서울 강남구 강남대로96길 17	1개	false	true	2~5개	2022-11-19 14:46:23	-
+2986UQ7RaPQhq/Y8EnWJnCpgjposMmDpvVWU	서울 마포구 신촌로4길 22-8	0개	false	true	2~5개	2022-11-19 14:47:13	Jin
+3CAEKKlUTnelYPNlUJVVvAsZIAKAad0nNuj7	서울 마포구 동교로 219	1개	false	false	-	2022-11-19 14:47:50	heenaa
+9w7f9sHK6kC65YZMJzhou3HkbWlP5j5xNvW1	서울 서초구 강남대로 423	2~5개	false	true	0개	2022-11-19 14:47:57	정의준
+SvAAKKmET4uKg/TA8usg70svMqzdnr6ez5Bq	서울 마포구 신촌로4길 22-10	0개	false	true	0개	2022-11-19 14:49:02	Jin
+ddlL4ZUIStXNawQFmGxp7WUT/vpnZFhDgRTS	서울 강남구 강남대로96길 15	2~5개	false	false	-	2022-11-19 14:49:07	-
+91mNRXdAhxZ4vpvw59VfB67w5yqAGhBZXTvs	서울 마포구 동교로 217	0개	true	true	0개	2022-11-19 14:50:39	heenaa
++EZ76L4N1cYqKI2XpxbCtk6Yec3PpDynKk4i	서울 마포구 신촌로4길 22-12	0개	false	true	0개	2022-11-19 14:51:54	Jin
+0dsnlk6DaJbUPPms3YhKI+gs4GgaJDPd0FwZ	서울 서대문구 신촌로 15	2~5개	false	false	-	2022-11-19 14:52:08	제니
+LLSdXG6w59XaFikhxZCwqZJhXtl1q1Rm5nK/	서울 마포구 월드컵북로2길 57	0개	true	true	0개	2022-11-19 14:52:08	leobit
+n58V0+2AR1yrEFM0ker4CMYv2n2vQ61qdmpn	서울 마포구 월드컵북로4길 95	6개 이상	false	false	-	2022-11-19 14:52:49	heenaa
+1scA/hSWGuzc8xeGcLItt4pi0LEG+yCHSNxE	서울 마포구 월드컵북로2길 25	2~5개	false	false	-	2022-11-19 14:53:03	-
+080w8BDX5RKmr0N6zxO6hOgcca6IYlNO2oGA	서울 마포구 신촌로4길 22-14	0개	false	true	2~5개	2022-11-19 14:53:45	Jin
+KuykROUyMbGDHnOq1EoHklaWIKV3Xr7ZW/t0	서울 마포구 월드컵북로4길 87	2~5개	true	true	0개	2022-11-19 14:54:28	heenaa
+tDiV3F80wVIqBRsjT7MyO6T3IyUzrGQO3SgU	서울 마포구 월드컵북로6길 88-10	6개 이상	false	false	-	2022-11-19 14:56:04	heenaa
+mFFoX/pvLT1whX6K7GBDF3TMQCwbavNnK2m7	서울 마포구 신촌로4길 22-22	6개 이상	false	false	-	2022-11-19 14:56:09	Jin
+YHld9fPzazPuOyTEjHnajHrLgayFsl6TGUOM	서울 서대문구 신촌로 17	0개	false	false	-	2022-11-19 14:56:13	제니
+Q1HEEhSYd2Q4mccPPBlfDWXT/b3yevoZs529	서울 서초구 서초대로77길 25	0개	true	true	6개 이상	2022-11-19 14:56:42	-
+1XXbC3yIooNJNgpJJDT0h02pIWtLV5AzSqTU	서울 마포구 월드컵북로6길 88	2~5개	false	false	-	2022-11-19 14:57:21	heenaa
+l39/6mbtCXf/a+UQXvRh8fGmy0z7LNPTGnTp	서울 마포구 신촌로2안길 2	2~5개	false	false	-	2022-11-19 14:58:15	Jin
+RIGbLog7O+kbsbLj2MyHrEew0GUhUGMuoqOD	서울 강남구 강남대로96길 20	1개	false	true	6개 이상	2022-11-19 14:58:24	-
+CcEQ9FEr3J4+Wuao0xyyLN15DgBzI9wtgFs7	서울 강남구 강남대로96길 18	6개 이상	false	false	-	2022-11-19 14:59:20	-
+AEsctiLRBWo1aHf0E1De3w/c3FrSLUu97SeT	서울 마포구 동교로 200	2~5개	false	false	-	2022-11-19 14:59:23	leobit
+zMpKDcQwRd6xbY3NHxs5wyVfoq3jpeRMr7nL	서울 마포구 월드컵북로2길 29	6개 이상	false	false	-	2022-11-19 14:59:25	우야
+bjNG/kVADUGGU1lsII/d8FaJl5Ho+YeoycOJ	서울 마포구 월드컵북로6길 92	1개	false	true	1개	2022-11-19 15:00:19	heenaa
+VlwOXNHAWKvYJOg3Gb1raLxBcfP5p38/oY2z	서울 마포구 동교로 198	1개	false	false	-	2022-11-19 15:01:01	leobit
+BeLHYPzALVIcOq8b/t2iKU8Nb7pF7kI3GwW9	서울 서초구 강남대로 421	0개	true	true	0개	2022-11-19 15:01:05	정의준
+usy8qIC5+FxzCVsXqSOfSHo/5AcbGPjpM0AZ	서울 마포구 월드컵북로6길 98	0개	false	true	0개	2022-11-19 15:02:18	heenaa
+/ql/zaQ9yegKmzOmlwvI4WTwgoBLkzz3PuYW	서울 마포구 신촌로2안길 6	1개	false	false	-	2022-11-19 15:02:34	Jin
+tnNDW8etEyjdUCAhIj173FGuSa31qrzvLmyf	서울 마포구 동교로 196	1개	false	false	-	2022-11-19 15:03:44	leobit
+gDs8GMM9oYG42aQnUisCeGML6pATG2eekySY	서울 서초구 서초대로73길 24	0개	true	false	-	2022-11-19 15:03:51	-
+Tyu+SjXfv6LEQvztPn6/paOXTU97KL10ty9J	서울 마포구 월드컵북로6길 97	2~5개	false	false	-	2022-11-19 15:03:51	heenaa
+e1vO86YdWcrMoIJb/wdXEYVbXx7ydEek+gg+	서울 마포구 동교로 182-6	2~5개	false	false	-	2022-11-19 15:04:27	우야
+JXSNfThFAVphp8byiSEHxlkd+4xR4qeoMEXc	서울 강남구 강남대로96길 22	1개	false	false	-	2022-11-19 15:04:27	-
+ejJFNlGFgwgUZ2XhT51v3aEm6LscvYH0UAQk	서울 마포구 동교로 194	2~5개	false	false	-	2022-11-19 15:04:49	leobit
+rxSy7zR+mUgxmkxtbF31cX8Ve5/9woLHnlU0	서울 마포구 월드컵북로6길 93	2~5개	false	false	-	2022-11-19 15:05:25	heenaa
+OgJcVqFTe0JG7aH4R54i93o+GtWTJFexIX5H	서울 서대문구 신촌로3길 9	0개	true	false	-	2022-11-19 15:05:51	제니
++3Haq2c6YQNAaEY7R9M+BWuz38bA6pOL1vZF	서울 강남구 테헤란로5길 24	2~5개	true	true	0개	2022-11-19 15:06:56	-
+SGkNhYQEfmvyF00YdJodJgaGigXF9hqTho/l	서울 마포구 신촌로2안길 20	6개 이상	false	false	-	2022-11-19 15:07:02	Jin
+q6m7svLmgFL4m7XM9yFwBaefr+ujwHlJ04ED	서울 마포구 동교로 182-3	0개	true	false	-	2022-11-19 15:07:05	우야
+lTPT8/9ZKiPzEw0mTMlPcH5ddIt5LfLXob88	서울 마포구 연남로 11	2~5개	false	false	-	2022-11-19 15:07:18	heenaa
+sFkAM8DjImvhX1Kf2pHczik8KZREZAI6iDbz	서울 서대문구 신촌로3길 6	2~5개	false	false	-	2022-11-19 15:07:33	제니
+ifHhDZjuzYU5hs4bGPa3fDfo8gvWjcXw0Bar	서울 마포구 동교로 193	0개	false	true	2~5개	2022-11-19 15:07:49	leobit
+iFNExwYsCS1Xv/KmzLzDu/WYqJTFKXA7Q76x	서울 마포구 연남로 13	2~5개	true	true	2~5개	2022-11-19 15:09:05	heenaa
+iXXHySMfjsKe6stOzCt9xxSbdLlO++NpeXqj	서울 마포구 동교로 195	1개	false	true	2~5개	2022-11-19 15:09:07	leobit
+2jHXoG+RTj8xZWQA4pIi0jONMoLlziojSUIM	서울 마포구 신촌로4길 18	0개	false	true	2~5개	2022-11-19 15:10:21	Jin
+rvSOIN4MIxupSYX48/UJvpv91hmYNX1EsIKW	서울 마포구 연남로 12	6개 이상	false	false	-	2022-11-19 15:11:05	heenaa
+CIJGPQc6bvug1LCXDo3c+KWMari+BsRcg+p6	서울 마포구 동교로 197	6개 이상	false	false	-	2022-11-19 15:11:17	leobit
+GV7zLCHRyp3X1Nyyc6rBtw8RSRmE3ZVSVh/J	서울 마포구 동교로 186-1	2~5개	false	false	-	2022-11-19 15:11:47	우야
+J6zVYMBaFCUd95egxe43pLyXR2iUnEBxRd2V	서울 서대문구 신촌로3길 10	6개 이상	true	true	0개	2022-11-19 15:11:51	제니
+dy1ftjrMTzxGDeKNrIh4EMcyiyW5d/cOg8dy	서울 마포구 연남로 10	6개 이상	false	false	-	2022-11-19 15:12:11	heenaa
+SG18C6yWQL5WG6o+HsQafka22uFrDtyusNmc	서울 마포구 신촌로4길 11	2~5개	false	true	6개 이상	2022-11-19 15:12:59	Jin
+rCV3EWaDAVPjW2r9iZv4WxMQyh+x2zPjCXKI	서울 마포구 동교로 190	1개	false	false	-	2022-11-19 15:13:48	우야
+Mqe7TVX8vXfiM8ah3rp9ZpeGOLUjyfOvHDH6	서울 강남구 테헤란로1길 28-13	2~5개	true	true	0개	2022-11-19 15:13:07	-
+DLo2oLnjSOplvbmxKoanfbHY/+OUY7TSuh2z	서울 마포구 동교로 199	0개	true	true	0개	2022-11-19 15:13:12	leobit
+O5TdPDJkMiOFIIYX/9Re/acQVFgiHyjYVKxo	서울 마포구 연남로 8	2~5개	false	false	-	2022-11-19 15:13:36	heenaa
+olafBaTdkKGZqyuXTUL8dod585VHaY8/052z	서울 서대문구 신촌로3길 5	1개	false	false	-	2022-11-19 15:13:42	제니
+Zl+xUUIwPHzQEdODbJgJcrwNtUZJ+Ht2+NSN	서울 서초구 서초대로77길 17	1개	true	true	0개	2022-11-19 15:13:56	-
+owaGi25WB5pTCPvUXDmPqxCckB4OYclBTrk8	서울 마포구 동교로 199-1	6개 이상	false	false	-	2022-11-19 15:14:20	leobit
+/ceuq/DkdKDz8atTQFRHNs04pEtcj/nQst4a	서울 마포구 신촌로4길 9	1개	false	false	-	2022-11-19 15:14:57	Jin
+9uzpQHy2lG6XkNlV90tM0F5LeMrG1aec7X4g	서울 강남구 강남대로94길 27-11	1개	false	true	0개	2022-11-19 15:15:13	-
+5Q2QUIN5PK9xB1ZXERKaSsbHGE6VIpatsiQa	서울 마포구 동교로 192-1	1개	false	false	-	2022-11-19 15:15:24	우야
+6QqeIStPPWZvqTCI6NOdlUrdSU9EAnIXwVMe	서울 마포구 동교로 201	1개	false	true	2~5개	2022-11-19 15:16:08	leobit
+IHWKR3VcQV7dq42PeXrzw+6bwj9mQcWho3o6	서울 마포구 연남로 4	0개	true	false	-	2022-11-19 15:16:28	heenaa
+Eluu0LCnzere6WcI1Lj+DFUtfGh/Im7PTZTw	서울 강남구 테헤란로1길 28-14	0개	true	true	0개	2022-11-19 15:16:45	-
+ef3MQ5FhRCtHrg5elNNib5V2S5DxNMLncRXS	서울 마포구 신촌로4길 5	0개	false	true	0개	2022-11-19 15:20:10	Jin
+8W6vyGqviPnhP6vKCaUboPxHaw92bR4QoR0N	서울 마포구 연남로 6	2~5개	false	false	-	2022-11-19 15:14:54	heenaa
+ByszdVEMLoCkBojQr+Pp2nUgxqSOoYhtnLAC	서울 마포구 연남로 4-1	2~5개	false	false	-	2022-11-19 15:15:41	heenaa
+U+EkwGInkIU+FtWTtCDd/JzYyIXPXG2aLPLd	서울 마포구 신촌로4길 8	2~5개	false	false	-	2022-11-19 15:17:21	Jin
+vJfSW/ssYzQiyoZ78YgCS4f8n36Hzql3QAgP	서울 강남구 강남대로94길 27-15	6개 이상	false	false	-	2022-11-19 15:18:17	-
+eoEPTHutJL0uVpl1P+pCuE2bEgBXHHcXMFLx	서울 마포구 동교로 227-5	6개 이상	false	false	-	2022-11-19 15:18:38	heenaa
+rg83HtB8iGTcKajfyQmsbq+tX9V6y6dQtAoh	서울 서대문구 신촌로3길 29	0개	false	false	-	2022-11-19 15:19:29	제니
+NOwxtDoL96xHDmSPxOff2vvmMcyCbQ9piguH	서울 마포구 동교로 227-7	1개	false	false	-	2022-11-19 15:19:59	heenaa
+ntMGiwuKDq3Pet+hd1mPT6wdKGYhwqtBbAO5	서울 마포구 동교로 227-11	6개 이상	false	false	-	2022-11-19 15:20:42	heenaa
+K7zNvrzCXU9i3rP5TPWJX7QmCeyM+Algjtva	서울 마포구 동교로 227-13	1개	false	true	6개 이상	2022-11-19 15:21:56	heenaa
+B74Mc9alBJxaenf4OceNd1835jS0wy5wSwsR	서울 마포구 동교로 203	2~5개	false	true	2~5개	2022-11-19 15:23:12	우야
+asYgnmbx16QIFxdNp5Stfkzfftov7hiMzEYD	서울 마포구 신촌로4길 3	1개	false	false	-	2022-11-19 15:23:19	Jin
+OIgcisNzaSA/1qYIY3uA0X0U7SX/SDUL9KJ0	서울 강남구 강남대로94길 21	6개 이상	false	false	-	2022-11-19 15:24:08	-
+khdRCS6ooC8z1ljc5dh5uYbrtgy95EVNSflo	서울 마포구 동교로 226	1개	false	false	-	2022-11-19 15:24:21	heenaa
+RhG389iPu5PiCQAN8yCaXz12a3cSOCpGHsGY	서울 마포구 신촌로 24	6개 이상	false	false	-	2022-11-19 15:24:54	Jin
+DY9AnODQOp1TOUPU6GArzV12BpMBWz4W/xFy	서울 강남구 강남대로94길 15	0개	true	true	0개	2022-11-19 15:25:02	-
+oTUxJVBjifmH5LnrDZFiNEdZ2mMQsOCZTWVp	서울 서대문구 신촌로1길 26	1개	true	false	-	2022-11-19 15:25:34	kokjh1234
+D10l3JfbmfFU6oCSAB2Hpu7JcjUkuLMqrv4M	서울 마포구 양화로21길 43	2~5개	false	false	-	2022-11-19 15:26:13	heenaa
+iXf54h06bmB4/J5LGlzeDZKld5DSryzBx+dl	서울 마포구 동교로 205	2~5개	false	false	-	2022-11-19 15:26:55	hanpanic
+Olnw09Hhg50F67Zu5WnJzQGHSzspUSfPYuyS	서울 마포구 신촌로 20	0개	false	true	0개	2022-11-19 15:27:24	Jin
+RkYrAYAEwAQZNrl2HIAtQZVedF0OgaRXvpGm	서울 강남구 압구정로54길 14	1개	false	false	-	2022-11-19 15:28:11	bellatoris
+Q8Sk06IvnttSqGIuKwvPUXpJcBg3YFxbtl+p	서울 서대문구 신촌로1길 7	6개 이상	false	false	-	2022-11-19 15:29:19	제니
+grHd3xA8kUCgxmNxPbW+QXW20Rtien1L7dua	서울 서대문구 신촌로1길 14	2~5개	true	false	-	2022-11-19 15:29:33	kokjh1234
+5AjiqxxbY6KGRFWvUT/BsfPDMCiU4QSjFam7	서울 마포구 양화로21길 31	6개 이상	false	false	-	2022-11-20 14:25:50	kimyj9501
+yxcG38l3Pt87kxES7ulQ1KAo1uFM/kY07x39	서울 강남구 선릉로161길 7	1개	false	true	6개 이상	2022-11-19 15:30:06	소금
+8uPrM7TvlE0Y9E0N37GxZ9hObFBI0mIoZ2FO	서울 마포구 신촌로 16	2~5개	false	false	-	2022-11-19 15:30:12	Jin
+25UcdmDW+P95AgGmY1s9rIw8L7wE2Bm85BDj	서울 강남구 압구정로54길 16	2~5개	false	false	-	2022-11-19 15:30:16	넹슨
+npLkxL07L6QuNz3ElS0I2OBhJCmntEmT1NSr	서울 마포구 동교로 207	1개	true	true	0개	2022-11-19 15:30:37	hanpanic
+xmxbALiuOp5aEXoFu37m5cUNjBkn6eqa8eQU	서울 서초구 서초대로77길 27	0개	true	true	0개	2022-11-19 15:31:28	-
+jJEke9pj3D/7DOcQXlYAYackPqhfFkyiRMhk	서울 서대문구 신촌로1길 9	2~5개	false	false	-	2022-11-19 15:31:35	제니
+zYqF/9rIdU9MsNdVHQ3EqgjUK0l4FNnkLk17	서울 마포구 신촌로 14	6개 이상	false	false	-	2022-11-19 15:33:43	Jin
+wqNRf9WyXEcaQTldH9L4mAkW8iVtw1pD/BGX	서울 마포구 동교로 209	1개	false	false	-	2022-11-19 15:33:58	hanpanic
+1SVEBs2BJXzOOREa8YIgvsGWVNUp37IuN5Qz	서울 강남구 언주로172길 66	2~5개	false	true	2~5개	2022-11-19 15:36:40	넹슨
+23JkgrVdTUjmxbpzbNoZbvaXXlYMV5II/z+y	서울 강남구 선릉로161길 5	2~5개	false	false	-	2022-11-19 15:38:37	소금
+hR1SHG1n2KH0XKkMbLSIt31+KzeacnMrBjx4	서울 마포구 신촌로 12	0개	true	true	0개	2022-11-19 15:40:15	Jin
+SQ+tKFvTiFYn54R/4dgfB2B7bVmpLJ6VHEf8	서울 강남구 압구정로56길 16	1개	false	false	-	2022-11-19 15:45:20	소금
+6SeufcF7yVF+5dW+7lFejEaM1D/xZHYfF2PF	서울 마포구 신촌로2길 5-8	6개 이상	false	false	-	2022-11-19 15:45:32	Jin
+T6XdOInxNrx+1IDEbadHNyra/88dosVh4ECu	서울 강남구 압구정로56길 26	2~5개	false	false	-	2022-11-19 15:58:44	소금
+RQouUpCguQw/mCu9EOJ4rhuQmAkTBTN65DzT	서울 강남구 선릉로157길 6	2~5개	false	true	6개 이상	2022-11-19 15:59:22	넹슨
+5JRCuAhKVSddbT2zZza2l449nAl1z6A2JBqn	서울 강남구 도산대로53길 39	2~5개	false	true	0개	2022-11-19 16:07:46	소금
+pDp5rK2TAOBGCV0w5BlcUaEMlDbLBPlnmiCt	서울 서초구 사평대로 371	0개	false	true	0개	2022-11-20 14:15:00	-
+o815+euqrC7GabMyTgTseANMsNqZzIMUWJje	서울 마포구 양화로21길 23	2~5개	false	false	-	2022-11-20 14:23:00	kimyj9501
+wWS4qWKRWQ+C6SD+2QMr5GldbzE4e5w6uc81	서울 마포구 양화로21길 29	6개 이상	false	false	-	2022-11-20 14:24:31	kimyj9501
+VZNwXhiKelY0Zj1JGd1eAOV0VZLg7UyRg8US	서울 마포구 동교로 212-8	6개 이상	false	false	-	2022-11-20 14:28:21	kimyj9501
+jbGysoXRlx4omRyiGOj5hp2pvtgF9FQHBjve	서울 마포구 동교로 212-16	2~5개	false	false	-	2022-11-20 14:27:19	kimyj9501
+VOOZ+hAVLvD1UX4YuN5+jwDpXDfK/R2i4McQ	서울 강남구 강남대로98길 20	2~5개	false	true	2~5개	2022-11-20 14:29:51	ph20315
+3Dbv+gt7yAGXCUIaCIBVtv5CJRtdl3FC7HBB	서울 마포구 동교로 212-5	6개 이상	false	false	-	2022-11-20 14:30:50	kimyj9501
+dGK/mVWWnYdq4XJjnd64D/kN1MzwDcfCMjg6	서울 강남구 강남대로98길 17	2~5개	true	true	0개	2022-11-20 14:28:17	ph20315
+Pfq8EhJObH/QkbPx3RJccChzxoYI/+JCDVZH	서울 마포구 동교로 212-7	2~5개	false	false	-	2022-11-20 14:32:05	kimyj9501
+hbLH/irAQFpcDC76BfGqxaprirkGDGqZNwss	서울 마포구 동교로27길 3-14	1개	false	true	0개	2022-11-20 14:29:08	라이언
+eyg7qwh7wG6GwOelFW02Rb+KsMTsa3N+RuNY	서울 마포구 동교로 212-2	6개 이상	false	false	-	2022-11-20 14:29:31	kimyj9501
+egrIMj4pU3WMO0pxmWQAoaR+mqqMGylYEryK	서울 마포구 양화로 183	6개 이상	true	true	2~5개	2022-11-20 14:32:33	Peace
+MUStzxtZg+q+fm83RQbfnJYwf17oj/0MGe4a	서울 강남구 강남대로98길 14	1개	false	false	-	2022-11-20 14:32:42	ph20315
+DO81u035no9JMGWamHlQQ4iXxnJPq8AdHDdu	서울 마포구 동교로 212-9	2~5개	false	false	-	2022-11-20 14:33:02	kimyj9501
+w2xfqBAEh+Dt6hT+TteiSBofNjinAO8E7cZx	서울 강남구 강남대로98길 12-3	2~5개	false	true	0개	2022-11-20 14:34:27	ph20315
+PmMlsQaUwop0hEKHSSCK+7UxMF5JEo6eZwpF	서울 마포구 동교로 220-7	6개 이상	false	false	-	2022-11-20 14:36:13	kimyj9501
+DfKvEJ9u8ylNxrZpxX0mU0+s0fkqnRBkFqnQ	서울 강남구 강남대로98길 22	0개	false	true	0개	2022-11-20 14:37:46	ph20315
+EB4RDI3d1K59bbUFbuDbpFaButyojdEZWXqB	서울 마포구 동교로 220-5	6개 이상	false	false	-	2022-11-20 14:38:19	kimyj9501
+zwRZGIisWpo5R9pdWuSXROBnhV0h88/SwMYr	서울 서초구 강남대로 365	0개	false	true	0개	2022-11-20 14:38:29	까망베르
+JOOzGmQEDEiY5imHwB/FYw38z+CKkgyz0YHo	서울 강남구 강남대로98길 25	1개	false	true	0개	2022-11-20 14:40:11	ph20315
+aItvkYoOGHknmkNBHCCELa5Ft95zMkhgHHfS	서울 마포구 양화로21길 33	2~5개	false	false	-	2022-11-20 14:40:43	kimyj9501
+exvrfdPa+bCnA96ISAbNsc7IL80Dt+abAoLu	서울 마포구 월드컵북로4길 44	2~5개	false	true	0개	2022-11-20 14:41:09	라이언
+6eqwJCM+hUXzfG/lx6s72PuHcmaL/SDKeWoZ	서울 마포구 양화로21길 37	6개 이상	false	false	-	2022-11-20 14:42:21	kimyj9501
+xKp1WYhKsXhnAsgYqTU7KgMVkOAtPrz8ok+Q	서울 강남구 강남대로98길 27	1개	false	false	-	2022-11-20 14:42:40	ph20315
+dv4hfIPSdEkfrbZKPKDsAu09qO//7L+QG2ij	서울 마포구 양화로23길 48	1개	false	false	-	2022-11-20 14:43:16	우야
+36ORGHYsOQXkisVxI9VPag5rsgUQQ++UZ5UB	서울 마포구 동교로25길 16	2~5개	true	true	0개	2022-11-20 14:45:05	라이언
+pKv03Gh90QVCQzJRR93U7lDK5E/3p8n1hbEy	서울 강남구 테헤란로2길 27	2~5개	false	true	0개	2022-11-20 14:45:35	-
+c7Ijuj1bm30PDUMRIAKQbEv6dqTuiGPS9G0B	서울 마포구 동교로 230	1개	false	false	-	2022-11-20 14:47:05	우야
+pC+K8y6yYTPwYVFGQmQDtS1FAqv0HN6c4RmD	서울 강남구 테헤란로5길 31	0개	false	true	0개	2022-11-20 14:47:35	ph20315
+M7cOSM2y/FILgKFl30NLuNXa/cOKUqECvdLJ	서울 마포구 동교로 218-1	6개 이상	false	false	-	2022-11-20 14:50:33	kimyj9501
+okkZgMvp8mXjeZ9jy4ZAVQlFx5fZqq5ca84N	서울 마포구 동교로 218	6개 이상	false	false	-	2022-11-20 14:51:25	kimyj9501
+OoCouDTlKZMRqsKeolC7mHCwPzXW6jF58daM	서울 강남구 강남대로98길 12-5	2~5개	false	false	-	2022-11-20 14:53:45	ph20315
+ommP/rWkYkIrrrB4g8YAF4v1A1NKbV06Ka7I	서울 마포구 월드컵북로4길 39	2~5개	false	false	-	2022-11-20 14:48:21	라이언
+4vm8odX8DFRO2ZuH4vGc/pdWy9Yw/cqcD/0U	서울 강남구 테헤란로1길 28-11	1개	false	true	0개	2022-11-20 14:50:20	ph20315
+Gd8n7uz6BXD35w80IYilBtVRpQNGuca3MY8j	서울 마포구 동교로25길 26	6개 이상	false	false	-	2022-11-20 14:50:48	롤라
+JpetGS5RTErpVLmT0qo2qQrdB/kBqTA+102E	서울 강남구 테헤란로1길 28-9	6개 이상	false	false	-	2022-11-20 14:51:46	ph20315
+iypn4tVeWjUWgGNuSY0DhJ7eZJAWG2MxF1x0	서울 마포구 월드컵북로4길 59	6개 이상	false	false	-	2022-11-20 14:54:08	롤라
+uw0LaBCjRrzALfgkOgAwqYLFq57hbkn5Xgmh	서울 마포구 양화로23길 40	6개 이상	false	false	-	2022-11-20 14:55:00	kimyj9501
+dEAb0M24r5PRVESj09SB4VmDSOEkioYl2RTx	서울 강남구 테헤란로1길 28-8	0개	true	true	0개	2022-11-20 14:55:39	ph20315
+NXI6bccXRMi3MRZ90nlmfima5Ungg6dwm3oF	서울 마포구 동교로 234	1개	false	false	-	2022-11-20 14:55:43	우야
+EYq6r6N0CNfh1il0FQyR8usiiMJH3kWBXVUT	서울 마포구 양화로23길 36	1개	false	false	-	2022-11-20 14:55:56	kimyj9501
+ZkDyRxU9KkC6Tp0qg/sHdzSSHWx26mHlr5Bq	서울 마포구 양화로23길 34	2~5개	false	false	-	2022-11-20 14:57:33	kimyj9501
+HOF3KyvF7Wxd313o1tk9T4wOuwKjZh55Olj3	서울 강남구 테헤란로1길 28-6	2~5개	false	false	-	2022-11-20 14:57:41	ph20315
+O3UjAG9PWlzPzhnGp4iqCbt9TShwvM82FAOX	서울 마포구 동교로30길 1	1개	false	false	-	2022-11-20 14:58:18	우야
+BNFYrB1ntsWjKPA3Xni7efLq4vCHvuUrvgQW	서울 마포구 월드컵북로4길 65	2~5개	false	false	-	2022-11-20 14:58:22	롤라
+XfX9exXP5QtT7WNF4Hru4LESsufvvtRS+C3Z	서울 서초구 서초대로78길 30	2~5개	false	true	6개 이상	2022-11-20 14:58:56	까망베르
+9I0j6BJf2fYkzi4aqDnHJn1PklWMIcN59KPn	서울 마포구 동교로27길 21	2~5개	false	false	-	2022-11-20 15:00:06	롤라
+z3zfCPqRCjbzbE8UCdM87L5Fm3rSn4K8TCkM	서울 서초구 서운로 138	0개	false	true	0개	2022-11-20 15:01:17	윤나
+/o+hcqBlheDtjreKyhTjBGVPY3nciaJv09Mj	서울 마포구 동교로25길 15	1개	false	false	-	2022-11-20 15:01:53	롤라
+NvEOFiZaaKVQPYs6K4tXbO3SQNbQVfQ52AEQ	서울 마포구 동교로 236	1개	false	false	-	2022-11-20 15:02:03	우야
+iyhZFN0rtaepewGD+6oHew9QJwQqXxzN5GhU	서울 마포구 동교로27길 27	1개	false	false	-	2022-11-20 15:04:42	롤라
+KgQ3+XP8NVKeokoJyuCzOP+sBFWjKhZcoJWQ	서울 마포구 동교로27길 21-8	6개 이상	false	false	-	2022-11-20 15:07:37	롤라
+wum5cbC+vadNlwRV+cQ9ImYHzPTB6Ne560JF	서울 마포구 동교로 208	6개 이상	false	false	-	2022-11-20 15:08:10	Peace
+E0z0cx8PCLcGBoT939A8Njh5cKWM0j8ZxW0i	서울 강남구 강남대로84길 15	0개	true	true	0개	2022-11-20 15:09:03	이대호
+w6kjXoXnJZlUfu2vDQ6GcIKTb4F/953NAujb	서울 서초구 서초대로78길 32	2~5개	false	false	-	2022-11-20 15:10:48	까망베르
+us2uTgQpfEoPc1JxlHDhjyiWgG+d3gKNPIJv	서울 마포구 양화로19길 24	0개	false	false	-	2022-11-20 15:12:49	Peace
+e5ee5Re581qqE9XA6i5Xhktwz2GFicFbNQCr	서울 서초구 서초대로78길 36	0개	false	true	0개	2022-11-20 15:15:06	까망베르
+gLf4gXojoTVjfZhR5gPqR/CcHqw3WOEBlhfp	서울 마포구 성미산로29길 17-8	2~5개	false	false	-	2022-11-20 15:16:32	kimyj9501
+//1b8vq+ybtIICu38Gk2P9W4CiGZtyhzK6G+	서울 강남구 강남대로98길 28	2~5개	false	true	0개	2022-11-20 15:21:01	ph20315
+oZVjbZHePN7TuCN2yUegxKMBJnk551GrFdu0	서울 강남구 강남대로84길 16	2~5개	false	true	0개	2022-11-20 15:23:29	이대호
+8LBb+FhMtRbqPlkwuSz70CQtjQO2Z2Cbnz3u	서울 마포구 월드컵북로4길 57	6개 이상	false	false	-	2022-11-20 15:25:04	롤라
+bOLGLQl1xGLcWFoyqIARose+dZfSZj5p/W5P	서울 마포구 양화로19길 22-8	1개	false	false	-	2022-11-20 15:27:01	Peace
+a7HHjST2V1VcrkTlSscuAFeOVtzmpcPoB3oW	서울 마포구 양화로19길 22-13	2~5개	false	false	-	2022-11-20 15:28:35	Peace
+UG8pH0qSGxBJLxoE9D6rLQQFyLOJkz4LrMrP	서울 강남구 강남대로84길 13	0개	true	true	0개	2022-11-20 15:28:51	이대호
+WAPbZIlTmUZGKERzGgqQfsSrYakihXGIwklT	서울 마포구 월드컵북로6길 56	2~5개	false	true	2~5개	2022-11-20 15:30:16	롤라
+rPmerRUI4HUs+ylSgPc129/H1pq54CfsEcbU	서울 마포구 양화로19길 22-25	2~5개	false	false	-	2022-11-20 15:31:04	Peace
+7mMZ7QdIZBSnGdVgkRCNv/ByC/THidiUQffQ	서울 강남구 테헤란로4길 14	2~5개	false	true	0개	2022-11-20 15:33:05	이대호
+gNo3djfOWWhQeUTTiDCQ4wvxUrk/EUoOU4jW	서울 서초구 강남대로53길 8	0개	false	true	0개	2022-11-20 15:33:17	까망베르
+OPHcMw49LqYk3i+9FuDWGdmiTmZvUv7eQ89T	서울 마포구 양화로19길 22-20	1개	false	false	-	2022-11-20 15:35:36	Peace
+fy3ISPnwwI+09PRuxZk72EswjwS0CfxPfSVt	서울 서초구 서초대로74길 33	1개	false	true	1개	2022-11-20 15:35:43	까망베르
+Xy8Zq+pVb9S2iPHKBDYXnFR7DTgrABook3A2	서울 마포구 동교로27길 21-12	1개	false	false	-	2022-11-20 15:16:19	롤라
+YbTBiAheNHu+clWQcnQ5Cy8iiftt0e12fqaI	서울 마포구 동교로27길 25	1개	false	false	-	2022-11-20 15:18:24	롤라
+YeRa91zQ/Z42x7YNvRd8ztGl/yUf7oFjJjuQ	서울 마포구 양화로19길 22	2~5개	true	true	2~5개	2022-11-20 15:19:32	Peace
+66mDzdpsp6uvCr2nY1WA4xLhcHSpZ+1FEVZa	서울 서초구 서초대로78길 38	0개	false	true	0개	2022-11-20 15:26:44	까망베르
+fLY2T1KTtjRjf7kE/K03SK6GDXBYJgc6XNdU	서울 강남구 강남대로98길 16	6개 이상	false	true	0개	2022-11-20 15:27:56	ph20315
+ZCQ5XlIJDJHWp5PVPD8Y6p4/wfcSJPs2KEo8	서울 서초구 서초대로78길 34	0개	false	false	-	2022-11-20 15:39:27	까망베르
+9zfuIap6umm34BkiHISXmYiS6zJCMPUVoh3X	서울 마포구 양화로19길 22-30	6개 이상	false	false	-	2022-11-20 15:40:02	Peace
+rdSnOtkftVHzY6Jlu21SSCP62IW29rjK4bUQ	서울 광진구 아차산로29길 19	2~5개	false	false	-	2022-11-21 20:36:09	이대호
+Fil3DTE2XiKl8htCBkBfKcgI8gHthwav2dny	서울 강남구 강남대로 362	2~5개	false	true	0개	2022-11-26 14:17:39	정의준
+rchaxkXk0uVHpwejEaOvMNWLC9Vde9qQqbIp	서울 강남구 강남대로 402	0개	false	true	0개	2022-11-26 14:21:09	썽니
+NxRCeRgjNKEFBLQiSSoCcL2wjPqouPWfYXw3	서울 강남구 역삼로3길 20-4	1개	false	false	-	2022-11-26 14:22:02	hanpanic
+y7EnMQefw6YsRhEtHUgMf6nGsX1WiQOu2syd	서울 강남구 강남대로 358	1개	true	true	0개	2022-11-26 14:22:46	정의준
+JlN9wJjdjIqun7kIIuki+UJ+Rxq85DU8cj+Z	서울 강남구 역삼로5길 21	1개	false	false	-	2022-11-26 14:25:53	hanpanic
+9ICSQR8JZxQGYAJuT8WaPs1VOIuFPEQXiv1T	서울 강남구 강남대로 406	1개	true	true	0개	2022-11-26 14:27:02	썽니
+4GnK63nw9pQXplMWvPJk0dIN8sSnIK4HCLxy	서울 서초구 강남대로 359	0개	false	true	0개	2022-11-26 14:27:47	테리
+MnBlqQm1FkwA5FmVBHt8yoXbRdINGPm5QvR6	서울 강남구 테헤란로8길 16	1개	true	true	0개	2022-11-26 14:29:10	-
+phAqTOZ0E/sJOHyg290qM20gRd0nkOqKRE4C	서울 강남구 강남대로 364	0개	false	true	0개	2022-11-26 14:30:48	윤주
+Y/NT8iLDUAYvpAxfPoSDhlzWxFYdTbnyNnr0	서울 강남구 테헤란로8길 22	2~5개	false	false	-	2022-11-26 14:31:43	-
+RME4FYTyGYZtE1QXxyhcuiB4R/XuI5Zk6t4o	서울 강남구 역삼로5길 22	2~5개	true	false	-	2022-11-26 14:32:18	hanpanic
+bOxBoPXz/FzH1bcmk1GC2HA9ThD+cxcWefHp	서울 강남구 강남대로 370	0개	false	true	0개	2022-11-26 14:32:59	-
+Ljls6ueu7ePpQfiIRQ9V+RU7PULB37pklpcg	서울 강남구 강남대로78길 30	1개	false	false	-	2022-11-26 14:34:52	hanpanic
+HcyU61pVV0uJp0XPwXccVorCJwFTQhLxMZYT	서울 마포구 연남로 17	2~5개	false	false	-	2022-11-26 14:33:06	Ej
+hBVrlSgdwvp/etOaP0jyJvNpC788XzGkO7IT	서울 마포구 양화로 157	1개	true	true	0개	2022-11-26 14:34:09	이대호
+xMCADFO1dDGlNO86dXPMbtzuCBpUbihICTjq	서울 마포구 동교로30길 6	6개 이상	false	false	-	2022-11-26 14:35:36	다솔
+CQRyIn8xoB6lN+ECqSyh4odY/jBfqiUycghW	서울 강남구 강남대로 408	1개	true	true	1개	2022-11-26 14:34:53	썽니
+b8jAkscxf4VtOeJvwcdiQLoXot9xNqeKZKIv	서울 마포구 연남로 15	2~5개	false	false	-	2022-11-26 14:36:14	Ej
+3juF9vurOAc7dbvcWcXiB253jnU+7QgTq9Nc	서울 강남구 테헤란로6길 47	2~5개	false	true	2~5개	2022-11-26 14:36:31	hanpanic
+oA8o5Q1c9Qof2TCkJdN0fSjcqGlZSE7QKu/5	서울 서대문구 신촌로 5	1개	false	false	-	2022-11-26 14:37:31	-
+1+7JB4t70Hs9YvB5AY4Q4dOVb0iRPdRFMJfo	서울 강남구 강남대로78길 33	1개	false	false	-	2022-11-26 14:37:34	hanpanic
+be+48AmoW80QjjiHnKYkyas+9EEtQfc2ipuV	서울 강남구 테헤란로8길 25	2~5개	false	false	-	2022-11-26 14:38:02	-
+yoYh6NA38Hy2i7MFT6RwRvgYPCROcmcKt/Jw	서울 강남구 강남대로78길 35	2~5개	true	false	-	2022-11-26 14:38:49	hanpanic
+2IxdfeKqZ0MGVfxmuwyP13HwWPe8PQInf41j	서울 강남구 강남대로 412	1개	false	true	0개	2022-11-26 14:38:53	썽니
+ARZJmyJA/BqTikeAHtLB1jxZ/Deun1Z9UxWj	서울 서초구 강남대로 363	1개	true	true	0개	2022-11-26 14:39:09	테리
+raEWKrLxGqjy817FlYE4ygeKgiStKUybZu09	서울 마포구 동교로32길 3	6개 이상	false	false	-	2022-11-26 14:40:18	다솔
+lyt1CYr5R1l26wJ1SatXtrCKkXsarH1uSRYF	서울 강남구 강남대로 372	0개	true	true	0개	2022-11-26 14:40:32	-
+KM4cCACmBmw4/iK2396ro8rjNlmaFXR9DAoh	서울 서대문구 신촌로1길 5	2~5개	false	false	-	2022-11-26 14:40:49	-
+5E+YDgOWFlGqIbJ11+Ijy/us+VoyOuIysXEW	서울 강남구 테헤란로8길 29	1개	false	false	-	2022-11-26 14:42:05	-
+DLy2s8/w3B70cs34Hd/FvX0b4G64NuIdck3o	서울 마포구 동교로32길 5	6개 이상	false	false	-	2022-11-26 14:42:09	다솔
+XU8bfAC7LRp0n4yer2dkgpJcFvVsK8tPYeru	서울 강남구 강남대로 416	2~5개	false	true	1개	2022-11-26 14:43:02	썽니
+GyppEYLIF51I9eUuVgcrA/5qn1NzkBLkwELl	서울 서대문구 신촌로 11-5	2~5개	false	false	-	2022-11-26 14:43:07	-
+CFVmChoS14grf2Ev7ql87jrmwQHL7mwYLEmB	서울 마포구 연남로1길 11	1개	false	false	-	2022-11-26 14:44:05	HJJ
+xORk6E+rbaXSWpVh7hKuJeUhxLTJwJAvcSPB	서울 서초구 강남대로 351-2	0개	false	false	-	2022-11-26 14:44:15	테리
+n1hXihAObSL9IwyzbfAjPqvaLWtJfPEQ+i1b	서울 서대문구 신촌로1길 10	2~5개	false	false	-	2022-11-26 14:44:33	-
+wfzFeBaq5/vk//vHhf+g62WP4gUUU4UMGm7V	서울 강남구 강남대로 374	0개	false	true	0개	2022-11-26 14:44:55	-
+LyMtnZ9InVGhoHc7pSO7grrxHYXzL0FZs+Oq	서울 마포구 동교로32길 7	6개 이상	false	false	-	2022-11-26 14:45:35	다솔
+A7nFps1YY0iVwvecZaHUJPsyrLZMWlXn+pqo	서울 마포구 양화로 153	0개	false	true	0개	2022-11-26 14:45:39	이대호
+jtJixaOifEbIaSN4PdQqH2k79N7Y8QBUsL8p	서울 강남구 테헤란로8길 32	2~5개	false	true	2~5개	2022-11-26 14:45:53	hanpanic
+bVxJzPdCJH/8y4jKbgxGWFA7VUBQVExVTBIN	서울 강남구 논현로85길 71	6개 이상	false	false	-	2022-11-26 14:45:55	-
+14+bFbTMBWwZpyo8wpr8YVRPTVbLd0vFSZuV	서울 마포구 연남로1길 19	6개 이상	false	false	-	2022-11-26 14:47:51	Ej
+lqwl3kfoaZ7TJpJlRBO2I4HQqczXCPulXh6g	서울 서대문구 신촌로 11	2~5개	false	false	-	2022-11-26 14:48:52	-
+aGoiS973DPGqk05Da4kvwuFL/h25G4ApSsNY	서울 마포구 동교로32길 19	6개 이상	false	false	-	2022-11-26 14:49:03	다솔
+mTxhjL605P5K3wyXtv//pjKRW43+lZwBQre1	서울 강남구 논현로85길 70	1개	true	true	0개	2022-11-26 14:51:47	-
+C2BJUtSsJJsRJS93BOojewlNANOIOQLUWS6H	서울 강남구 강남대로98길 11	6개 이상	false	true	6개 이상	2022-11-26 14:52:19	sycy2000
+T29JkXAlrTWzR2lAchRJjV5Obw8gFNWWNHo5	서울 서초구 강남대로 349	2~5개	false	true	2~5개	2022-11-26 14:46:31	테리
+7CXPp0KHKkxQvyrslmCKgsG1RrPmV1NZ5knX	서울 강남구 강남대로 422	2~5개	false	true	2~5개	2022-11-26 14:47:36	sycy2000
+azXc63XmMcauIj2TeCxhv9BR/PinppbWF+aH	서울 마포구 양화로 151	2~5개	false	true	0개	2022-11-26 14:47:59	이대호
+8PtAa8iuvTVggr+ucUiQQtuwONGNpwJSvsmp	서울 마포구 연남로1길 22	0개	false	true	0개	2022-11-26 14:49:19	HJJ
+ZzmBfObvL1m5mXRnMWQjERVH3MoaLg75Vp26	서울 강남구 테헤란로8길 42	0개	true	true	0개	2022-11-26 14:49:28	hanpanic
+4bQcbAsxgdpJX1+XU43i5k1NR3KyCwHTv5/E	서울 강남구 테헤란로8길 44	0개	true	true	0개	2022-11-26 14:51:13	hanpanic
+jzbxX9PNuzZ1uHY6lsRV54FdeuEvRjnjM6dY	서울 서대문구 신촌로 13	1개	true	true	0개	2022-11-26 14:51:18	-
+AEqQqpQQxXdBxB27n4hNcx4N4hzhmxJ2dPpu	서울 마포구 동교로34길 17	6개 이상	false	false	-	2022-11-26 14:52:06	다솔
+WhuDOX0ecZcm+q1dYOEnlJB8kccHSZkmFca3	서울 강남구 강남대로 376	0개	false	true	0개	2022-11-26 14:52:29	-
+GPavNMwBB1cMzvSPavGuViZUIttPPCoZcEtE	서울 마포구 동교로 182-5	0개	false	false	-	2022-11-26 14:52:32	이대호
+mOOA8xKuW74nS5difOg/ARzmaO4sFGyCo0y5	서울 강남구 테헤란로8길 46	1개	true	false	-	2022-11-26 14:52:42	hanpanic
+wirnTfQv82OSRB2fu2QH3iu3xEdap+eiheIJ	서울 서초구 강남대로 345	1개	false	true	2~5개	2022-11-26 14:53:30	테리
+izIwKoCC4anWaf41+LErudKR7FN2dSVc3jLX	서울 마포구 연남로1길 31	6개 이상	false	false	-	2022-11-26 14:54:11	Ej
+6lPmOODh078QDEVDmqRVGukMnbhOzcPgQEYb	서울 마포구 동교로34길 12	6개 이상	false	false	-	2022-11-26 14:55:28	다솔
+up7X50S+jIvTpasbsbagcP6Zh/mLVQT3n8p0	서울 강남구 테헤란로2길 22	1개	false	false	-	2022-11-26 14:55:57	-
+pVQCsd3ong0EuJD6TB52uM4pO7DJt5myu4r4	서울 강남구 봉은사로18길 90	2~5개	false	false	-	2022-11-26 14:56:41	sycy2000
+Nf7LeL9H2dGSJr8PjutCJo5QIYAf/g5G/fO8	서울 마포구 월드컵북로2길 31	0개	false	false	-	2022-11-26 14:56:50	이대호
+35YObcBkjNXH2UNjOKliSxqJNfz+5oaWyo40	서울 강남구 테헤란로6길 48	0개	true	false	-	2022-11-26 14:56:54	hanpanic
+jt0xcOSMSWvOxp9n7lxtNEh3JAxjPCp0qFzD	서울 마포구 동교로27길 46	2~5개	false	false	-	2022-11-26 14:56:59	Ej
+ImvnGzniPccWrhyEcAC6V8sJfPVZeinM7Pvy	서울 마포구 월드컵북로2길 33	2~5개	false	false	-	2022-11-26 14:57:30	이대호
+70PFzK1ZYYnEsdln3h4Yy0d8DE/CMfPa4Hkq	서울 강남구 강남대로78길 14	0개	true	false	-	2022-11-26 14:57:48	정의준
+nIguVfi4/ZcWLfFd4lKz7zqTDQtFJ15UEnFr	서울 마포구 연희로 29	1개	false	false	-	2022-11-27 14:43:15	유미
+kDek4uVInhx9S0PXU3aMsT+PdaBfJosO8XXf	서울 마포구 동교로34길 8	6개 이상	false	false	-	2022-11-26 14:57:53	다솔
+PQXTYhKXYRaitP/hZr1EhJlj24CLYaMpfP95	서울 강남구 테헤란로6길 45	1개	false	false	-	2022-11-26 14:58:35	hanpanic
+2+SUOVe+x79V9pS9RktDv45JD9fUePRo/lpl	서울 서초구 서초대로78길 46	0개	true	false	-	2022-11-26 14:59:04	테리
+8ra35f40OEaFrF0u7DMQZAs4IHNe9oVPB6/z	서울 서대문구 신촌로 19	1개	false	false	-	2022-11-26 14:59:17	-
+6eNUaTuK/qP1muhAcVVM5CbgmOCdFW18j4sZ	서울 마포구 동교로27길 44	2~5개	false	false	-	2022-11-26 14:59:25	Ej
+ovyiPGeOW64F4leXhsQNAlmlTh8/dF/Vwmnk	서울 마포구 월드컵북로2길 37	2~5개	false	false	-	2022-11-26 14:59:25	이대호
+WQ2Irgk3LEiotLLQ8ucA32KKtGgHW3aWJBlN	서울 마포구 월드컵북로2길 41	0개	false	false	-	2022-11-26 15:00:51	이대호
+K9IOWZOSi/QevMqqsJcnjcMcQu/C9vFlSsFo	서울 강남구 테헤란로10길 16	1개	false	true	0개	2022-11-26 15:00:52	-
+s+AnWvG4Eop69SSuAAngIPImekP5Q8mgL0bd	서울 서대문구 신촌로 21	2~5개	false	false	-	2022-11-26 15:01:02	우야
+QCSaHRIWQ7FwRVAK+Es01ljDVJNEvOsOBRJU	서울 강남구 테헤란로4길 46	2~5개	true	true	0개	2022-11-26 15:01:13	정의준
+EMuTHuKf5qV0/oozlj5b0OLBi2oQ4ovZkj7J	서울 강남구 강남대로84길 6	2~5개	false	true	2~5개	2022-11-26 14:58:45	-
+EIPYnmBMpNZK0sKD+jYpzM77AOdDJ2Ugt0Xc	서울 강남구 강남대로98길 10	2~5개	false	false	-	2022-11-26 15:00:19	sycy2000
+lC217ScfXbEAIGHS743mDJdX249Frhedr705	서울 서초구 서초대로78길 44	2~5개	false	true	2~5개	2022-11-26 15:01:04	테리
+EjSOAAxkbKGn1B5wiaZCY33SgI3ImVBeXFRs	서울 강남구 테헤란로6길 46	0개	false	true	2~5개	2022-11-26 15:01:21	hanpanic
+C9MiQjErDY4hzEDdc6p63jDZOLZFcfMsZeJL	서울 마포구 동교로34길 6	0개	false	true	0개	2022-11-26 15:01:57	다솔
+HiskeQQlh0gj1G4GGlBivYlPGpWFbdIvxdLk	서울 강남구 테헤란로2길 32	0개	false	false	-	2022-11-26 15:02:45	-
+nDUQRY8o+ioPqYaMJqiLSPPK7Z0nrOWtNrcw	서울 강남구 테헤란로1길 30	6개 이상	false	false	-	2022-11-26 15:03:00	sycy2000
+Hzq55Enmy8u+rvSHpRYp7nvdAUntU5LBWKfL	서울 강남구 테헤란로6길 42	0개	false	true	0개	2022-11-26 15:03:20	hanpanic
+afNpVDAWyw9qOpsrQnDbC+OZIVv3uuP10Kww	서울 마포구 월드컵북로6길 69	2~5개	false	false	-	2022-11-26 15:03:23	HJJ
+3Ep6wFV3GueCSUWbes8zYzIEAPWmyvNWhNIi	서울 강남구 테헤란로8길 11-8	2~5개	false	false	-	2022-11-26 15:03:28	-
+HEzRXkatIChfd4JYn6mhV2joLRVOPCQIgWcr	서울 서초구 강남대로53길 7	0개	true	true	0개	2022-11-26 15:04:03	테리
+33QMn6KK/BTn4XivPzqdNd3LMoMmaB6egTt9	서울 서대문구 신촌로 23	2~5개	false	false	-	2022-11-26 15:04:20	우야
+k08IHpN2oqsBhVWWhbnqXlc3+jpThgbAwpv9	서울 강남구 테헤란로6길 37	0개	false	false	-	2022-11-26 15:04:36	hanpanic
+vj/f16qY8PXxt1X5dir/xD8if6v9N4kIbZsB	서울 마포구 동교로 192	1개	false	false	-	2022-11-26 15:05:23	이대호
+Ttec6m4AT04ioG4ctzj+qS8sprEnq1kHSN3D	서울 강남구 테헤란로1길 28	1개	true	true	6개 이상	2022-11-26 15:05:52	sycy2000
+agflN66jTqJD7T/egmHc5tLxSMh+offURs8l	서울 강남구 테헤란로8길 11-7	1개	false	false	-	2022-11-26 15:05:58	-
+Inkic21viTUpVH0eqkN3dQYqt3gNVqvjuuvG	서울 마포구 동교로 238	6개 이상	false	false	-	2022-11-26 15:06:31	다솔
+QK7DmUo5nNTcsR2F7ou9vpuEPW5HUdBLPicI	서울 마포구 동교로 188-1	1개	false	false	-	2022-11-26 15:06:43	이대호
+bnG7quFS00QgET78NR3oTL5m2dH7abOb/QMt	서울 강남구 강남대로 378	0개	false	true	0개	2022-11-26 15:07:15	-
+QJiEcAHfu1LsjmrHs2savpP5978lIz6jD0e8	서울 강남구 강남대로78길 27	1개	false	false	-	2022-11-26 15:07:19	hanpanic
+LIO4Pl0k5btfM+srYeRTvvS17o9t6zjrWIW3	서울 마포구 동교로 240	2~5개	false	false	-	2022-11-26 15:09:02	다솔
+8SNk+0yFpDU+83XMbvjkQKUkPzioWyGYp440	서울 강남구 테헤란로1길 28-1	2~5개	false	false	-	2022-11-26 15:09:32	sycy2000
+bZM//Hzb4OAqRB2kIUvQarPqRaNOxc0YM+zB	서울 강남구 강남대로78길 24	1개	false	true	2~5개	2022-11-26 15:09:21	hanpanic
+I+LHHoasWUz4tkQGyOMwR8tSoId7dReJBhYn	서울 마포구 동교로 181-6	1개	false	false	-	2022-11-26 15:11:21	이대호
+KfB+CUJHVMLFBxEr0z99attJJq4JNZtRizp8	서울 강남구 테헤란로1길 28-5	0개	false	true	0개	2022-11-26 15:11:28	sycy2000
+Gw4xNLPyv9gTfXN4kUq6tp704eLIGcb7QFLq	서울 강남구 강남대로78길 25	1개	false	true	0개	2022-11-26 15:11:54	hanpanic
+Tq7Cs5VQMxhlxudqheJ+3uMMYMzkZzZlRlIs	서울 마포구 신촌로2안길 35	6개 이상	false	false	-	2022-11-26 15:12:25	-
+W4kZRjBuVjB3hH9tyOKyVmzLQ5FcGnlebICl	서울 마포구 월드컵북로6길 61	2~5개	false	false	-	2022-11-26 15:12:35	Ej
+5K/sxrgaC5ydCSkjtZWBycurvh+K5YY9JkA0	서울 마포구 동교로 187	2~5개	false	false	-	2022-11-26 15:13:06	이대호
+2mnz5LWUqO8jGj4rxPSfqUuNL0FYI/e7JunS	서울 마포구 신촌로2안길 42	6개 이상	false	false	-	2022-11-26 15:14:47	-
+Ce5lWPSlRzzd6bbYvJ25l0sKsTnpWSmHzIND	서울 강남구 강남대로96길 13	2~5개	false	false	-	2022-11-26 15:15:01	sycy2000
+Zsbg1ibT9WfiqIUL2G7JLgHrQ75MBNQNntIY	서울 강남구 강남대로 388	0개	false	true	0개	2022-11-26 15:15:06	윤주
+Qlc/rYy6NUhu+DrNDp1yUzv5W/o0UTCHddOr	서울 마포구 동교로 191	1개	false	true	0개	2022-11-26 15:18:42	이대호
+yaGGbmbW/qKjKWFG/Eg0q0LYXHXC8FUlYYjg	서울 마포구 동교로36길 3	6개 이상	false	false	-	2022-11-26 15:11:55	다솔
+dVpYGXYSRuhiFvgcKWKfZUe4xRYn3sbuxzFv	서울 마포구 동교로36길 15	2~5개	false	false	-	2022-11-26 15:17:14	다솔
+rWWLNZMM6JIBT9DAUNGPy8YE3BEkcG4N4C3J	서울 서초구 강남대로53길 12	0개	false	true	0개	2022-11-26 15:17:53	테리
+60avGkB2m9AGxP10SM28qmj8+cq4CtIv/YT8	서울 강남구 강남대로 390	6개 이상	true	true	0개	2022-11-26 15:18:29	-
+Zjx2q2JBf0Nv0fUERzJby60kQWVKsyXKM4ZC	서울 마포구 와우산로37길 42	2~5개	false	false	-	2022-11-26 15:19:35	-
+de2StKnTtdLajEOVt737ndyCRr0gAv6coQ6K	서울 마포구 월드컵북로6길 60	6개 이상	false	false	-	2022-11-26 15:19:39	Ej
+jTqT4eJr1t96HkOK+GUe2ZEaiuiHHFHKbEtT	서울 강남구 강남대로96길 16	2~5개	false	true	6개 이상	2022-11-26 15:19:40	sycy2000
+NkbLp2KJo+30Czh0jr1be4tafTUhjeViNVFq	서울 강남구 테헤란로4길 45	2~5개	true	true	0개	2022-11-26 15:21:02	hanpanic
+goh0CjnAAd/atC01aXJnAmpdp8vffATTgUMD	서울 강남구 강남대로78길 22	0개	false	true	2~5개	2022-11-26 15:21:15	정의준
+WqriqmoStas85h3dz2N+6opodNGVhx7y2UDa	서울 마포구 월드컵북로6길 64	2~5개	false	false	-	2022-11-26 15:22:04	HJJ
+6ITDrzmXwD2ATj9koxc65+zXVblDVz3Sqs/r	서울 강남구 테헤란로4길 39	6개 이상	true	true	0개	2022-11-26 15:23:10	hanpanic
+ZwBw1J4wZpwub3WEQe47HMwXDN8UBRfQAb/k	서울 서초구 강남대로53길 11	2~5개	true	true	0개	2022-11-26 15:23:13	테리
+5PddG7tXf+7fjz8xj3ZIqJqPEGI0U7CPUjBa	서울 마포구 와우산로37길 48	1개	false	false	-	2022-11-26 15:23:44	-
+qsO17ffm2F+vFDdmo1GhmOlql7zXdtk1zo7G	서울 강남구 강남대로96길 11	6개 이상	false	false	-	2022-11-26 15:23:56	sycy2000
+Qr3MjMzyKL9z6lkICdWZSsHmfrE9VCtdc+08	서울 강남구 역삼로3길 22	2~5개	false	false	-	2022-11-26 15:24:39	정의준
+PZNP2nYAFtJD2pzlw5HLvtXIJNeDWnO5wG1R	서울 강남구 강남대로96길 9	2~5개	false	false	-	2022-11-26 15:25:40	sycy2000
+PWhYWgSwlQHJg3DHIgIDRjQSCyqWyd478Uw0	서울 강남구 강남대로78길 18	2~5개	false	false	-	2022-11-26 15:26:30	정의준
+39WWoowEWsLyc8EXVm8RucpfqODXDjy6+U4x	서울 마포구 동교로27길 29	6개 이상	false	false	-	2022-11-26 15:28:07	HJJ
+sro1S0WvmgJjM/f+Cu/1S3Rmq9Fk997Z/Zax	서울 마포구 동교로 242-13	6개 이상	false	false	-	2022-11-26 15:28:37	Yb
+JTFp7r6DiZuJmSVB475UFAC6xTlir/4R8xLM	서울 강남구 테헤란로1길 29	0개	true	true	0개	2022-11-26 15:28:42	sycy2000
+/VgtKPNSETWlFsne5IyiPV9jyhmKubUy3XcQ	서울 강남구 테헤란로 110	0개	true	true	0개	2022-11-26 15:28:58	-
+VNmHSUgQPIAQPix6H7b2ZiwTwWMPZ+AY/u1A	서울 강남구 역삼로3길 17-4	0개	false	true	0개	2022-11-26 15:29:59	정의준
+rCnrHVfatLDuM2QbG18XcW9ULoexuM8hsgyJ	서울 서초구 서초대로74길 45	0개	false	true	0개	2022-11-26 15:30:17	테리
+BppQNlc3psbokqjyO1tHHJUV69Zxf1e9PEyC	서울 강남구 테헤란로1길 25	1개	false	false	-	2022-11-26 15:30:19	sycy2000
+Oh9DbNdNYhF+e62HhTwkj7UvHUHdBMLjBOP7	서울 마포구 동교로 242-6	6개 이상	false	false	-	2022-11-26 15:30:38	Yb
+otG3n/WfCIlrn/JnELama2jv74D05UtYTq47	서울 강남구 역삼로3길 17-5	1개	false	false	-	2022-11-26 15:31:18	정의준
+LMyN6SYb6pOV3d5q47SEL4zMDPMYEAP6awPb	서울 마포구 동교로27길 22	2~5개	false	false	-	2022-11-26 15:31:55	Ej
+R2a3ga1+ldfgKfQ0LtrGQIOXDWFXdPei79hr	서울 마포구 동교로38길 4	6개 이상	false	false	-	2022-11-26 15:32:46	Yb
+OoaqCb7YVeEVTwA8zQS3JgUSngF37OoSqGHk	서울 서초구 서초대로74길 49	0개	false	true	0개	2022-11-26 15:32:59	-
+lyBtSLhoCxx1cEQMYNzqwdCQuSGE/0yRYRkU	서울 강남구 강남대로96길 5	2~5개	false	true	6개 이상	2022-11-26 15:33:06	sycy2000
+PXUlci47cLqwP7HKi7G7g0BH8iTcQrTbVeHi	서울 마포구 월드컵북로4길 61	0개	false	false	-	2022-11-26 15:33:14	HJJ
+mhO45BwWJrjxe5tRf1XgnGao5CJj80y+JURy	서울 강남구 역삼로1길 19	0개	false	false	-	2022-11-26 15:34:27	정의준
+Uz6cRbrjSJuRA3Jeq5X+gsYTt8f2vtQHLBY3	서울 서초구 강남대로 369	2~5개	true	true	0개	2022-11-26 15:31:46	hanpanic
+9fl6anW27wlhhTEaUwcXtQZwo6DSEP1wVcPy	서울 강남구 역삼로1길 18	2~5개	true	true	0개	2022-11-26 15:32:58	정의준
+4ITQxneYUowe7bxzUQTs2v/WTarkbWfi+QPR	서울 서초구 강남대로 375	2~5개	false	true	2~5개	2022-11-26 15:34:15	hanpanic
+ogRC8Khk7Ge6DZRc4nyOx+PkKpe3GHcArqlm	서울 강남구 테헤란로1길 20	1개	false	false	-	2022-11-26 15:35:20	sycy2000
+mUgwcJ82nGJAZ2OecQtEMxAfA5b/xnqw+1zp	서울 강남구 역삼로1길 17	0개	false	false	-	2022-11-26 15:35:45	정의준
+XA6frLIYZnX4Zt/g0Duj6YNzEkHeUyjJ+4Iq	서울 마포구 월드컵북로4길 30	0개	false	false	-	2022-11-26 15:36:01	이대호
+Rn+Si4GxUmqEFVVZ3bxTU3fR5IBCCP52XyCf	서울 마포구 동교로34길 3	6개 이상	false	false	-	2022-11-26 15:36:03	Yb
+sDxzQTHmqgwoSovlq+flglpmwNu1EnhrAzXv	서울 강남구 테헤란로4길 5	2~5개	true	true	0개	2022-11-26 15:37:11	윤주
+uztAAxrFeswjFSUeMKiTNJZeHtEhz1fRuwub	서울 강남구 강남대로 352	0개	false	false	-	2022-11-26 15:38:56	정의준
+Lo8jem9WrvNz9BrxO5k/VrNQovefBshiu2OD	서울 강남구 테헤란로1길 19	1개	false	true	0개	2022-11-26 15:39:01	sycy2000
+krttjfO3e59EHX/m6cZdDfnDUxmp0qHRITO5	서울 마포구 양화로23길 46	2~5개	false	false	-	2022-11-26 15:39:04	Yb
+bhiEVpZCU9F+SADrSqPj0PD+VcfzEWVsU6cI	서울 마포구 월드컵북로4길 29	6개 이상	false	false	-	2022-11-26 15:39:34	이대호
+lbDVZRpbdrCH5Of9TG8S/uF9aOIKxYAh9peU	서울 마포구 월드컵북로4길 72	2~5개	true	true	2~5개	2022-11-26 15:40:14	HJJ
+o886EJ5XuYxv+GY8w2gr7+eB+t2QpLOvng2m	서울 강남구 테헤란로4길 13	0개	false	true	0개	2022-11-26 15:41:58	윤주
+ZLGPQZk/T4KPDQxXnrp/ZH8acXRiyYlVmMzt	서울 마포구 월드컵북로4길 26	1개	false	false	-	2022-11-26 15:42:17	wjsqhr05252
+5AVw3Y+m0kGXYl/IvsbjlMwiMZS6bD8myMWx	서울 강남구 테헤란로4길 6	0개	false	true	0개	2022-11-26 15:45:24	-
+Xh6WSFl5bA0jhKP2oTneQgUw181Nl8Ks2XzW	서울 강남구 강남대로94길 11	1개	false	true	0개	2022-11-26 15:47:05	sycy2000
+VmoOnOwHJyQEAySMpceJKHID9lmUtKmZVklk	서울 마포구 연남로 97	2~5개	false	false	-	2022-11-26 16:35:31	-
+daU6i525Atz3A8mKZTdLqPnfuo4ITk+jL34w	서울 마포구 연남로 93	2~5개	true	false	-	2022-11-26 16:37:38	-
+dP6xVojfAIYUDhYvTP9AQEBh2iR74zyejlMt	경기 성남시 분당구 판교로 372	0개	false	false	-	2022-11-27 10:30:04	mauve
+zXGZ3Zcpf1YedsakF4wpM+0FeOOZ3ffVJOp+	서울 서초구 서초대로74길 3	1개	false	true	6개 이상	2022-11-27 14:16:16	-
+7xuzx0t1L0djg+cJogiCs3OeFpS/xlJUDg2Y	서울 강남구 테헤란로6길 7	1개	false	true	0개	2022-11-27 14:17:21	myungh5
+hl2xfCaWVZSW3EZfEzj3G2BB3D5SANwZlZzA	서울 마포구 양화로 196	6개 이상	false	true	6개 이상	2022-11-27 14:23:54	NANAL
+oMC/xffWkYWd3cE/E4l/hyK5sZuE55m7X66/	서울 서대문구 연희로2안길 7-3	0개	false	true	0개	2022-11-27 14:24:49	유미
+8a+PLycL/7MBwCBUCg7Mm/26r7f2uTQUPMqG	서울 마포구 동교로 225	1개	false	false	-	2022-11-27 14:26:05	Peace
+BOC3FZ3Ht0Zj2WRepbkpwqNoYdMgEUTn67p2	서울 서대문구 연희로 32	0개	false	false	-	2022-11-27 14:30:52	유미
+9pxBksdnS/SqK4QDEd18OvuUfexhCHcpQPEM	서울 강남구 강남대로84길 33	6개 이상	true	true	0개	2022-11-27 14:25:58	myungh5
+oL0i4j86KSAI2wDZdLs8NSzQ5IjNYbGbHQcv	서울 강남구 강남대로84길 8	2~5개	false	true	2~5개	2022-11-27 14:26:17	다코
+ZTo/1RrOvRXliIlu47HF5zU3Ja4+DsY05yKj	서울 강남구 테헤란로7길 11	2~5개	false	true	0개	2022-11-27 14:27:34	-
+qZ4UafQ/i4TnPc9Ox0j6swU92wcSrWCclTNA	서울 강남구 테헤란로 109	6개 이상	true	true	0개	2022-11-27 14:29:15	Sonny
+FqwWFOyOU6CLyzFGlBmwJDLQxdRiserhrnw8	서울 마포구 동교로 185	1개	false	false	-	2022-11-27 14:29:20	iu2516
+dhzCWjORQn1qA3eryB8uqJBTNEfWBeO/utBV	서울 마포구 양화로 191	2~5개	false	false	-	2022-11-27 14:30:11	NANAL
+IexRrAebFkCuBxIqqfxtBfoxdcB2dprUk7c6	서울 마포구 연희로 3	6개 이상	false	false	-	2022-11-27 14:33:08	NANAL
+u52vkJFepqJ1aWwiRMdOSoCmczn7iBGQaNL1	서울 마포구 연희로 35	1개	false	false	-	2022-11-27 14:33:51	유미
+wgjpu2Pbixi5ES5dD2ZlMLVOzxsw6+Iv36+h	서울 강남구 테헤란로 119	2~5개	false	true	2~5개	2022-11-27 14:34:35	-
+eVw9XfGI0z2wcEr3ktk/aXUCkcPwDRtkocSu	서울 마포구 연희로 33	0개	true	false	-	2022-11-27 14:35:21	유미
+1x1+1+agB9UlGWIkHtw6mnftC0h0ejd5APr0	서울 강남구 테헤란로 111	2~5개	true	true	0개	2022-11-27 14:36:27	-
+Cch9G09pWpQpdg4Aqkn57cMJ4XcmjWx1ciOG	서울 서초구 강남대로55길 24	0개	false	true	0개	2022-11-27 14:36:59	-
+a4ar6rjUaPWGWfKDRn+UIvzFygHcS/nPYxzD	서울 마포구 연희로 5	0개	false	false	-	2022-11-27 14:37:05	NANAL
+3zQxgUreRAf6HjSMwnns5jv69hKJC2TDTU3I	서울 강남구 테헤란로5길 11	2~5개	false	true	0개	2022-11-27 14:38:22	Sonny
+s/JUj5ooq4NDMAKtkA4lxGJhu2ZIQDJPW7Hf	서울 강남구 테헤란로8길 20	1개	false	false	-	2022-11-27 14:38:35	myungh5
+ItWseM+BzBuD18Yy12bIuTT+vItNx2uv3Hkq	서울 마포구 동교로46길 42-9	1개	false	false	-	2022-11-27 14:38:40	유미
+2fFPtFaRQhY4dga0Vb/CgD8+znYKJh+bdhnh	서울 마포구 동교로25길 7	6개 이상	false	false	-	2022-11-27 14:39:00	iu2516
+FYxktZRx1d0Xs7fvi+vIDewyAKmixyk9byz9	서울 마포구 연희로 7	0개	false	true	0개	2022-11-27 14:40:11	NANAL
+b6bRbQ/oz3GpAl3OY02d6zy4x6B+9PNZGfld	서울 강남구 테헤란로8길 26	0개	true	true	0개	2022-11-27 14:41:35	myungh5
+m1DYMRp2urQ43L7jmpoGc5V7C4BFwc2VfBun	서울 강남구 강남대로94길 27	2~5개	false	false	-	2022-11-27 14:41:45	-
+NDJDKiwF3JaX4t1vku4hpMGr5XcDY5CZfbZe	서울 마포구 양화로23길 10-9	6개 이상	false	false	-	2022-11-27 14:44:22	NANAL
+NnG08M3V8flWMF+Azr0MiYdbaykJUAz/WUYG	서울 마포구 동교로 183-12	0개	true	true	0개	2022-11-27 14:45:06	iu2516
+91O0lCOI+Xr+KD1/1wFdS08Esleeex3jbmJJ	서울 마포구 연희로 29-1	0개	false	false	-	2022-11-27 14:45:14	유미
+TdoMcSm3T139aNFTXftj9QdLohtOMI/3J1+N	서울 서초구 서운로 133	2~5개	false	false	-	2022-11-27 14:45:54	-
+WAM612yN98GO7L2YVFI+Fhgu3cmpMIpLLjt9	서울 강남구 강남대로94길 23	2~5개	false	false	-	2022-11-27 14:46:29	Sonny
+pAr5qk6OEUDztvG30kxK7tPGZR1ddT6tPFbJ	서울 마포구 연희로1길 63	2~5개	true	false	-	2022-11-27 14:46:45	유미
+4zY07WpZ+XI8RktUwx4L0xCCkyITRNQmkFTg	서울 마포구 연희로1길 55	6개 이상	false	false	-	2022-11-27 14:48:10	유미
+UHOWqKnuKu33HyXuM17SE+x6G3PMs1NqIAbz	서울 마포구 동교로25길 28	2~5개	false	true	2~5개	2022-11-27 14:48:41	iu2516
+FrjRvChWGQbFq+G/rdEFV15p1VBx5jpSeoT9	서울 강남구 강남대로94길 14	0개	true	true	0개	2022-11-27 14:49:12	-
+Qlxax4gwoVO+bJoDG2qtA3gNZmexViSvRXO8	서울 마포구 동교로 245	0개	false	true	0개	2022-11-27 14:50:02	Peace
+CyrMU3opf0NS7XQxCd8TXqu8z9e7U/sOgRaW	서울 마포구 연희로1길 51	2~5개	false	false	-	2022-11-27 14:50:18	유미
+3Q2zAao1UFfFdTC0n1lrjKAA69UKe3YmfkeF	서울 마포구 양화로23길 22-10	2~5개	false	false	-	2022-11-27 14:50:41	NANAL
+M6pRsdGz+dKB79m3ICoTaMDT1lW231wklJeb	서울 마포구 연희로1길 52	6개 이상	false	false	-	2022-11-27 14:51:39	유미
+8GW5B8DRLyKykThPxTnV4seZOFhXUbZVcqf3	서울 서초구 서초대로74길 29	0개	true	true	0개	2022-11-27 14:52:01	-
+emIybhKiQR62bXqcpq2kCS3dDedcm0zTI8Yg	서울 마포구 월드컵북로6길 52	0개	false	true	0개	2022-11-27 14:53:28	iu2516
+gXsceFC9naZa94jsZlBrdXiZYF7bvzvgD66a	서울 마포구 연희로1길 11	2~5개	false	true	6개 이상	2022-11-27 14:53:37	NANAL
+o/ixF9F0n0oNYl2yCxizQSnbnzLMdoB3WZSi	서울 마포구 연희로1길 41	1개	false	false	-	2022-11-27 14:54:28	유미
+jYQMMAeONW/FV/5a39/y8Pw9buImdK+63/HP	서울 강남구 테헤란로8길 21	2~5개	true	true	2~5개	2022-11-27 14:47:02	myungh5
+8G3fASdNHN+w5dju60fXCkWS3h2w7DlG9d1x	서울 마포구 양화로23길 20	0개	false	false	-	2022-11-27 14:48:10	NANAL
+4pmrESMbdL4ytSMEL43BL9f9YtfiRC0ueM46	서울 강남구 테헤란로 128	1개	true	true	0개	2022-11-27 14:49:37	-
+/UEXgjjumuARp6xKxHAglYo+6P3EHouk2CE3	서울 강남구 테헤란로8길 17	2~5개	true	false	-	2022-11-27 14:52:18	myungh5
+39HikSUuvqVRc6i89oRejaJzAAH7gUJ8DiXD	서울 마포구 연희로1길 45	6개 이상	true	false	-	2022-11-27 14:52:43	유미
+ILZyG8HBlXbY6tA0TG59/tapL+k2z44+ZlY+	서울 강남구 강남대로94길 10	0개	false	true	0개	2022-11-27 14:54:50	-
+BdIOrseG39kgYjIwNl/IdBUCZ1SG/Tnh3lko	서울 강남구 테헤란로8길 30	1개	false	true	1개	2022-11-27 14:55:26	myungh5
+SeO688Wy8EEYjuRI4/+C28YlUYgSPuvSWDDi	서울 마포구 연희로1길 19	6개 이상	false	false	-	2022-11-27 14:55:32	NANAL
+EqLu1u2DYNI+bF1DF7Va151sxZuyE0kjiG1Y	서울 마포구 동교로 243-4	6개 이상	false	false	-	2022-11-27 14:56:41	Peace
+r3mZSjpHRW6bRewpTmjwH+0Dvxq9dOcnL1+S	서울 마포구 동교로27길 41	6개 이상	false	false	-	2022-11-27 14:56:44	iu2516
+ag7OssFIxHDjrrzd4u5A/GoDqQ5u5Bl4dR2F	서울 마포구 동교로34길 21	6개 이상	false	false	-	2022-11-27 14:56:52	유미
+AagSS6S4cSeS0XMnaq+Vy/WonjZtrHQbFnsL	서울 마포구 연희로1길 23	1개	false	false	-	2022-11-27 14:57:20	NANAL
+DiMRlJRaqSQYskVO8lWMioRsYBfySNpbKtDE	서울 강남구 테헤란로 116	2~5개	false	true	2~5개	2022-11-27 14:57:34	-
+SfCGmsdTULA8IPTPok2rxHb2iWc2j1ppQ6mx	서울 강남구 강남대로84길 32	2~5개	false	false	-	2022-11-27 14:58:57	myungh5
+KUKTd3S/i46WAHxMRADx5JQGO7FA6cKg6COA	서울 마포구 동교로38길 42-5	6개 이상	false	false	-	2022-11-27 14:59:03	유미
+ovuZPk4SHkNTVrKL712Z2cXAJBE1UcbBhyus	서울 서초구 서초대로74길 27	0개	false	true	0개	2022-11-27 14:59:15	-
+eeoYyb3It63Af5NEphcTqU/F0Zwy+a2vOvTv	서울 마포구 동교로 248	6개 이상	false	false	-	2022-11-27 14:59:26	-
+0k5s6QqBqDkHVEs3IIm9ZyL/3UQ9Q4gp7xgA	서울 강남구 테헤란로1길 10	1개	true	true	0개	2022-11-27 14:59:30	-
+Wjacip5NTXXZefTDqPXUCFFroP+6sMe+JGY2	서울 마포구 동교로 248-2	2~5개	false	false	-	2022-11-27 15:00:18	Peace
+YvprtOhiCcSYACugc9ZwEUr/8MpUR4FmLzds	서울 마포구 연희로1길 28	6개 이상	false	false	-	2022-11-27 15:00:30	NANAL
+Aay0ArbTTncQlm9dOyYHX6I2qS6gePzZ0fmD	서울 마포구 동교로38길 42-6	6개 이상	false	false	-	2022-11-27 15:00:34	유미
+AkvGNzv6VSKo2eAfmqkShLnMYvV5M08cwVF5	서울 마포구 월드컵북로6길 82	1개	false	true	2~5개	2022-11-27 15:01:01	iu2516
+zET4jo+aAWL0OAAtxHcAyOpAsH+D8SEVQF5/	서울 강남구 강남대로94길 9	2~5개	false	true	0개	2022-11-27 15:01:37	Sonny
+flEmEZ10iXMImtEAJGoXb8ka7DWAwbDiYSRJ	서울 마포구 동교로38길 42	6개 이상	false	false	-	2022-11-27 15:02:11	유미
+qdcFddsATV17A0rJOXj8jto0YKHM0F8Fj9XC	서울 서초구 서초대로74길 23	2~5개	true	true	0개	2022-11-27 15:02:37	-
+4HsY4/8Q1xvnsjamJFw+kXCPLzbP6tWvPn0r	서울 마포구 동교로38길 35	6개 이상	false	false	-	2022-11-27 15:03:39	유미
+NuGNE2mZhJIZhpGZfrEQI69zDIppxqkn8Z0X	서울 마포구 연희로1길 28-5	6개 이상	false	false	-	2022-11-27 15:04:09	NANAL
+nsmW1pbrqyRJYx4VVrocgWo32udGYoj4rOXq	서울 마포구 동교로 244-1	0개	false	false	-	2022-11-27 15:04:36	Peace
+XeU3kE31WkSV4GzTmPtp4lnqzN/l4Oh5kRpS	서울 강남구 테헤란로 115	2~5개	true	true	0개	2022-11-27 15:04:44	-
+H2kY8zN9Gg+SzlCA52IveVrB31/CdN8SaBnS	서울 강남구 테헤란로4길 25	2~5개	false	false	-	2022-11-27 15:04:54	myungh5
++8kih+aoZXWMpSA/Hk+M/2+ipFEWo09C2x1w	서울 강남구 테헤란로1길 16	0개	false	true	0개	2022-11-27 15:05:55	Sonny
+eKyrhu/QTyr3nwXH6Tj0lFc8MbTJsjsierZd	서울 서초구 서초대로78길 22	0개	false	true	0개	2022-11-27 15:06:23	다코
+8FZQubUCx62uKnu7/s051zE5QQrDV59deC3o	서울 마포구 동교로38길 33	6개 이상	false	false	-	2022-11-27 15:06:25	유미
+FR3Pom90qA6A1FFidtWXBpTvdPbJpvp62eGx	서울 마포구 동교로30길 17-1	6개 이상	false	false	-	2022-11-27 15:06:35	NANAL
+o+d4IxbSKnELNou8VGqMIqPqo7Z3/VKSGQPO	서울 마포구 월드컵북로6길 81	6개 이상	false	false	-	2022-11-27 15:06:59	iu2516
+dEIPTaVPbEHZfio02cPIbpv7vd4m0+sfWqWB	서울 마포구 동교로38길 6	1개	false	true	0개	2022-11-27 15:07:10	-
+KK+UBb0IslLlznu9D1W/lI+tcyZuhfn9skkC	서울 서초구 서초대로78길 24	2~5개	true	false	-	2022-11-27 15:08:56	다코
++bqttuNSnsOVr7JbOmKq+NMVYJVdGWlbGW6/	서울 마포구 동교로30길 17	6개 이상	false	false	-	2022-11-27 15:09:08	NANAL
+a3s3gGmB+9NCzauEPun4HeYXYLLCx5nOKo19	서울 마포구 동교로38길 7	2~5개	false	false	-	2022-11-27 15:09:22	Peace
+1htfbkepd3ZAZYQEsXHIoHGH0Xojbv1/sonn	서울 강남구 테헤란로7길 7	0개	false	true	0개	2022-11-27 15:09:24	-
+crm3UKIcR/JJ9iwfb8DhwA7PL990cOLwQX7e	서울 마포구 동교로38길 12	1개	false	false	-	2022-11-27 15:09:46	-
+RbEsaO66ORBfxILBiycvRjxAxLY6r0KgIzh3	서울 마포구 동교로30길 16	6개 이상	false	false	-	2022-11-27 15:09:51	sputnik1905
+zflpcE3NuX/UnZN/rITxH5j5nK1dL8XFmpZM	서울 마포구 동교로38길 33-9	0개	false	true	0개	2022-11-27 15:10:22	유미
+n3q/5bJvcKCg5/1Bel20tzP+QsCuB49Ds88K	서울 강남구 테헤란로 101	6개 이상	true	true	0개	2022-11-27 15:11:02	-
+be/19eNwy03FfA/TiwIvb3veZK9+R5oi6w1Y	서울 마포구 동교로30길 21	2~5개	false	false	-	2022-11-27 15:11:17	NANAL
+KRDco6f1dG50+5n+09b6+78VUPKohEmS90ZA	서울 강남구 테헤란로7길 8	0개	true	false	-	2022-11-27 15:11:26	-
+wCw39L6XO3ASlOI9Gies5qhPqeNbNObIjVTc	서울 마포구 동교로38길 27-8	6개 이상	false	false	-	2022-11-27 15:11:47	유미
+lTWjdML5nNoDjmRx476WSc7DXBJ8JNGE8LoX	서울 마포구 동교로38길 27-19	6개 이상	false	false	-	2022-11-27 15:13:27	유미
+LCGLiEWg52IPkLV5Tk4q/RNgU3XYk+vW3f7V	서울 마포구 월드컵북로4길 82	2~5개	false	true	2~5개	2022-11-27 15:15:10	iu2516
+PgQ25ueeUUbyDCpWHB4aq5aYg+c4JwT+uf/a	서울 강남구 테헤란로7길 22	2~5개	false	false	-	2022-11-27 15:15:19	-
+Kdv3Eu1gwixD085EWRstv57HXFyN9N3SkFeG	서울 마포구 동교로38길 20	2~5개	false	false	-	2022-11-27 15:16:02	Peace
+GlS20wlhsOOHj83r4UkdocAEGkjRUtseZzP7	서울 마포구 월드컵북로2길 93	1개	false	false	-	2022-11-27 15:17:02	sputnik1905
+gzAv11NDUTa2/2Fp7PvKcDtYyJrrgeZrYgyn	서울 마포구 월드컵북로2길 85	6개 이상	false	false	-	2022-11-27 15:18:44	NANAL
+Zahs1N3Ao8fy+u5XmvDXo+1u8j/Ks6n/PUO3	서울 마포구 동교로46길 24-2	6개 이상	false	false	-	2022-11-27 15:19:05	유미
+JrHsvkhzGRrCeEWNMBQTRCdPG6uT+fkiRHln	서울 강남구 강남대로94길 57	2~5개	false	false	-	2022-11-27 15:19:14	-
+DBVrLzKxxDSduVrw90dwJPXSOebfBY+EOuLM	서울 마포구 동교로46길 24-4	6개 이상	false	false	-	2022-11-27 15:21:01	유미
+4PkLyCifk1uE7/XAze+wmIsPOXZ7fJY2YZ7O	서울 마포구 월드컵북로4길 77	0개	false	true	0개	2022-11-27 15:21:02	iu2516
+Lq94BhXW4Ebo+ur9juhM/Bp7qk+elL3Lz0nQ	서울 서초구 서초대로78길 26	0개	true	true	0개	2022-11-27 15:22:17	다코
+NrjZN1xf4zwxnHtBVjbvs2nbm9zbPXit8BcB	서울 마포구 양화로19길 14	2~5개	false	false	-	2022-11-27 15:22:58	sputnik1905
+5FWTDVVJ9dbEcVSeHcmCtQ71jXlUwFK7tjAy	서울 강남구 강남대로94길 54	6개 이상	false	false	-	2022-11-27 15:23:24	-
+tDbmvltj2GwmVTSchrft35zGfssyKeqLX4SX	서울 마포구 독막로 48	2~5개	false	false	-	2022-11-27 15:23:29	NANAL
+MT93RyYfubudQXZWuxMHRQ0bz3/BEwCz1ri9	서울 마포구 양화로19길 16	2~5개	false	false	-	2022-11-27 15:24:17	sputnik1905
+MyIFhUdKHFolVejRBTN+ELgP9lUD7yGtTbAT	서울 서초구 서초대로74길 11	2~5개	true	false	-	2022-11-27 15:25:15	-
+BxupHsdpgfC6QJdfURA5Mtd8A15PVR5w48z6	서울 마포구 동교로27길 12	6개 이상	false	false	-	2022-11-27 15:25:30	iu2516
+DzcsEQuEi49kh3qtg5FFNwP/VpZDk8X0+QAL	서울 강남구 강남대로84길 23	1개	false	false	-	2022-11-27 15:11:54	myungh5
+Zj8Dc2/pzWtbXvigi/vlOaNaty0nRptlCkuO	서울 서초구 서초대로78길 28	1개	false	true	6개 이상	2022-11-27 15:12:25	다코
+QP/+QFN+d9WKExQ12hBN/sS2TPR2TQ5q/h2q	서울 강남구 강남대로96길 12	1개	false	true	0개	2022-11-27 15:12:42	Sonny
+8Z1HhyLrQocs8e3DYKsqs2wKss8I1kZcRZTO	서울 마포구 양화로21길 15	0개	false	false	-	2022-11-27 15:14:25	sputnik1905
+JKw7lLgZFCFxofQ1olKVvg5U8whJcV6S8Vpc	서울 마포구 양화로21길 17	6개 이상	false	false	-	2022-11-27 15:14:58	NANAL
+MEgpcxibth3WKFeQT2s1Bagl5buPWa9nOhMq	서울 서초구 강남대로55길 9-11	0개	true	true	0개	2022-11-27 15:15:21	다코
+iH4zAHyjahfmaV9Wzul+rPAzppyNR02qfDA+	서울 마포구 동교로46길 24-5	6개 이상	false	false	-	2022-11-27 15:16:59	유미
+gJl7loVm9ZgFBANKv275LK0DkgqoyTRHp5IA	서울 마포구 월드컵북로2길 89	6개 이상	false	false	-	2022-11-27 15:17:32	NANAL
+lzNTOsWmmCpQ5An2r5jQA/rZxyWORibB295w	서울 강남구 테헤란로1길 26	1개	false	false	-	2022-11-27 15:18:12	Sonny
+ek4JdQr36T8rWU20yOv+jB0my0baeJHL5VBR	서울 강남구 강남대로94길 55	2~5개	false	false	-	2022-11-27 15:18:13	-
+ovpb5UDwDEgpOxqic76BBUjfaIBxF0ZZKR62	서울 마포구 동교로27길 20	1개	false	false	-	2022-11-27 15:18:35	iu2516
+ibM82NEcMegV33lETkM8DXCIFFkDJm78ezfo	서울 강남구 테헤란로4길 15	0개	true	true	0개	2022-11-27 15:19:02	myungh5
+NyFBnYLfo1910AiD5Ejiv8hBdcj0MVRMHF/A	서울 마포구 동교로 242-4	0개	false	false	-	2022-11-27 15:24:45	Peace
+dz4ZgOoRuT+HimY34lFrTp3yE3Iwegt3ZLmn	서울 강남구 테헤란로4길 29	2~5개	false	true	2~5개	2022-11-27 15:25:09	myungh5
+qglgGWKwYSUI4h1hrPUZganqBgnBmKCvy0rn	서울 마포구 동교로38길 27	6개 이상	false	false	-	2022-11-27 15:26:22	유미
+l9rTQsuKnxGCGzS1rByvqH71vQPemjkgYZ+W	서울 마포구 월드컵북로2길 81	2~5개	false	false	-	2022-11-27 15:26:30	NANAL
+EIbvAg+iAh9X5LGFmErxP8hF2cn4NWERf9Q4	서울 강남구 강남대로98길 12	0개	true	true	0개	2022-11-27 15:27:47	Sonny
+Mq1oZrzC7kHcPZ79XbfMrMT6CG48GdCJYMaV	서울 마포구 동교로38길 28	6개 이상	false	false	-	2022-11-27 15:27:50	유미
+cppy8BL2ZtWYgwRF3YgXORr3/DyXtI0/5DAE	서울 마포구 양화로19길 22-4	1개	false	false	-	2022-11-27 15:28:14	sputnik1905
+TEbMxWnnMR3ijgtq3UWtQqAMFvz1mzvg1XcE	서울 마포구 동교로38길 23	6개 이상	false	false	-	2022-11-27 15:29:44	유미
+d1WuwZD9phYG8KIFxcQxEh8MLkc58k5xYqN1	서울 강남구 강남대로84길 24-4	0개	false	false	-	2022-11-27 15:30:04	myungh5
+oVjMsxnGAdo1/i4GG6ojQrwJTomWUaZ6wQow	서울 마포구 동교로38길 27-9	6개 이상	false	false	-	2022-11-27 15:31:48	유미
+RmDjAbwsZcTo3HzuaMmApZqYYqsnq4SlVdNY	서울 마포구 양화로19길 2	1개	false	false	-	2022-11-27 15:32:54	sputnik1905
+U1eLyv/bFad0CCQZ6WaS52/IoB+pbv79XNfz	서울 마포구 와우산로29바길 24	6개 이상	false	false	-	2022-12-03 14:35:01	doobootofu
+P1ZL5zhZif4673x8ShUgcdpTLNPWHRZ8U7Eh	서울 강남구 테헤란로 129	2~5개	true	true	0개	2022-11-27 15:33:43	-
+g8UeBtp+XX66xzCngmdOGYO8pwQKsejak2qR	서울 강남구 강남대로98길 8	2~5개	false	false	-	2022-11-27 15:34:05	Sonny
+zwkxDQXfQtquUJKCSQWq4Ccjn9jysGLjViOX	서울 마포구 동교로32길 10	6개 이상	false	false	-	2022-11-27 15:36:16	-
++VkP/xeru7H2Je+o9dclQUo3HGLRini1luo+	서울 강남구 테헤란로4길 32	2~5개	true	true	2~5개	2022-11-27 15:37:57	myungh5
+aevpCU/ljyhzzvB6PtaVDVRjWtotWoq61yf7	서울 마포구 동교로30길 3	2~5개	false	false	-	2022-11-27 15:38:38	Peace
+n8sl2aX5FImmUf/TP8c+1C9eFQxktOh5c/Rs	서울 강남구 테헤란로1길 17	0개	false	true	0개	2022-11-27 15:39:42	Sonny
++63utkgrNpRV6DU8+HpFlvVXC7Y1AbqZiWg7	서울 마포구 양화로23길 10-10	6개 이상	false	false	-	2022-11-27 15:40:07	sputnik1905
+GNZ3eLg7uPbX3T2b9XlO6qZy2jhTpz5ByBuz	서울 마포구 연희로 17	1개	false	false	-	2022-11-27 15:40:31	유미
+d+VDS0b6XUfqcKoNBGcxAIvWKNmr6wxgubTh	서울 마포구 양화로23길 30	6개 이상	false	false	-	2022-11-27 15:41:26	NANAL
+cuKNKmEF1SyE5MqAbAYqtGwTg1O3zijIGvf6	서울 마포구 양화로23길 44	2~5개	false	false	-	2022-11-27 15:41:38	-
+8/QkZjSi91djjHvXeATgmb6V5hHD/2M4ipiw	서울 마포구 양화로23길 22-7	0개	false	false	-	2022-11-27 15:44:48	NANAL
+LEoPsLDBlm0SABG0LzBQZkDXrL06pUGC2+M5	서울 강남구 테헤란로 125	2~5개	false	true	0개	2022-11-27 15:46:29	-
+S8amLP0OjOn5OvV9X/33ZbrvSwEFkZPJ5Pne	서울 강남구 테헤란로 121	0개	false	true	0개	2022-11-27 15:49:41	-
+3Jpm0VeWubFz1UafMBErDFA80PvXxYctcvLS	서울 강남구 강남대로 430	0개	false	true	0개	2022-12-03 14:17:38	동대문의아들
+2BcISXiHBl8WiaRfQGNu2ouqNUO2/lg+qiSd	서울 강남구 강남대로 432	0개	false	true	0개	2022-12-03 14:19:25	동대문의아들
+7dxDeW6KdGR3DN+Um9IFqgJWB6Ci3Jzj5VXU	서울 서초구 서운로 164	6개 이상	false	false	-	2022-12-03 14:28:29	정의준
+OQKsaHAqwxL7EWsfMwKJFGgjZakkEprcBN5C	서울 마포구 연희로1길 36	6개 이상	false	false	-	2022-12-03 14:28:48	다솔
+JQ8c/UuT2/rupKOXJrwz3Cssn/+0BSg68zHz	서울 서초구 강남대로61길 27	0개	false	false	-	2022-12-03 14:30:05	썽니
+RQdYEcJIzRUkt5/1/sYjMSEhpTasFGwKxXBX	서울 마포구 양화로 161	0개	true	true	0개	2022-12-03 14:31:37	산타
+E7w8w/S5m5M7o8yLZBKbE2zXhn7OTnkh5T1m	서울 강남구 강남대로 438	6개 이상	true	true	0개	2022-12-03 14:32:31	동대문의아들
+ks4tTbs2HY8gQjf+OEveNX/dnCkt2jpZh1kf	서울 마포구 연희로 23	1개	false	false	-	2022-12-03 14:33:35	leobit
+cwjxKe6+D6x6BnEREzH6nVEItel69bBM1Z6z	서울 서초구 강남대로61길 19	0개	true	true	0개	2022-12-03 14:34:12	썽니
+VhhFV0vucjZfz0gBSFERgTO/Z77u1y98cKiF	서울 마포구 연희로1길 46	2~5개	false	false	-	2022-12-03 14:38:05	다솔
+H5T9DtWpGTgErwfmQSOIRrBYH3GIAFIh+2PG	서울 마포구 연희로1길 57	6개 이상	false	false	-	2022-12-03 14:38:05	leobit
+dcA7DG+wXiZFOq58JYgQ3FCEDczuTxcyC476	서울 마포구 와우산로29바길 20	6개 이상	false	false	-	2022-12-03 14:38:11	doobootofu
+JACcr/7nVHC8vFFKv3zR5bxNGy3oeJAMqpDT	서울 서초구 서초대로73길 9	2~5개	false	true	0개	2022-12-03 14:40:39	정의준
+cCEMi4TiAUrm4o/VBRxo0VDJzaspgcL0e8An	서울 서초구 강남대로61길 17	2~5개	false	true	2~5개	2022-12-03 14:38:11	썽니
+ihN/T7iqzB/YrtsbKhlhsc1qL6cyVZnEDqzf	서울 마포구 와우산로29바길 18	6개 이상	false	false	-	2022-12-03 14:40:18	doobootofu
+h9ggnZ6U++cyBY66drLWQP4ojbTvbHvtFj8X	서울 강남구 강남대로102길 11	2~5개	false	false	-	2022-12-03 14:41:33	동대문의아들
+hkuuGxalxpIRkphs9UCjOfckYd3/m5q79Ar9	서울 마포구 연희로1길 48	0개	false	false	-	2022-12-03 14:41:38	다솔
+WiMsbfB5nr48HHHXk/S77TeYudU0SrNILiAx	서울 마포구 어울마당로 136-18	6개 이상	false	false	-	2022-12-03 14:42:54	doobootofu
+UsJ5qCN+aJXlhuKBEk0244Mgpb9aBzmVoa+y	서울 서초구 서초대로73길 7	0개	true	false	-	2022-12-03 14:43:38	정의준
+6z+o10o0j4nzny6kpwGisSNAVOGEDNjcpqGF	서울 강남구 봉은사로2길 39	1개	false	true	2~5개	2022-12-03 14:44:41	동대문의아들
+o2nHqcoDgtV83a94uAtk50My68Y0fmu2aoyp	서울 마포구 어울마당로 136-11	6개 이상	false	false	-	2022-12-03 14:44:59	doobootofu
+3aBrkpUoDR839sDw7ZLk61xHfhg/CcP66E6T	서울 마포구 동교로38길 33-21	6개 이상	false	false	-	2022-12-03 14:47:19	다솔
+ltzJ/YRa1kpwvgvLc1VNmlD/QW5brPmgFrV3	서울 마포구 동교로 181	1개	false	false	-	2022-12-03 14:47:55	산타
+SDOEBLleheB6FPsNWIA2G2o4cOrYDHc/1eo2	서울 마포구 동교로46길 30	6개 이상	false	false	-	2022-12-03 14:48:40	다솔
+8rkpfQ5VsQG/KsR6iaxdzw9RbnF15VKROaSw	서울 마포구 동교로 179	1개	false	true	1개	2022-12-03 14:50:13	산타
+pi0p2JFIaCdCLTRtLsTEEXMJH73g5oOAUzMN	서울 강남구 강남대로102길 15	2~5개	false	false	-	2022-12-03 14:50:38	동대문의아들
+UhTpwtV/Aa+gyTbRckWlxMJslFAgGf7QxRgj	서울 마포구 동교로38길 33-18	6개 이상	false	false	-	2022-12-03 14:51:11	다솔
+bhjrZXLE1Msq/xtEZPapjqja8fFDs98YMPhX	서울 마포구 동교로38길 27-14	6개 이상	false	false	-	2022-12-03 14:52:22	다솔
+6PXK5W9nqgRhTbL7TLD0vbJOaOzp1CT39uRK	서울 마포구 동교로 177	2~5개	false	false	-	2022-12-03 14:52:23	산타
+zVw/Nh3myStwQA60PSX5Z9A1xYsEuZU7C2Mx	서울 강남구 강남대로102길 14	2~5개	false	true	0개	2022-12-03 14:52:23	동대문의아들
+zT+tT2BSBToHpbl4U9TTV2V6cy2o7k6sJT75	서울 마포구 와우산로29바길 12	6개 이상	false	false	-	2022-12-03 14:52:57	doobootofu
+I0PHQQU17DbvVwA1WNtLz+g8Ks1xcIpOvrg+	서울 마포구 동교로38길 33-15	6개 이상	false	false	-	2022-12-03 14:53:43	다솔
+N6xuVlnru0sppZp2s/ITtGMQ4CegYgUzgTDL	서울 강남구 봉은사로4길 36	2~5개	false	true	6개 이상	2022-12-03 14:54:40	동대문의아들
+OWpibkMLluFLKcX2AG0KHXW+6fmD9vuQYTqn	서울 마포구 동교로38길 33-12	6개 이상	false	false	-	2022-12-03 14:55:00	다솔
+FcZD5tSNDJCqS8R9HJy1NECHBcdkJCNz1nDC	서울 마포구 와우산로29바길 6	6개 이상	false	false	-	2022-12-03 14:56:00	doobootofu
+FBHqA8v/w9A2RWV1MoJrZ8RBDWDixgDZX0M0	서울 마포구 동교로38길 33-10	6개 이상	false	false	-	2022-12-03 14:57:01	다솔
+0DlvoOSabRC4GFRMqIZISddBpQE7GfqCfYKJ	서울 마포구 동교로38길 30	6개 이상	false	false	-	2022-12-03 15:00:20	다솔
+9InN1kPsaGAR+xFNEoPDyEMLNM+fkGfhOYSO	서울 마포구 동교로38길 29	6개 이상	false	false	-	2022-12-03 15:01:23	다솔
+dds/EWt18VxW/8y+QkPKNsRUvr8Q/4H8xBmo	서울 강남구 강남대로100길 10	6개 이상	false	false	-	2022-12-03 15:03:33	동대문의아들
+FyMK2aSLpusXHE7Xo6zwOGP7jNHfCgaFMJL2	서울 마포구 와우산로29마길 6	6개 이상	false	false	-	2022-12-03 15:03:55	doobootofu
+3AQM7ux6IaR8KUHZb+yB+IXFLVuhkd3g1jZQ	서울 마포구 동교로46길 23	6개 이상	false	false	-	2022-12-03 15:07:08	다솔
+ScWJ2ZTnUPAj1bV4PLYNbleT4Tcm2zf0QkwF	서울 마포구 와우산로29마길 7	2~5개	false	false	-	2022-12-03 15:07:30	doobootofu
+CAxWSS6+L9Rn2dgF3+fDWIRuSx8qsRULrt9P	서울 강남구 봉은사로6길 38	0개	false	false	-	2022-12-03 14:58:33	동대문의아들
++NrUtfJJUn49LqP20Eap1tv+a/VPjOR6CYqK	서울 마포구 와우산로29바길 11-3	2~5개	false	false	-	2022-12-03 14:58:45	doobootofu
+57EO4HWR/w2honUFA3h/rPKoDF1f5ROantFP	서울 마포구 양화로 186	0개	false	true	0개	2022-12-03 15:05:09	-
+EMxooi0RgmRf9f26ps/N81ZUJWj7OsIRTOTo	서울 마포구 어울마당로 116	1개	false	false	-	2022-12-03 15:05:14	산타
+6kEgZAW06d4NqLtK1U7ltrw+JHrK98mW/D+d	서울 강남구 강남대로100길 13	0개	true	true	0개	2022-12-03 15:05:17	동대문의아들
+3vy2SxwCtcLdQqNQwxos2mVPhq3vQUakvbJV	서울 마포구 와우산로29마길 5	2~5개	false	false	-	2022-12-03 15:05:32	doobootofu
+jQLQmSvysWVYT3XUbdqAgte63BonwKs557Mx	서울 마포구 동교로46길 26	2~5개	false	false	-	2022-12-03 15:05:58	다솔
+OOsoa1ygPh30ayffy7T9NpkX69cRruViSOlI	서울 마포구 동교로46길 25	6개 이상	false	false	-	2022-12-03 15:08:08	다솔
+G5zgLs5/xV5IwKcktO49ACydeuzmCJcEUzrk	서울 마포구 와우산로29마길 15	6개 이상	false	false	-	2022-12-03 15:09:17	doobootofu
+Re4fqWt5uN/s9cAVwM/qinGISmD9euJQOoMz	서울 마포구 어울마당로 118	2~5개	false	true	2~5개	2022-12-03 15:10:07	산타
+/k3DklioSzfeEl+hngZ+k3d9tpdCx/vu2i4n	서울 마포구 동교로46길 36	2~5개	false	false	-	2022-12-03 15:10:21	다솔
+dY+i/tmcfUxqw+eGX5NzsBxF5b53yaO5K4R4	서울 마포구 동교로46길 22	2~5개	false	false	-	2022-12-03 15:11:19	다솔
+cdiLtaTslEotJ3AaoVkFKB975uAaD8qLI+CK	서울 강남구 테헤란로1길 44	0개	false	false	-	2022-12-03 15:11:22	동대문의아들
+a1u0QwDQHOlEH5eBPf7yOko+7OmKzLTG9qYm	서울 강남구 강남대로94길 55-3	0개	false	false	-	2022-12-03 15:12:37	-
+MkEESy7siv2nzYE7EtzHfkiT8Qdu9wEmPk9y	서울 마포구 성미산로 190-11	6개 이상	false	false	-	2022-12-03 15:13:08	다솔
+DIGmiCd7E/wgEhTH0m2jNeweBzmWEwQzjXBp	서울 마포구 성미산로 190-31	6개 이상	false	false	-	2022-12-03 15:14:48	다솔
+yHZLyQzhHYGxrj9C9NYYuWR4AWOcN8EQNCvo	서울 강남구 강남대로94길 55-10	1개	false	false	-	2022-12-03 15:14:58	-
+nPivPG3V6sxtIRur0KunjPSqoggNEKVX7ekg	서울 강남구 테헤란로1길 42	0개	false	true	0개	2022-12-03 15:15:37	동대문의아들
+Ad68essWAz+RRukauDT8wKld06bRQ8+xdNUH	서울 마포구 성미산로 190-33	6개 이상	false	false	-	2022-12-03 15:16:14	다솔
+y9oj5yLLDGyoXTQuj+P1kvO9LfdLw69KVtQ4	서울 마포구 어울마당로 120	2~5개	false	false	-	2022-12-03 15:17:06	산타
+NrK6L2gg/QA5m/kh0+gSAflKcdP0zHP/dEj9	서울 마포구 양화로 177-1	0개	false	false	-	2022-12-03 15:17:51	이대호
+235zx2oNVsYBPlOjkZuKPwRLM5yOs9Fegmz7	서울 서초구 서초대로73길 12	0개	true	false	-	2022-12-03 15:18:05	정의준
+eF8KiubWuBvN1K4FovKDe5KWp9fIkkGsZ7Qq	서울 강남구 테헤란로1길 40	2~5개	false	true	0개	2022-12-03 15:18:30	동대문의아들
+SqsFqQYWrz4xkGiqA4woruFKqZArydtPLzJd	서울 마포구 동교로46길 16	6개 이상	false	false	-	2022-12-03 15:19:43	다솔
+tnTUd/B4sYc4ChVTCTmP2ckx9Pf941tzbY3n	서울 마포구 월드컵북로2길 82	1개	false	true	2~5개	2022-12-03 15:20:42	이대호
+04KLpCbw0ObqNMfBvB+nyNs65oVW17GdrBu9	서울 마포구 와우산로23길 50	2~5개	false	false	-	2022-12-03 15:21:43	산타
+cSbfZ5nmvCNxsIkRp/87dxLX1RVkuAe04P9U	서울 서초구 서초대로 411	0개	false	true	0개	2022-12-03 15:21:50	정의준
+4FnzleJU+xGbLK/8AKylta3hmKTxAgPmVy04	서울 강남구 강남대로 428	6개 이상	false	true	0개	2022-12-03 15:22:18	동대문의아들
+Uw50ljKXod6sWryoxRWHkR1vRU1x+Fa3ZGuJ	서울 마포구 양화로19길 10	1개	false	false	-	2022-12-03 15:23:04	이대호
++gEofmerNeEv+K/DVFz1LeeO7yujpRJEY93M	서울 마포구 월드컵북로2길 86	1개	false	true	0개	2022-12-03 15:24:16	-
+EpESEP/gWfkpdw5ntoyXqjTEcp7qPFW6MEwd	서울 마포구 홍익로2길 27	0개	true	false	-	2022-12-03 15:25:26	산타
+J3axYRJRNKWTNnlZYhY6qsKZoyu0q2WPCIUU	서울 마포구 홍익로2길 31	6개 이상	false	false	-	2022-12-03 15:25:34	은정
+SnaV/Gf2yjxtmYHG6JbOy3kllMwQjmRr11M4	서울 마포구 와우산로29마길 26-1	2~5개	false	false	-	2022-12-03 15:25:43	doobootofu
+Ocwy9Ix3I26wgMUMy5sslkGepg97DsmtxwEJ	서울 서초구 서초대로77길 3	2~5개	false	true	0개	2022-12-03 15:26:22	정의준
++rv3qrHkZchhF0+lws+MlVlZQSKTXsyKZJSs	서울 마포구 와우산로29마길 16	6개 이상	false	false	-	2022-12-03 15:27:08	doobootofu
+tqHQaxJr5FJEqnIC6+8myZuicydYmPzwEcDy	서울 마포구 양화로19길 18	1개	false	false	-	2022-12-03 15:27:34	이대호
+nWzMncadtvXlywzEiVYfIIhwGQtVA4PsU3NB	서울 마포구 어울마당로 124	2~5개	false	false	-	2022-12-03 15:29:18	산타
+DrIqnoQ38Np2Pt13zDPmuHXAmVaMRdDa/PCY	서울 마포구 어울마당로 122-1	6개 이상	false	false	-	2022-12-03 15:30:04	은정
+Isf5SeMy1nkpHEc4JMRx5+TsZkr2dZ4UDd7H	서울 강남구 논현로64길 14	0개	true	false	-	2022-12-03 15:31:38	동대문의아들
+LvV2PQyHNgYdQTMoxeLsFnPIsMCRG2jTxtcJ	서울 마포구 어울마당로 122	2~5개	false	false	-	2022-12-03 15:31:58	산타
+TdD/VFy1c9MY4Qvk5cNSa070YlFV2Kfw+DOe	서울 마포구 양화로21길 21	2~5개	false	false	-	2022-12-03 15:32:08	이대호
+Rebnu+Gl8+C0fHhFKvJUWpVMJebemIRVEag7	서울 마포구 와우산로29길 64	6개 이상	false	false	-	2022-12-03 15:32:46	doobootofu
+JE/E5C6heI9DCXK5cwoZV+xCFLzU/DMHtWzi	서울 서초구 서초대로77길 5	0개	true	true	0개	2022-12-03 15:33:11	썽니
+DUZxcRSUp0fyo6oi9CpsdbnE8/y1YWOYit0L	서울 마포구 어울마당로 121	6개 이상	false	false	-	2022-12-03 15:34:33	은정
+K52wSXOf+d3d8A+dsQ+O5qDo0pSOMp43yo7G	서울 마포구 와우산로29길 66	1개	false	false	-	2022-12-03 15:34:39	doobootofu
+HD4bUDnctdpfdgFZaBF0OCVRSwZSmVqjX0cf	서울 서초구 서초대로77길 9	0개	true	true	0개	2022-12-03 15:34:41	썽니
+hpGpZ8HbLsugE2tYnx7VrG5Kxc0URDusYneP	서울 마포구 홍익로6길 26	2~5개	false	false	-	2022-12-03 15:34:48	산타
+rIOFiYtw+FpKhjlEoyvKopbB2zAz2eS97OLg	서울 마포구 어울마당로 115-2	6개 이상	false	false	-	2022-12-03 15:37:10	산타
+WFh6LKy15tYUkmCETAg3/FLMV7ommfghrxYp	서울 강남구 강남대로 442	6개 이상	false	true	0개	2022-12-03 15:39:02	동대문의아들
+tw4rTNak0AoIl+WnooE1gXgdTZI0oc6GouVg	서울 마포구 양화로23길 22	2~5개	false	false	-	2022-12-03 15:35:57	이대호
+D4HIfU6hQeVH2pHBHRXBfyo3gNrbRQgdcaWf	서울 서초구 서초대로77길 15	2~5개	false	true	2~5개	2022-12-03 15:40:27	정의준
+06cUuxW0e+UXSSONlfxRkptzc0C8I1p2XXwN	서울 서초구 서초대로77길 13	2~5개	false	true	2~5개	2022-12-03 15:40:47	썽니
+yvL1rdJ5QJDRblRf6JzPSQFmEBwzwXzup5yD	서울 마포구 홍익로6길 23	2~5개	false	false	-	2022-12-03 15:41:24	산타
+veDmyAxp0UUMdNHmXA+roFZ52nQgwAvTN53W	서울 마포구 홍익로6길 15	0개	true	true	0개	2022-12-03 15:43:21	은정
+3zPZ+SG685FaF9h+bLsVks6+ke8DiSf52woE	서울 서초구 강남대로 415	2~5개	false	true	0개	2022-12-03 15:43:56	썽니
+b+Mexj8z+EplbeGD5irnowjfAr3pQmH5kpPE	서울 마포구 동교로38길 19	6개 이상	true	false	-	2022-12-03 16:20:18	hood00
+uQ5lDOBX7LizZL4GALU88N+TFAROIaYTRSEF	경기 성남시 분당구 판교로 440	0개	false	true	0개	2022-12-03 23:29:20	-
+qxJ+vZ347wf8EqhoVYerRSWMEyj1DhdaU4h4	인천 계양구 오류남길 8	2~5개	false	false	-	2022-12-04 13:01:26	hood00
+ANKrol0f2O4N/uIxj3HShOdIFZMkfQH5miEL	인천 계양구 다남로 24	2~5개	true	true	0개	2022-12-04 13:20:48	hood00
+pry+WwnyjH3/M+kfk7OIx3eE+Aeo/1QvnjPI	서울 강남구 테헤란로 120	1개	true	true	0개	2022-12-04 14:21:15	myungh5
+fJAvz2jJTjV1ACVivJU7Vo+7lEinqUoheHGy	서울 마포구 양화로 188	2~5개	true	false	-	2022-12-04 14:25:14	민혁
+ZdmRCOLHb3GAplkLyhlX+1ocq3zb3pgubNPf	서울 강남구 테헤란로 124	2~5개	true	true	2~5개	2022-12-04 14:26:08	myungh5
+5E/VcSnTXKW/8pHUSaAgdkNZOnJtuixZHgzV	서울 마포구 양화로 178-8	0개	true	false	-	2022-12-04 14:28:28	민혁
+stMEB1iZL6BPn+a3LxXndB8ndqJmuROvBKrX	서울 마포구 연희로 19	6개 이상	true	false	-	2022-12-04 14:29:00	수면
+5Whi8+rAH+RY0bge98oerxJkJ4DVg3PHEliU	서울 마포구 홍익로6길 83	6개 이상	false	false	-	2022-12-04 14:30:05	민혁
+YcBdWLvzLfuLJFMrM7GO0YI1xoIHOdkCCuto	서울 강남구 테헤란로 113	2~5개	false	true	0개	2022-12-04 14:30:39	wjsqhr05252
+rVpnrBYV1QKkg6OayzlnoLzkbZ6fmyx7jELL	서울 마포구 홍익로6길 78	6개 이상	false	false	-	2022-12-04 14:31:28	민혁
+13u00T3MNGylUWMJGNg2LdddWWxPq6YZ5Ag0	서울 마포구 동교로 232	0개	false	false	-	2022-12-04 14:32:08	산타
+51admmK47LTrj6zxxMPEWusEx2FxvCo8GCnR	서울 마포구 연희로 25-1	2~5개	true	true	2~5개	2022-12-04 14:32:30	수면
+On54DPKQdvF6bAsGWBct9pIqGQBjORavLhkQ	서울 마포구 양화로18안길 12	6개 이상	false	false	-	2022-12-04 14:33:57	민혁
++ODWg3N3Yng9cNErzsvIRX8tkG5KfMEcIC07	서울 마포구 신촌로4길 20	1개	true	true	2~5개	2022-12-04 14:34:43	제니
+OMWqaXpfAkMcdDDIu4jvLPelMvI5wMET7T0d	서울 마포구 양화로18안길 16	6개 이상	false	false	-	2022-12-04 14:35:48	민혁
++wAKjNV9feZ+yzO08gfUlrLnjm0nPIVke8aC	서울 마포구 연희로1길 65	6개 이상	true	false	-	2022-12-04 14:36:15	수면
+r/gmxIuC6C04PNpoacp8l1B1O2kaHMAf+Uxh	서울 마포구 양화로18안길 18	6개 이상	false	false	-	2022-12-04 14:37:41	민혁
+IovrH8tM1D/binYPMxJ2GfDySrZ0gCnYBLkb	서울 마포구 와우산로35길 55	0개	false	false	-	2022-12-04 14:39:11	제니
+bvI8whlNwxtQgnsT1pnADxdjj/sP2h6GRIMQ	서울 마포구 동교로34길 9	6개 이상	false	false	-	2022-12-04 14:39:21	웅이
+4nC0IEiasJ41M+vVb+b7fis1y465rNfwEA7c	서울 마포구 양화로18안길 22	6개 이상	true	true	0개	2022-12-04 14:39:36	민혁
+QnJmOZKaqMgS9SsJTt7/ctFAYTQbYOhtT5ir	서울 마포구 와우산로35길 53	0개	false	false	-	2022-12-04 14:40:49	제니
+s87NOynOTp6bc+wfO4cfeP0Jd69YVUddrLf4	서울 마포구 양화로18안길 28	6개 이상	false	false	-	2022-12-04 14:41:19	민혁
+pe4SeOb5cKpHMGDOoQZ5yL72C7hVFNHHeDaR	서울 강남구 테헤란로 126	2~5개	false	true	2~5개	2022-12-04 14:41:35	myungh5
+tJW4hTSxrXgnWHT7QobNtcRH8NBhokXzJyY0	서울 마포구 신촌로2길 5-13	6개 이상	false	false	-	2022-12-04 14:41:37	-
+BtaZIyVzVqcATeBoYwxTcZ/k9FMUqg+aWKEy	서울 마포구 연희로 31	2~5개	true	true	6개 이상	2022-12-04 14:42:17	수면
+GijFpBcVtYml9nlYRGD/Wm+dO0VxUQDiFCeQ	서울 마포구 양화로18안길 26-5	6개 이상	false	false	-	2022-12-04 14:42:38	hood00
+iUJ5kfbD2Sf/qA3MPM7PBYmMldv3r20r14No	서울 마포구 양화로18안길 26-6	2~5개	false	true	2~5개	2022-12-04 14:42:49	민혁
+CJ/JlLBY1UbxBoYesAK1wWo8bnw6LudUkGMn	서울 강남구 테헤란로5길 7	6개 이상	false	true	0개	2022-12-04 14:42:50	wjsqhr05252
+6FCGX34fbAFgQihALpO+YIGjlsIVcqLOmaQ9	서울 마포구 와우산로29길 48-29	2~5개	true	false	-	2022-12-04 14:43:08	제니
+1Lo8d1yFjJOrlzZ04I/YHTmDdnXT6OUXmqnp	서울 강남구 테헤란로14길 6	1개	true	true	1개	2022-12-04 14:44:06	myungh5
+7NeS3EgmNJMx4pvVJ/LZYLjcOOVv78OYhTiw	서울 마포구 양화로 176	2~5개	false	true	0개	2022-12-04 14:44:43	현진
+G5Kfj647E5kBPDr6FcptMEFdsRO4+EUVZeAv	서울 마포구 어울마당로 147-1	0개	true	true	0개	2022-12-04 14:44:58	민혁
+5+e/kT57tYTGRqGjCc92zWYnOm8Km+c1u9Vk	서울 강남구 테헤란로8길 28-4	0개	false	true	0개	2022-12-10 14:58:05	-
+YDmBmIS5yLLlil9q8hqbtkr8lm4FU1iHAwb8	서울 마포구 어울마당로 149	6개 이상	false	false	-	2022-12-04 14:46:20	민혁
+Hd2HNQzKZKZyuV8KgCxEBeuTv1/qmaBPon8L	서울 강남구 테헤란로14길 8	2~5개	true	true	1개	2022-12-04 14:46:30	myungh5
+roN+J5l85hLnpKJKp430tX/oqVvG0jQYIA30	서울 마포구 어울마당로 149-1	2~5개	false	false	-	2022-12-04 14:47:09	민혁
+SHSUOtli3n1mdX/OeIiukNvK0Y1SZFHYnBEe	서울 마포구 와우산로29길 48-14	0개	true	true	0개	2022-12-04 14:47:49	제니
+jYZRQdHaPiFXwVyK1EwGAS8nYQ0vhgzU8T7e	서울 마포구 동교로46길 42-3	6개 이상	false	false	-	2022-12-04 14:48:02	수면
+y1nGuVLj2PLW8nZTHgynDn7jV/Xpu0pPwmfK	서울 마포구 어울마당로 149-3	2~5개	false	false	-	2022-12-04 14:48:11	hood00
+/GR/3xAiex+Vz6SJfYOOZR1zb4qrLAKmGgd1	서울 마포구 어울마당로 151	2~5개	false	false	-	2022-12-04 14:48:33	민혁
+yLRYeVG7wgVkHaMvIHQ3g2FbEJX0tdh5EfGw	서울 마포구 동교로38안길 21	2~5개	false	false	-	2022-12-04 14:49:08	웅이
+TdaO19y3W29+pcHGB/6YON1YU9i83ejhlTsZ	서울 마포구 와우산로29길 44	6개 이상	false	false	-	2022-12-04 14:50:25	제니
+mCoYg9SgIrt99MO+cpmxUNiPT+/qezJIp1W5	서울 강남구 강남대로94길 28	0개	false	true	0개	2022-12-04 14:50:39	wjsqhr05252
+NgaKxXdc5Cb61DEkQ8IXkHJ7URjjP644/qxO	서울 마포구 신촌로4길 5-25	0개	false	false	-	2022-12-04 14:50:42	-
+wCgN0uzhHi2X5Arhc408vL1kmK/TxLXNV2TD	서울 마포구 동교로46길 42-20	6개 이상	false	false	-	2022-12-04 14:51:08	수면
+n01W4yp2h0l43umpUoWtlPk/9dPaxF85ABTG	서울 마포구 어울마당로 145-2	1개	false	false	-	2022-12-04 14:51:16	민혁
+lZuDFkCl+azsUSpXbBUnigTYZLypSMTAk/Kl	서울 마포구 와우산로15길 34	1개	false	false	-	2022-12-04 14:52:06	민혁
+duxzPWndkwpcAhh3czZE9ySOhEP8m5vsK8XO	서울 마포구 동교로38안길 10	1개	false	false	-	2022-12-04 14:52:39	산타
+pmTCJw4UiYGVFD5Tt8mwfQMVfgE5r60h+meB	서울 마포구 신촌로 32	2~5개	false	true	2~5개	2022-12-04 14:53:47	-
+NSnVhsPMK/2BDLbaZBGZ5F9Hi8eoOIMKNIfH	서울 마포구 어울마당로 139	6개 이상	false	false	-	2022-12-04 14:53:48	민혁
+BjdUHxETICx0DRWrVJYTbG7CJYgUuZ5ify1U	서울 마포구 어울마당로 144	2~5개	false	false	-	2022-12-04 14:54:44	민혁
+sViuvPzUP3hczZv3drkncEsNcgFhH+9WL4xP	서울 마포구 동교로38안길 3	0개	false	false	-	2022-12-04 14:54:45	산타
+tjtfcH8jNA+/y9guzwYo4dFsqSoqVehF0fmI	서울 마포구 와우산로29길 40	2~5개	false	true	6개 이상	2022-12-04 14:54:51	제니
+utbVsw9+gj0xUflA9bN44NydU6LVO7Ps2NaK	서울 서초구 서초대로 405	2~5개	true	true	0개	2022-12-04 14:54:52	ㅇ나
+OHfGaKVZN71U8ah79Z0iKugqcpXFZFwPDGf8	서울 마포구 양화로18길 3	0개	false	true	0개	2022-12-04 14:54:54	현진
+hCe6opQXEyUt0jWU+H6PRWzjNUdwFX+zOayc	서울 강남구 테헤란로14길 16	2~5개	true	true	2~5개	2022-12-04 14:55:45	myungh5
+aFWtmDu6Zc0cWLhLoLlyQJCR0g+zw3wM4spe	서울 마포구 동교로38안길 5	1개	false	false	-	2022-12-04 14:56:10	웅이
+aKRBQDvtIuGbT36A1cUR7YXELXiRnS5qvhxk	서울 마포구 연희로 37	6개 이상	true	false	-	2022-12-04 14:56:19	수면
+1dVuTOQtu5lDEj1EeSodmSCqFWyF9bUC9Sd5	서울 마포구 와우산로29길 70	1개	false	false	-	2022-12-04 14:56:58	민혁
+Q8LZEdFIgioIVBzNF7glRA4kJVrZg8ICnV2f	서울 마포구 양화로18길 9	2~5개	false	false	-	2022-12-04 14:57:11	현진
+Lg0fYCnxkCJoLmx1APS2UBK/bJkHQ1mQ5C1v	서울 마포구 와우산로29길 37	1개	false	true	1개	2022-12-04 14:57:12	제니
+F+ILRaCpB4VXivf2cL2j3xAkoeqNtErXFRnN	서울 마포구 동교로38길 13	1개	false	false	-	2022-12-04 14:57:44	산타
+dsMXcjBTHENKJY5SEfb9A6RYSRWYhKb642kr	서울 마포구 동교로38길 11	6개 이상	false	false	-	2022-12-04 14:58:17	웅이
+fCeR6ilG8gKmG4sJBS4JbdC2k/shuXS65COP	서울 강남구 테헤란로10길 21	2~5개	false	false	-	2022-12-04 14:58:18	myungh5
+LPI2Fge/8WkZPxP4QJLNxvT1n41GwBs2vASX	서울 마포구 와우산로29길 33	0개	false	false	-	2022-12-04 14:58:42	제니
+7P3M/neiAMZkNqZ1Bv2RmRQNLfSmGlczW9qs	서울 마포구 성미산로 200	1개	true	false	-	2022-12-04 14:59:00	수면
+m0e07L3z0XzV/NC6wQRHpfW9IL1cS7eeKJX8	서울 마포구 동교로38길 16	6개 이상	false	false	-	2022-12-04 14:59:42	산타
+Llr+LhUBjIri4I2fi/BmSCbDvIhWC+QeUgYW	서울 마포구 성미산로 198	1개	true	false	-	2022-12-04 14:59:46	Yb
+gsMpwpQ8H0otezxayiZWu6JALrrlyNvEw0AG	서울 강남구 테헤란로6길 30	1개	false	false	-	2022-12-04 14:59:50	-
+WeoRoC/b4k2P8VGT4FT9If2beBrh49mdM8nM	서울 마포구 와우산로35길 75	6개 이상	false	false	-	2022-12-04 15:00:29	민혁
+lMR6AE/HRPQvclvjyavST3rNhDMsLOHUgcgB	서울 마포구 어울마당로 114	2~5개	true	true	0개	2022-12-04 15:00:56	현진
+gCoF++aZwWWGkLIr8vqD09GvRgMjTd02Z804	서울 마포구 와우산로35길 71	6개 이상	false	false	-	2022-12-04 15:01:17	민혁
+ZX4TnegHlLPLzUqbBTC81CxZaimuTS3tf6JF	서울 마포구 와우산로29길 32	6개 이상	false	false	-	2022-12-04 15:01:18	제니
+ALbsoHDguEpvALbw1ASiqwWPxLjLWEY1PQwu	서울 마포구 동교로38길 6-5	1개	false	false	-	2022-12-04 15:02:38	웅이
+Nz6PhXMHbfhQVCFKHrG/BGwk7gsl33oSKwbr	서울 마포구 와우산로29길 30	1개	false	false	-	2022-12-04 15:02:47	제니
+joMU1zW2Mb+S7g+/H6mhwUY/AXwObSFQOuNo	서울 강남구 테헤란로4길 27	2~5개	false	true	6개 이상	2022-12-04 15:02:52	-
+33dHmsgoAlXwFaWwyGZLQMGoADgiH6kr+f/T	서울 강남구 테헤란로10길 25	0개	false	false	-	2022-12-04 15:03:26	myungh5
+P8Efxtzw6AGXj/kFEvGYbE5oFPyLE8Z1eD1b	서울 마포구 와우산로29길 69	6개 이상	false	true	6개 이상	2022-12-04 15:03:49	민혁
+/danr6N20i2bG4ni7V3mJNOqJfDOPTT683l7	서울 마포구 동교로 248-1	0개	false	false	-	2022-12-04 15:05:34	산타
+In0NZdUqgw0ZHxJ2T9QMn8pfm2lDCfdOe6gB	서울 강남구 테헤란로4길 33	1개	false	true	0개	2022-12-04 15:04:15	-
+f9J2F0paj+3Y16gBiodPkpkvnLDPPI9O66iy	서울 마포구 와우산로29바길 5	6개 이상	false	false	-	2022-12-04 15:05:05	민혁
+hiQ9haF0M2fVs5GXWfOmpBgfOd9N517Fn93C	서울 서초구 강남대로61길 23	0개	true	true	0개	2022-12-04 15:06:59	ㅇ나
+9HWr468RjjJ6PGMmenzy6h4Me5wVev9d2n4B	서울 마포구 홍익로6길 56	2~5개	false	false	-	2022-12-04 15:10:04	현진
+DV8xS1wTYtYscA+Vnkt2XuF4vPdXSUhYX8TQ	서울 마포구 와우산로29길 26-8	1개	false	false	-	2022-12-04 15:10:38	제니
++HHRZIPEzE/wtYUBvYCBhFjTlTMvHxtdb4bO	서울 강남구 테헤란로8길 11-4	0개	false	true	0개	2022-12-04 15:11:46	myungh5
+Z0O9h1ls/99Rl6JqfGa5rhDi0ZPHm4qxd3I2	서울 강남구 테헤란로4길 38-5	0개	true	true	6개 이상	2022-12-04 15:12:57	-
+NDnyvZlzBxYKpmMXPG93qn4w+cjDggXgXlDs	서울 마포구 홍익로6길 52	6개 이상	false	false	-	2022-12-04 15:13:03	현진
+oXt2q/WSNFwzGpZoDga4yX5IcDrSppjOO7TG	서울 마포구 동교로38길 27-4	6개 이상	false	false	-	2022-12-04 15:16:46	수면
+/j31OT9YQFgmk28F6eD/9j3iaU9ldRPalqs/	서울 마포구 양화로18길 15	1개	false	false	-	2022-12-04 15:18:19	현진
+vPrOaYNKyNsRUDUqP41UwmzDaMZWxUzPTmQ5	서울 서대문구 신촌로 31	0개	false	false	-	2022-12-04 15:20:17	-
+3/N7wQhFfpuKIsqvaAcUGS0yZto9IZth3UnT	서울 마포구 와우산로33길 26-13	0개	false	true	0개	2022-12-04 15:20:47	박찬미
+GbcLP44qDSxTJx2TScbKKFj7j8jJxxMvbqs5	서울 마포구 동교로46길 29	0개	false	false	-	2022-12-04 15:06:11	Yb
+J83ESynEcHxHCzZ2WEa4u+8Sx4sQX7giHrDr	서울 마포구 와우산로29길 26-5	1개	false	false	-	2022-12-04 15:06:26	제니
+pXXKMl5Wu/b05Sqw6ab5o579T1tW3zHhaQXK	서울 마포구 와우산로29바길 11	6개 이상	false	false	-	2022-12-04 15:06:52	민혁
+1HnCrrfiLgw7N+M5xDdW9dxiri7gy3ZaIaAH	서울 마포구 양화로18안길 7	1개	false	true	0개	2022-12-04 15:06:59	현진
+7ISzoQ2CjH2zuMBTGIPiw3bR1M7HLJeRltrG	서울 마포구 와우산로29길 26-33	2~5개	false	false	-	2022-12-04 15:08:04	제니
+kSy2UTR3vB6zJDIj4tKanqQubRrNeZNk40I2	서울 강남구 테헤란로10길 18	0개	false	true	0개	2022-12-04 15:08:50	myungh5
+EUmULp/Jj5EUYXX/v70yjPu1XnmmkguXZPK/	서울 강남구 테헤란로4길 38	2~5개	true	false	-	2022-12-04 15:09:09	-
+yT3KdXWcihyRogZsqOnAuW45I/IjW30HBG0F	서울 마포구 동교로46길 27	6개 이상	false	false	-	2022-12-04 15:10:00	수면
+w/NVrNl6Olqd6QLJhTClXBDQzPHS9RnZ+L9c	서울 강남구 테헤란로10길 14	0개	false	false	-	2022-12-04 15:10:09	myungh5
+cvYlfbVsZ4vTEPEG/kyI8FDY7DLqfPbK3zRj	서울 마포구 어울마당로 136-13	6개 이상	false	false	-	2022-12-04 15:10:23	hood00
+rk0goFRjVc27CcyRNCGvmeIXs0RQJnejoen7	서울 서초구 강남대로61길 25	1개	false	false	-	2022-12-04 15:11:22	ㅇ나
+D2w7PuhgSfdB4rRS5Dio7JN/5bx/rYbSHCom	서울 마포구 동교로 254	2~5개	false	false	-	2022-12-04 15:11:53	웅이
+jE3oQTk25XlN56ZTZMvc7/NkXccG+EOvMhCc	서울 마포구 와우산로29바길 16	6개 이상	false	false	-	2022-12-04 15:12:39	hood00
+kTZlZkfsuF34yWDSYxOLODiyYTkEmFY9Y6PJ	서울 강남구 테헤란로8길 11	2~5개	false	false	-	2022-12-04 15:13:35	myungh5
+d35tRsmQvIsGs9QptToPQoghfhBYwr+g7RUU	서울 마포구 홍익로6길 46	1개	false	false	-	2022-12-04 15:14:37	현진
+gkGe9Mp40orWBHgxBj2dKeThZN+xaWnFyWjl	서울 마포구 동교로38길 27-5	1개	false	false	-	2022-12-04 15:15:25	수면
+wZsuew7Ue2zE/f4yOxqLYcEY86q+fwtxfO7L	서울 마포구 어울마당로 133	2~5개	false	false	-	2022-12-04 15:20:03	현진
+FWOWeQPhefzFWDdlieGxNlSJ5P+OAvRRDjoZ	서울 강남구 테헤란로1길 28-3	6개 이상	false	false	-	2022-12-04 15:21:46	wjsqhr05252
+1JumeqrG4eBvmmlzV4bEY9Vw+3LPq79CQIL/	서울 마포구 어울마당로 131-1	1개	false	false	-	2022-12-04 15:22:03	현진
+OSr4IIFMfgts/x5eZMYvpT10zPC/cfZxDpcF	서울 강남구 테헤란로 123	6개 이상	false	false	-	2022-12-04 15:23:07	myungh5
+PqAqGPTyxVU4/tPvBfRBY+RIXe2La0OI9Bqz	서울 마포구 어울마당로 134	1개	true	true	0개	2022-12-04 15:23:27	채은
+sY3hgC6YfBmjyH+rDkO7Xqq1vWnYggsvaI/m	서울 강남구 강남대로96길 11-4	2~5개	false	false	-	2022-12-04 15:23:46	wjsqhr05252
+efk2JiBNaRqmyMJWRfJpkUZsoVA7ihagzGt5	서울 마포구 홍익로 29	6개 이상	false	false	-	2022-12-10 15:15:34	rladbswl7112
+aBJhPgSXx38rMyBzKqk4qmR7CUcjH17EhcBv	서울 마포구 어울마당로 130	2~5개	false	true	2~5개	2022-12-04 15:27:32	채은
+frnciQCv+UWmr3rxZoNqT8KC0v0vzlOsjYJ1	서울 마포구 어울마당로 127-1	0개	false	false	-	2022-12-04 15:27:39	현진
+OJ//kPJ+CTPV2XCcUmgyZeurhrkD+HfYMqmG	서울 강남구 역삼로3길 20	2~5개	true	true	0개	2022-12-04 15:27:48	-
++Hh6ltKGDyDVojvRkoxguFdtBoCjmAiQSLo4	서울 마포구 동교로38길 33-14	6개 이상	false	false	-	2022-12-04 15:28:30	수면
+12HBZo0chOCX17Tn1l/nljDLSAYYiDGlHLZ1	서울 강남구 강남대로94길 59	2~5개	false	true	2~5개	2022-12-04 15:28:32	myungh5
+A8uGlNbNGxT/9sR1z5Fc0SeLSTOdhQSAK3gj	서울 서초구 서초대로 397	2~5개	true	true	2~5개	2022-12-04 15:30:07	ㅇ나
+jcafFQi/G4DDdvTzD4f2CIOnKXzTe9S2Mj9c	서울 마포구 동교로38길 33-20	6개 이상	false	false	-	2022-12-04 15:30:24	수면
+uBB1JIk7cU4UVms2mPevDfBeSmDHxz3ckn6d	서울 강남구 테헤란로13길 17	2~5개	false	false	-	2022-12-04 15:30:36	myungh5
+ISTW/tPy0SCrL5nN5hQiBvzrQ4isWnU8vjWw	서울 강남구 역삼로3길 17	0개	true	true	2~5개	2022-12-04 15:31:38	-
+r8HKQA8JuMqvOVTHJtrVN3MPoa4hB5olsUJ/	서울 마포구 신촌로6길 22	2~5개	false	false	-	2022-12-04 15:32:22	박찬미
+l2bBvbO6wP+h8oy6OBjLt0f4kZiVpooDjuao	서울 서대문구 연희로2안길 7-29	1개	false	true	0개	2022-12-04 15:33:18	-
+J6pN8/w+CjMPTMqFbYIkRI5LGNQU1XXoI/xP	서울 마포구 양화로 166	2~5개	true	true	0개	2022-12-04 15:33:21	현진
+LsNHwI6jkgVdQsuo9Pup2afS046jsnl5UlaE	서울 마포구 신촌로6길 18	6개 이상	false	false	-	2022-12-04 15:36:59	박찬미
+3WTycST9MZ+5JyrymvFQgUiI3C8GVrgc/Txi	서울 마포구 동교로38길 26-7	0개	false	false	-	2022-12-04 15:39:52	-
+wjoypDrWLZmqaeRBhVJ1Kz/nL+t++BLPXMUY	서울 강남구 테헤란로10길 9	0개	false	true	0개	2022-12-04 15:41:08	myungh5
+MBNEKR0+UARu2V/aoHY6nPupTm017WNVYcXf	서울 마포구 양화로 162	0개	true	true	0개	2022-12-04 15:42:31	현진
+jtWGvYkOVGylXhBcK03F4XgzwXO3nTuMQFDX	서울 마포구 동교로 251	1개	false	false	-	2022-12-04 15:43:56	웅이
+3s1iYpdKlphelbVpt39leen8gKir1MYhNmyl	서울 마포구 동교로 249	6개 이상	false	false	-	2022-12-04 15:45:33	산타
+ux6mb71u9BVNYxKwsPPpHuxQLSN59nBC2x9v	서울 마포구 동교로 247	0개	false	false	-	2022-12-04 15:47:06	웅이
+ZJxkYBfNfqwA4gRH4zMI5SwM+5fxvWwnZysw	서울 마포구 어울마당로 141	1개	false	false	-	2022-12-11 14:42:46	-
+Dd40z5ZZ94/PIpdkwDZQSCKb5akXb8VmZtg2	경기 성남시 분당구 성남대로925번길 16	0개	false	true	0개	2022-12-07 10:53:12	-
+2gHjmjMmsmzXSExx3efF3LjE6efj9fLjPpA6	서울 마포구 연희로 1	2~5개	false	false	-	2022-12-10 14:22:11	산타
+at+TR+WEPhVL0LayNl5PcY29tybGGfvNwge7	서울 강남구 강남대로 382	2~5개	true	true	0개	2022-12-10 14:24:07	-
+NLZsLzjPowAVGEoUglLp4XaiUHmiK1ou6mBP	서울 서초구 강남대로 399	0개	false	true	0개	2022-12-10 14:25:52	Sonny
+zd3TtgygNtW7eyhYM8c3DngR9ZONKd3srsD1	서울 마포구 홍익로6길 8	6개 이상	false	false	-	2022-12-10 14:28:56	-
+nmWCLzn7B76N/xgGIDwhxkXVFaBZCM8mkxqD	서울 마포구 양화로 141	0개	false	true	0개	2022-12-10 14:29:14	Eej
+uNBCUPHt5s/b9b2cAG2AqZX8HRPZlh8mCXJ5	서울 마포구 동교로 181-9	0개	false	false	-	2022-12-10 14:30:10	sputnik1905
+Ag4h22EJjO/ChUDG5mtM1uHhViFtXPogUzT7	서울 마포구 홍익로2길 13	2~5개	false	false	-	2022-12-10 14:30:32	ej
+MOYL8sxRbEEi8xpSgq/sBgjQmLlQDDonpYIs	서울 마포구 연희로 11	2~5개	true	true	2~5개	2022-12-10 14:31:29	산타
+562CMdWypKLd1gjv5KtSSrSityHTX+7vyYeh	서울 마포구 연희로1길 7	6개 이상	false	false	-	2022-12-10 14:33:03	산타
+rbBqd6bG7W9b2/tkxPWsVDFrD46vUEaf/Emc	서울 마포구 월드컵북로4길 20	2~5개	false	false	-	2022-12-10 14:33:45	sputnik1905
+5lvkxHbhkADQTfuBuRq9/kfF48UJtKsXmdq8	서울 마포구 연희로1길 9	2~5개	false	false	-	2022-12-10 14:34:19	산타
+h9d6K+mOkhuoa+Z7feaHEL2LmbP7fCXSKFnQ	서울 마포구 홍익로2길 23	1개	false	false	-	2022-12-10 14:36:37	수면
+vJQBlR12Z+i2vdLHl+S2qU0b24xVJIP9qugV	서울 마포구 와우산로23길 44	6개 이상	false	false	-	2022-12-10 14:36:54	-
+jPXhWmVWD7t7n7VeTJn1HoE5znKmYAHOuXFs	서울 마포구 양화로6길 57	6개 이상	false	false	-	2022-12-10 14:37:01	sputnik1905
+9rOItkzvwfUNkYTG8mZ6JlmKC1xnaR+fmIgV	서울 마포구 양화로23길 10-8	2~5개	false	false	-	2022-12-10 14:38:03	산타
+lHcrz2cFLfBKuQWRq5ainplNNjpxBqvMw7C4	서울 마포구 와우산로23길 42	1개	true	false	-	2022-12-10 14:38:38	-
+8xVGUVYOH+06/XR5XPQQfZf3cCAp+PJrcdO6	서울 마포구 와우산로23길 40	2~5개	false	false	-	2022-12-10 14:40:15	-
+MgMbpRV6Od5VaGNvxP+Z6FSel0LCkkI2euce	서울 마포구 양화로23길 10	2~5개	false	false	-	2022-12-10 14:41:38	산타
+iIQACATk/JLvYzy0qSjkPUZ7lZEqFtXlyqcj	서울 마포구 와우산로23길 35	1개	true	false	-	2022-12-10 14:41:46	-
+mQUsKVS9Pi7WC8EjoDEt2zGS4HL7FATHImHc	서울 마포구 월드컵북로4길 25	1개	false	true	2~5개	2022-12-10 14:42:09	Lucia
+8ROG6it+zXuBKUEdizGNe6K2qa3TFbw3cYJE	서울 마포구 어울마당로 141-1	2~5개	false	false	-	2022-12-11 14:44:06	-
+IGfI6JEVvVKR7h/9mqVa3x1GFcdEXg8cDoTb	서울 마포구 와우산로23길 35-3	0개	true	false	-	2022-12-10 14:43:33	-
+3QNtiprtP31Log+1xn+svNDCx2zoxEBcpY3K	서울 마포구 양화로23길 16	2~5개	false	false	-	2022-12-10 14:44:08	산타
+1SONIHrHO0kOVySHQce1ZR0edsT8tiUH/THs	서울 마포구 양화로23길 16-2	2~5개	false	false	-	2022-12-10 14:45:21	산타
+uHRfq7BzSlr9L1pdPe3J4/+wSVHWcL4j4fml	서울 마포구 홍익로2길 16	2~5개	true	true	2~5개	2022-12-10 14:46:24	수면
+R2PLtYrZNr44DK1izJHY7GqHpyixO48aYlkj	서울 마포구 도화4길 39	2~5개	true	true	0개	2022-12-10 14:47:42	sputnik1905
+Z3RSej+NuStjDPZxGTGOWxg3PqTgRLimc4NI	서울 마포구 월드컵북로4길 15	6개 이상	false	true	6개 이상	2022-12-10 14:47:58	Lucia
+e41tf7s2jzBQSvViYOjuk/8VGqyzOC/xUtQR	서울 마포구 양화로23길 24	2~5개	false	false	-	2022-12-10 14:48:17	산타
+LKfnx/DYW/wTL7/iyuUjiU+sJVVC0qc52u4q	서울 마포구 와우산로23길 35-6	6개 이상	false	false	-	2022-12-10 14:48:23	-
+qHaLnbnHgW+ZZ8raHgYfhpYW/mu960GZUfYZ	서울 마포구 월드컵북로 6	1개	false	false	-	2022-12-10 14:49:35	-
+yT9OELhX/+tCOz9JaXpJDrSXmUxNCHY/9p29	서울 마포구 양화로23길 22-6	2~5개	false	false	-	2022-12-10 14:50:46	산타
+oniOKi48fkTEtc2mptnZGNi3qC5qoGwRjYIv	서울 마포구 어울마당로 112-3	1개	false	false	-	2022-12-10 14:51:29	-
+l9cIVp0Iq7ywDM2xeq3JIYcCI9ZziKIufSIE	서울 마포구 월드컵북로4길 23-5	2~5개	false	false	-	2022-12-10 14:51:47	sputnik1905
+Nbb7lvUIBZOssBJwkOTxIUH+DlYSPDTX0Z9z	서울 마포구 월드컵북로2길 5	6개 이상	false	false	-	2022-12-10 14:52:06	-
+p9WBZ18/CBCc6WKmqA7JSelWMgsBdSHFtT+m	서울 마포구 어울마당로 115-1	1개	false	false	-	2022-12-10 14:53:10	-
+DJsrVswDEGD5K28N6cL6pq792H9R5v25950d	서울 마포구 와우산로23길 18-7	1개	false	false	-	2022-12-10 14:53:24	수면
+E1RU7bbtxy8jWxsaahSqrFxrLg1rtc4phdKH	서울 마포구 월드컵북로2길 7	6개 이상	false	false	-	2022-12-10 14:54:03	-
+cI33gnYmuBawneAMbcD8AKk1RuvSWnrIreFy	서울 마포구 월드컵북로4길 13	1개	false	false	-	2022-12-10 14:54:24	Lucia
+MU9IZ1KavKLLGmYfMXHsutQQMgEpERPvvHq3	서울 마포구 연희로1길 15	2~5개	false	false	-	2022-12-10 14:55:01	산타
+bOycccAYesrEa59KiRBdav9Sxb6u4DCpg8Ov	서울 마포구 어울마당로 113	2~5개	false	false	-	2022-12-10 14:55:05	-
+EQLkeuEwNX4v33jyAb5/g+IFklknIdNRxO1/	서울 마포구 어울마당로 111	6개 이상	false	false	-	2022-12-10 14:56:15	-
+kUoHt2fjNLwL88/NsvCTjJ6nTuREgME+Z6Sw	서울 강남구 테헤란로8길 28	1개	false	true	6개 이상	2022-12-10 14:56:17	썽니
+sKtqkqlhJs/mj3MWXMGB0MguTFf9EjmhuESo	서울 마포구 동교로23길 21	0개	false	false	-	2022-12-10 14:58:05	sputnik1905
+AjoUIpwbVVtPl28Zs1heUUz5OtPK2fWReu43	서울 마포구 월드컵북로2길 11	1개	true	true	1개	2022-12-10 14:58:52	-
+TECXLFwRSinlj1i27shRcT2zfTnr6sMPyvfk	서울 강남구 강남대로84길 34	6개 이상	false	false	-	2022-12-10 14:59:51	-
+78H44cpg35XjILrniyV3ThUZeLuROBpgAyP0	서울 서초구 서초대로77길 7	1개	false	false	-	2022-12-10 15:00:26	Sonny
+K2tTgClY6dSRarn9WwV8jFRByjp/vs85OtK3	서울 마포구 동교로 176	6개 이상	false	false	-	2022-12-10 15:01:01	Eej
+PZx5yEJ1h1ymt+N/eFDm2u71+/uRRsnUpUbz	서울 마포구 동교로23길 14	1개	false	true	0개	2022-12-10 15:02:26	Lucia
+tg3L8c40Wr2yEHXQxoI5WE5NUWwM1AhPtasz	서울 마포구 월드컵북로4길 8	2~5개	false	true	2~5개	2022-12-10 15:02:31	sputnik1905
+I/ORYs7FcP46eaXH6zJqP7fSLhmnP3WmxcVW	서울 마포구 월드컵로 151	2~5개	false	false	-	2022-12-10 15:03:12	rladbswl7112
+8euGjsKFb2K0CucVe96E1TEE/Z0d9NB+SkJq	서울 마포구 와우산로23길 14	1개	false	true	1개	2022-12-10 15:03:19	수면
+Um/tcCwAfOchxpd3nEblxQ66NbIm8gT7vC24	서울 마포구 월드컵북로2길 49	0개	false	true	0개	2022-12-10 15:03:31	-
+s5uOImyX8GG1kPbG/vMGlH9/oJAlWG7HvNpu	서울 마포구 월드컵북로 8	6개 이상	false	false	-	2022-12-10 15:04:44	Eej
+emNU71DyC2hNtj9U9W8f4f3UZI7+0wE6T700	서울 마포구 월드컵북로4길 12	0개	false	false	-	2022-12-10 15:05:12	Lucia
+eObywyGQNfAKjZvId8yMLiF/JtZS0wFj3eng	서울 마포구 와우산로29가길 84	0개	true	true	0개	2022-12-10 15:05:59	수면
+B4jygMwvPHyeptDkq/pv+8dzlykvQSNrp5II	서울 마포구 연희로1길 28-9	2~5개	false	false	-	2022-12-10 15:06:48	산타
+JbsoLVxP5SmIqYWLbSDsAbtJoq6LXzEmbvHw	서울 마포구 어울마당로 98-1	6개 이상	false	false	-	2022-12-10 15:06:51	rladbswl7112
+QsvvBldI/WxHnjXlw1ccpnO67tJNghjp9jB5	서울 강남구 테헤란로6길 29	1개	false	false	-	2022-12-10 15:07:04	-
+qDm4nA6Ln9kc+fQkXqaAPb/gcE7xM6pqT5QG	서울 강남구 강남대로84길 36	0개	false	true	2~5개	2022-12-10 15:00:07	썽니
+MYIY+csl1B1mav9QN3amrHahUHOT0r00vglC	서울 마포구 홍익로3길 7	6개 이상	false	false	-	2022-12-10 15:00:48	rladbswl7112
+oMve7DcDDNsl1kepDUTB4CgQCkUa+SfgdFzd	서울 마포구 홍익로3길 11	6개 이상	false	false	-	2022-12-10 15:04:38	rladbswl7112
+boD33kIyafLWggrBQGxR8stuGpMzgRDum9Ct	서울 마포구 연희로1길 21	2~5개	false	false	-	2022-12-10 15:04:54	산타
+P4XPE1ZGXIIJN+x3uShkMnNO2uMSbhZqZiZ3	서울 마포구 월드컵북로 18	1개	false	false	-	2022-12-10 15:05:14	sputnik1905
+/MVBFdtF1j33P9HLuoK7G/0U6MmqgkSxEkcP	서울 마포구 와우산로29가길 86	1개	true	true	0개	2022-12-10 15:05:38	ej
+5IA07MStl8s/7MlKt0b0HkAvKFpH7aLBT6BA	서울 마포구 어울마당로 100-6	1개	false	false	-	2022-12-10 15:07:55	rladbswl7112
+06Dn+NamSP8IQjDJJq1DLLVh0Bu0Gx+WAWt3	서울 마포구 연희로1길 29	2~5개	false	false	-	2022-12-10 15:08:36	산타
+HB/pTn0OITfvbk/9XWYsht1tfQ7aEmcSDrY9	서울 마포구 월드컵북로 20	1개	false	false	-	2022-12-10 15:08:41	sputnik1905
+pLzDN2ooRpOxqyVrJlJdu54YlbtHLN+7EH0/	서울 마포구 와우산로29가길 79	2~5개	false	false	-	2022-12-10 15:08:43	수면
+mrf9HvaqWYj9/GdEsCvZ/oa7pD4kOIEf+mgG	서울 강남구 테헤란로6길 32	1개	true	false	-	2022-12-10 15:09:08	썽니
+o4Rwqza1IFpamS/QJdUTa6ZDYS1Y+9kWqLHb	서울 서초구 강남대로55길 9-15	1개	true	true	2~5개	2022-12-10 15:11:46	정의준
+nZMznhbaRFhEK60pCbv/tDPDCXhNM3X9kKzc	서울 마포구 월드컵북로 12	1개	false	false	-	2022-12-10 15:11:50	Eej
+ch3OJTa982VYxul/Xoodn5aVQ/h4kng51WhZ	서울 마포구 월드컵북로 14	0개	true	true	0개	2022-12-10 15:12:34	-
+u385XF5B7P51ybokQdl+JHvtSZ/Z6w+dVzOZ	서울 마포구 홍익로5안길 14	2~5개	false	false	-	2022-12-10 15:12:46	rladbswl7112
+2O3qCsohZfJ2hdoLO3bawbUV4ndGmM5jWSTS	서울 강남구 테헤란로6길 26	0개	false	true	6개 이상	2022-12-10 15:13:09	썽니
+1DlIgxYFsALnMpB9kP3LMPO6R7ANZ8qRGcob	서울 강남구 강남대로84길 28	1개	false	true	2~5개	2022-12-10 15:13:56	-
+cJvjK7LVm+ZNNQmwnV+hysHB07JSxNMQ5aL4	서울 마포구 홍익로5길 13	2~5개	false	false	-	2022-12-10 15:14:31	rladbswl7112
+pZma7qxqRyU4YfRcp+aGu3Fq4GT+6iFBSM+p	서울 마포구 와우산로23길 8	6개 이상	true	false	-	2022-12-10 15:15:05	수면
+Z0dgTB+pLk0xlDdzH6QSJeBD7ZbrKsUWR7lB	서울 마포구 와우산로23길 9	2~5개	false	true	2~5개	2022-12-10 15:15:18	ej
+xwH7iqzaIKzR18Mnea1OWsoEghnSSgSTgtYn	서울 마포구 양화로 133	0개	true	true	0개	2022-12-10 15:17:51	Eej
+bxZoZpHoON+ga3lkjFcBdOZoMCY7kahjxGo2	서울 강남구 강남대로84길 26	2~5개	false	true	2~5개	2022-12-10 15:17:53	썽니
+s+Bm6pLwjMbbjhqe+PstMUEyoDqaQ+7eT3LB	서울 마포구 양화로23길 28	2~5개	false	false	-	2022-12-10 15:17:59	산타
+e+wVJhUV2mV69xJaUXV5QSzyGCEPmTnXxPwP	서울 마포구 홍익로 25	6개 이상	false	true	6개 이상	2022-12-10 15:18:10	rladbswl7112
+YL0nCfmVLhdijC+/yf3PQlbQNAZgRvhODhP7	서울 마포구 양화로 156	2~5개	true	true	0개	2022-12-10 15:20:13	-
+ngd1Rrt7DFWdTCt3pRAWMIAEWet3Ufng6jB9	서울 마포구 월드컵북로2길 97	2~5개	false	false	-	2022-12-10 15:21:54	산타
+yJpihThX5tEFO+WeGmJAzo/bO22o5yRuLEY5	서울 강남구 테헤란로4길 31	2~5개	false	true	1개	2022-12-10 15:24:03	-
+VbIH3yBurUFi6+j82+GL2RKl3Vm7t4JJHZ1G	서울 강남구 테헤란로4길 28	2~5개	false	true	2~5개	2022-12-10 15:25:57	-
+D6UZ6BEGf2mBg+odQoW8wK75/H1F0vhq0szb	서울 마포구 양화로 192	2~5개	true	true	2~5개	2022-12-10 15:26:39	산타
+KdrKAAw37mr9+Mi5TMXX+H1fKVMiL/9sWe+k	서울 서초구 강남대로61길 13	2~5개	true	true	0개	2022-12-10 15:27:29	Sonny
+jSxLOyiID+0zxEAKDX3BM1CQDEjSQTjcxTy+	서울 마포구 월드컵북로6길 12-13	6개 이상	true	false	-	2022-12-10 15:28:52	Lucia
+mLtKujoZ9ahSZMsvtWngRgaJBVc+ACX1AcZb	서울 마포구 동교로23길 40	0개	false	true	0개	2022-12-10 15:30:38	sputnik1905
+D4e+aYL02aE/wB47gxkUQefqqShsNV6B4wxp	서울 강남구 테헤란로4길 34	1개	false	true	1개	2022-12-10 15:31:34	-
+ykzPwlN7Oe9OTqZQS11mmIOL134vSaK3u8jj	서울 서초구 강남대로 373	2~5개	true	true	2~5개	2022-12-10 15:33:52	-
+cKBuqYYBffdE1dhWoMjMB7Yft2yiMLy7N2uh	서울 마포구 양화로 130	0개	true	true	0개	2022-12-10 15:34:48	Eej
+YI9+s950qFbQ/ZOlI+GcReQatp3Jz2+3/V9M	서울 강남구 테헤란로4길 35	2~5개	false	true	0개	2022-12-10 15:35:16	썽니
+qm/+4rLnQa0Zn8A0+vjYF6tDuRYtEEaSt+ud	서울 강남구 테헤란로4길 37	0개	false	true	0개	2022-12-10 15:35:36	-
+5rXSWXoN32G1UTo80irZu+HpT3P+nRmB5Eb6	서울 서초구 강남대로 381	2~5개	true	true	0개	2022-12-10 15:36:46	정의준
+P9Zl0nsWLkaCiSde47wQwllgOFdzVMLQ6phI	서울 마포구 동교로23길 32-15	0개	false	true	0개	2022-12-10 15:37:12	Lucia
+BWWG+A5D7PQ2cabvE1D0hEWQCfneagUnrds2	서울 마포구 월드컵북로6길 24-7	1개	false	false	-	2022-12-10 15:37:58	sputnik1905
+Li2MN+e5+ykadP2WVs3nLz+NGODf6pTcNG5r	서울 마포구 홍익로 10	6개 이상	false	true	6개 이상	2022-12-10 16:15:27	수면
+LVarFDGPhynAtNgZQnQJKcjt/yWEAp4V/o9b	서울 마포구 홍익로 11	2~5개	false	false	-	2022-12-10 16:46:41	-
+VHye4ZjPOdewoPMsFtWc32m8a2PKVvXLXh5f	서울 마포구 홍익로 13-12	2~5개	true	false	-	2022-12-10 16:55:19	수면
+BVOuvRcbu9E9+8WntnxfvoxwVRKCGj/qangQ	서울 마포구 어울마당로 151-1	2~5개	false	true	2~5개	2022-12-11 14:23:01	-
+O3k5TExAdw64lDl1KMDFixObuQLCxrhzkcmZ	서울 강남구 강남대로92길 29	1개	false	false	-	2022-12-11 14:27:24	현진
+NW0QBfHzHcfcuHjHMSaadvJ+UczgU2BECb5I	서울 서초구 강남대로65길 1	2~5개	false	true	2~5개	2022-12-11 14:27:49	양소
+aSHJFP0bJw9UnU6JPc4W8q4zEqCaTh43IEBF	서울 마포구 동교로 213	6개 이상	false	false	-	2022-12-11 14:28:52	Yb
+bKcRDOhjvF/1fiX2D/IVLkE9sIkQE13ss4cA	서울 서초구 강남대로 437	0개	true	true	0개	2022-12-11 14:29:32	-
+Nn8W2uXfzIFFgc2KznBafuucksSkNrthSisW	서울 서초구 강남대로 429	2~5개	false	true	0개	2022-12-11 14:30:48	양소
+imB55mNWaoOMMCXnvjfuWtdAO/X6QurveBkG	서울 마포구 와우산로35길 67	0개	true	false	-	2022-12-11 14:30:59	-
+IEIzkCaj1/fuCfp2PZO7RCbAmPjJoDh1q15y	서울 마포구 동교로 211	0개	false	false	-	2022-12-11 14:32:07	Yb
+tarzPNrGm1yZFKSeS+VoMgSoEs+HaJctAPRx	서울 마포구 동교로 209-4	1개	false	true	1개	2022-12-11 14:35:38	Yb
+ntswlPDMV7oR8KZuge8Hnrukb8spEFAHm9Wr	서울 강남구 강남대로94길 20	0개	true	true	0개	2022-12-11 14:36:26	현진
+tVJwamsW79C0cIGZCdV9YFahrSOEfo3+lKB1	서울 서초구 강남대로 439	2~5개	true	true	0개	2022-12-11 14:36:31	-
+jeZLkwaiBTaiF0GmZUlsYf9+PLS1Q81flGgD	서울 강남구 테헤란로2길 36	0개	false	true	2~5개	2022-12-11 14:36:44	ㅇ나
+N7q94ggROzjIICkL8ECisJsXeMuXZHJm/q/5	서울 서초구 서초대로77길 37	0개	false	true	0개	2022-12-11 14:38:54	양소
+I4u+8oKEF6MjhPkVynCuCp+5pauTlUp7aZ/v	서울 서초구 서초대로77길 43	1개	false	true	1개	2022-12-11 14:39:06	-
+94INzDejo/Q3fpTGdelR06jgfPdU7fK/OFTA	서울 마포구 어울마당로 143	1개	false	false	-	2022-12-11 14:41:02	-
+nLEQeZtwZdJzYK33+a4FirNgUto9qZFOlkNV	서울 마포구 와우산로29마길 10-4	6개 이상	false	false	-	2022-12-11 14:41:59	-
+OOodeiZqAod+FbnWfAhAGtqfGo/FB3oL0gb3	서울 서초구 서초대로77길 41	0개	false	true	0개	2022-12-11 14:48:40	-
+j7N576/mXjpyzZCQSZM/HwiQipo0+FVgh8xv	서울 마포구 어울마당로 143-1	2~5개	false	false	-	2022-12-11 14:45:54	-
+5fjdipzJJRRglFBEYem9L2mUcNCAZPixQGi9	서울 마포구 어울마당로 145	1개	false	false	-	2022-12-11 14:46:55	-
+yIUQoqdmdYVDPgEA5DFsajNxU+HaggM8nfga	서울 마포구 동교로27길 8	2~5개	false	false	-	2022-12-11 14:46:25	Yb
+zRpi399ry1YR+pBBsazygmIbv336/2uSMsw/	서울 서초구 강남대로 435	0개	false	true	0개	2022-12-11 14:48:10	-
+uFSphhVjhRCtN9FsmpbLhAu91MrPTsl3ax+I	서울 마포구 어울마당로 146-1	0개	false	false	-	2022-12-11 14:50:47	-
+xsT8EBOfY8d+eb/XzLBVaHZD+LxqLAqHoNgl	서울 강남구 테헤란로2길 8	2~5개	true	true	0개	2022-12-11 14:51:02	-
+r+xNzsVO/69db9MtOF6WWpbYkPn6aN8zpWjy	서울 마포구 동교로27길 39	6개 이상	false	false	-	2022-12-11 14:52:13	Yb
+BizsSUqsY6+33Ue8x5Sjob9JUeNQbfidlBPs	서울 서초구 서초대로75길 34	0개	false	true	0개	2022-12-11 14:52:39	양소
+8gWzlle/I4sREqQOZVJAc3EQWozufA+5pnJf	서울 서초구 서초대로77길 31	0개	true	false	-	2022-12-11 14:54:00	-
+FHIQcs1gjnvStkqKF0W1bIpJmSqfhZ7EABbS	서울 강남구 봉은사로18길 84	2~5개	false	true	2~5개	2022-12-11 14:54:56	clear
+2onHRItS1H+uUxeZeBWYgfycTvzd8UCEHsUY	서울 서초구 강남대로65길 7	6개 이상	false	true	0개	2022-12-11 14:55:23	양소
+adQTNai5ddK7IFp+KwkqU67jbgpcSICrMyoN	서울 강남구 봉은사로2길 35	2~5개	false	true	6개 이상	2022-12-11 14:56:22	-
+ikZV6v+nCPF7a6h9ahcz15aUczmtGGaMJqA3	서울 강남구 봉은사로18길 88	2~5개	false	false	-	2022-12-11 14:56:52	clear
+9aJareJpePCjLYVTygkNImjz1gunfqQKJXch	서울 마포구 연남로1길 37	2~5개	false	false	-	2022-12-11 14:57:02	Yb
+V+M3kYT3qJGelKOaVGBc7wob56PHpKXSNVae	서울 서초구 강남대로65길 9	0개	false	false	-	2022-12-11 14:57:03	-
+SCnf49bFSvzB1KLVIBmXxXC6FIhPBvlwnqG5	서울 서초구 서초대로77길 45	0개	false	true	0개	2022-12-11 14:57:10	-
+3bKSVYeSj+ybl468Bo42DQ9H0nsoNtIep+Gz	서울 강남구 봉은사로2길 37	2~5개	false	true	0개	2022-12-11 14:59:58	-
+5WbgeF3v83GrIBY6+HNOGZlyUmN1r24GRfCH	서울 마포구 연남로1길 39	0개	false	false	-	2022-12-11 15:00:44	Yb
+JI8oLejmzkQw/cTjO4/+B+osiUOY59N/D12g	서울 서초구 강남대로65길 10	1개	true	true	0개	2022-12-11 15:01:38	양소
+X4ljCh52tVdDvOoCJgk52bB66950bTa+3oUO	서울 마포구 연남로1길 41	6개 이상	false	false	-	2022-12-11 15:02:06	Yb
+fRx3Iogu5l7oK6VyTKHl8WTWZTDO/cWUXiXR	서울 서초구 강남대로61길 7	1개	false	false	-	2022-12-11 15:02:30	-
+Zv9yST3FUcepnBqZca/uGoLF4rhmbbIqZuU8	서울 서초구 강남대로 441	2~5개	true	true	0개	2022-12-11 15:03:20	-
+WqAyEQKGGTcjaoaZwciIvrrrCB4ML1I8IPGz	서울 강남구 강남대로92길 17	0개	false	true	0개	2022-12-11 15:04:19	현진
+IRgrDksd7QdIqedfUr4EUs2p7V3XcODyzz1E	서울 서초구 서초대로77길 35	0개	true	true	0개	2022-12-11 15:04:38	Sozu
+dxfoJD46dWasH5w0LemWzi/gSyeKBsrr2F9J	서울 강남구 강남대로102길 13-8	2~5개	false	false	-	2022-12-11 15:05:05	-
+Kc+O0sA1CpOQaCSq6zs17lVhdc/NomaDb8AZ	서울 서초구 서초대로77길 55	1개	true	true	0개	2022-12-11 15:06:55	-
+cvAET7HawzX2YuyF17J9YZ/obrr4LoAyItrF	서울 서초구 서초대로73길 38	2~5개	false	false	-	2022-12-11 15:07:09	-
+Kibro6Ha9Aul7T26FQWuBmSbQm/0ykBn598Z	서울 강남구 강남대로78길 8	1개	true	true	0개	2022-12-11 15:07:38	ㅇ나
+GSR3fz568pXWWH6yPG6ZIyMoTHPOnpjTl4RR	서울 강남구 강남대로102길 13-5	2~5개	false	false	-	2022-12-11 15:08:03	-
+dK37vE75CX/L4Z44FuROVOh4oGPEnZtXyUPg	서울 마포구 와우산로29라길 19	1개	false	false	-	2022-12-11 15:10:04	-
+tsRiCL+gvwuAtO0+K3Ru9BykM4Gmcnwbx+2f	서울 서초구 강남대로 449-3	0개	true	true	0개	2022-12-11 15:11:26	-
+9OPixRbQpMVANeinxboolh0Y7MDY+dD1zMaz	서울 마포구 와우산로29라길 16	6개 이상	false	false	-	2022-12-11 15:11:37	Eej
+4mVXDB3EiGCVQ6ooXeDydPGM3CTv3/Yv22c1	서울 강남구 지하 396	2~5개	true	true	0개	2022-12-11 15:14:57	-
+d/K9EHYHG/eDsLjiiUTGzyfXOatOAOz8zq2n	서울 서초구 강남대로65길 12	0개	true	true	0개	2022-12-11 15:04:40	-
+br551YDfTwFp1/C3adgxBpjx6F5VOLpbMbzK	서울 마포구 와우산로29마길 27	1개	false	false	-	2022-12-11 15:05:19	-
+5d7kuRL3VNIMOQwyRFmagA95qeNo5sQFdooJ	서울 마포구 월드컵북로6길 49	2~5개	false	true	2~5개	2022-12-11 15:06:58	Yb
+jiPgfEZ+xFYHmMNPiFDd3Ms2Ox7ptY6+W0XX	서울 마포구 월드컵북로6길 46	2~5개	false	false	-	2022-12-11 15:08:59	Yb
+akR0CMpQVIncl4zdj6ebMSNNsuRuoVjWor7q	서울 서초구 서초대로75길 35	6개 이상	false	false	-	2022-12-11 15:10:26	양소
+1Xir0bULINgo2KlLoZTEds3mLINWHBhWJjE0	서울 서초구 강남대로 405	2~5개	true	true	0개	2022-12-11 15:12:20	-
+Z4tsoqTYrDT1/K70oEQ6bzy3otBUj8JygJPn	서울 서초구 서초대로75길 37	0개	false	true	0개	2022-12-11 15:14:28	-
+dwV5RG08kf2vaDm89ianj98Zx83KBsmAmj9R	서울 마포구 동교로25길 53	0개	false	false	-	2022-12-11 15:14:29	Yb
+5LXYVljDj9ltmpWaO9opp4ettYd4NxkSbO8i	서울 마포구 동교로25길 57	2~5개	false	false	-	2022-12-11 15:16:24	Yb
+PTskoAWTazmQUvy8FobS4Tt8UNDLTQJfb0A2	서울 서초구 강남대로 445	1개	false	true	6개 이상	2022-12-11 15:16:45	-
+4CdZEYWNnmcwGtBsRUSmxrpucEHQ8rTDwHEs	서울 마포구 연남로1길 67	2~5개	false	false	-	2022-12-11 15:17:36	Yb
+UeySQHT3O0O2HvEWicT/CIUhHbTk2Ka82eR5	서울 마포구 와우산로29길 39	1개	true	false	-	2022-12-11 15:17:59	-
+hzKO2u6qWtpN5SYyk3bzD1U19FkmDyGeI6Sd	서울 강남구 봉은사로4길 40	2~5개	true	false	-	2022-12-11 15:18:09	-
+kaMSCmBGEMcSU8SFP8RhKNGnH+7OS7RK7HQx	서울 마포구 연남로1길 70	0개	false	true	0개	2022-12-11 15:19:18	Yb
+nfI4EhRm3HaGgm75C8QKTzcBCSW9sdDRWFPZ	서울 강남구 강남대로102길 16	0개	true	true	0개	2022-12-11 15:20:22	-
+BRUeJADToFzCsSazNu7VfnG9WK88TgQ2yFgo	서울 마포구 와우산로29다길 10	6개 이상	false	false	-	2022-12-11 15:20:46	-
+edo3lmCtEU+h54NYsOhpnGk5m3fGIa6kVevn	서울 강남구 강남대로92길 13	0개	false	true	0개	2022-12-11 15:21:32	-
+PdCgIK2LvYRyY0Az6skCP1zurlhyWTo46O6P	서울 마포구 와우산로29다길 14	1개	false	false	-	2022-12-11 15:21:56	Eej
+fQCifo2cLZxAFNA754ta4UZ3tZ9xigtZQx6g	서울 마포구 동교로23길 64	2~5개	false	false	-	2022-12-11 15:22:26	Yb
+egngH9czvWSINmJwqgmH6SNXWj8IltG9Me1o	서울 강남구 강남대로94길 19	0개	false	true	0개	2022-12-11 15:22:32	현진
+ds6oKEIqVw4sfYoR0z5YU8PaNw+kytCziJwY	서울 강남구 강남대로78길 12	1개	false	true	0개	2022-12-11 15:22:33	ㅇ나
+XZRyZRoFv+9UjIbj/veadydMwjBl6tRrynPe	서울 강남구 봉은사로4길 37	2~5개	true	true	2~5개	2022-12-11 15:24:34	-
+rG2lfgRn4C5AD+0PCvx9InBKKWVUTidvtmEw	서울 서초구 서초대로73길 54	0개	true	true	0개	2022-12-11 15:25:18	-
+Llyp4NUV4EFzaedhWnSokXD/H3k0BD/01+CP	서울 마포구 동교로23길 67	0개	true	true	0개	2022-12-11 15:25:29	Yb
+V7hBhq5jsAso/6hP7AZFNxb2wDluVnbPsSUN	서울 마포구 와우산로27길 24	1개	false	false	-	2022-12-11 15:26:11	Eej
+yE/tfw9bVQ4e+kQ2HGKuVFGOyLGbGhyFOTcD	서울 마포구 와우산로27길 21	2~5개	false	true	2~5개	2022-12-11 15:28:02	Eej
+JEyPHhA63cSPe9mY8xoOcIBA0liVtpCZjRFx	서울 마포구 월드컵북로6길 12	1개	false	false	-	2022-12-11 15:28:10	Yb
+XlbZN/m8KTyN++kUFOqkkoXv/8a5Nj/QeMCj	서울 강남구 테헤란로5길 25	2~5개	true	true	2~5개	2022-12-11 15:28:33	채은
+AHVnNecv1PeEtnCgOVXUsoac+FfIwxWljYTB	서울 서초구 서초대로73길 50	2~5개	true	true	0개	2022-12-11 15:29:28	-
+9qdbz3aJJwAQrQl+ZhW0fqWpSCQges0IXB6I	서울 강남구 강남대로102길 23	6개 이상	false	false	-	2022-12-11 15:29:31	-
+R/btyKw/qM4WQRwiRMnPmgawD6iEmLI0UaOH	서울 마포구 월드컵북로6길 19	1개	false	false	-	2022-12-11 15:30:22	Yb
+24JUMYpt+H2fmYVHYN9GfTRNWxTPGNeThZsH	서울 서초구 서초대로75길 45	2~5개	false	true	2~5개	2022-12-11 15:32:07	-
+7vuvt9F7gABIFZldynkZ05e9Law8OrMSsWwY	서울 마포구 월드컵북로6길 21	1개	false	false	-	2022-12-11 15:32:42	Yb
+BnYhuN/Y/7S7bUBG8XDg0mAkEho9BcUADMuo	서울 마포구 월드컵북로6길 26	0개	true	true	0개	2022-12-11 15:34:24	Yb
+5n3i6GuAjFOOSdgLbW+ESLDc5U7RzAVuD2NF	서울 마포구 와우산로27길 27	1개	false	false	-	2022-12-11 15:35:29	-
+gc5bF2QEbUMMt9FonAdpy1+gqPwDvVQV1ltI	서울 마포구 동교로25길 23	2~5개	true	true	1개	2022-12-11 15:45:02	Yb
