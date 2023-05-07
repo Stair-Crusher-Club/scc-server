@@ -298,7 +298,7 @@ redash:
     sqlAlchemyEnablePoolPrePing: "true"
     # redash.existingSecret -- Name of existing secret to use instead of either the values above
     ## This secret must contain keys matching the items marked "Stored as a Secret value" above.
-    # existingSecret:
+    existingSecret: "scc-redash-secret"
 
   ## Configuration for Redash web server
   server:
@@ -314,13 +314,12 @@ redash:
 
     # server.resources -- Server resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
-      { }
-      # limits:
-      #   cpu: 500m
-      #   memory: 3Gi
-    # requests:
-    #   cpu: 100m
-    #  memory: 500Mi
+      limits:
+        cpu: 800m
+        memory: 1Gi
+      requests:
+        cpu: 800m
+        memory: 1Gi
 
     # server.podSecurityContext -- Security contexts for server pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -392,12 +391,12 @@ redash:
 
     # adhocWorker.resources -- Ad-hoc worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
-    # limits:
-    #   cpu: 500m
-    #   memory: 3Gi
-    # requests:
-    #   cpu: 100m
-    #  memory: 500Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+      requests:
+        cpu: 200m
+        memory: 500Mi
 
     # adhocWorker.podSecurityContext -- Security contexts for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -436,12 +435,12 @@ redash:
 
     # scheduledWorker.resources -- Scheduled worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
-    # limits:
-    #   cpu: 500m
-    #   memory: 3Gi
-    # requests:
-    #   cpu: 100m
-    #  memory: 500Mi
+      limits:
+        cpu: 100m
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 500Mi
 
     # scheduledWorker.podSecurityContext -- Security contexts for scheduled worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -478,12 +477,12 @@ redash:
 
     # scheduler.resources -- scheduler resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
-    # limits:
-    #   cpu: 500m
-    #   memory: 3Gi
-    # requests:
-    #   cpu: 100m
-    #  memory: 500Mi
+      limits:
+        cpu: 100m
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 500Mi
 
     # scheduler.podSecurityContext -- Security contexts for scheduler pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -522,12 +521,12 @@ redash:
 
     # genericWorker.resources -- Generic worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
-    # limits:
-    #   cpu: 500m
-    #   memory: 3Gi
-    # requests:
-    #   cpu: 100m
-    #  memory: 500Mi
+      limits:
+        cpu: 500m
+        memory: 500Mi
+      requests:
+        cpu: 500m
+        memory: 500Mi
 
     # genericWorker.podSecurityContext -- Security contexts for generic worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -560,12 +559,12 @@ redash:
     ttlSecondsAfterFinished: 600
     # hookInstallJob.resources -- Scheduled worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
-    # limits:
-    #   cpu: 500m
-    #   memory: 3Gi
-    # requests:
-    #   cpu: 100m
-    #  memory: 500Mi
+      limits:
+        cpu: 100m
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 500Mi
 
     # hookInstallJob.podSecurityContext -- Security contexts for scheduled worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -589,12 +588,12 @@ redash:
     ttlSecondsAfterFinished: 600
     # hookUpgradeJob.resources -- Scheduled worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
-    # limits:
-    #   cpu: 500m
-    #   memory: 3Gi
-    # requests:
-    #   cpu: 100m
-    #  memory: 500Mi
+      limits:
+        cpu: 100m
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 500Mi
 
     # hookUpgradeJob.podSecurityContext -- Security contexts for scheduled worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -616,7 +615,7 @@ redash:
   externalPostgreSQL:
   # externalPostgreSQLSecret -- Read external PostgreSQL configuration from a secret. This should point at a secret file with a single key which specifies the connection string.
   externalPostgreSQLSecret:
-    name: scc-redash-postgresql-secret
+    name: scc-redash-secret
     key: redisDatabaseUrl
 
   # envSecretName -- DEPRECIATED, use externalPostgreSQLSecret/externalRedisSecret instead. Contents of this secret will be loaded as environment variables into the container. Useful e.g. to set to set PostgreSQL password in externalPostgreSQL parameter: postgresql://user:$(POSTGRESQL_PASSWORD)@host:5432/database [ref](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#using-environment-variables-inside-of-your-config)
@@ -669,6 +668,15 @@ redash:
     master:
       # redis.master.port -- Redis master port to use (when redis chart enabled)
       port: 6379
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      persistence:
+        enabled: false
     cluster:
       # redis.databaseNumber -- Enable Redis clustering (when redis chart enabled)
       enabled: false
