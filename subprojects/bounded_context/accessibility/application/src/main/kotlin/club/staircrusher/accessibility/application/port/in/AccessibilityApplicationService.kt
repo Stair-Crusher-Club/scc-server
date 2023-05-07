@@ -41,16 +41,26 @@ class AccessibilityApplicationService(
     private val userApplicationService: UserApplicationService,
     private val clock: Clock,
 ) {
-    data class WithUserInfo<T>(
-        val value: T,
-        val userInfo: UserInfo?
-    )
-
     private val BuildingAddress.isAccessibilityRegistrable: Boolean
         get() {
             val addressStr = toString()
             return addressStr.startsWith("서울") || addressStr.startsWith("경기 성남시")
         }
+
+    data class GetAccessibilityResult(
+        val buildingAccessibility: WithUserInfo<BuildingAccessibility>?,
+        val buildingAccessibilityUpvoteInfo: BuildingAccessibilityUpvoteInfo?,
+        val buildingAccessibilityComments: List<WithUserInfo<BuildingAccessibilityComment>>,
+        val placeAccessibility: WithUserInfo<PlaceAccessibility>?,
+        val placeAccessibilityComments: List<WithUserInfo<PlaceAccessibilityComment>>,
+        val hasOtherPlacesToRegisterInSameBuilding: Boolean,
+        val isLastPlaceAccessibilityInBuilding: Boolean,
+    ) {
+         data class BuildingAccessibilityUpvoteInfo(
+             val isUpvoted: Boolean,
+             val totalUpvoteCount: Int,
+         )
+    }
 
     fun isAccessibilityRegistrable(placeId: String): Boolean {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
