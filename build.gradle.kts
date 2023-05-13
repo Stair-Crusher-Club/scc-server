@@ -21,6 +21,11 @@ val generatedProject = listOf(project(":admin_api"), project("api"))
 subprojects {
     apply(plugin = "kotlin")
 
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     repositories {
         maven(url = "https://repo.osgeo.org/repository/release/") // for org.geotools
         maven(url = "https://repo.spring.io/milestone/")
