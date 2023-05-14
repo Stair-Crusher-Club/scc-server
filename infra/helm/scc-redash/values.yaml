@@ -338,10 +338,10 @@ redash:
     resources:
       limits:
         cpu: 800m
-        memory: 1Gi
+        memory: 1024Mi
       requests:
         cpu: 800m
-        memory: 1Gi
+        memory: 1024Mi
 
     # server.podSecurityContext -- Security contexts for server pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -415,10 +415,10 @@ redash:
     resources:
       limits:
         cpu: 200m
-        memory: 500Mi
+        memory: 512Mi
       requests:
         cpu: 200m
-        memory: 500Mi
+        memory: 512Mi
 
     # adhocWorker.podSecurityContext -- Security contexts for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -458,11 +458,11 @@ redash:
     # scheduledWorker.resources -- Scheduled worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 100m
-        memory: 500Mi
+        cpu: 200m
+        memory: 512Mi
       requests:
-        cpu: 100m
-        memory: 500Mi
+        cpu: 200m
+        memory: 384Mi
 
     # scheduledWorker.podSecurityContext -- Security contexts for scheduled worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -500,11 +500,11 @@ redash:
     # scheduler.resources -- scheduler resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 100m
-        memory: 500Mi
+        cpu: 300m
+        memory: 384Mi
       requests:
-        cpu: 100m
-        memory: 500Mi
+        cpu: 300m
+        memory: 384Mi
 
     # scheduler.podSecurityContext -- Security contexts for scheduler pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -545,10 +545,10 @@ redash:
     resources:
       limits:
         cpu: 500m
-        memory: 500Mi
+        memory: 1024Mi
       requests:
         cpu: 500m
-        memory: 500Mi
+        memory: 1024Mi
 
     # genericWorker.podSecurityContext -- Security contexts for generic worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -583,10 +583,10 @@ redash:
     resources:
       limits:
         cpu: 100m
-        memory: 500Mi
+        memory: 256Mi
       requests:
         cpu: 100m
-        memory: 500Mi
+        memory: 256Mi
 
     # hookInstallJob.podSecurityContext -- Security contexts for scheduled worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -612,10 +612,10 @@ redash:
     resources:
       limits:
         cpu: 100m
-        memory: 500Mi
+        memory: 256Mi
       requests:
         cpu: 100m
-        memory: 500Mi
+        memory: 256Mi
 
     # hookUpgradeJob.podSecurityContext -- Security contexts for scheduled worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
