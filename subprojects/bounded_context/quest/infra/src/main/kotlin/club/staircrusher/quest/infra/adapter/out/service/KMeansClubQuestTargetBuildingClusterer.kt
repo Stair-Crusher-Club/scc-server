@@ -2,6 +2,7 @@ package club.staircrusher.quest.infra.adapter.out.service
 
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
+import club.staircrusher.quest.infra.kmeans.Centroid
 import club.staircrusher.quest.infra.kmeans.EuclideanDistance
 import club.staircrusher.quest.infra.kmeans.KMeans
 import club.staircrusher.quest.infra.kmeans.Record
@@ -35,22 +36,22 @@ class KMeansClubQuestTargetBuildingClusterer : ClubQuestTargetBuildingClusterer 
             val centerLat = buildings.sumOf { it.location.lat } / buildings.count()
             return mapOf(Location(centerLng, centerLat) to buildings)
         }
-        repeat(REPEAT_NUM) { _ ->
-            val result = KMeans.fit(records, clusterCount, EuclideanDistance(), MAX_ITERATION)
+        var result: Map<Centroid, List<Record>>? = null
+        repeat(REPEAT_NUM) { iteration ->
+            result = KMeans.fit(records, clusterCount, EuclideanDistance(), MAX_ITERATION)
             // k-means를 돌리는 와중에 cluster count가 감소할 수 있는 것으로 보인다.
             // 그래서 cluster count가 감소되지 않았는지 확인하고, 감소되었으면 재시도한다.
-            if (result.size == clusterCount) {
-                return result.map { (centroid, records) ->
-                    val clusterCenterLocation = Location(
-                        lng = centroid.coordinates["lng"]!!,
-                        lat = centroid.coordinates["lat"]!!,
-                    )
-                    val belongingPlaces = records.map { buildingById[it.description]!! }
-                    clusterCenterLocation to belongingPlaces
-                }.toMap()
+            if (result!!.size == clusterCount) {
+               return@repeat
             }
-
         }
-        throw error("Failed to clustering places. Please try again.")
+        return result!!.map { (centroid, records) ->
+            val clusterCenterLocation = Location(
+                lng = centroid.coordinates["lng"]!!,
+                lat = centroid.coordinates["lat"]!!,
+            )
+            val belongingPlaces = records.map { buildingById[it.description]!! }
+            clusterCenterLocation to belongingPlaces
+        }.toMap()
     }
 }

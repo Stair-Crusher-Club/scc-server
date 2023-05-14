@@ -46,6 +46,7 @@ resource "aws_lightsail_domain_entry" "dev_ns" {
   target      = each.key
 }
 
+# FIXME: this entry should be created before creating oidc connector
 resource "aws_lightsail_domain_entry" "k3s" {
   domain_name = aws_lightsail_domain.staircrusher_club.domain_name
   name        = "k3s"

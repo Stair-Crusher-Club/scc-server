@@ -131,7 +131,7 @@ class ClubQuestCreateAplService(
     }
 
     private fun getBuildingName(idx: Int): String {
-        return "${HumanReadablePrefixGenerator.generateByWord(idx)} 건물"
+        return "${idx + 1}번 건물"
     }
 
     private fun getQuestNamePostfix(idx: Int): String {

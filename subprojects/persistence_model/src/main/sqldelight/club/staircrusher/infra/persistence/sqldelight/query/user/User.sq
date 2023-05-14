@@ -26,3 +26,7 @@ findByIdIn:
 SELECT *
 FROM scc_user
 WHERE scc_user.id IN :ids;
+
+findAll:
+SELECT *
+FROM scc_user;

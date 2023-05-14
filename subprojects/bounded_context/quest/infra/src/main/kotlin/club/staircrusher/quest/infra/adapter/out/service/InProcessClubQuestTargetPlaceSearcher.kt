@@ -35,16 +35,16 @@ class InProcessClubQuestTargetPlaceSearcher(
      * 2. 1에서 획득한 건물의 주소로 키워드 검색을 하여 장소 목록 획득
      */
     override suspend fun searchPlaces(centerLocation: Location, radiusMeters: Int): List<Place> {
-        val buildingsInRegion = searchBuildingsInRegion(centerLocation, radiusMeters)
-        return searchPlacesInBuildings(buildingsInRegion)
+        val radius = Length.ofMeters(radiusMeters)
+        val buildingsInRegion = searchBuildingsInRegion(centerLocation, radius)
+        return searchPlacesInBuildings(buildingsInRegion, centerLocation, radius)
     }
 
-    private suspend fun searchBuildingsInRegion(centerLocation: Location, radiusMeters: Int): List<Building> {
-        val radius = Length.ofMeters(radiusMeters)
+    private suspend fun searchBuildingsInRegion(centerLocation: Location, radius: Length): List<Building> {
         val leftBottomLocation = centerLocation.minusLng(radius).minusLat(radius)
         val rightTopLocation = centerLocation.plusLng(radius).plusLat(radius)
 
-        val chunkCount = determineChunkCount(radiusMeters)
+        val chunkCount = determineChunkCount(radius)
         val chunkedRectangles = (1..chunkCount).flatMap { lngIdx ->
             (1..chunkCount).map { latIdx ->
                 val chunkLeftBottomLocation = getAvgLocation(
@@ -70,7 +70,7 @@ class InProcessClubQuestTargetPlaceSearcher(
             .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
     }
 
-    private suspend fun searchPlacesInBuildings(buildings: List<Building>): List<Place> {
+    private suspend fun searchPlacesInBuildings(buildings: List<Building>, centerLocation: Location, radius: Length): List<Place> {
         return coroutineScope {
             buildings
                 .map { building ->
@@ -85,6 +85,7 @@ class InProcessClubQuestTargetPlaceSearcher(
                 .flatten()
         }
             .filter { it.category in targetPlaceCategories }
+            .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
     }
 
     private suspend fun getBuildingsInRectangle(leftBottomLocation: Location, rightTopLocation: Location): List<Building> {
@@ -111,8 +112,8 @@ class InProcessClubQuestTargetPlaceSearcher(
     }
 
     @Suppress("MagicNumber") private val chunkTargetLength = Length.ofMeters(150)
-    private fun determineChunkCount(radiusMeters: Int): Int {
-        return ceil(radiusMeters.toDouble() * 2 / chunkTargetLength.meter).toInt()
+    private fun determineChunkCount(radius: Length): Int {
+        return ceil(radius.meter * 2 / chunkTargetLength.meter).toInt()
     }
 
     private fun getAvgLocation(l1: Location, l2: Location, l2LngRatio: Double, l2LatRatio: Double): Location {

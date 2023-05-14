@@ -1,0 +1,21 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: scc-update-ranking
+  labels:
+    {{- include "scc-server.labels" . | nindent 4 }}
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: curl-container
+            image: appropriate/curl
+            args: 
+            - "--fail"
+            - "-XPOST"
+            - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/updateAccessibilityRanks"
+          restartPolicy: OnFailure
+

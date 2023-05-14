@@ -21,13 +21,12 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.eupMyeonDongById
 import club.staircrusher.stdlib.geography.siGunGuById
+import club.staircrusher.stdlib.testing.SccRandom
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
-import java.util.Base64
-import kotlin.random.Random
 
 @Suppress("MagicNumber", "TooManyFunctions")
 @Component
@@ -64,7 +63,7 @@ class ITDataGenerator {
 
 
     fun createUser(
-        nickname: String = generateRandomString(12),
+        nickname: String = SccRandom.string(12),
         password: String = "password",
         instagramId: String? = null
     ): User {
@@ -215,9 +214,5 @@ class ITDataGenerator {
                 createdAt = clock.instant(),
             ),
         )
-    }
-
-    private fun generateRandomString(length: Int): String {
-        return Base64.getEncoder().encodeToString(Random.nextBytes(length)).take(length)
     }
 }

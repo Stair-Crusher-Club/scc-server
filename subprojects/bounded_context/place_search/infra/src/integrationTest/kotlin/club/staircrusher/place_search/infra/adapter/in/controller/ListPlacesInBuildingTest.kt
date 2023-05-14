@@ -3,12 +3,12 @@ package club.staircrusher.place_search.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place_search.infra.adapter.`in`.controller.base.PlaceSearchITBase
+import club.staircrusher.stdlib.testing.SccRandom
 import com.fasterxml.jackson.core.type.TypeReference
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
 
 class ListPlacesInBuildingTest : PlaceSearchITBase() {
     @Test
@@ -22,7 +22,7 @@ class ListPlacesInBuildingTest : PlaceSearchITBase() {
             val building = testDataGenerator.createBuilding()
             testDataGenerator.registerBuildingAccessibilityIfNotExists(building)
             val places = (1..placesCount).map {
-                val place = testDataGenerator.createPlace(placeName = Random.nextBytes(32).toString(), building = building)
+                val place = testDataGenerator.createPlace(placeName = SccRandom.string(32), building = building)
                 if (it % 3 == 0) {
                     testDataGenerator.registerPlaceAccessibility(place)
                     accessibilityRegisteredPlaceIds.add(place.id)
