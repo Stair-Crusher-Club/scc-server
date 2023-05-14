@@ -683,6 +683,7 @@ redash:
   redis:
     # redis.enabled -- Whether to deploy a Redis server to satisfy the applications database requirements. To use an external Redis set this to false and configure the externalRedis parameter.
     enabled: true
+    password: redash-redis
     # redis.password -- If the password is not specified, a random password will be generated (when redis chart enabled)
     # password:
     # redis.databaseNumber -- Redis database number to use (when redis chart enabled)
