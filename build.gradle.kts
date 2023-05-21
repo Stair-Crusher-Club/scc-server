@@ -107,7 +107,7 @@ subprojects {
         }
         if (applicationProject != null && infraProject != null) {
             infraProject.dependencies {
-                implementation(applicationProject)
+                api(applicationProject)
             }
         }
 

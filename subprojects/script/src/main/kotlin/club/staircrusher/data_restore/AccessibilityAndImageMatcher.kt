@@ -1,10 +1,7 @@
 package club.staircrusher.data_restore
 
-import java.io.File
+import club.staircrusher.accessibility.domain.model.StairInfo
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 /**
@@ -130,10 +127,10 @@ fun main() {
         }
 
     val paInsertQueries = paMatchResults.joinToString("\n") { it.toInsertQuery() }
-    writeQueriesAsFile(paInsertQueries, "insert_place_accessibilities.sql")
+    writeTextAsFile(paInsertQueries, "insert_place_accessibilities_2022.sql")
 
     val baInsertQueries = baMatchResults.joinToString("\n") { it.toInsertQuery() }
-    writeQueriesAsFile(baInsertQueries, "insert_building_accessibilities.sql")
+    writeTextAsFile(baInsertQueries, "insert_building_accessibilities_2022.sql")
 
 
 
@@ -154,21 +151,8 @@ fun main() {
 //    // {2=2674, 1=1299, 4=251, 0=385, 3=359, 6=3, 5=3}
 }
 
-private fun readTsvAsLines(resourceName: String): List<List<String>> {
-    return object {}.javaClass.classLoader.getResource(resourceName)?.readText()
-        ?.split("\n")
-        ?.drop(1) // 첫 줄은 header라 버린다.
-        ?.map { it.replace("\r", "") }
-        ?.map { it.split("\t") }
-        ?: emptyList()
-}
-
-private fun writeQueriesAsFile(query: String, filename: String) {
-    File(filename).writeText(query)
-}
-
 private fun readImageInfos(): List<ImageInfo> {
-    val imageInfoLines = readTsvAsLines("data_restore/2022_images.tsv")
+    val imageInfoLines = readTsvAsLines("data_restore/AccessibilityAndImageMatcher/2022_images.tsv")
     return imageInfoLines.map { (createdAtStr, url, matchType) ->
         ImageInfo(
             createdAt = createdAtStr.toInstant(),
@@ -187,7 +171,7 @@ private fun readImageInfos(): List<ImageInfo> {
 
 private fun readPlaceAccessibilities(): List<PlaceAccessibility> {
     // 점포 id,점포 이름,건물 id,주소,출입구 계단 개수,출입구 경사로 유무,생성 시점,입력자 이름
-    val lines = readTsvAsLines("data_restore/2022_place_accessibilities.tsv")
+    val lines = readTsvAsLines("data_restore/AccessibilityAndImageMatcher/2022_place_accessibilities.tsv")
     return lines.map { (placeId, _, _, addressStr, stairInfoStr, hasSlopeStr, createdAtStr) ->
         PlaceAccessibility(
             placeId = placeId,
@@ -202,7 +186,7 @@ private fun readPlaceAccessibilities(): List<PlaceAccessibility> {
 
 private fun readBuildingAccessibilities(): List<BuildingAccessibility> {
     // 건물 id,주소,출입구 계단 개수,출입구 경사로 유무,엘리베이터 유무,엘리베이터까지의 계단 개수,생성 시점,입력자 이름
-    val lines = readTsvAsLines("data_restore/2022_building_accessibilities.tsv")
+    val lines = readTsvAsLines("data_restore/AccessibilityAndImageMatcher/2022_building_accessibilities.tsv")
     return lines.map { (buildingId, addressStr, entranceStairInfoStr, hasSlopeStr, hasElevatorStr, elevatorStairInfoStr, _, createdAtStr) ->
         BuildingAccessibility(
             buildingId = buildingId,
@@ -215,15 +199,6 @@ private fun readBuildingAccessibilities(): List<BuildingAccessibility> {
             createdAt = createdAtStr.toInstant(),
         )
     }
-}
-
-private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-private val seoulZoneId = ZoneId.of("Asia/Seoul")
-private fun String.toInstant(): Instant {
-    return LocalDateTime.parse(this, dateTimeFormatter).atZone(seoulZoneId).toInstant()
-}
-private fun Instant.toKstString(): String {
-    return this.atZone(seoulZoneId).toLocalDateTime().format(dateTimeFormatter)
 }
 
 private fun <T> Map<Long, List<T>>.findCandidates(imageInfo: ImageInfo): List<T> {
@@ -268,7 +243,7 @@ interface Accessibility {
     fun toInsertQuery(imageInfos: List<ImageInfo>): String
 }
 
-data class PlaceAccessibility(
+private data class PlaceAccessibility(
     val placeId: String,
     val isFirstFloor: Boolean,
     val stairInfo: StairInfo,
@@ -292,7 +267,7 @@ data class PlaceAccessibility(
     }
 }
 
-data class BuildingAccessibility(
+private data class BuildingAccessibility(
     val buildingId: String,
     val entranceStairInfo: StairInfo,
     val entranceImageUrls: List<String>,
@@ -322,14 +297,6 @@ data class BuildingAccessibility(
     }
 }
 
-enum class StairInfo {
-    UNDEFINED,
-    NONE,
-    ONE,
-    TWO_TO_FIVE,
-    OVER_SIX,
-    ;
-}
 private fun String.toStairInfo() = when (this) {
     "-" -> StairInfo.UNDEFINED
     "0개" -> StairInfo.NONE
