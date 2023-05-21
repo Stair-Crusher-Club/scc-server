@@ -5,10 +5,11 @@ import LoginPage from './page/Login/LoginPage';
 import ClubQuestsPage from './page/ClubQuests/ClubQuestsPage';
 import CreateClubQuestPage from './page/CreateClubQuest/CreateClubQuestPage';
 import ClubQuestPage from './page/ClubQuest/ClubQuestPage';
+import CreateAccessibilityAllowedRegionPage
+  from "./page/CreateAccessibilityAllowedRegion/CreateAccessibilityAllowedRegionPage";
 import AuthContext, { getSavedAccessToken } from './context/AuthContext';
 import PageLayout from './PageLayout';
 import AuthGuard from './AuthGuard';
-
 import "./App.scss";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="clubQuests" element={<ClubQuestsPage />} />
                 <Route path="clubQuest/create" element={<CreateClubQuestPage />} />
+                <Route path="accessibilityAllowedRegion/create" element={<CreateAccessibilityAllowedRegionPage />} />
               </Route>
             </Route>
           </Routes>
