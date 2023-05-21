@@ -5,7 +5,9 @@ import club.staircrusher.accessibility.domain.model.AccessibilityAllowedRegion
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toDomainModel
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
 import club.staircrusher.infra.persistence.sqldelight.DB
+import club.staircrusher.stdlib.di.annotation.Component
 
+@Component
 class SqlDelightAccessibilityAllowedRegionRepository(
     db: DB
 ) : AccessibilityAllowedRegionRepository {
