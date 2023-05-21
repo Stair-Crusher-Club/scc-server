@@ -1,3 +1,4 @@
+@file:Suppress("TooManyFunctions")
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.UserInfo

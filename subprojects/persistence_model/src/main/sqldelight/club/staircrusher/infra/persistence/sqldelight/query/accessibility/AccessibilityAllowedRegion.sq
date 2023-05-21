@@ -1,0 +1,21 @@
+save:
+INSERT INTO accessibility_allowed_region
+VALUES :accessibility_allowed_region
+ON CONFLICT(id) DO UPDATE SET
+    id = EXCLUDED.id,
+    name = EXCLUDED.name,
+    boundary_vertices = EXCLUDED.boundary_vertices,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at;
+
+removeAll:
+DELETE FROM accessibility_allowed_region;
+
+remove:
+DELETE FROM accessibility_allowed_region
+WHERE id = :id;
+
+findById:
+SELECT *
+FROM accessibility_allowed_region
+WHERE id = :id;

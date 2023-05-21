@@ -59,7 +59,7 @@ class AccessibilityRankController(
             !clusterIpAddressMatcher.matches(request)
             && !localIpAddressMatcher.matches(request)
         ) {
-            throw Exception("Unauthorized")
+            throw IllegalArgumentException("Unauthorized")
         }
         updateRanksUseCase.handle()
     }

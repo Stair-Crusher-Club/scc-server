@@ -2,6 +2,7 @@
 
 package club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight
 
+import club.staircrusher.accessibility.domain.model.AccessibilityAllowedRegion
 import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
@@ -9,6 +10,7 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_rank
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility_comment
@@ -178,6 +180,22 @@ fun Accessibility_rank.toDomainModel() = AccessibilityRank(
     userId = user_id,
     conqueredCount = conquered_count,
     rank = rank,
+    createdAt = created_at.toInstant(),
+    updatedAt = updated_at.toInstant(),
+)
+
+fun AccessibilityAllowedRegion.toPersistenceModel() = Accessibility_allowed_region(
+    id = id,
+    name = name,
+     boundary_vertices = boundaryVertices,
+     created_at = createdAt.toOffsetDateTime(),
+     updated_at = updatedAt.toOffsetDateTime(),
+)
+
+fun Accessibility_allowed_region.toDomainModel() = AccessibilityAllowedRegion(
+    id = id,
+    name = name,
+    boundaryVertices = boundary_vertices,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant(),
 )

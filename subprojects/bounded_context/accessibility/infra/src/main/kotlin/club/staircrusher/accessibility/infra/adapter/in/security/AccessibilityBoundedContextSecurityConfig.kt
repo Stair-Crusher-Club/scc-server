@@ -3,7 +3,6 @@ package club.staircrusher.accessibility.infra.adapter.`in`.security
 import club.staircrusher.spring_web.security.SccSecurityConfig
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import org.springframework.web.bind.annotation.PostMapping
 
 @Component
 class AccessibilityBoundedContextSecurityConfig : SccSecurityConfig {
