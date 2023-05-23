@@ -13,6 +13,10 @@ class SqlDelightAccessibilityAllowedRegionRepository(
 ) : AccessibilityAllowedRegionRepository {
     private val queries = db.accessibilityAllowedRegionQueries
 
+    override fun findAll(): List<AccessibilityAllowedRegion> {
+        return queries.findAll().executeAsList().map { it.toDomainModel() }
+    }
+
     override fun save(entity: AccessibilityAllowedRegion): AccessibilityAllowedRegion {
         queries.save(entity.toPersistenceModel())
         return entity

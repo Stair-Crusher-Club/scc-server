@@ -19,3 +19,7 @@ findById:
 SELECT *
 FROM accessibility_allowed_region
 WHERE id = :id;
+
+findAll:
+SELECT *
+FROM accessibility_allowed_region;
