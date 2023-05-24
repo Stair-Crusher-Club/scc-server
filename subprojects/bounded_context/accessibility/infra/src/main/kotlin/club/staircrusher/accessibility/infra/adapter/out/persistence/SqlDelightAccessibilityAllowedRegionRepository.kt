@@ -17,6 +17,10 @@ class SqlDelightAccessibilityAllowedRegionRepository(
         return queries.findAll().executeAsList().map { it.toDomainModel() }
     }
 
+    override fun remove(id: String) {
+        queries.remove(id)
+    }
+
     override fun save(entity: AccessibilityAllowedRegion): AccessibilityAllowedRegion {
         queries.save(entity.toPersistenceModel())
         return entity

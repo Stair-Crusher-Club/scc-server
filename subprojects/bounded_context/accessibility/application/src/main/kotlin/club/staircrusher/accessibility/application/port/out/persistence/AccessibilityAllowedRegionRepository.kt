@@ -5,4 +5,5 @@ import club.staircrusher.stdlib.domain.repository.EntityRepository
 
 interface AccessibilityAllowedRegionRepository : EntityRepository<AccessibilityAllowedRegion, String> {
     fun findAll(): List<AccessibilityAllowedRegion>
+    fun remove(id: String)
 }
