@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, InputGroup, NumericInput } from '@blueprintjs/core';
-import { CreateAccessibilityAllowedRegionRequestDTO } from '../../api';
+import { Button, InputGroup } from '@blueprintjs/core';
 import { AdminApi } from '../../AdminApi';
 
 import './CreateAccessibilityAllowedRegionPage.scss';
@@ -87,7 +86,7 @@ function CreateAccessibilityAllowedRegionPage() {
   }
 
   async function createAccessibilityAllowedRegion() {
-    if (!window.confirm('퀘스트를 생성하시겠습니까?')) {
+    if (!window.confirm('정보 등록 허용 지역을 생성하시겠습니까?')) {
       return;
     }
     withLoading((
@@ -97,7 +96,7 @@ function CreateAccessibilityAllowedRegionPage() {
           boundaryVertices: boundaryVertices.map(it => ({ lng: it.getLng(), lat: it.getLat() })),
         });
         alert('정보 등록 허용 지역 생성을 완료했습니다.');
-        // navigate('/accessibilityAllowedRegions');
+        navigate('/accessibilityAllowedRegions');
       }
     )());
   }
