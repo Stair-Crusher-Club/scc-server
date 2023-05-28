@@ -1,8 +1,10 @@
 package club.staircrusher.infra.persistence.sqldelight
 
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.LocationListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
+import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
@@ -44,6 +46,9 @@ class DB(dataSource: DataSource) : TransactionManager {
                 }
 
             }
+        ),
+        accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
+            boundary_verticesAdapter = LocationListToTextColumnAdapter,
         )
     )
 
@@ -57,6 +62,7 @@ class DB(dataSource: DataSource) : TransactionManager {
     val accessibilityRankQueries = scc.accessibilityRankQueries
     val userQueries = scc.userQueries
     val clubQuestQueries = scc.clubQuestQueries
+    val accessibilityAllowedRegionQueries = scc.accessibilityAllowedRegionQueries
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {
         // FIXME: 다른 bounded context의 기능을 호출하기 때문에 nested transaction이 반드시 발생한다.

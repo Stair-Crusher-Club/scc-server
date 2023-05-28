@@ -7,7 +7,6 @@ info:
 
 defaultContentType: application/json
 
-
 paths:
   /login:
     post:
@@ -106,7 +105,7 @@ paths:
 
   /clubQuests/{clubQuestId}:
     get:
-      summary: dryRun 생성 결과를 받아서 실제로 퀘스트를 생성한다.
+      summary: 퀘스트를 조회한다.
       parameters:
         - in: path
           name: clubQuestId
@@ -195,6 +194,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClubQuestDTO'
+
+  /accessibilityAllowedRegions:
+    post:
+      summary: 정보 등록 가능 지역을 생성한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccessibilityAllowedRegionRequestDTO'
+      responses:
+        '204': {}
+
+    get:
+      summary: 정보 등록 가능 지역 목록을 조회한다.
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessibilityAllowedRegionDTO'
+
+  /accessibilityAllowedRegions/{regionId}:
+    parameters:
+      - in: path
+        name: regionId
+        schema:
+          type: string
+        required: true
+
+    get:
+      summary: 정보 등록 가능 지역을 조회한다.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessibilityAllowedRegionDTO'
+
+    delete:
+      summary: 정보 등록 가능 지역을 삭제한다.
+      responses:
+        '204': {}
 
 components:
   # Reusable schemas (data models)
@@ -295,3 +340,30 @@ components:
         - isConquered
         - isClosed
         - isNotAccessible
+
+    CreateAccessibilityAllowedRegionRequestDTO:
+      properties:
+        name:
+          type: string
+        boundaryVertices:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationDTO'
+      required:
+        - name
+        - boundaryVertices
+
+    AccessibilityAllowedRegionDTO:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        boundaryVertices:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationDTO'
+      required:
+        - id
+        - type
+        - boundaryVertices
