@@ -18,7 +18,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.place.application.port.`in`.BuildingService
 import club.staircrusher.place.application.port.`in`.PlaceService
-import club.staircrusher.place.domain.model.BuildingAddress
+import club.staircrusher.place.domain.model.Building
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
@@ -40,17 +40,19 @@ class AccessibilityApplicationService(
     private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,
     // FIXME: do not use other BC's application service directly
     private val userApplicationService: UserApplicationService,
+    private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
     private val clock: Clock,
 ) {
-    private val BuildingAddress.isAccessibilityRegistrable: Boolean
+    private val Building.isAccessibilityRegistrable: Boolean
         get() {
-            val addressStr = toString()
-            return addressStr.startsWith("서울") || addressStr.startsWith("경기 성남시")
+            val addressStr = address.toString()
+            return (addressStr.startsWith("서울") || addressStr.startsWith("경기 성남시")) ||
+                accessibilityAllowedRegionService.isAccessibilityAllowed(location)
         }
 
     fun isAccessibilityRegistrable(placeId: String): Boolean {
         val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
-        return place.building.address.isAccessibilityRegistrable
+        return place.building.isAccessibilityRegistrable
     }
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult = transactionManager.doInTransaction {
@@ -155,8 +157,8 @@ class AccessibilityApplicationService(
             if (buildingAccessibilityRepository.findByBuildingId(it.buildingId) != null) {
                 throw SccDomainException("이미 접근성 정보가 등록된 건물입니다.")
             }
-            val buildingAddress = buildingService.getById(createBuildingAccessibilityParams.buildingId)!!.address
-            if (!buildingAddress.isAccessibilityRegistrable) {
+            val building = buildingService.getById(createBuildingAccessibilityParams.buildingId)!!
+            if (!building.isAccessibilityRegistrable) {
                 throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
             }
             if (
@@ -200,8 +202,8 @@ class AccessibilityApplicationService(
         if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
             throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
         }
-        val buildingAddress = placeService.findPlace(createPlaceAccessibilityParams.placeId)!!.address
-        if (!buildingAddress.isAccessibilityRegistrable) {
+        val building = placeService.findPlace(createPlaceAccessibilityParams.placeId)!!.building
+        if (!building.isAccessibilityRegistrable) {
             throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
         }
         val result = placeAccessibilityRepository.save(

@@ -7,6 +7,7 @@ import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.
 import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.stdlib.di.annotation.Component
 
+@Suppress("TooManyFunctions")
 @Component
 class AccessibilityRankRepository(
     val db: DB,
