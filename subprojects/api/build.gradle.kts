@@ -29,7 +29,7 @@ val openApiGenerateTask = tasks.getByName("openApiGenerate") {
     }
     finalizedBy("build")
 }
-tasks.getByName("build").dependsOn(openApiGenerateTask)
+tasks.getByName("compileKotlin").dependsOn(openApiGenerateTask)
 
 // openApiGenerateTask로 생성된 build.gradle.kts의 dependencies를 여기에 복사한다.
 dependencies {

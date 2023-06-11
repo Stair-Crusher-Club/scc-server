@@ -18,6 +18,10 @@ class InMemoryUserRepository : UserRepository {
         return userById.values.filter { it.id in ids }
     }
 
+    override fun findAll(): List<User> {
+        return userById.values.toList()
+    }
+
     override fun save(entity: User): User {
         userById[entity.id] = entity
         return entity

@@ -1,0 +1,87 @@
+name: dev-ci-cd
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+
+jobs:
+  backend-build:
+    runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: postgres:14.5-alpine
+        ports:
+          - 15432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: scc_test
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 19
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Gradle Check
+        run: ./gradlew check
+
+      - uses: actions/upload-artifact@v3
+        name: Upload Check Report If Failed
+        if: failure()
+        with:
+          name: test report
+          path: "**/build/reports"
+          retention-days: 1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::833004893731:role/github-action-ci-cd
+          aws-region: ap-northeast-2
+
+      - name: Build and Push Docker Image
+        run: ./gradlew jib -Pversion=latest-rc
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install & Run openapi-generator
+        working-directory: admin-frontend
+        run: |
+          mkdir -p ~/bin/openapitools
+          curl https://raw.githubusercontent.com/OpenAPITools/openapi-generator/master/bin/utils/openapi-generator-cli.sh > ~/bin/openapitools/openapi-generator-cli
+          chmod u+x ~/bin/openapitools/openapi-generator-cli
+          export PATH=$PATH:~/bin/openapitools/
+
+          mv ~/bin/openapitools/openapi-generator-cli ~/bin/openapitools/openapi-generator
+          
+          ./generate-api-spec.sh
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::833004893731:role/github-action-ci-cd
+          aws-region: ap-northeast-2
+
+      - name: Build and Push Image
+        working-directory: admin-frontend
+        run: ./docker-push.sh dev
+#  deploy: {}
