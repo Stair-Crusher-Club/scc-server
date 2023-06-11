@@ -1,0 +1,22 @@
+name: dev-ci-cd
+on:
+  push:
+    branches:
+      - main
+      - dev-ci-cd
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 19
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Build
+        run: ./gradlew detekt
