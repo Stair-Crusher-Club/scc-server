@@ -7,8 +7,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  backend-build:
     runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: postgres:14.5-alpine
+        ports:
+          - 15432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: scc_test
+
     steps:
       - uses: actions/checkout@v3
       - name: Setup Java
@@ -19,4 +29,4 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Build
-        run: ./gradlew detekt
+        run: ./gradlew build
