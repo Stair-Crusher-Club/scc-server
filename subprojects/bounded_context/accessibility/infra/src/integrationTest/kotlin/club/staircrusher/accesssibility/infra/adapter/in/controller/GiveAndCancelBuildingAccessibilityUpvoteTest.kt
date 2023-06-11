@@ -2,7 +2,7 @@ package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
-import club.staircrusher.api.spec.dto.GiveBuildingAccessibilityUpvotePostRequest
+import club.staircrusher.api.spec.dto.GiveBuildingAccessibilityUpvoteRequestDto
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
             Pair(user, buildingAccessibility)
         }
 
-        val giveUpvoteParams = GiveBuildingAccessibilityUpvotePostRequest(
+        val giveUpvoteParams = GiveBuildingAccessibilityUpvoteRequestDto(
             buildingAccessibilityId = buildingAccessibility.id
         )
         mvc
@@ -32,7 +32,7 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
                 }
             }
 
-        val cancelUpvoteParams = GiveBuildingAccessibilityUpvotePostRequest(
+        val cancelUpvoteParams = GiveBuildingAccessibilityUpvoteRequestDto(
             buildingAccessibilityId = buildingAccessibility.id
         )
         mvc

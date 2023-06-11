@@ -15,7 +15,6 @@ import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -131,18 +130,16 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `로그인되어 있지 않아도 등록이 잘 된다`() {
+    fun `로그인되어 있지 않으면 등록이 안 된다`() {
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
         }
         mvc
             .sccRequest("/registerAccessibility", getDefaultRequestParams(place))
-            .apply {
-                val result = getResult(RegisterAccessibilityPost200Response::class)
-                assertNull(result.buildingAccessibility!!.registeredUserName)
-                assertNull(result.placeAccessibility.registeredUserName)
-                assertNull(result.buildingAccessibilityComments[0].user)
-                assertNull(result.placeAccessibilityComments[0].user)
+            .andExpect {
+                status {
+                    isUnauthorized()
+                }
             }
     }
 
@@ -162,8 +159,12 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 ),
             )
         }
+
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
         mvc
-            .sccRequest("/registerAccessibility", getDefaultRequestParams(place))
+            .sccRequest("/registerAccessibility", getDefaultRequestParams(place), user = user)
             .andExpect {
                 status {
                     isBadRequest()

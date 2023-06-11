@@ -13,7 +13,6 @@ import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.BuildingAddress
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -105,22 +104,23 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `로그인되어 있지 않아도 등록이 잘 된다`() {
+    fun `로그인되어 있지 않으면 등록이 안 된다`() {
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
         }
         mvc.sccRequest("/registerBuildingAccessibility", getDefaultRequestParams(place.building))
-        mvc
-            .sccRequest("/getAccessibility", GetAccessibilityPostRequest(place.id))
-            .apply {
-                val result = getResult(AccessibilityInfoDto::class)
-                assertNull(result.buildingAccessibility!!.registeredUserName)
-                assertNull(result.buildingAccessibilityComments[0].user)
+            .andExpect {
+                status {
+                    isUnauthorized()
+                }
             }
     }
 
     @Test
     fun `서울, 성남외의 지역을 등록하려면 에러가 난다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(
                 placeName = "장소장소",
@@ -136,7 +136,7 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
             )
         }
         mvc
-            .sccRequest("/registerBuildingAccessibility", getDefaultRequestParams(place.building))
+            .sccRequest("/registerBuildingAccessibility", getDefaultRequestParams(place.building), user = user)
             .andExpect {
                 status {
                     isBadRequest()

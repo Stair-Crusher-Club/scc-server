@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 
 class GetAccessibilityTest : AccessibilityITBase() {
     @Autowired
@@ -162,7 +163,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
             }
 
-        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration)
+        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
 
         mvc
             .sccRequest("/getAccessibility", params, user = user)

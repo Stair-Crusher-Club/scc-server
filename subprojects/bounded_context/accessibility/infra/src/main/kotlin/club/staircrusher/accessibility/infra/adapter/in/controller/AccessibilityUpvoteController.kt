@@ -1,8 +1,8 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.`in`.BuildingAccessibilityUpvoteApplicationService
-import club.staircrusher.api.spec.dto.CancelBuildingAccessibilityUpvotePostRequest
-import club.staircrusher.api.spec.dto.GiveBuildingAccessibilityUpvotePostRequest
+import club.staircrusher.api.spec.dto.CancelBuildingAccessibilityUpvoteRequestDto
+import club.staircrusher.api.spec.dto.GiveBuildingAccessibilityUpvoteRequestDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,7 +15,7 @@ class AccessibilityUpvoteController(
 ) {
     @PostMapping("/giveBuildingAccessibilityUpvote")
     fun giveBuildingAccessibilityUpvote(
-        @RequestBody request: GiveBuildingAccessibilityUpvotePostRequest,
+        @RequestBody request: GiveBuildingAccessibilityUpvoteRequestDto,
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         buildingAccessibilityUpvoteApplicationService.giveUpvote(
@@ -29,7 +29,7 @@ class AccessibilityUpvoteController(
 
     @PostMapping("/cancelBuildingAccessibilityUpvote")
     fun cancelBuildingAccessibilityUpvote(
-        @RequestBody request: CancelBuildingAccessibilityUpvotePostRequest,
+        @RequestBody request: CancelBuildingAccessibilityUpvoteRequestDto,
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         buildingAccessibilityUpvoteApplicationService.cancelUpvote(
