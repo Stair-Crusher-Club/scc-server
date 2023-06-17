@@ -65,21 +65,27 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `로그인되어 있지 않아도 등록이 잘 된다`() {
+    fun `로그인되어 있지 않으면 등록이 안 된다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
         }
         mvc
             .sccRequest("/registerPlaceAccessibility", getDefaultRequestParams(place))
-            .apply {
-                val accessibilityInfo = getResult(RegisterPlaceAccessibilityPost200Response::class).accessibilityInfo
-                assertNull(accessibilityInfo.placeAccessibility!!.registeredUserName)
-                assertNull(accessibilityInfo.placeAccessibilityComments[0].user)
+            .andExpect {
+                status {
+                    isUnauthorized()
+                }
             }
     }
 
     @Test
     fun `서울, 성남외의 지역을 등록하려면 에러가 난다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(
                 placeName = "장소장소",
@@ -95,7 +101,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             )
         }
         mvc
-            .sccRequest("/registerPlaceAccessibility", getDefaultRequestParams(place))
+            .sccRequest("/registerPlaceAccessibility", getDefaultRequestParams(place), user = user)
             .andExpect {
                 status {
                     isBadRequest()

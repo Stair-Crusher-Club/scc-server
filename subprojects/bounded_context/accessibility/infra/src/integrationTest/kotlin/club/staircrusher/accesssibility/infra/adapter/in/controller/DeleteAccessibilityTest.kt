@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 
 class DeleteAccessibilityTest : AccessibilityITBase() {
     @Autowired
@@ -101,7 +102,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
     @Test
     fun `등록한지 6시간이 지난 장소 정보는 삭제할 수 없다`() {
         val (user, _, placeAccessibility) = registerAccessibility()
-        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration)
+        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
 
         val params = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
         mvc

@@ -48,7 +48,7 @@ subprojects {
         kotlinOptions.jvmTarget = "17"
     }
 
-    tasks.withType<BootJar>() {
+    tasks.withType<BootJar> {
         enabled = false
     }
 

@@ -369,12 +369,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                buildingAccessibilityId:
-                  type: string
-              required:
-                - buildingAccessibilityId
+              $ref: '#/components/schemas/GiveBuildingAccessibilityUpvoteRequestDto'
       responses:
         '204': {}
 
@@ -386,12 +381,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                buildingAccessibilityId:
-                  type: string
-              required:
-                - buildingAccessibilityId
+              $ref: '#/components/schemas/CancelBuildingAccessibilityUpvoteRequestDto'
       responses:
         '204': {}
 
@@ -892,6 +882,22 @@ components:
         - user
         - conqueredCount
         - rank
+
+    GiveBuildingAccessibilityUpvoteRequestDto:
+      type: object
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
+
+    CancelBuildingAccessibilityUpvoteRequestDto:
+      type: object
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
 
     ApiErrorResponse:
       type: object
