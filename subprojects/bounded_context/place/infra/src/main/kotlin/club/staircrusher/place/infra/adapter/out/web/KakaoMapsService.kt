@@ -118,6 +118,13 @@ class KakaoMapsService(
         return searchPlacesInParallel { page -> fetchPageForSearchByKeyword(keyword, option, page) }
     }
 
+    override suspend fun findFirstByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): Place? {
+        return fetchPageForSearchByKeyword(keyword, option, 1)
+            .map { it.convertToModel() }
+            .awaitFirstOrNull()
+            ?.firstOrNull()
+    }
+
     // TODO: MapsService.SearchByKeywordOption 말고 KakaoMapsService.SearchByKeywordOption 별도로 만들고, page / size 등을 해당 옵션으로 받기
     private fun fetchPageForSearchByKeyword(keyword: String, option: MapsService.SearchByKeywordOption, page: Int): Mono<SearchResult> {
         @Suppress("UnstableApiUsage") rateLimiter.acquire()
@@ -215,10 +222,7 @@ class KakaoMapsService(
                         name = it.placeName,
                         location = it.location,
                         building = Building(
-                            id = Hashing.getHash(
-                                it.roadAddressName,
-                                length = 36
-                            ),
+                            id = Building.generateId(it.roadAddressName),
                             name = it.roadAddressName,
                             location = it.location,
                             address = it.parseToBuildingAddress(),

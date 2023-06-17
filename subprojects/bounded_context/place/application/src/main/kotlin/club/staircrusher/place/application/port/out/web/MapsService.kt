@@ -10,6 +10,11 @@ interface MapsService {
         option: SearchByKeywordOption,
     ): List<Place>
 
+    suspend fun findFirstByKeyword(
+        keyword: String,
+        option: SearchByKeywordOption,
+    ): Place?
+
     suspend fun findAllByCategory(
         category: PlaceCategory,
         option: SearchByCategoryOption,
