@@ -17,7 +17,7 @@ tasks.bootJar { enabled = false }
 group = "club.staircrusher"
 version = "1.0.0-SNAPSHOT"
 
-val generatedProject = listOf(project(":admin_api"), project("api"))
+val detektExcludedProjects = listOf(project(":admin_api"), project("api"), project(":script"))
 subprojects {
     apply(plugin = "kotlin")
 
@@ -52,7 +52,7 @@ subprojects {
         enabled = false
     }
 
-    if (this !in generatedProject) {
+    if (this !in detektExcludedProjects) {
         apply(plugin = "io.gitlab.arturbosch.detekt")
 
         detekt {
