@@ -33,6 +33,7 @@ function CreateClubQuestPage() {
   const [questRadius, setQuestRadius] = useState<number>(200);
   const [questCenterIndicator, setQuestCenterIndicator] = useState<QuestCenterIndicator | null>(null);
   const [questClusterCount, setQuestClusterCount] = useState(1);
+  const [maxPlaceCountPerQuest, setMaxPlaceCountPerQuest] = useState(50);
 
   const [questClustersMarkers, _setQuestClustersMarkers] = useState<kakao.maps.Marker[][]>([]);
   const [dryRunResults, setDryRunResults] = useState<ClubQuestCreateDryRunResultItemDTO[]>([]);
@@ -126,6 +127,7 @@ function CreateClubQuestPage() {
             },
             radiusMeters: questRadius,
             clusterCount: questClusterCount,
+            maxPlaceCountPerQuest: maxPlaceCountPerQuest,
           });
           const dryRunResult = res.data;
           setDryRunResults(dryRunResult);
@@ -302,7 +304,20 @@ function CreateClubQuestPage() {
               disabled={isLoading}
             />
           </div>
-          <Button icon="refresh" text="장소 조회 & 분할하기" onClick={dryRunCreateClubQuest} disabled={isLoading || !questCenter || !questRadius || !questClusterCount}></Button>
+          <div className="input-group">
+            <span>퀘스트 당 최대 장소 수 :&nbsp;</span>
+            <NumericInput
+                className="inline-flex"
+                allowNumericCharactersOnly={true}
+                min={1}
+                value={maxPlaceCountPerQuest}
+                onValueChange={setMaxPlaceCountPerQuest}
+                disabled={isLoading}
+            />
+          </div>
+        </div>
+        <div className="input-group">
+          <Button icon="refresh" text="장소 조회 & 분할하기" onClick={dryRunCreateClubQuest} disabled={isLoading || !questCenter || !questRadius || !questClusterCount || !maxPlaceCountPerQuest}></Button>
           <Button icon="confirm" text="확정하기 (퀘스트 생성)" onClick={createClubQuest} disabled={isLoading || dryRunResults.length === 0}></Button>
           <Button icon="trash" text="처음부터 다시하기" onClick={onClearDryRunResult} disabled={isLoading || dryRunResults.length === 0}></Button>
         </div>

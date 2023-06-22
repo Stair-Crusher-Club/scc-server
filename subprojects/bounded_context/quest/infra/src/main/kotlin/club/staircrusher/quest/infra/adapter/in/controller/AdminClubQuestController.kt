@@ -48,6 +48,7 @@ class AdminClubQuestController(
             centerLocation = request.centerLocation.toModel(),
             radiusMeters = request.radiusMeters,
             clusterCount = request.clusterCount,
+            maxPlaceCountPerQuest = request.maxPlaceCountPerQuest,
         )
         return result.map { it.toDTO(conqueredPlaceIds = emptySet()) }
     }

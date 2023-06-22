@@ -29,6 +29,7 @@ class ClubQuestCreateAplService(
         centerLocation: Location,
         radiusMeters: Int,
         clusterCount: Int,
+        maxPlaceCountPerQuest: Int,
     ): List<ClubQuestCreateDryRunResultItem> {
         val places = runBlocking {
             clubQuestTargetPlacesSearcher.searchPlaces(centerLocation, radiusMeters)
@@ -48,9 +49,10 @@ class ClubQuestCreateAplService(
             .toList().map { (questCenterLocation, targetBuildings) ->
                 Pair(
                     questCenterLocation,
-                    applyTargetPlacesCountLimitOfSingleQuest(targetBuildings).mapIndexed { idx, targetBuilding ->
-                        targetBuilding.copy(name = getBuildingName(idx))
-                    },
+                    applyMaxPlaceCountPerQuest(targetBuildings, maxPlaceCountPerQuest)
+                        .mapIndexed { idx, targetBuilding ->
+                            targetBuilding.copy(name = getBuildingName(idx))
+                        },
                 )
             }
             .convertToClubQuestCreateDryRunResultItems()
@@ -101,16 +103,18 @@ class ClubQuestCreateAplService(
             }
     }
 
-    @Suppress("MagicNumber") private val targetPlacesCountLimitOfSingleQuest = 50
-    private fun applyTargetPlacesCountLimitOfSingleQuest(targetBuildings: List<ClubQuestTargetBuilding>): List<ClubQuestTargetBuilding> {
+    private fun applyMaxPlaceCountPerQuest(
+        targetBuildings: List<ClubQuestTargetBuilding>,
+        maxPlaceCountPerQuest: Int,
+    ): List<ClubQuestTargetBuilding> {
         val totalTargetPlaces = targetBuildings.sumOf { it.places.count() }
-        if (totalTargetPlaces <= targetPlacesCountLimitOfSingleQuest) {
+        if (totalTargetPlaces <= maxPlaceCountPerQuest) {
             return targetBuildings
         }
         return targetBuildings
             .flatMap { targetBuilding -> targetBuilding.places.map { Pair(targetBuilding, it) } }
             .shuffled()
-            .take(targetPlacesCountLimitOfSingleQuest)
+            .take(maxPlaceCountPerQuest)
             .groupBy { it.first }
             .map { (targetBuilding, pairs) ->
                 targetBuilding.copy(places = pairs.map { it.second })
