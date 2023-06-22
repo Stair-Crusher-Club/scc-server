@@ -69,10 +69,13 @@ paths:
                   type: integer
                 clusterCount:
                   type: integer
+                maxPlaceCountPerQuest:
+                  type: integer
               required:
                 - centerLocation
                 - radiusMeters
                 - clusterCount
+                - maxPlaceCountPerQuest
       responses:
         '200':
           content:
