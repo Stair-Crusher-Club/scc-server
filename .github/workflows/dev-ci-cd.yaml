@@ -34,10 +34,12 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Gradle Check
+        working-directory: app-server
         run: ./gradlew check
 
       - uses: actions/upload-artifact@v3
         name: Upload Check Report If Failed
+        working-directory: app-server
         if: failure()
         with:
           name: test report
@@ -51,6 +53,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Build and Push Docker Image
+        working-directory: app-server
         run: ./gradlew jib -Pversion=latest-rc
 
   frontend-build:
@@ -64,7 +67,7 @@ jobs:
           node-version: 18
 
       - name: Install & Run openapi-generator
-        working-directory: admin-frontend
+        working-directory: app-admin-frontend
         run: |
           mkdir -p ~/bin/openapitools
           curl https://raw.githubusercontent.com/OpenAPITools/openapi-generator/master/bin/utils/openapi-generator-cli.sh > ~/bin/openapitools/openapi-generator-cli
@@ -82,6 +85,6 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Build and Push Image
-        working-directory: admin-frontend
+        working-directory: app-admin-frontend
         run: ./docker-push.sh dev
 #  deploy: {}

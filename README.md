@@ -18,7 +18,7 @@ gradle openApiGenerate
 
 프론트엔드(어드민)를 위한 typescript generating은 아래의 커맨드를 실행해야 합니다.
 ```bash
-# admin-frontend 디렉토리에서
+# app-admin-frontend 디렉토리에서
 ./generate-api-spec.sh
 ```
 
