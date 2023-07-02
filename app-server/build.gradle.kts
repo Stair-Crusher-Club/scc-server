@@ -2,10 +2,22 @@ import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
+buildscript {
+    repositories {
+        maven {
+            url = uri("https://repo.spring.io/plugins-snapshot")
+        }
+    }
+    dependencies {
+        classpath("io.spring.gradle:dependency-management-plugin:1.1.0")
+    }
+}
+
 plugins {
     kotlin("jvm")
     id("org.springframework.boot")
     id("io.gitlab.arturbosch.detekt")
+    id("io.spring.dependency-management")
 }
 
 repositories {
@@ -70,6 +82,14 @@ subprojects {
                 html.required.set(true)
                 md.required.set(true)
             }
+        }
+    }
+
+
+    apply(plugin = "io.spring.dependency-management")
+    dependencyManagement {
+        imports {
+            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
         }
     }
 }
