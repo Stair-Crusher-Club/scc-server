@@ -21,6 +21,10 @@ jobs:
           POSTGRES_PASSWORD: test
           POSTGRES_DB: scc_test
 
+    defaults:
+      run:
+        working-directory: app-server
+
     steps:
       - uses: actions/checkout@v3
 
@@ -55,6 +59,11 @@ jobs:
 
   frontend-build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: app-admin-frontend
+
     steps:
       - uses: actions/checkout@v3
 
@@ -64,7 +73,6 @@ jobs:
           node-version: 18
 
       - name: Install & Run openapi-generator
-        working-directory: admin-frontend
         run: |
           mkdir -p ~/bin/openapitools
           curl https://raw.githubusercontent.com/OpenAPITools/openapi-generator/master/bin/utils/openapi-generator-cli.sh > ~/bin/openapitools/openapi-generator-cli
@@ -82,6 +90,5 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Build and Push Image
-        working-directory: admin-frontend
         run: ./docker-push.sh dev
 #  deploy: {}

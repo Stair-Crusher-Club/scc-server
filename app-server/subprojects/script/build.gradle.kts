@@ -1,10 +1,6 @@
 val coroutineVersion: String by project
 val kotlinxSerializationVersion: String by project
 
-plugins {
-    id("org.springframework.boot")
-}
-
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")

@@ -1,13 +1,6 @@
 plugins {
     kotlin("plugin.serialization")
-    id("io.spring.dependency-management")
     id("org.springframework.boot")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-    }
 }
 
 dependencies {

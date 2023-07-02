@@ -10,7 +10,7 @@ dependencies {
 }
 
 openApiGenerate {
-    inputSpec.set("${project.rootDir}/admin-api/api-spec.yaml")
+    inputSpec.set("${project.rootDir}/../api-admin/api-spec.yaml")
     packageName.set("club.staircrusher.admin_api.spec")
     apiPackage.set("club.staircrusher.admin_api.spec")
     modelPackage.set("club.staircrusher.admin_api.spec.dto")
