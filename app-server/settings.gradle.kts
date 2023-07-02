@@ -1,4 +1,4 @@
-rootProject.name = "scc-server"
+rootProject.name = "app-server"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 fileTree("subprojects").filter { it.name == "build.gradle.kts" }.forEach {
