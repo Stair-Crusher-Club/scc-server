@@ -1,12 +1,14 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
 import club.staircrusher.api.converter.toModel
+import club.staircrusher.api.spec.dto.ListPlaceCategoriesPost200Response
 import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
 import club.staircrusher.stdlib.geography.Length
+import club.staircrusher.stdlib.place.PlaceCategory
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -33,5 +35,14 @@ class SearchPlacesController(
     suspend fun listPlacesInBuilding(@RequestBody request: ListPlacesInBuildingPostRequest): List<PlaceListItem> {
         return placeSearchService.listPlacesInBuilding(request.buildingId)
             .map { it.toDTO() }
+    }
+
+    @PostMapping("/listPlaceCategories")
+    suspend fun listPlaceCategories(): ListPlaceCategoriesPost200Response {
+        return ListPlaceCategoriesPost200Response(
+            PlaceCategory.values()
+                .map { it.toDTO() }
+                .distinct()
+        )
     }
 }

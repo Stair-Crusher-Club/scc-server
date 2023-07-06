@@ -1,9 +1,11 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
+import club.staircrusher.api.spec.dto.PlaceCategoryDto
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
+import club.staircrusher.stdlib.place.PlaceCategory
 
 fun Place.toDTO() = club.staircrusher.api.spec.dto.Place(
     id = id,
@@ -23,4 +25,14 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     hasPlaceAccessibility = placeAccessibility != null,
     distanceMeters = distance?.meter?.toInt(),
     isAccessibilityRegistrable = isAccessibilityRegistrable,
+)
+
+fun PlaceCategory.toDTO() = PlaceCategoryDto(
+    type = when (this) {
+        PlaceCategory.RESTAURANT -> club.staircrusher.api.spec.dto.PlaceCategory.rESTAURANT
+        PlaceCategory.CAFE -> club.staircrusher.api.spec.dto.PlaceCategory.cAFE
+        PlaceCategory.ACCOMODATION -> club.staircrusher.api.spec.dto.PlaceCategory.aCCOMODATION
+        else -> club.staircrusher.api.spec.dto.PlaceCategory.eTC
+    },
+    name = this.humanReadableName
 )

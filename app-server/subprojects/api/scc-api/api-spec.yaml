@@ -301,6 +301,29 @@ paths:
                     items:
                       $ref: '#/components/schemas/PlaceListItem'
 
+  /listPlaceCategories:
+    post:
+      summary: 건물의 카테고리들을 조회한다.
+      description: "특정 카테고리로 검색할 때 이용한다."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlaceCategoryDto'
+
   /registerBuildingAccessibilityComment:
     post:
       summary: 건물에 의견을 추가한다.
@@ -781,6 +804,22 @@ components:
         - hasBuildingAccessibility
         - hasPlaceAccessibility
         - isAccessibilityRegistrable
+
+    PlaceCategory:
+      type: string
+      enum:
+        - ACCOMODATION
+        - RESTAURANT
+        - CAFE
+        - ETC
+
+    PlaceCategoryDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/PlaceCategory'
+        name:
+          type: string
 
     AccessibilityInfoDto:
       type: object
