@@ -1,13 +1,13 @@
 #!/bin/bash
 
 if [[ $1 != "dev" && $1 != "prod" ]]; then
-  echo 'Usage: ./docker-push.sh (dev|prod)'
+  echo 'Usage: ./docker-push.sh (dev|prod) [<release-version>]; <release-version> is "latest" by default'
   exit 0
 fi;
 
-IMAGE_TAG=latest
+IMAGE_TAG="${2:-"latest"}"
 if [[ $1 = "dev" ]]; then
-  IMAGE_TAG="$IMAGE_TAG-rc"
+  IMAGE_TAG="IMAGE_TAG-rc"
 fi;
 
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/q0g6g7m8
