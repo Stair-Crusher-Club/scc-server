@@ -115,6 +115,7 @@ fun main() {
                 matchType = imageAccessibilityPairs[0].matchType,
             )
         }
+
     val baMatchResults = imageAccessibilityPairs
         .filter { it.accessibility is BuildingAccessibility }
         .groupBy { it.accessibility }
