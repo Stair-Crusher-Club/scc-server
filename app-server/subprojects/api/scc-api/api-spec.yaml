@@ -301,6 +301,29 @@ paths:
                     items:
                       $ref: '#/components/schemas/PlaceListItem'
 
+  /listSearchKeywordsOfPlaceCategory:
+    post:
+      summary: 특정 건물의 점포를 조회한다.
+      description: "'이 건물에 다른 점포 등록하기'를 눌렀을 때 호출된다."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchKeywordOfPlaceCategory'
+
   /registerBuildingAccessibilityComment:
     post:
       summary: 건물에 의견을 추가한다.
@@ -781,6 +804,25 @@ components:
         - hasBuildingAccessibility
         - hasPlaceAccessibility
         - isAccessibilityRegistrable
+
+    PlaceCategoryDto:
+      type: string
+      enum:
+        - RESTAURANT
+        - CAFE
+        - ACCOMODATION
+
+    SearchKeywordOfPlaceCategory:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/PlaceCategoryDto'
+        keyword:
+          type: string
+          description: '검색창에 들어가는 문자열. ex) 음식점, 병원, 카페'
+      required:
+        - category
+        - keyword
 
     AccessibilityInfoDto:
       type: object

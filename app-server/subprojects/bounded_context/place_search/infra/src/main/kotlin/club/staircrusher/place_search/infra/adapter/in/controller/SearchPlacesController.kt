@@ -2,7 +2,9 @@ package club.staircrusher.place_search.infra.adapter.`in`.controller
 
 import club.staircrusher.api.converter.toModel
 import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
+import club.staircrusher.api.spec.dto.ListSearchKeywordsOfPlaceCategoryPost200Response
 import club.staircrusher.api.spec.dto.PlaceListItem
+import club.staircrusher.api.spec.dto.SearchKeywordOfPlaceCategory
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
@@ -33,5 +35,17 @@ class SearchPlacesController(
     suspend fun listPlacesInBuilding(@RequestBody request: ListPlacesInBuildingPostRequest): List<PlaceListItem> {
         return placeSearchService.listPlacesInBuilding(request.buildingId)
             .map { it.toDTO() }
+    }
+
+    @PostMapping("/listSearchKeywordsOfPlaceCategory")
+    suspend fun listSearchKeywordsOfPlaceCategory(): ListSearchKeywordsOfPlaceCategoryPost200Response {
+        return ListSearchKeywordsOfPlaceCategoryPost200Response(
+            items = placeSearchService.availableSearchKeywordsOfPlaceCategory()
+                .mapNotNull { (category, keyword) ->
+                    category.toDto()?.let {
+                        SearchKeywordOfPlaceCategory(it, keyword)
+                    }
+                }
+        )
     }
 }
