@@ -303,8 +303,8 @@ paths:
 
   /listSearchKeywordsOfPlaceCategory:
     post:
-      summary: 특정 건물의 점포를 조회한다.
-      description: "'이 건물에 다른 점포 등록하기'를 눌렀을 때 호출된다."
+      summary: 특정 카테고리의 점포들을 검색할 수 있게 키워드들을 내려준다.
+      description: "음식점, 카페, 편의점, 병원 같이 키워드를 내려주면 searchPlaces 키워드로 쓸 수 있습니다."
       requestBody:
         required: true
         content:
