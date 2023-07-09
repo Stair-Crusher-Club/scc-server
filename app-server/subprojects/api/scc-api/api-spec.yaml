@@ -115,7 +115,7 @@ paths:
                 eupMyeonDongId:
                   type: string
                 category:
-                  $ref: '#/components/schemes/PlaceCategoryDto'
+                  $ref: '#/components/schemes/PlaceCategory'
               required:
                 - searchText
                 - distanceMetersLimit
@@ -305,7 +305,7 @@ paths:
 
   /listPlaceCategories:
     post:
-      summary: 건물의 카테고리들을 조회한다.
+      summary: 점포 카테고리들을 조회한다.
       description: "특정 카테고리로 검색할 때 이용한다."
       requestBody:
         required: true

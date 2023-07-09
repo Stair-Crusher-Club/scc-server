@@ -193,7 +193,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
             searchText = searchText,
             distanceMetersLimit = radiusMeters,
             currentLocation = places.first().location.toDTO(),
-            category = selectedRandomCategory.toDTO()
+            category = selectedRandomCategory.toDTO()?.type
         )
         mvc.sccRequest("/searchPlaces", params2, user = user)
             .apply {
