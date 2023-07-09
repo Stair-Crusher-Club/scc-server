@@ -19,7 +19,10 @@ class PlaceService(
         return placeRepository.findByIdOrNull(placeId)
     }
 
-    suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
+    suspend fun findAllByKeyword(
+        keyword: String,
+        option: MapsService.SearchByKeywordOption
+    ): List<Place> {
         if (keyword.isBlank()) {
             return emptyList()
         }

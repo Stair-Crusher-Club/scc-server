@@ -25,6 +25,7 @@ class SearchPlacesController(
             distanceMetersLimit = Length.ofMeters(request.distanceMetersLimit.toDouble()),
             siGunGuId = request.siGunGuId,
             eupMyeonDongId = request.eupMyeonDongId,
+            category = request.category?.type?.let { PlaceCategory.from(it) }
         )
         return SearchPlacesPost200Response(
             items = searchResults.map { it.toDTO() }
@@ -41,7 +42,7 @@ class SearchPlacesController(
     fun listPlaceCategories(): ListPlaceCategoriesPost200Response {
         return ListPlaceCategoriesPost200Response(
             PlaceCategory.values()
-                .map { it.toDTO() }
+                .mapNotNull { it.toDTO() }
                 .distinctBy { it.type }
         )
     }

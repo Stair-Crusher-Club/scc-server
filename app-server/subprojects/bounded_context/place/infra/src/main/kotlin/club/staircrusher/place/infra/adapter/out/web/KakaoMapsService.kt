@@ -33,14 +33,17 @@ import java.util.concurrent.TimeUnit
 @Component
 class KakaoMapsService(
     kakaoProperties: KakaoProperties,
-): MapsService {
+) : MapsService {
     companion object {
         private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
         private val READ_TIMEOUT = Duration.ofSeconds(10)
         private val WRITE_TIMEOUT = Duration.ofSeconds(10)
     }
+
     private val logger = KotlinLogging.logger {}
-    @Suppress("UnstableApiUsage", "MagicNumber") private val rateLimiter = RateLimiter.create(20.0)
+
+    @Suppress("UnstableApiUsage", "MagicNumber")
+    private val rateLimiter = RateLimiter.create(20.0)
 
     private val kakaoService: KakaoService by lazy {
         // FIXME: extract configurable parameters to kakaoProperties
@@ -109,7 +112,8 @@ class KakaoMapsService(
         ): Mono<SearchResult>
 
         companion object {
-            @Suppress("MagicNumber") internal const val defaultSize = 15
+            @Suppress("MagicNumber")
+            internal const val defaultSize = 15
         }
     }
 
@@ -125,32 +129,43 @@ class KakaoMapsService(
     }
 
     // TODO: MapsService.SearchByKeywordOption 말고 KakaoMapsService.SearchByKeywordOption 별도로 만들고, page / size 등을 해당 옵션으로 받기
-    private fun fetchPageForSearchByKeyword(keyword: String, option: MapsService.SearchByKeywordOption, page: Int): Mono<SearchResult> {
+    private fun fetchPageForSearchByKeyword(
+        keyword: String,
+        option: MapsService.SearchByKeywordOption,
+        page: Int
+    ): Mono<SearchResult> {
         @Suppress("UnstableApiUsage") rateLimiter.acquire()
         return when (option.region) {
             is MapsService.SearchByKeywordOption.CircleRegion -> {
                 val region = option.region as MapsService.SearchByKeywordOption.CircleRegion
                 kakaoService.searchByKeyword(
                     query = keyword,
+                    category_group_code = option.category?.let { SearchResult.Document.Category.fromPlaceCategory(it).name },
                     x = region.centerLocation.lng.toString(),
                     y = region.centerLocation.lat.toString(),
                     radius = region.radiusMeters,
                     page = page,
                 )
             }
+
             is MapsService.SearchByKeywordOption.RectangleRegion -> {
                 val region = option.region as MapsService.SearchByKeywordOption.RectangleRegion
                 kakaoService.searchByKeyword(
                     query = keyword,
+                    category_group_code = option.category?.let { SearchResult.Document.Category.fromPlaceCategory(it).name },
                     rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" },
                     page = page,
                 )
             }
+
             null -> kakaoService.searchByKeyword(query = keyword, page = page)
         }
     }
 
-    override suspend fun findAllByCategory(category: PlaceCategory, option: MapsService.SearchByCategoryOption): List<Place> {
+    override suspend fun findAllByCategory(
+        category: PlaceCategory,
+        option: MapsService.SearchByCategoryOption
+    ): List<Place> {
         return searchPlacesInParallel { page -> fetchPageForSearchByCategory(category, option, page) }
     }
 
@@ -172,6 +187,7 @@ class KakaoMapsService(
                     page = page,
                 )
             }
+
             is MapsService.SearchByCategoryOption.RectangleRegion -> {
                 val region = option.region as MapsService.SearchByCategoryOption.RectangleRegion
                 kakaoService.searchByCategory(
@@ -183,20 +199,25 @@ class KakaoMapsService(
         }
     }
 
-    @Suppress("MagicNumber") private val fetchChunkSize = 20
+    @Suppress("MagicNumber")
+    private val fetchChunkSize = 20
+
     @Suppress("ReturnCount")
     private suspend fun searchPlacesInParallel(fetchPageBlock: (page: Int) -> Mono<SearchResult>): List<Place> {
         val firstPageResult = fetchPageBlock(1)
             .awaitFirstOrNull()
             ?: return emptyList()
-        val pageablePage = maxOf(0, firstPageResult.meta.pageableCount - 1) / KakaoService.defaultSize + 1 // TODO: KakaoService.defaultSize를 고정적으로 사용하지 말고, searchOption에 넣는 size를 사용해서 페이지 계산하기
+        val pageablePage = maxOf(
+            0,
+            firstPageResult.meta.pageableCount - 1
+        ) / KakaoService.defaultSize + 1 // TODO: KakaoService.defaultSize를 고정적으로 사용하지 말고, searchOption에 넣는 size를 사용해서 페이지 계산하기
 
         val result = firstPageResult.convertToModel().toMutableList()
         if (pageablePage == 1) {
             return result
         }
 
-        (2 .. pageablePage)
+        (2..pageablePage)
             .map { page -> fetchPageBlock(page) }
             .chunked(fetchChunkSize)
             .forEach { chunkedMonos ->

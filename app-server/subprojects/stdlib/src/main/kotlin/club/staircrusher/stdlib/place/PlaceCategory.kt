@@ -18,5 +18,7 @@ enum class PlaceCategory(val humanReadableName: String) {
     RESTAURANT(humanReadableName = "음식점"),
     CAFE(humanReadableName = "카페"),
     HOSPITAL(humanReadableName = "병원"),
-    PHARMACY(humanReadableName = "약국"),
+    PHARMACY(humanReadableName = "약국");
+
+    companion object
 }

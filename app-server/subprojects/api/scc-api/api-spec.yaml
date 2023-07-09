@@ -114,6 +114,8 @@ paths:
                   type: string
                 eupMyeonDongId:
                   type: string
+                category:
+                  $ref: '#/components/schemes/PlaceCategoryDto'
               required:
                 - searchText
                 - distanceMetersLimit
@@ -811,7 +813,6 @@ components:
         - ACCOMODATION
         - RESTAURANT
         - CAFE
-        - ETC
 
     PlaceCategoryDto:
       type: object

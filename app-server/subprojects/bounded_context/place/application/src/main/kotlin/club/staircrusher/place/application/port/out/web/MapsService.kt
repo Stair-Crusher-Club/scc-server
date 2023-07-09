@@ -22,12 +22,14 @@ interface MapsService {
 
     data class SearchByKeywordOption(
         val region: Region? = null,
+        val category: PlaceCategory? = null,
     ) {
         sealed interface Region
         data class CircleRegion(
             val centerLocation: Location,
             val radiusMeters: Int,
         ) : Region
+
         data class RectangleRegion(
             val leftTopLocation: Location,
             val rightBottomLocation: Location,
@@ -42,6 +44,7 @@ interface MapsService {
             val centerLocation: Location,
             val radiusMeters: Int,
         ) : Region
+
         data class RectangleRegion(
             val leftBottomLocation: Location,
             val rightTopLocation: Location,

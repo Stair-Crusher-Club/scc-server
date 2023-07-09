@@ -11,6 +11,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.LocationUtils
+import club.staircrusher.stdlib.place.PlaceCategory
 
 @Component
 class PlaceSearchService(
@@ -33,6 +34,7 @@ class PlaceSearchService(
         distanceMetersLimit: Length,
         siGunGuId: String?,
         eupMyeonDongId: String?,
+        category: PlaceCategory?,
     ): List<SearchPlacesResult> {
         val places = placeService.findAllByKeyword(
             searchText,
@@ -42,7 +44,8 @@ class PlaceSearchService(
                         centerLocation = it,
                         radiusMeters = distanceMetersLimit.meter.toInt(),
                     )
-                }
+                },
+                category = category
             ),
         )
         return places.map { it.toSearchPlacesResult(currentLocation) }

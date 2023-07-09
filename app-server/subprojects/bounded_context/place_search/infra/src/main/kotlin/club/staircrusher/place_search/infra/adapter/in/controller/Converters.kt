@@ -27,12 +27,29 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     isAccessibilityRegistrable = isAccessibilityRegistrable,
 )
 
-fun PlaceCategory.toDTO() = PlaceCategoryDto(
-    type = when (this) {
-        PlaceCategory.RESTAURANT -> club.staircrusher.api.spec.dto.PlaceCategory.rESTAURANT
-        PlaceCategory.CAFE -> club.staircrusher.api.spec.dto.PlaceCategory.cAFE
-        PlaceCategory.ACCOMODATION -> club.staircrusher.api.spec.dto.PlaceCategory.aCCOMODATION
-        else -> club.staircrusher.api.spec.dto.PlaceCategory.eTC
-    },
-    name = this.humanReadableName
-)
+fun PlaceCategory.Companion.from(dto: club.staircrusher.api.spec.dto.PlaceCategory) =
+    when (dto) {
+        club.staircrusher.api.spec.dto.PlaceCategory.aCCOMODATION -> PlaceCategory.ACCOMODATION
+        club.staircrusher.api.spec.dto.PlaceCategory.cAFE -> PlaceCategory.CAFE
+        club.staircrusher.api.spec.dto.PlaceCategory.rESTAURANT -> PlaceCategory.RESTAURANT
+        else -> null
+    }
+
+fun PlaceCategory.toDTO(): PlaceCategoryDto? = when (this) {
+    PlaceCategory.ACCOMODATION -> PlaceCategoryDto(
+        type = club.staircrusher.api.spec.dto.PlaceCategory.aCCOMODATION,
+        this.humanReadableName
+    )
+
+    PlaceCategory.CAFE -> PlaceCategoryDto(
+        type = club.staircrusher.api.spec.dto.PlaceCategory.cAFE,
+        this.humanReadableName
+    )
+
+    PlaceCategory.RESTAURANT -> PlaceCategoryDto(
+        type = club.staircrusher.api.spec.dto.PlaceCategory.rESTAURANT,
+        this.humanReadableName
+    )
+
+    else -> null
+}
