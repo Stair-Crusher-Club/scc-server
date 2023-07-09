@@ -38,11 +38,11 @@ class SearchPlacesController(
     }
 
     @PostMapping("/listPlaceCategories")
-    suspend fun listPlaceCategories(): ListPlaceCategoriesPost200Response {
+    fun listPlaceCategories(): ListPlaceCategoriesPost200Response {
         return ListPlaceCategoriesPost200Response(
             PlaceCategory.values()
                 .map { it.toDTO() }
-                .distinct()
+                .distinctBy { it.type }
         )
     }
 }
