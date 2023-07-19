@@ -38,7 +38,7 @@ class SearchPlacesController(
     }
 
     @PostMapping("/listSearchKeywordsOfPlaceCategory")
-    suspend fun listSearchKeywordsOfPlaceCategory(): ListSearchKeywordsOfPlaceCategoryPost200Response {
+    fun listSearchKeywordsOfPlaceCategory(): ListSearchKeywordsOfPlaceCategoryPost200Response {
         return ListSearchKeywordsOfPlaceCategoryPost200Response(
             items = placeSearchService.availableSearchKeywordsOfPlaceCategory()
                 .mapNotNull { (category, keyword) ->
