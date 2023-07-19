@@ -7,6 +7,7 @@ import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.api.spec.dto.SearchKeywordOfPlaceCategory
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
+import club.staircrusher.place_search.application.port.`in`.ListSearchKeywordOfPlaceCategoryUseCase
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
 import club.staircrusher.stdlib.geography.Length
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class SearchPlacesController(
     private val placeSearchService: PlaceSearchService,
+    private val listSearchKeywordOfPlaceCategoryUseCase: ListSearchKeywordOfPlaceCategoryUseCase
 ) {
     @PostMapping("/searchPlaces")
     suspend fun searchPlaces(@RequestBody request: SearchPlacesPostRequest): SearchPlacesPost200Response {
@@ -39,8 +41,9 @@ class SearchPlacesController(
 
     @PostMapping("/listSearchKeywordsOfPlaceCategory")
     fun listSearchKeywordsOfPlaceCategory(): ListSearchKeywordsOfPlaceCategoryPost200Response {
+
         return ListSearchKeywordsOfPlaceCategoryPost200Response(
-            items = placeSearchService.availableSearchKeywordsOfPlaceCategory()
+            items = listSearchKeywordOfPlaceCategoryUseCase.handle()
                 .mapNotNull { (category, keyword) ->
                     category.toDto()?.let {
                         SearchKeywordOfPlaceCategory(it, keyword)

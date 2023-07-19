@@ -59,12 +59,6 @@ class PlaceSearchService(
             .map { it.toSearchPlacesResult(currentLocation = null) }
     }
 
-    fun availableSearchKeywordsOfPlaceCategory(): List<Pair<PlaceCategory, String>> {
-        return PlaceCategory.values().map {
-            it to it.humanReadableName
-        }
-    }
-
     private fun Place.toSearchPlacesResult(currentLocation: Location?): SearchPlacesResult {
         val placeAccessibility = accessibilityApplicationService.getPlaceAccessibility(id)
         val buildingAccessibility = accessibilityApplicationService.getBuildingAccessibility(id)
