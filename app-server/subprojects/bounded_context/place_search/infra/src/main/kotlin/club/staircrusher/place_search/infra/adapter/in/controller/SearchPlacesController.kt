@@ -41,14 +41,9 @@ class SearchPlacesController(
 
     @PostMapping("/listSearchKeywordsOfPlaceCategory")
     fun listSearchKeywordsOfPlaceCategory(): ListSearchKeywordsOfPlaceCategoryPost200Response {
-
         return ListSearchKeywordsOfPlaceCategoryPost200Response(
             items = listSearchKeywordOfPlaceCategoryUseCase.handle()
-                .mapNotNull { (category, keyword) ->
-                    category.toDto()?.let {
-                        SearchKeywordOfPlaceCategory(it, keyword)
-                    }
-                }
+                .map { SearchKeywordOfPlaceCategory(it.first.toDto(), it.second) }
         )
     }
 }

@@ -811,6 +811,21 @@ components:
         - RESTAURANT
         - CAFE
         - ACCOMODATION
+        - MARKET
+        - CONVENIENCE_STORE
+        - KINDERGARTEN
+        - SCHOOL
+        - ACADEMY
+        - PARKING_LOT
+        - GAS_STATION
+        - SUBWAY_STATION
+        - BANK
+        - CULTURAL_FACILITIES
+        - AGENCY
+        - PUBLIC_OFFICE
+        - ATTRACTION
+        - HOSPITAL
+        - PHARMACY
 
     SearchKeywordOfPlaceCategory:
       type: object

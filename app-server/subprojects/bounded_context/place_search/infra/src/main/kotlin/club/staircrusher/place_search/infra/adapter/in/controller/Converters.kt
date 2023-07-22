@@ -26,23 +26,23 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     isAccessibilityRegistrable = isAccessibilityRegistrable,
 )
 
-fun club.staircrusher.stdlib.place.PlaceCategory.toDto(): PlaceCategoryDto? = when (this) {
+fun club.staircrusher.stdlib.place.PlaceCategory.toDto(): PlaceCategoryDto = when (this) {
     club.staircrusher.stdlib.place.PlaceCategory.ACCOMODATION -> PlaceCategoryDto.aCCOMODATION
     club.staircrusher.stdlib.place.PlaceCategory.CAFE -> PlaceCategoryDto.cAFE
     club.staircrusher.stdlib.place.PlaceCategory.RESTAURANT -> PlaceCategoryDto.rESTAURANT
-    club.staircrusher.stdlib.place.PlaceCategory.MARKET,
-    club.staircrusher.stdlib.place.PlaceCategory.CONVENIENCE_STORE,
-    club.staircrusher.stdlib.place.PlaceCategory.KINDERGARTEN,
-    club.staircrusher.stdlib.place.PlaceCategory.SCHOOL,
-    club.staircrusher.stdlib.place.PlaceCategory.ACADEMY,
-    club.staircrusher.stdlib.place.PlaceCategory.PARKING_LOT,
-    club.staircrusher.stdlib.place.PlaceCategory.GAS_STATION,
-    club.staircrusher.stdlib.place.PlaceCategory.SUBWAY_STATION,
-    club.staircrusher.stdlib.place.PlaceCategory.BANK,
-    club.staircrusher.stdlib.place.PlaceCategory.CULTURAL_FACILITIES,
-    club.staircrusher.stdlib.place.PlaceCategory.AGENCY,
-    club.staircrusher.stdlib.place.PlaceCategory.PUBLIC_OFFICE,
-    club.staircrusher.stdlib.place.PlaceCategory.ATTRACTION,
-    club.staircrusher.stdlib.place.PlaceCategory.HOSPITAL,
-    club.staircrusher.stdlib.place.PlaceCategory.PHARMACY -> null
+    club.staircrusher.stdlib.place.PlaceCategory.MARKET -> PlaceCategoryDto.mARKET
+    club.staircrusher.stdlib.place.PlaceCategory.CONVENIENCE_STORE -> PlaceCategoryDto.cONVENIENCESTORE
+    club.staircrusher.stdlib.place.PlaceCategory.KINDERGARTEN -> PlaceCategoryDto.kINDERGARTEN
+    club.staircrusher.stdlib.place.PlaceCategory.SCHOOL -> PlaceCategoryDto.sCHOOL
+    club.staircrusher.stdlib.place.PlaceCategory.ACADEMY -> PlaceCategoryDto.aCADEMY
+    club.staircrusher.stdlib.place.PlaceCategory.PARKING_LOT -> PlaceCategoryDto.pARKINGLOT
+    club.staircrusher.stdlib.place.PlaceCategory.GAS_STATION -> PlaceCategoryDto.gASSTATION
+    club.staircrusher.stdlib.place.PlaceCategory.SUBWAY_STATION -> PlaceCategoryDto.sUBWAYSTATION
+    club.staircrusher.stdlib.place.PlaceCategory.BANK -> PlaceCategoryDto.bANK
+    club.staircrusher.stdlib.place.PlaceCategory.CULTURAL_FACILITIES -> PlaceCategoryDto.cULTURALFACILITIES
+    club.staircrusher.stdlib.place.PlaceCategory.AGENCY -> PlaceCategoryDto.aGENCY
+    club.staircrusher.stdlib.place.PlaceCategory.PUBLIC_OFFICE -> PlaceCategoryDto.pUBLICOFFICE
+    club.staircrusher.stdlib.place.PlaceCategory.ATTRACTION -> PlaceCategoryDto.aTTRACTION
+    club.staircrusher.stdlib.place.PlaceCategory.HOSPITAL -> PlaceCategoryDto.hOSPITAL
+    club.staircrusher.stdlib.place.PlaceCategory.PHARMACY -> PlaceCategoryDto.pHARMACY
 }

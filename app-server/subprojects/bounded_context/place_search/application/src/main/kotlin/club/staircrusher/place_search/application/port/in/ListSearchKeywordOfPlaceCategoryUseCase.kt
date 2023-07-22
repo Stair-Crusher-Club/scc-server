@@ -7,9 +7,15 @@ import club.staircrusher.stdlib.place.PlaceCategory
 class ListSearchKeywordOfPlaceCategoryUseCase(
 ) {
     fun handle(): List<Pair<PlaceCategory, String>> {
-        return PlaceCategory.values().map {
-            it to it.humanReadableName
-        }
+        return PlaceCategory.values()
+            .filter {
+                listOf(
+                    PlaceCategory.RESTAURANT,
+                    PlaceCategory.CAFE,
+                    PlaceCategory.CONVENIENCE_STORE,
+                    PlaceCategory.PHARMACY
+                ).contains(it)
+            }
+            .map { it to it.humanReadableName }
     }
 }
-
