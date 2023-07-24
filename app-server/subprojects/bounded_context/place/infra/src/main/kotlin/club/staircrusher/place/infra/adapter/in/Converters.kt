@@ -1,4 +1,4 @@
-package club.staircrusher.place.application.port.`in`
+package club.staircrusher.place.infra.adapter.`in`
 
 import club.staircrusher.domain_event.dto.BuildingAddressDTO
 import club.staircrusher.domain_event.dto.BuildingDTO
@@ -8,8 +8,8 @@ import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 
 
-fun BuildingAddress.toBuildingAddressDTO(): BuildingAddressDTO {
-    return BuildingAddressDTO(
+fun BuildingAddressDTO.toBuildingAddress(): BuildingAddress {
+    return BuildingAddress(
         siDo = this.siDo,
         siGunGu = this.siGunGu,
         eupMyeonDong = this.eupMyeonDong,
@@ -20,23 +20,23 @@ fun BuildingAddress.toBuildingAddressDTO(): BuildingAddressDTO {
     )
 }
 
-fun Building.toBuildingDTO(): BuildingDTO {
-    return BuildingDTO(
+fun BuildingDTO.toBuilding(): Building {
+    return Building(
         id = this.id,
         name = this.name,
         location = this.location,
-        address = this.address.toBuildingAddressDTO(),
+        address = this.address.toBuildingAddress(),
         siGunGuId = this.siGunGuId,
         eupMyeonDongId = this.eupMyeonDongId,
     )
 }
 
-fun Place.toPlaceDTO(): PlaceDTO {
-    return PlaceDTO(
+fun PlaceDTO.toPlace(): Place {
+    return Place(
         id = this.id,
         name = this.name,
         location = this.location,
-        building = this.building.toBuildingDTO(),
+        building = this.building.toBuilding(),
         siGunGuId = this.siGunGuId,
         eupMyeonDongId = this.eupMyeonDongId,
         category = this.category,

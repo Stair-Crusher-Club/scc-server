@@ -3,7 +3,6 @@ package club.staircrusher.place.application.port.`in`
 import club.staircrusher.domain_event.PlaceSearchEvent
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.application.toPlaceDTO
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
