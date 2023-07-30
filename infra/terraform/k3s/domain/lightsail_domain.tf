@@ -90,6 +90,18 @@ resource "aws_lightsail_domain_entry" "admin" {
   }
 }
 
+resource "aws_lightsail_domain_entry" "redash" {
+  domain_name = aws_lightsail_domain.staircrusher_club.domain_name
+  name        = "redash"
+  type        = "A"
+  target      = data.terraform_remote_state.lightsail.outputs.lb_dns_name
+  is_alias    = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
+}
+
 resource "aws_lightsail_domain_entry" "dev_admin" {
   domain_name = aws_lightsail_domain.dev_staircrusher_club.domain_name
   name        = "admin"
@@ -101,4 +113,3 @@ resource "aws_lightsail_domain_entry" "dev_admin" {
     create_before_destroy = false
   }
 }
-
