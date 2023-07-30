@@ -7,10 +7,11 @@ import club.staircrusher.place.application.port.`in`.BuildingService
 import club.staircrusher.place.application.port.`in`.PlaceService
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
-import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.LocationUtils
+import club.staircrusher.stdlib.place.PlaceCategory
 
 @Component
 class PlaceSearchService(
@@ -33,7 +34,7 @@ class PlaceSearchService(
         distanceMetersLimit: Length,
         siGunGuId: String?,
         eupMyeonDongId: String?,
-    ) : List<SearchPlacesResult> {
+    ): List<SearchPlacesResult> {
         val places = placeService.findAllByKeyword(
             searchText,
             option = MapsService.SearchByKeywordOption(
