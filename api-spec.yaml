@@ -300,6 +300,33 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/PlaceListItem'
+                required:
+                  - items
+
+  /listSearchKeywordsOfPlaceCategory:
+    post:
+      summary: 특정 카테고리의 점포들을 검색할 수 있게 키워드들을 내려준다.
+      description: "음식점, 카페, 편의점, 병원 같이 키워드를 내려주면 searchPlaces 키워드로 쓸 수 있습니다."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchKeywordOfPlaceCategory'
+                required:
+                  - items
 
   /registerBuildingAccessibilityComment:
     post:
@@ -793,6 +820,40 @@ components:
         - hasPlaceAccessibility
         - isAccessibilityRegistrable
 
+    PlaceCategoryDto:
+      type: string
+      enum:
+        - RESTAURANT
+        - CAFE
+        - ACCOMODATION
+        - MARKET
+        - CONVENIENCE_STORE
+        - KINDERGARTEN
+        - SCHOOL
+        - ACADEMY
+        - PARKING_LOT
+        - GAS_STATION
+        - SUBWAY_STATION
+        - BANK
+        - CULTURAL_FACILITIES
+        - AGENCY
+        - PUBLIC_OFFICE
+        - ATTRACTION
+        - HOSPITAL
+        - PHARMACY
+
+    SearchKeywordOfPlaceCategoryDto:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/PlaceCategoryDto'
+        keyword:
+          type: string
+          description: '검색창에 들어가는 문자열. ex) 음식점, 병원, 카페'
+      required:
+        - category
+        - keyword
+
     AccessibilityInfoDto:
       type: object
       properties:
@@ -877,7 +938,7 @@ components:
         - hasSlope
         - imageUrls
 
-    AccessibilityRankDTO:
+    AccessibilityRankDto:
       type: object
       properties:
         user:
@@ -916,4 +977,3 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiErrorResponse'
-
