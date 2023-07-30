@@ -1,0 +1,4 @@
+[submodule "app-server/subprojects/api/scc-api"]
+	path = app-server/subprojects/api/scc-api
+	url = git@github.com:Stair-Crusher-Club/scc-api.git
+	branch = main
