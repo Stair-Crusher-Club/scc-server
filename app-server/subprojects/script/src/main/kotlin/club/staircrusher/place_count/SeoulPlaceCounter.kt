@@ -1,7 +1,14 @@
 package club.staircrusher.place_count
 
+import club.staircrusher.data_restore.readTsvAsLines
+import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
+import club.staircrusher.place.infra.adapter.out.web.KakaoProperties
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 private const val kakaoApiKey = "fake key"
@@ -24,10 +31,10 @@ private data class CategoryGroup(
 private data class TargetRegionPlaceCount(
     val targetRegionInfo: TargetRegionInfo,
     val radiusMeters: Int,
-    val count: Int,
+    val count: Map<CategoryGroup, Int>,
 ) {
     fun toCsvRow(): String {
-        return "${targetRegionInfo.name}(${radiusMeters}m),$count"
+        return "${targetRegionInfo.name}(${radiusMeters}m)," + count.toList().joinToString(",") { it.second.toString() }
     }
 }
 
@@ -40,13 +47,15 @@ private val targetCategoryGroups = listOf(
 )
 
 @Suppress("MagicNumber")
-private val radiusMetersList = listOf(500, 750, 1000)
+private val radiusMetersList = listOf(500)
+
+private val kakaoMapsService = KakaoMapsService(KakaoProperties(kakaoApiKey))
 
 fun main() {
     val regionInfos = getTargetRegionInfos()
     val rows = getTargetRegionPlaceCounts(regionInfos).map { it.toCsvRow() }
 
-    val headerRow = "," + targetCategoryGroups.joinToString(",")
+    val headerRow = "역 이름," + targetCategoryGroups.joinToString(",")
     println(listOf(headerRow) + rows)
 
     File("result.csv").writeText(buildString {
@@ -56,26 +65,63 @@ fun main() {
 }
 
 private fun getTargetRegionInfos(): List<TargetRegionInfo> {
-    return listOf(
-        TargetRegionInfo(name = "강남역", lng = 127.0276309, lat = 37.4978948),
-        TargetRegionInfo(name = "성수역", lng = 127.055974, lat = 37.544569),
-        TargetRegionInfo(name = "뚝섬역", lng = 127.047405, lat = 37.547206),
-        TargetRegionInfo(name = "서울숲역", lng = 127.044566, lat = 37.5431275),
-        TargetRegionInfo(name = "홍대입구역", lng = 126.9244669, lat = 37.557527),
-        TargetRegionInfo(name = "연남동", lng = 126.9220027, lat = 37.5644783),
-        TargetRegionInfo(name = "종각역", lng = 126.983197, lat = 37.570176),
-        TargetRegionInfo(name = "용산역", lng = 126.9648019, lat = 37.5298837),
-        TargetRegionInfo(name = "신사역", lng = 127.0200228, lat = 37.5162873),
-        TargetRegionInfo(name = "압구정역", lng = 127.028513, lat = 37.52633),
-        TargetRegionInfo(name = "압구정로데오역", lng = 127.040572, lat = 37.527394),
-    )
+    val targetStationInfos = readTsvAsLines("place_count/target_station_infos.tsv")
+    data class Station(
+        val subwayLine: String,
+        val name: String,
+    ) {
+        val fullname: String
+            get() = "$name $subwayLine"
+    }
+    val stations = targetStationInfos.map { (rawSubwayLine, rawStationName) ->
+        val normalizedStationName = rawStationName
+            .replace(Regex("\\(.*\\)"), "")
+            .let {
+                if (!it.endsWith("역")) {
+                    it + "역"
+                } else {
+                    it
+                }
+            }
+        val normalizedSubwayLine = rawSubwayLine.replace(Regex("호선.*"), "호선")
+        Station(subwayLine = normalizedSubwayLine, name = normalizedStationName)
+    }
+    println(stations)
+    val hardCodedTargetRegionInfosByPlaceName = listOf(
+        "충무로역 3호선" to TargetRegionInfo(
+            name = "충무로역 3호선",
+            lng = 126.994728,
+            lat = 37.560997,
+        )
+    ).toMap()
+    val targetRegionInfos = runBlocking {
+        val deferredList = stations.map { station ->
+            async {
+                hardCodedTargetRegionInfosByPlaceName[station.fullname]?.let {
+                    println("station: ${it.name} / ${it.name}")
+                    return@async it
+                }
+                val place = kakaoMapsService.findFirstByKeyword(station.fullname, MapsService.SearchByKeywordOption())
+                    ?: kakaoMapsService.findFirstByKeyword(station.name, MapsService.SearchByKeywordOption())
+                    ?: throw IllegalArgumentException("${station.fullname}에 해당하는 장소가 없습니다.")
+                println("station: ${station.fullname} / ${place.name}")
+                TargetRegionInfo(
+                    name = station.fullname,
+                    lng = place.location.lng,
+                    lat = place.location.lat,
+                )
+            }
+        }
+        awaitAll(*deferredList.toTypedArray())
+    }
+    return targetRegionInfos
 }
 
 @Suppress("MagicNumber")
 private fun getTargetRegionPlaceCounts(regionInfos: List<TargetRegionInfo>): List<TargetRegionPlaceCount> {
     return regionInfos.flatMap { regionInfo ->
         radiusMetersList.map { radiusMeters ->
-            val placeCounts = targetCategoryGroups.joinToString(",") { categoryGroup ->
+            val placeCountByCategoryGroup = targetCategoryGroups.map { categoryGroup ->
                 val (_, _, result) = "https://dapi.kakao.com/v2/local/search/category.json"
                     .httpGet(listOf(
                         "category_group_code" to categoryGroup.code,
@@ -90,7 +136,7 @@ private fun getTargetRegionPlaceCounts(regionInfos: List<TargetRegionInfo>): Lis
                     )
                     .responseString()
 
-                when (result) {
+                categoryGroup to when (result) {
                     is Result.Failure -> {
                         println(result.getException())
                         "-1"
@@ -98,10 +144,10 @@ private fun getTargetRegionPlaceCounts(regionInfos: List<TargetRegionInfo>): Lis
                     is Result.Success -> {
                         Regex("\"total_count\":\\s*(\\d*)").find(result.value)?.groups?.get(1)?.value ?: "-1"
                     }
-                }
-            }
-            radiusMeters to placeCounts
+                }.toInt()
+            }.toMap()
+            radiusMeters to placeCountByCategoryGroup
         }
-            .map { (radiusMeters, placeCounts) -> TargetRegionPlaceCount(regionInfo, radiusMeters, placeCounts.toInt()) }
+            .map { (radiusMeters, placeCountByCategoryGroup) -> TargetRegionPlaceCount(regionInfo, radiusMeters, placeCountByCategoryGroup) }
     }
 }
