@@ -1,4 +1,4 @@
-package club.staircrusher
+package club.staircrusher.place_count
 
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
