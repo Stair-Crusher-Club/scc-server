@@ -27,7 +27,14 @@ interface MapsService {
         data class CircleRegion(
             val centerLocation: Location,
             val radiusMeters: Int,
-        ) : Region
+            val sort: Sort = Sort.ACCURACY
+        ) : Region {
+            enum class Sort {
+                DISTANCE, // 가까운 순
+                ACCURACY // 정확도 순
+            }
+        }
+
         data class RectangleRegion(
             val leftTopLocation: Location,
             val rightBottomLocation: Location,
@@ -41,7 +48,14 @@ interface MapsService {
         data class CircleRegion(
             val centerLocation: Location,
             val radiusMeters: Int,
-        ) : Region
+            val sort: Sort = Sort.ACCURACY
+        ) : Region {
+            enum class Sort {
+                DISTANCE, // 가까운 순
+                ACCURACY // 정확도 순
+            }
+        }
+
         data class RectangleRegion(
             val leftBottomLocation: Location,
             val rightTopLocation: Location,
