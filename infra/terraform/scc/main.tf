@@ -7,13 +7,10 @@ terraform {
     aws = {
       source = "hashicorp/aws"
     }
-    sops = {
-      source = "carlpett/sops"
-    }
   }
 
   backend "s3" {
-    bucket = "scc-tf-remote-state"
+    bucket = "scc-prod-tf-remote-state"
     key    = "scc.tfstate"
     region = "ap-northeast-2"
   }
@@ -22,17 +19,8 @@ terraform {
 data "terraform_remote_state" "oidc" {
   backend = "s3"
   config = {
-    bucket = "scc-tf-remote-state"
-    key    = "k3s.domain.tfstate"
-    region = "ap-northeast-2"
-  }
-}
-
-data "terraform_remote_state" "secret_manager" {
-  backend = "s3"
-  config = {
-    bucket = "scc-tf-remote-state"
-    key    = "secret-manager.tfstate"
+    bucket = "scc-prod-tf-remote-state"
+    key    = "k3s.oidc.tfstate"
     region = "ap-northeast-2"
   }
 }
@@ -40,12 +28,8 @@ data "terraform_remote_state" "secret_manager" {
 data "terraform_remote_state" "kms" {
   backend = "s3"
   config = {
-    bucket = "scc-tf-remote-state"
+    bucket = "scc-prod-tf-remote-state"
     key    = "kms.tfstate"
     region = "ap-northeast-2"
   }
-}
-
-data "sops_file" "secret_data" {
-  source_file = "secret.yaml"
 }
