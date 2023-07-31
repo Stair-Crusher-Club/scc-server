@@ -1,5 +1,4 @@
 provider "aws" {
-  region = "us-east-1"
 }
 
 terraform {
@@ -14,7 +13,7 @@ terraform {
 
   backend "s3" {
     bucket = "scc-prod-tf-remote-state"
-    key    = "k3s.domain.tfstate"
+    key    = "k3s.oidc.tfstate"
     region = "ap-northeast-2"
   }
 }

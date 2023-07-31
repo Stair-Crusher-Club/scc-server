@@ -35,10 +35,10 @@ resource "aws_lightsail_domain" "dev_staircrusher_club" {
 
 resource "aws_lightsail_domain_entry" "dev_ns" {
   for_each = toset([
-    "ns-1217.awsdns-24.org",
-    "ns-532.awsdns-02.net",
-    "ns-1753.awsdns-27.co.uk",
-    "ns-51.awsdns-06.com",
+    "ns-136.awsdns-17.com",
+    "ns-1918.awsdns-47.co.uk",
+    "ns-1417.awsdns-49.org",
+    "ns-918.awsdns-50.net",
   ])
   domain_name = aws_lightsail_domain.staircrusher_club.domain_name
   name        = "dev"

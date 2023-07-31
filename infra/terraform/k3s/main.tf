@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "scc-tf-remote-state"
+    bucket = "scc-prod-tf-remote-state"
     key    = "k3s.tfstate"
     region = "ap-northeast-2"
   }
@@ -25,9 +25,3 @@ data "sops_file" "secret_data" {
   source_file = "secret.yaml"
 }
 
-data "terraform_remote_state" "s3" {
-  backend = "local"
-  config = {
-    path = "../s3/terraform.tfstate"
-  }
-}
