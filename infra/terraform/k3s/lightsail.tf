@@ -25,7 +25,7 @@ resource "aws_lightsail_instance" "k3s_control_plane" {
   availability_zone = "ap-northeast-2a"
   key_pair_name     = aws_lightsail_key_pair.scc_key_pair.name
   bundle_id         = "small_2_0"
-  blueprint_id      = "ubuntu_20_04"
+  blueprint_id      = "ubuntu_22_04"
   user_data         = local.control_plane_userdata
   tags = {
     role = "control_plane"
@@ -87,13 +87,13 @@ USERDATA
 }
 
 resource "aws_lightsail_instance" "k3s_data_planes" {
-  for_each = { for i in range(7) : i => i }
+  for_each = { for i in range(3) : i => i }
 
   name              = "k3s_data_plane_${each.value}"
   availability_zone = element(["ap-northeast-2a", "ap-northeast-2c"], each.value % 2)
   key_pair_name     = aws_lightsail_key_pair.scc_key_pair.name
-  bundle_id         = "small_2_0"
-  blueprint_id      = "ubuntu_20_04"
+  bundle_id         = "medium_2_0"
+  blueprint_id      = "ubuntu_22_04"
   user_data         = local.data_plane_userdata
   tags = {
     role = "data_plane"
