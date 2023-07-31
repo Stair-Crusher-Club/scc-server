@@ -4,7 +4,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "scc-tf-remote-state"
+    bucket = "scc-prod-tf-remote-state"
     key    = "kms.tfstate"
     region = "ap-northeast-2"
   }
