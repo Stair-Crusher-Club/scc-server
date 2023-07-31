@@ -8,7 +8,7 @@ server:
 spring:
   datasource:
     username: scc
-    url: jdbc:postgresql://ls-c98c2adf0b3042bcc92c6442cffe938489bbbd45.cojudf9vatyk.ap-northeast-2.rds.amazonaws.com:5432/scc_dev
+    url: jdbc:postgresql://ls-69d68cd036e3b1665f22027b3469cdb456fca15c.cmc9lkaaidnz.ap-northeast-2.rds.amazonaws.com:5432/scc_dev
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 1000
@@ -48,4 +48,4 @@ sentry:
 scc:
   s3:
     imageUpload:
-      bucketname: scc-dev-accessibility-images
+      bucketname: scc-dev-accessibility-images-2

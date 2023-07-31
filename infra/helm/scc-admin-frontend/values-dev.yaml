@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: public.ecr.aws/q0g6g7m8/scc-admin-frontend
+  repository: public.ecr.aws/i6n1n6v2/scc-admin-frontend
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest-rc"
