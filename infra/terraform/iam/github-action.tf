@@ -26,7 +26,7 @@ resource "aws_iam_policy" "github_action_ci_cd_policy" {
           "ecr-public:ListTagsForResource",
           "ecr-public:BatchCheckLayerAvailability"
         ],
-        "Resource": "arn:aws:ecr-public::833004893731:repository/*"
+        "Resource": "arn:aws:ecr-public::${var.account_id}:repository/*"
       },
       {
         "Effect": "Allow",
