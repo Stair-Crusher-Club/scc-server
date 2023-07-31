@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 deploySecret:
-  awsRoleArn: arn:aws:iam::833004893731:role/scc-deploy-secret-dev
+  awsRoleArn: arn:aws:iam::291889421067:role/scc-deploy-secret-dev
 
 replicaCount: 1
 
@@ -11,7 +11,7 @@ filesDir: files/dev
 env: dev
 
 image:
-  repository: public.ecr.aws/q0g6g7m8/scc-server
+  repository: public.ecr.aws/i6n1n6v2/scc-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest-rc
@@ -89,4 +89,4 @@ tolerations: []
 affinity: {}
 
 aws:
-  roleArn: arn:aws:iam::833004893731:role/scc-dev
+  roleArn: arn:aws:iam::291889421067:role/scc-dev

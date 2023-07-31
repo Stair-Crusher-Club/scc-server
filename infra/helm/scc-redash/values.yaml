@@ -1,5 +1,5 @@
 deploySecret:
-  awsRoleArn: arn:aws:iam::833004893731:role/scc-deploy-secret
+  awsRoleArn: arn:aws:iam::291889421067:role/scc-deploy-secret
 
 filesDir: files
 
