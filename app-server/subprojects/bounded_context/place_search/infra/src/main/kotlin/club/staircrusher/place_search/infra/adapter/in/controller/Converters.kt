@@ -26,6 +26,7 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     isAccessibilityRegistrable = isAccessibilityRegistrable,
 )
 
+@Suppress("ComplexMethod")
 fun club.staircrusher.stdlib.place.PlaceCategory.toDto(): PlaceCategoryDto = when (this) {
     club.staircrusher.stdlib.place.PlaceCategory.ACCOMODATION -> PlaceCategoryDto.aCCOMODATION
     club.staircrusher.stdlib.place.PlaceCategory.CAFE -> PlaceCategoryDto.cAFE

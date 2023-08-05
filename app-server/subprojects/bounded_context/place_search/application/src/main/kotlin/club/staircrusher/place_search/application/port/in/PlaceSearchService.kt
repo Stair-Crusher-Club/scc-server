@@ -11,7 +11,6 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.LocationUtils
-import club.staircrusher.stdlib.place.PlaceCategory
 
 @Component
 class PlaceSearchService(

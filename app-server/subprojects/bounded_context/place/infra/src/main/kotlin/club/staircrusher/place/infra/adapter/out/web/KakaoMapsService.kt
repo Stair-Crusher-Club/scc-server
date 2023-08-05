@@ -126,8 +126,8 @@ class KakaoMapsService(
         val size: Int = DEFAULT_SIZE,
     ) {
         companion object {
-            val MAX_SIZE = 45
-            val DEFAULT_SIZE = 15
+            const val MAX_SIZE = 45
+            const val DEFAULT_SIZE = 15
         }
     }
 
@@ -136,7 +136,7 @@ class KakaoMapsService(
         val size: Int = MAX_SIZE,
     ) {
         companion object {
-            val MAX_SIZE = 15
+            const val MAX_SIZE = 15
         }
     }
 
