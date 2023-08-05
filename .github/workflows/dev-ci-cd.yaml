@@ -57,6 +57,11 @@ jobs:
       - name: Build and Push Docker Image
         run: ./gradlew jib -Pversion=latest-rc
 
+      - name: Notify build failure to slack
+        run: |
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] backend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}' https://hooks.slack.com/services/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
+
   frontend-ci:
     runs-on: ubuntu-latest
 
@@ -91,6 +96,11 @@ jobs:
 
       - name: Build and Push Image
         run: ./docker-push.sh dev
+
+      - name: Notify build failure to slack
+        run: |
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] frontend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}' https://hooks.slack.com/services/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
 
   cd:
     runs-on: ubuntu-latest
@@ -134,3 +144,8 @@ jobs:
       - name: Restart deploy/scc-admin-frontend # tag를 latest-rc로 고정해서 사용하기 때문에 helm upgrade --install만 해서는 새 버전의 이미지가 배포되지 않는다. 따라서 강제로 rollout을 해준다.
         run: |
           kubectl rollout restart deploy/scc-admin-frontend -n dev
+
+      - name: Notify build failure to slack
+        run: |
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] scc-server CD failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}' https://hooks.slack.com/services/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
