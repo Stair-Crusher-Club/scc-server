@@ -57,11 +57,11 @@ jobs:
       - name: Build and Push Docker Image
         run: ./gradlew jib -Pversion=latest-rc
 
-      - name: Notify build failure to slack
+      - name: Notify CI failure to slack
         if: failure()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[TESTTEST] (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] Backend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
   frontend-ci:
     runs-on: ubuntu-latest
@@ -98,11 +98,11 @@ jobs:
       - name: Build and Push Image
         run: ./docker-push.sh dev
 
-      - name: Notify build failure to slack
+      - name: Notify CI failure to slack
         if: failure()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[TESTTEST] (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] Frontend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
   cd:
     runs-on: ubuntu-latest
@@ -147,8 +147,13 @@ jobs:
         run: |
           kubectl rollout restart deploy/scc-admin-frontend -n dev
 
-      - name: Notify build failure to slack
+      - name: Notify CD failure to slack
         if: failure()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[TESTTEST] (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] scc-server deployment failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+
+      - name: Notify CD success to slack
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] new version of scc-server is deployed! (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
