@@ -64,7 +64,7 @@ jobs:
         if: failure()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] Backend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] Backend CI failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
   frontend-ci:
     runs-on: ubuntu-latest
@@ -107,7 +107,7 @@ jobs:
         if: failure()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] Frontend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] Frontend CI failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
   cd:
     runs-on: ubuntu-latest
@@ -160,7 +160,7 @@ jobs:
         if: failure()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] scc-server deployment failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] scc-server deployment failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
       - name: Set RELEASE_VERSION
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
