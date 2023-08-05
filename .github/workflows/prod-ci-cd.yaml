@@ -60,6 +60,12 @@ jobs:
       - name: Build and Push Docker Image
         run: ./gradlew jib -Pversion=$RELEASE_VERSION
 
+      - name: Notify CD failure to slack
+        if: failure()
+        run: |
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] Backend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+
   frontend-ci:
     runs-on: ubuntu-latest
 
@@ -96,6 +102,12 @@ jobs:
 
       - name: Build and Push Image
         run: ./docker-push.sh prod $RELEASE_VERSION
+
+      - name: Notify CD failure to slack
+        if: failure()
+        run: |
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] Frontend CI failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
   cd:
     runs-on: ubuntu-latest
@@ -144,6 +156,22 @@ jobs:
         run: |
           helm upgrade --install --namespace scc -f values-prod.yaml scc-admin-frontend ./
 
+      - name: Notify CD failure to slack
+        if: failure()
+        run: |
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] scc-server deployment failed. (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+
+      - name: Set RELEASE_VERSION
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Notify CD success to slack
+        if: success()
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] scc-server version $RELEASE_VERSION is deployed!\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+
   update-main-branch:
     runs-on: ubuntu-latest
     needs:
@@ -176,5 +204,5 @@ jobs:
           git config --global user.name "Stair-Crusher-Club"
           git diff
           git add .
-          git commit -m "Prod deploy: $RELEASE_VERSION"
+          git commit -m "[skip ci] Prod deploy: $RELEASE_VERSION"
           git push

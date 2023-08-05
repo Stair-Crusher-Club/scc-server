@@ -156,4 +156,5 @@ jobs:
       - name: Notify CD success to slack
         if: success()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] new version of scc-server is deployed! (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] scc-server with latest version is deployed!\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
