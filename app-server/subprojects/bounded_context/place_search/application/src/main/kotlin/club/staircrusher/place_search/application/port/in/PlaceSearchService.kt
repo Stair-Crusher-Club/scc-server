@@ -33,6 +33,7 @@ class PlaceSearchService(
         distanceMetersLimit: Length,
         siGunGuId: String?,
         eupMyeonDongId: String?,
+        sort: String?
     ): List<SearchPlacesResult> {
         val places = placeService.findAllByKeyword(
             searchText,
@@ -41,6 +42,9 @@ class PlaceSearchService(
                     MapsService.SearchByKeywordOption.CircleRegion(
                         centerLocation = it,
                         radiusMeters = distanceMetersLimit.meter.toInt(),
+                        sort = sort
+                            ?.let { MapsService.SearchByKeywordOption.CircleRegion.Sort.valueOf(it.lowercase()) }
+                            ?: MapsService.SearchByKeywordOption.CircleRegion.Sort.ACCURACY
                     )
                 }
             ),
