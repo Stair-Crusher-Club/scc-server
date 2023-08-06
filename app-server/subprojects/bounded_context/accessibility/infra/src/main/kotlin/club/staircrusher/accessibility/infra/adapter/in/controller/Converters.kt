@@ -1,16 +1,17 @@
 @file:Suppress("TooManyFunctions")
+
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.UserInfo
 import club.staircrusher.accessibility.application.port.`in`.result.GetAccessibilityResult
+import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
+import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
+import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
-import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
-import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
-import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
@@ -142,7 +143,7 @@ fun UserInfo.toDTO() = User(
     instagramId = instagramId,
 )
 
-fun AccessibilityRank.toDTO(userInfo: UserInfo) = club.staircrusher.api.spec.dto.AccessibilityRankDTO(
+fun AccessibilityRank.toDTO(userInfo: UserInfo) = club.staircrusher.api.spec.dto.AccessibilityRankDto(
     user = userInfo.toDTO(),
     rank = rank,
     conqueredCount = conqueredCount,

@@ -4,7 +4,7 @@ import club.staircrusher.api.converter.toModel
 import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
 import club.staircrusher.api.spec.dto.ListSearchKeywordsOfPlaceCategoryPost200Response
 import club.staircrusher.api.spec.dto.PlaceListItem
-import club.staircrusher.api.spec.dto.SearchKeywordOfPlaceCategory
+import club.staircrusher.api.spec.dto.SearchKeywordOfPlaceCategoryDto
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place_search.application.port.`in`.ListSearchKeywordOfPlaceCategoryUseCase
@@ -43,7 +43,7 @@ class SearchPlacesController(
     fun listSearchKeywordsOfPlaceCategory(): ListSearchKeywordsOfPlaceCategoryPost200Response {
         return ListSearchKeywordsOfPlaceCategoryPost200Response(
             items = listSearchKeywordOfPlaceCategoryUseCase.handle()
-                .map { SearchKeywordOfPlaceCategory(it.first.toDto(), it.second) }
+                .map { SearchKeywordOfPlaceCategoryDto(it.first.toDto(), it.second) }
         )
     }
 }
