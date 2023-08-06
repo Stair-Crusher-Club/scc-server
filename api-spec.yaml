@@ -324,7 +324,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/SearchKeywordOfPlaceCategory'
+                      $ref: '#/components/schemas/SearchKeywordOfPlaceCategoryDto'
                 required:
                   - items
 
@@ -520,7 +520,7 @@ paths:
                 type: object
                 properties:
                   accessibilityRank:
-                    $ref: '#/components/schemas/AccessibilityRankDTO'
+                    $ref: '#/components/schemas/AccessibilityRankDto'
                 required:
                   - accessibilityRank
 
@@ -544,7 +544,7 @@ paths:
                   ranks:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AccessibilityRankDTO'
+                      $ref: '#/components/schemas/AccessibilityRankDto'
                 required:
                   - ranks
 
