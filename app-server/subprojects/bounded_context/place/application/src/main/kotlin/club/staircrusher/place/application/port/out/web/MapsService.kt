@@ -29,9 +29,9 @@ interface MapsService {
             val radiusMeters: Int,
             val sort: Sort = Sort.ACCURACY
         ) : Region {
-            enum class Sort {
-                DISTANCE, // 가까운 순
-                ACCURACY // 정확도 순
+            enum class Sort(val value: String) {
+                DISTANCE("distance"), // 가까운 순
+                ACCURACY("accuracy") // 정확도 순
             }
         }
 
@@ -50,9 +50,9 @@ interface MapsService {
             val radiusMeters: Int,
             val sort: Sort = Sort.ACCURACY
         ) : Region {
-            enum class Sort {
-                DISTANCE, // 가까운 순
-                ACCURACY // 정확도 순
+            enum class Sort(val value: String) {
+                DISTANCE("distance"), // 가까운 순
+                ACCURACY("accuracy") // 정확도 순
             }
         }
 
