@@ -77,7 +77,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties: { }
       responses:
         '200':
           content:
@@ -258,7 +258,7 @@ paths:
                 required:
                   - accessibilityInfo
                   - registeredUserOrder
-    
+
   /registerBuildingAccessibility:
     post:
       summary: 건물 접근성 정보를 등록한다.
@@ -313,7 +313,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties: { }
       responses:
         '200':
           content:
@@ -396,14 +396,9 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                buildingAccessibilityId:
-                  type: string
-              required:
-                - buildingAccessibilityId
+              $ref: '#/components/schemas/GiveBuildingAccessibilityUpvoteRequestDto'
       responses:
-        '204': {}
+        '204': { }
 
   /cancelBuildingAccessibilityUpvote:
     post:
@@ -413,14 +408,9 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                buildingAccessibilityId:
-                  type: string
-              required:
-                - buildingAccessibilityId
+              $ref: '#/components/schemas/CancelBuildingAccessibilityUpvoteRequestDto'
       responses:
-        '204': {}
+        '204': { }
 
   /listConqueredPlaces:
     post:
@@ -431,7 +421,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties: { }
       responses:
         '200':
           content:
@@ -478,7 +468,7 @@ paths:
     post:
       summary: 계정을 삭제한다.
       responses:
-        '204': {}
+        '204': { }
 
   /deleteAccessibility:
     post:
@@ -498,7 +488,7 @@ paths:
               required:
                 - placeAccessibilityId
       responses:
-        '204': {}
+        '204': { }
         '400':
           $ref: '#/components/responses/ApiFailure'
 
@@ -511,7 +501,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties: { }
       responses:
         '200':
           content:
@@ -533,7 +523,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties: { }
       responses:
         '200':
           content:
@@ -557,7 +547,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties: { }
       responses:
         '200':
           content:
@@ -969,6 +959,22 @@ components:
           enum:
             - -999999
             - 1
+
+    GiveBuildingAccessibilityUpvoteRequestDto:
+      type: object
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
+
+    CancelBuildingAccessibilityUpvoteRequestDto:
+      type: object
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
 
   responses:
     ApiFailure:
