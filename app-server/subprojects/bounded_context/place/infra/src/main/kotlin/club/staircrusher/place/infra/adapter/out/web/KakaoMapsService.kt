@@ -154,7 +154,7 @@ class KakaoMapsService(
                     y = region.centerLocation.lat.toString(),
                     radius = region.radiusMeters,
                     page = option.page,
-                    sort = region.sort.name
+                    sort = region.sort.value
                 )
             }
             is MapsService.SearchByKeywordOption.RectangleRegion -> {
@@ -186,7 +186,7 @@ class KakaoMapsService(
                     y = region.centerLocation.lat.toString(),
                     radius = region.radiusMeters,
                     page = option.page,
-                    sort = region.sort.name
+                    sort = region.sort.value
                 )
             }
             is MapsService.SearchByCategoryOption.RectangleRegion -> {
