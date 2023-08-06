@@ -4,6 +4,7 @@ import club.staircrusher.api.converter.toModel
 import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
 import club.staircrusher.api.spec.dto.ListSearchKeywordsOfPlaceCategoryPost200Response
 import club.staircrusher.api.spec.dto.PlaceListItem
+import club.staircrusher.api.spec.dto.SearchKeywordOfPlaceCategory
 import club.staircrusher.api.spec.dto.SearchKeywordOfPlaceCategoryDto
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
