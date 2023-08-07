@@ -9,11 +9,12 @@ resource "aws_lightsail_domain" "dev_staircrusher_club" {
 # FIXME: does not work correctly due to terraform bug
 # resource "aws_lightsail_domain_entry" "acm" {
 #   for_each = {
-#     "_2467817f8161e4f737c5380cac02ca88.api"       = "_abfc53231f4a4cb78039f67b0f25f814.bkngfjypgb.acm-validations.aws.",
-#     "_68805ce864e49431a924f853a0caae1b.admin-api" = "_66d4049354143869bf0a210467ebff13.bkngfjypgb.acm-validations.aws.",
-#     "_cad568561e5d03fbee1bd4dcc6281ca6"           = "_11d889bfc325f00638a4628718dd5b2a.bkngfjypgb.acm-validations.aws.",
-#     "_e0533ee0a07b2235970940e292a911c6.www"       = "_dd7ff4f50e586c1a33a529b08877c5ec.bkngfjypgb.acm-validations.aws.",
-#     "_9a2c8af390022ee0a73338b2deb8d01f.admin"     = "_3c3e1e86745a9f4315d4208669612f41.yzdtlljtvc.acm-validations.aws.",
+#     "_8985d37115fba2afd63bce08349ac02e.api"       = "_731f54376d93d5d6c9db9f282aff9328.nbgfhbpblk.acm-validations.aws."
+#     "_4cefeaf9c021e6eccfe0c23ca586dae1.admin-api" = "_9efd37d17364e7d51b2064a2ff1d252c.nbgfhbpblk.acm-validations.aws."
+#     "_8c5fa176b85703fa7649368266c87855.redash"    = "_a3ed4e60185fa3fee606cc4ffaccfad3.nbgfhbpblk.acm-validations.aws."
+#     "_9bbd6321f76af969e4a766a60ad3afab"           = "_b04d36eddbd638266d74cbddb60f739b.qqqkmlyjyg.acm-validations.aws."
+#     "_d41aa41f61974f00401f545b5ec6b29b.www"       = "_18487efa2da29bad3865d9b3e88eb7ef.nbgfhbpblk.acm-validations.aws."
+#     "_91b62c133bc56f61489e5f94a53d98cf.admin"     = "_a0e5dd70e11f8176d3867d44233b9cdd.nbgfhbpblk.acm-validations.aws."
 #   }
 #   domain_name = aws_lightsail_domain.staircrusher_club.domain_name
 #   type        = "CNAME"
@@ -23,9 +24,9 @@ resource "aws_lightsail_domain" "dev_staircrusher_club" {
 
 # resource "aws_lightsail_domain_entry" "dev_acm" {
 #   for_each = {
-#     "_de9c3da5ed9a0b9e821cdbbb336910c4.admin-api" = "_65f80983cd357f10562cd0d7ea83a8c3.bkngfjypgb.acm-validations.aws.",
-#     "_898e1443bdf6c0a1d604ae60a18c60d2.admin"     = "_0f81388ab4bff9a8578352eaf9a02467.crxktfrmng.acm-validations.aws.",
-#     "_6d98a5c1c057035b857773878a2a571d.api"       = "_abc1751100762fc6678e0b6ffff7cb7b.bkngfjypgb.acm-validations.aws.",
+#     "_c731bd34f5765a4403c546f3e0a797f6.admin-api" = "_81df3ba184baa7473e134fe0525f9897.nbgfhbpblk.acm-validations.aws."
+#     "_045e514bf062801eb27e5680e88406fc.admin"     = "_5784dbaf5eb751d626a676d40132ac48.nbgfhbpblk.acm-validations.aws."
+#     "_c7a9c4753120d2aa3918b83195fe5459.api"       = "_4c8039f4d8b7fb8309a0a2e37361ba2d.nbgfhbpblk.acm-validations.aws."
 #   }
 #   domain_name = aws_lightsail_domain.dev_staircrusher_club.domain_name
 #   type        = "CNAME"
