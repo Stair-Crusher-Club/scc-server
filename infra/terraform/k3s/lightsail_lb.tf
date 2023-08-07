@@ -15,19 +15,44 @@ resource "aws_lightsail_lb_attachment" "k3s" {
   instance_name = each.key
 }
 
-# it does not work correctly...
-# resource "aws_lightsail_lb_certificate" "scc_lb_cert" {
-#   name        = "scc-load-balancer-certificate"
-#   lb_name     = aws_lightsail_lb.scc_lb.id
-#   domain_name = "staircrusher.club"
-# }
+import {
+  to = aws_lightsail_lb_certificate.scc_lb_cert
+  id = "scc_lb,star.staircrusher.club"
+}
 
-# resource "aws_lightsail_lb_certificate_attachment" "scc_lb_cert_attachment" {
-#   lb_name          = aws_lightsail_lb.scc_lb.name
-#   certificate_name = aws_lightsail_lb_certificate.scc_lb_cert.name
-# }
+resource "aws_lightsail_lb_certificate" "scc_lb_cert" {
+  name                      = "star.staircrusher.club"
+  lb_name                   = aws_lightsail_lb.scc_lb.id
+  domain_name               = "api.staircrusher.club"
+  subject_alternative_names = [
+    "admin-api.dev.staircrusher.club",
+    "admin-api.staircrusher.club",
+    "admin.dev.staircrusher.club",
+    "admin.staircrusher.club",
+    "api.dev.staircrusher.club",
+    "api.staircrusher.club",
+    "redash.staircrusher.club",
+    "staircrusher.club",
+    "www.staircrusher.club",
+  ]
+}
 
-# resource "aws_lightsail_lb_https_redirection_policy" "scc_lb_https" {
-#   lb_name = aws_lightsail_lb.scc_lb.name
-#   enabled = true
-# }
+import {
+  to = aws_lightsail_lb_certificate_attachment.scc_lb_cert_attachment
+  id = "scc_lb,star.staircrusher.club"
+}
+
+resource "aws_lightsail_lb_certificate_attachment" "scc_lb_cert_attachment" {
+  lb_name          = aws_lightsail_lb.scc_lb.name
+  certificate_name = aws_lightsail_lb_certificate.scc_lb_cert.name
+}
+
+import {
+  to = aws_lightsail_lb_https_redirection_policy.scc_lb_https
+  id = "scc_lb"
+}
+
+resource "aws_lightsail_lb_https_redirection_policy" "scc_lb_https" {
+  lb_name = aws_lightsail_lb.scc_lb.name
+  enabled = true
+}
