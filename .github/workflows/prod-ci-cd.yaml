@@ -56,7 +56,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::833004893731:role/github-action-ci-cd
+          role-to-assume: arn:aws:iam::291889421067:role/github-action-ci-cd
           aws-region: ap-northeast-2
 
       - name: Build and Push Docker Image
@@ -101,7 +101,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::833004893731:role/github-action-ci-cd
+          role-to-assume: arn:aws:iam::291889421067:role/github-action-ci-cd
           aws-region: ap-northeast-2
 
       - name: Build and Push Image

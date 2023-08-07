@@ -14,5 +14,5 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 
 npm install
 npm run "build:$1"
-docker buildx build --platform linux/amd64 -t public.ecr.aws/q0g6g7m8/scc-admin-frontend:$IMAGE_TAG .
-docker push public.ecr.aws/q0g6g7m8/scc-admin-frontend:$IMAGE_TAG
+docker buildx build --platform linux/amd64 -t public.ecr.aws/i6n1n6v2/scc-admin-frontend:$IMAGE_TAG .
+docker push public.ecr.aws/i6n1n6v2/scc-admin-frontend:$IMAGE_TAG
