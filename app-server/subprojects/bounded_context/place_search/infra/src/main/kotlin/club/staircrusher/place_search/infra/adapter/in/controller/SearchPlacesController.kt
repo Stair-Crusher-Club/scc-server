@@ -27,7 +27,6 @@ class SearchPlacesController(
             distanceMetersLimit = Length.ofMeters(request.distanceMetersLimit.toDouble()),
             siGunGuId = request.siGunGuId,
             eupMyeonDongId = request.eupMyeonDongId,
-            sort = request.sort?.value
         )
         return SearchPlacesPost200Response(
             items = searchResults.map { it.toDTO() }
