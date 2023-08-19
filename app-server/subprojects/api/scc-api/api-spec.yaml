@@ -70,7 +70,7 @@ paths:
 
   /loginWithKakao:
     post:
-      summary: 카카오 로그인을 통해 로그인 or 회원가입을 한다.
+      summary: 카카오 로그인을 통해 로그인을 한다.
       requestBody:
         required: true
         content:
@@ -78,16 +78,34 @@ paths:
             schema:
               type: object
               properties:
-                kakaoAccessToken:
-                  type: string
-                kakaoRefreshToken:
-                  type: string
-                kakaoIdToken:
-                  type: string
+                kakaoTokens:
+                  $ref: '#/components/schemas/KakaoTokensDto'
               required:
-                - kakaoAccessToken
-                - kakaoRefreshToken
-                - kakaoIdToken
+                - kakaoTokens
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/component/schemas/LoginResultDto'
+
+  /signUpWithKakao:
+    post:
+      summary: 카카오 로그인을 통해 회원가입을 한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kakaoTokens:
+                  $ref: '#/components/schemas/KakaoTokensDto'
+                userSignUpInfo:
+                  $ref: '#/components/schemas/UserSignUpInfoDto'
+              required:
+                - kakaoTokens
+                - userSignUpInfo
       responses:
         '200':
           content:
@@ -600,6 +618,20 @@ components:
       required:
         - value
 
+    KakaoTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        idToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+        - idToken
+
     LoginResultDto:
       type: object
       properties:
@@ -607,6 +639,19 @@ components:
           type: string
       required:
         - accessToken
+
+    UserSignUpInfoDto:
+      type: object
+      properties:
+        nickname:
+          type: string
+        email:
+          type: string
+        instagramId:
+          type: string
+      required:
+        - nickname
+        - email
 
     Location:
       description: 위치를 위경도로 표현하기 위한 모델.

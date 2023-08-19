@@ -45,6 +45,6 @@ class AuthController(
 
     @PostMapping("/loginWithKakao")
     fun login(@RequestBody request: LoginWithKakaoPostRequest): LoginResultDto {
-        return loginWithKakaoUseCase.handle(request.kakaoIdToken).toDTO()
+        return loginWithKakaoUseCase.handle(request.kakaoTokens.idToken).toDTO()
     }
 }
