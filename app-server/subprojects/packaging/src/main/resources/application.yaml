@@ -37,6 +37,9 @@ scc:
   kakao:
     api-key: test
 
+  kakao-login:
+    client-id: test
+
   s3:
     imageUpload:
       bucketName: test

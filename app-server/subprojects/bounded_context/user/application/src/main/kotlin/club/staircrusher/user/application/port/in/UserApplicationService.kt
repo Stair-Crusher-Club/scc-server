@@ -5,6 +5,7 @@ import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.user.application.port.`in`.dto.LoginResult
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.service.PasswordEncryptor
@@ -46,7 +47,7 @@ class UserApplicationService(
             )
         )
         val accessToken = userAuthService.issueAccessToken(user)
-        LoginResult(user, accessToken)
+        LoginResult(accessToken)
     }
 
     fun login(
@@ -61,13 +62,8 @@ class UserApplicationService(
             throw SccDomainException("잘못된 비밀번호입니다.")
         }
         val accessToken = userAuthService.issueAccessToken(user)
-        LoginResult(user, accessToken)
+        LoginResult(accessToken)
     }
-
-    data class LoginResult(
-        val user: User,
-        val accessToken: String
-    )
 
     fun updateUserInfo(
         userId: String,
