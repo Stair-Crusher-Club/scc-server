@@ -2,7 +2,7 @@ package club.staircrusher.user.application.port.`in`.use_case
 
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
-import club.staircrusher.user.application.port.`in`.dto.LoginResult
+import club.staircrusher.user.domain.model.LoginResult
 import club.staircrusher.user.application.port.`in`.exception.SignUpRequiredException
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.web.KakaoLoginService
@@ -22,7 +22,6 @@ class LoginWithKakaoUseCase(
         val userAuthInfo = userAuthInfoRepository.findByExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
             ?: throw SignUpRequiredException("UserAuthInfo does not exists.")
 
-        val accessToken = userAuthService.issueAccessToken(userAuthInfo)
-        LoginResult(accessToken = accessToken)
+        userAuthService.issueTokens(userAuthInfo)
     }
 }
