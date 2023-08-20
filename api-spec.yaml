@@ -96,7 +96,7 @@ paths:
 
   /searchPlaces:
     post:
-      summary: 점포를 검색한다.
+      summary: 점포를 검색한다. sort 가 null 인 경우에는 정확도순을 기본으로 한다.
       requestBody:
         required: true
         content:
@@ -114,6 +114,8 @@ paths:
                   type: string
                 eupMyeonDongId:
                   type: string
+                sort:
+                  $ref: '#/components/schemas/SearchPlaceSortDto'
               required:
                 - searchText
                 - distanceMetersLimit
@@ -975,6 +977,12 @@ components:
           type: string
       required:
         - buildingAccessibilityId
+
+    SearchPlaceSortDto:
+      type: string
+      enum:
+        - ACCURACY
+        - DISTANCE
 
   responses:
     ApiFailure:
