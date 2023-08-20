@@ -1,0 +1,37 @@
+import club.staircrusher.challenge.domain.model.ChallengeAccessLevel;
+import club.staircrusher.challenge.domain.model.ChallengeCondition;
+import kotlin.Int;
+import kotlin.collections.List;
+
+CREATE TABLE IF NOT EXISTS challenge (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    access_level VARCHAR(32) AS ChallengeAccessLevel NOT NULL DEFAULT 'PRIVATE',
+    invitation_code VARCHAR(64) NULL,
+    is_complete BOOLEAN NOT NULL DEFAULT FALSE,
+    starts_on TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ends_on TIMESTAMP(6) WITH TIME ZONE DEFAULT NULL,
+    goals TEXT AS List<Int> NOT NULL,
+    conditions TEXT AS List<ChallengeCondition> NOT NULL,
+    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS challenge_participation (
+    challenge_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
+    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (challenge_id, user_id),
+    FOREIGN KEY (challenge_id) REFERENCES challenge(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES scc_user(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS challenge_contribution (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    challenge_id VARCHAR(36) NOT NULL,
+    place_accessibility_id VARCHAR(36) NULL,
+    building_accessibility_id VARCHAR(36) NULL,
+    accessibility_comment_id VARCHAR(36) NULL,
+    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

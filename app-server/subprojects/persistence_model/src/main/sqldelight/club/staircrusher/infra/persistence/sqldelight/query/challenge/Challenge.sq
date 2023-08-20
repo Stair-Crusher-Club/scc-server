@@ -1,0 +1,36 @@
+save:
+INSERT INTO challenge
+VALUES :challenge
+ON CONFLICT(id) DO UPDATE SET
+    name = EXCLUDED.name,
+    access_level = EXCLUDED.access_level,
+    invitation_code = EXCLUDED.invitation_code,
+    is_complete = EXCLUDED.is_complete,
+    starts_on = EXCLUDED.starts_on,
+    ends_on = EXCLUDED.ends_on,
+    goals = EXCLUDED.goals,
+    conditions = EXCLUDED.conditions,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at;
+
+removeAll:
+DELETE FROM challenge;
+
+findById:
+SELECT *
+FROM challenge
+WHERE challenge.id = :id;
+
+findByUserId:
+SELECT *
+FROM challenge
+WHERE challenge.id IN (
+    SELECT challenge_participation.challenge_id
+    FROM challenge_participation
+    WHERE challenge_participation.user_id = :userId
+);
+
+numberOfParticipants:
+SELECT COUNT(*)
+FROM challenge_participation
+WHERE challenge_participation.challenge_id = :id;
