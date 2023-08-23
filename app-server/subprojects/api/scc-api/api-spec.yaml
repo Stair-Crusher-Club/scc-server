@@ -78,22 +78,24 @@ paths:
             schema:
               type: object
               properties:
-                kakaoAccessToken:
-                  type: string
-                kakaoRefreshToken:
-                  type: string
-                kakaoIdToken:
-                  type: string
+                kakaoTokens:
+                  $ref: '#/components/schemas/KakaoTokensDto'
               required:
-                - kakaoAccessToken
-                - kakaoRefreshToken
-                - kakaoIdToken
+                - kakaoTokens
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/component/schemas/LoginResultDto'
+                type: object
+                properties:
+                  loginResult:
+                    $ref: '#/component/schemas/LoginResultDto'
+                  userInfo:
+                    $ref: '#/components/schemas/UserInfoDto'
+                required:
+                  - loginResult
+                  - userInfo
 
   /listAdministrativeAreas:
     post:
@@ -600,6 +602,20 @@ components:
       required:
         - value
 
+    KakaoTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        idToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+        - idToken
+
     LoginResultDto:
       type: object
       properties:
@@ -607,6 +623,22 @@ components:
           type: string
       required:
         - accessToken
+
+    UserInfoDto:
+      type: object
+      properties:
+        id:
+          type: string
+        nickname:
+          type: string
+        email:
+          type: string
+        instagramId:
+          type: string
+        # TODO: TBD
+      required:
+        - id
+        - nickname
 
     Location:
       description: 위치를 위경도로 표현하기 위한 모델.
