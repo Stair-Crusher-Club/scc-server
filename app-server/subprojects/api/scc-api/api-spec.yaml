@@ -2,7 +2,7 @@ openapi: '3.0.0'
 info:
   title: Stair Crusher Club API Specification
   version: '1.0.0'
-  description: |
+  de:scription: |
     ## 계단정복지도 서비스의 서버 - 클라이언트 통신을 위한 API 명세.
 
 defaultContentType: application/json

@@ -4,5 +4,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("scc.kakao-login")
 data class KakaoLoginProperties(
-    val apiKey: String,
+    val appKey: String,
 )

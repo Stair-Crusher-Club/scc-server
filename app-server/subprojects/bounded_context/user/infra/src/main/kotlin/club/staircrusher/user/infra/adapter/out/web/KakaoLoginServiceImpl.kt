@@ -25,11 +25,12 @@ class KakaoLoginServiceImpl(
         return kakaoIdToken
     }
 
+    // 검증 로직은 https://developers.kakao.com/docs/latest/ko/kakaologin/common#oidc 를 참고.
     private fun validateKakaoIdToken(kakaoIdToken: KakaoIdToken) {
         if (kakaoIdToken.issuer != "https://kauth.kakao.com") {
             throw InvalidKakaoIdTokenException("issuer does not match: ${kakaoIdToken.issuer}")
         }
-        if (kakaoIdToken.audience != kakaoLoginProperties.apiKey) {
+        if (kakaoIdToken.audience != kakaoLoginProperties.appKey) {
             throw InvalidKakaoIdTokenException("audience does not match")
         }
         if (kakaoIdToken.expiresAt < SccClock.instant()) {
