@@ -6,7 +6,7 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.InitialNicknameGenerator
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import club.staircrusher.user.domain.model.LoginResult
+import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.application.port.out.web.KakaoLoginService
@@ -19,6 +19,7 @@ import java.time.Duration
 class LoginWithKakaoUseCase(
     private val transactionManager: TransactionManager,
     private val kakaoLoginService: KakaoLoginService,
+    private val userRepository: UserRepository,
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
@@ -35,7 +36,12 @@ class LoginWithKakaoUseCase(
     }
 
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
-        return userAuthService.issueTokens(userAuthInfo)
+        val authTokens = userAuthService.issueTokens(userAuthInfo)
+        val user = userRepository.findById(userAuthInfo.userId)
+        return LoginResult(
+            authTokens = authTokens,
+            user = user,
+        )
     }
 
     private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String): LoginResult {
@@ -59,7 +65,11 @@ class LoginWithKakaoUseCase(
             )
         )
 
-        return userAuthService.issueTokens(newUserAuthInfo)
+        val authTokens = userAuthService.issueTokens(newUserAuthInfo)
+        return LoginResult(
+            authTokens = authTokens,
+            user = user,
+        )
     }
 
     companion object {

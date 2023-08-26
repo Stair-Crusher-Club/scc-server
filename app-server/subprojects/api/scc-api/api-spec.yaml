@@ -87,15 +87,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  loginResult:
-                    $ref: '#/component/schemas/LoginResultDto'
-                  userInfo:
-                    $ref: '#/components/schemas/UserInfoDto'
-                required:
-                  - loginResult
-                  - userInfo
+                $ref: '#/components/schemas/LoginResultDto'
 
   /listAdministrativeAreas:
     post:
@@ -616,7 +608,7 @@ components:
         - refreshToken
         - idToken
 
-    LoginResultDto:
+    AuthTokensDto:
       type: object
       properties:
         accessToken:
@@ -624,21 +616,16 @@ components:
       required:
         - accessToken
 
-    UserInfoDto:
+    LoginResultDto:
       type: object
       properties:
-        id:
-          type: string
-        nickname:
-          type: string
-        email:
-          type: string
-        instagramId:
-          type: string
-        # TODO: TBD
+        authTokens:
+          $ref: '#/component/schemas/AuthTokensDto'
+        user:
+          $ref: '#/components/schemas/User'
       required:
-        - id
-        - nickname
+        - authTokens
+        - user
 
     Location:
       description: 위치를 위경도로 표현하기 위한 모델.
@@ -690,6 +677,9 @@ components:
           type: string
         instagramId:
           type: string
+        email:
+          type: string
+        # TODO: TBD
       required:
         - id
         - nickname

@@ -5,7 +5,7 @@ import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
-import club.staircrusher.user.domain.model.LoginResult
+import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.service.PasswordEncryptor
@@ -25,7 +25,7 @@ class UserApplicationService(
         nickname: String,
         password: String,
         instagramId: String?
-    ): LoginResult = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
+    ): AuthTokens = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val params = UserRepository.CreateUserParams(
             nickname = nickname,
             password = password,
@@ -36,7 +36,7 @@ class UserApplicationService(
         val user = signUp(params)
 
         val accessToken = userAuthService.issueAccessToken(user)
-        LoginResult(accessToken)
+        AuthTokens(accessToken)
     }
 
     fun signUp(
@@ -65,7 +65,7 @@ class UserApplicationService(
     fun login(
         nickname: String,
         password: String
-    ): LoginResult = transactionManager.doInTransaction {
+    ): AuthTokens = transactionManager.doInTransaction {
         val user = userRepository.findByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
         if (user.isDeleted) {
             throw SccDomainException("잘못된 계정입니다.")
@@ -74,7 +74,7 @@ class UserApplicationService(
             throw SccDomainException("잘못된 비밀번호입니다.")
         }
         val accessToken = userAuthService.issueAccessToken(user)
-        LoginResult(accessToken)
+        AuthTokens(accessToken)
     }
 
     fun updateUserInfo(

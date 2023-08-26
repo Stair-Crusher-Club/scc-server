@@ -1,5 +1,5 @@
 package club.staircrusher.user.domain.model
 
-data class LoginResult(
+data class AuthTokens(
     val accessToken: String,
 )

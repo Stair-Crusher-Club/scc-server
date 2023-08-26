@@ -6,7 +6,7 @@ import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.model.UserAccessTokenPayload
 import club.staircrusher.user.domain.exception.UserAuthenticationException
 import club.staircrusher.stdlib.token.TokenVerificationException
-import club.staircrusher.user.domain.model.LoginResult
+import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.domain.model.UserAuthInfo
 
 @Component
@@ -18,9 +18,9 @@ class UserAuthService(
         return tokenManager.issueToken(UserAccessTokenPayload(userId = user.id))
     }
 
-    fun issueTokens(userAuthInfo: UserAuthInfo): LoginResult {
+    fun issueTokens(userAuthInfo: UserAuthInfo): AuthTokens {
         val accessToken = tokenManager.issueToken(UserAccessTokenPayload(userId = userAuthInfo.userId))
-        return LoginResult(accessToken = accessToken)
+        return AuthTokens(accessToken = accessToken)
     }
 
     @Throws(UserAuthenticationException::class)
