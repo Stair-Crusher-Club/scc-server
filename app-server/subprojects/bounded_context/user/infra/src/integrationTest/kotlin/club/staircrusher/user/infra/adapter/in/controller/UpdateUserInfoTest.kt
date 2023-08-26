@@ -2,6 +2,7 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.stdlib.testing.SccRandom
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
@@ -18,9 +19,9 @@ class UpdateUserInfoTest : UserITBase() {
             testDataGenerator.createUser()
         }
 
-        val changedNickname = UUID.randomUUID().toString().take(32)
-        val changedInstagramId = UUID.randomUUID().toString().take(32)
-        val changedEmail = UUID.randomUUID().toString().take(32)
+        val changedNickname = SccRandom.string(32)
+        val changedInstagramId = SccRandom.string(32)
+        val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
         val changedMobilityTools = listOf(
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
@@ -110,6 +111,27 @@ class UpdateUserInfoTest : UserITBase() {
             nickname = user.nickname,
             instagramId = user.instagramId,
             email = user2.email!!,
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
+        )
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+    }
+
+    @Test
+    fun `유효하지 않은 포맷의 이메일로는 변경이 불가능하다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = user.nickname,
+            instagramId = user.instagramId,
+            email = "strange",
             mobilityTools = user.mobilityTools.map { it.toDTO() },
         )
         mvc

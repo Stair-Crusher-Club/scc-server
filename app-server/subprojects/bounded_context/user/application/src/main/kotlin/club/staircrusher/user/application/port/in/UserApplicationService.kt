@@ -5,6 +5,7 @@ import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.stdlib.validation.email.EmailValidator
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
@@ -98,8 +99,10 @@ class UserApplicationService(
             normalizedNickname
         }
         user.email = run {
-            // TODO: 이메일이 valid한 format인지 검증하기
             val normalizedEmail = email.trim()
+            if (!EmailValidator.isValid(normalizedEmail)) {
+                throw SccDomainException("${normalizedEmail}은 유효한 형태의 이메일이 아닙니다.")
+            }
             if (userRepository.findByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException("${normalizedEmail}은 이미 사용 중인 이메일입니다.")
             }
