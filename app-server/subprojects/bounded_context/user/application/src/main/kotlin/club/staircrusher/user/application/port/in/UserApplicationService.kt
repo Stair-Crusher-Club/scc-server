@@ -80,7 +80,8 @@ class UserApplicationService(
     fun updateUserInfo(
         userId: String,
         nickname: String,
-        instagramId: String?
+        instagramId: String?,
+        email: String,
     ): User = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val user = userRepository.findById(userId)
         user.nickname = run {
@@ -92,6 +93,13 @@ class UserApplicationService(
                 throw SccDomainException("${normalizedNickname}은 이미 사용 중인 닉네임입니다.")
             }
             normalizedNickname
+        }
+        user.email = run {
+            val normalizedEmail = email.trim()
+            if (userRepository.findByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
+                throw SccDomainException("${normalizedEmail}은 이미 사용 중인 이메일입니다.")
+            }
+            normalizedEmail
         }
         user.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
         userRepository.save(user)

@@ -475,9 +475,11 @@ paths:
                 instagramId:
                   type: string
                   description: 변경되지 않았으면 기존 값을 그대로 올려준다.
+                email:
+                  type: string
               required:
                 - nickname
-                - instagramId
+                - email
       responses:
         '200':
           content:

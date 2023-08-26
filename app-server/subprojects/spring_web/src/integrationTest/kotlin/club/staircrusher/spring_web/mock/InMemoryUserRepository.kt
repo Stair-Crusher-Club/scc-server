@@ -14,6 +14,10 @@ class InMemoryUserRepository : UserRepository {
         return userById.values.find { it.nickname == nickname }
     }
 
+    override fun findByEmail(email: String): User? {
+        return userById.values.find { it.email == email }
+    }
+
     override fun findByIdIn(ids: Collection<String>): List<User> {
         return userById.values.filter { it.id in ids }
     }

@@ -65,7 +65,7 @@ class ITDataGenerator {
     fun createUser(
         nickname: String = SccRandom.string(12),
         password: String = "password",
-        email: String = "official@staircrusher.club",
+        email: String = SccRandom.string(24),
         instagramId: String? = null
     ): User {
         return userRepository.save(

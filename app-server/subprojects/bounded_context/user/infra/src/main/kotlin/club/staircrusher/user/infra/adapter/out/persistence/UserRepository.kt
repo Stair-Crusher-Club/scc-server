@@ -40,6 +40,12 @@ class UserRepository(
             ?.toDomainModel()
     }
 
+    override fun findByEmail(email: String): User? {
+        return queries.findByEmail(email = email)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
     override fun findByIdIn(ids: Collection<String>): List<User> {
         if (ids.isEmpty()) {
             // empty list로 쿼리를 할 경우 sqldelight가 제대로 처리하지 못하는 문제가 있다.

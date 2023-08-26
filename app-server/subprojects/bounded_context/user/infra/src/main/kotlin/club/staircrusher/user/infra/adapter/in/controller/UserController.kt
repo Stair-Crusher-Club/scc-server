@@ -23,6 +23,7 @@ class UserController(
             userId = authentication.principal,
             nickname = request.nickname,
             instagramId = request.instagramId,
+            email = request.email,
         )
         return UpdateUserInfoPost200Response(
             user = updatedUser.toDTO(),
