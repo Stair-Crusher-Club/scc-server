@@ -2,7 +2,10 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
+import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
+import club.staircrusher.user.infra.adapter.`in`.converter.toModel
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
@@ -18,14 +21,20 @@ class UpdateUserInfoTest : UserITBase() {
         val changedNickname = UUID.randomUUID().toString().take(32)
         val changedInstagramId = UUID.randomUUID().toString().take(32)
         val changedEmail = UUID.randomUUID().toString().take(32)
+        val changedMobilityTools = listOf(
+            UserMobilityTool.ELECTRIC_WHEELCHAIR,
+            UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
+        )
         assertNotEquals(user.nickname, changedNickname)
         assertNotEquals(user.instagramId, changedInstagramId)
         assertNotEquals(user.email, changedEmail)
+        assertNotEquals(user.mobilityTools, changedMobilityTools)
 
         val params = UpdateUserInfoPostRequest(
             nickname = changedNickname,
             instagramId = changedInstagramId,
-            email = changedEmail
+            email = changedEmail,
+            mobilityTools = changedMobilityTools.map { it.toDTO() },
         )
         mvc
             .sccRequest("/updateUserInfo", params, user = user)
@@ -35,6 +44,7 @@ class UpdateUserInfoTest : UserITBase() {
                 assertEquals(changedNickname, result.user.nickname)
                 assertEquals(changedInstagramId, result.user.instagramId)
                 assertEquals(changedEmail, result.user.email)
+                assertEquals(changedMobilityTools.sorted(), result.user.mobilityTools.map { it.toModel() }.sorted())
             }
     }
 
@@ -48,6 +58,7 @@ class UpdateUserInfoTest : UserITBase() {
             nickname = user.nickname,
             instagramId = user.instagramId,
             email = user.email!!,
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
         )
         mvc
             .sccRequest("/updateUserInfo", params, user = user)
@@ -73,7 +84,8 @@ class UpdateUserInfoTest : UserITBase() {
         val params = UpdateUserInfoPostRequest(
             nickname = user2.nickname,
             instagramId = user.instagramId,
-            email = user.email!!
+            email = user.email!!,
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
         )
         mvc
             .sccRequest("/updateUserInfo", params, user = user)
@@ -98,6 +110,7 @@ class UpdateUserInfoTest : UserITBase() {
             nickname = user.nickname,
             instagramId = user.instagramId,
             email = user2.email!!,
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
         )
         mvc
             .sccRequest("/updateUserInfo", params, user = user)

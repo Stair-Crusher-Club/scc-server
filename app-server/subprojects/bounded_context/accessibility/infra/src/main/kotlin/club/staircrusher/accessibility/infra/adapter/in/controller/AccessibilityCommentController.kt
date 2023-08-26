@@ -29,7 +29,7 @@ class AccessibilityCommentController(
             )
         )
         return RegisterBuildingAccessibilityCommentPost200Response(
-            buildingAccessibilityComment = result.value.toDTO(userInfo = result.userInfo)
+            buildingAccessibilityComment = result.value.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
         )
     }
 
@@ -46,7 +46,7 @@ class AccessibilityCommentController(
             )
         )
         return RegisterPlaceAccessibilityCommentPost200Response(
-            placeAccessibilityComment = result.value.toDTO(userInfo = result.userInfo)
+            placeAccessibilityComment = result.value.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
         )
     }
 }

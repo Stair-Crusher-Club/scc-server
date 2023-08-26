@@ -8,7 +8,8 @@ ON CONFLICT(id) DO UPDATE SET
     instagram_id = EXCLUDED.instagram_id,
     created_at = EXCLUDED.created_at,
     deleted_at = EXCLUDED.deleted_at,
-    email = EXCLUDED.email;
+    email = EXCLUDED.email,
+    mobility_tools = EXCLUDED.mobility_tools;
 
 removeAll:
 DELETE FROM scc_user;

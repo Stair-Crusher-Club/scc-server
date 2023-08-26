@@ -27,6 +27,7 @@ class KakaoLoginServiceImpl(
 
 
     // 검증 로직은 https://developers.kakao.com/docs/latest/ko/kakaologin/common#oidc 를 참고.
+    @Suppress("ThrowsCount")
     private fun validateKakaoIdToken(kakaoIdToken: KakaoIdToken) {
         if (kakaoIdToken.issuer != "https://kauth.kakao.com") {
             throw InvalidKakaoIdTokenException("issuer does not match: ${kakaoIdToken.issuer}")

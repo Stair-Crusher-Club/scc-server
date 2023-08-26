@@ -6,7 +6,6 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.InitialNicknameGenerator
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.application.port.out.web.KakaoLoginService

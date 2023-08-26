@@ -8,6 +8,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import java.time.Clock
@@ -56,6 +57,7 @@ class UserApplicationService(
                 encryptedPassword = params.password?.trim()?.let { passwordEncryptor.encrypt(it) },
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = params.email,
+                mobilityTools = mutableListOf(),
                 createdAt = clock.instant(),
             )
         )
@@ -82,6 +84,7 @@ class UserApplicationService(
         nickname: String,
         instagramId: String?,
         email: String,
+        mobilityTools: List<UserMobilityTool>,
     ): User = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val user = userRepository.findById(userId)
         user.nickname = run {
@@ -95,6 +98,7 @@ class UserApplicationService(
             normalizedNickname
         }
         user.email = run {
+            // TODO: 이메일이 valid한 format인지 검증하기
             val normalizedEmail = email.trim()
             if (userRepository.findByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException("${normalizedEmail}은 이미 사용 중인 이메일입니다.")
@@ -102,6 +106,8 @@ class UserApplicationService(
             normalizedEmail
         }
         user.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
+        user.mobilityTools.clear()
+        user.mobilityTools.addAll(mobilityTools)
         userRepository.save(user)
     }
 
