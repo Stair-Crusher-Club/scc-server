@@ -24,3 +24,6 @@ scc:
 
   admin:
     password: adminPassword
+
+  kakao-login:
+    app-key: test

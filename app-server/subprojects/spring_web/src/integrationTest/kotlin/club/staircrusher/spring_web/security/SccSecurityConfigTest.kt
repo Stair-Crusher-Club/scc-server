@@ -71,6 +71,7 @@ class SccSecurityConfigTest {
             nickname = "",
             encryptedPassword = "",
             instagramId = null,
+            email = "",
             createdAt = Instant.now()
         ))
     }

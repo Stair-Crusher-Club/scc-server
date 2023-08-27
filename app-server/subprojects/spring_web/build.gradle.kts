@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(projects.adminApi)
+    api(projects.api)
     implementation(projects.stdlib)
     implementation(projects.boundedContext.user.application)
 

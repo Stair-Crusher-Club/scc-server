@@ -1,0 +1,3 @@
+ALTER TABLE scc_user
+    ADD COLUMN email VARCHAR(64) NULL,
+    ALTER COLUMN encrypted_password DROP NOT NULL;

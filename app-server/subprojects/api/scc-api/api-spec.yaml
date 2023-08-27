@@ -68,6 +68,32 @@ paths:
             대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
             클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
 
+  /loginWithKakao:
+    post:
+      summary: 카카오 로그인을 통해 로그인 or 회원가입을 한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kakaoTokens:
+                  $ref: '#/components/schemas/KakaoTokensDto'
+              required:
+                - kakaoTokens
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultDto'
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+          description: |-
+            에러 코드 설명
+            - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
+
   /listAdministrativeAreas:
     post:
       summary: 점포를 검색한다.
@@ -573,6 +599,39 @@ components:
       required:
         - value
 
+    KakaoTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        idToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+        - idToken
+
+    AuthTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+      required:
+        - accessToken
+
+    LoginResultDto:
+      type: object
+      properties:
+        authTokens:
+          $ref: '#/components/schemas/AuthTokensDto'
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - authTokens
+        - user
+
     Location:
       description: 위치를 위경도로 표현하기 위한 모델.
       type: object
@@ -623,6 +682,9 @@ components:
           type: string
         instagramId:
           type: string
+        email:
+          type: string
+        # TODO: TBD
       required:
         - id
         - nickname
