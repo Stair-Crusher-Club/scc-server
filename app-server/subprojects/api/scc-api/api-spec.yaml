@@ -1062,11 +1062,13 @@ components:
             - INVALID_AUTHENTICATION # 1
             - INVALID_NICKNAME # 2
             - INVALID_EMAIL # 3
+            - UNAUTHORIZED # 4
           enum:
             - -999999
             - 1
             - 2
             - 3
+            - 4
 
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object
