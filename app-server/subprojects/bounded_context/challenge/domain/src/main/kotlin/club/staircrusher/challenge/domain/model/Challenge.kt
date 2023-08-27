@@ -2,7 +2,7 @@ package club.staircrusher.challenge.domain.model
 
 import java.time.Instant
 
-data class Challenge(
+class Challenge(
     val id: String,
     val name: String,
     val isPublic: Boolean,
@@ -14,4 +14,12 @@ data class Challenge(
     val conditions: List<ChallengeCondition>,
     val createdAt: Instant,
     val updatedAt: Instant,
-)
+) {
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is Challenge && other.id == id
+    }
+}
