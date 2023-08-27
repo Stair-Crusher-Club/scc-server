@@ -625,7 +625,7 @@ components:
       type: object
       properties:
         authTokens:
-          $ref: '#/component/schemas/AuthTokensDto'
+          $ref: '#/components/schemas/AuthTokensDto'
         user:
           $ref: '#/components/schemas/User'
       required:

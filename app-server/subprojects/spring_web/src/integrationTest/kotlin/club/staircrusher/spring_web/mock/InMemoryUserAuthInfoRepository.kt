@@ -32,4 +32,8 @@ class InMemoryUserAuthInfoRepository : UserAuthInfoRepository {
     override fun findByExternalId(authProviderType: UserAuthProviderType, externalId: String): UserAuthInfo? {
         return userById.values.find { it.authProviderType == authProviderType && it.externalId == externalId }
     }
+
+    override fun findByUserId(userId: String): List<UserAuthInfo> {
+        return userById.values.filter { it.userId == userId }
+    }
 }

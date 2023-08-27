@@ -38,4 +38,10 @@ class UserAuthInfoRepository(
             .executeAsOneOrNull()
             ?.toDomainModel()
     }
+
+    override fun findByUserId(userId: String): List<UserAuthInfo> {
+        return queries.findByUserId(userId)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
 }
