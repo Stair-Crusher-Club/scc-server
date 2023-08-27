@@ -1,0 +1,36 @@
+save:
+INSERT INTO user_auth_info
+VALUES :user_auth_info
+ON CONFLICT(id) DO UPDATE SET
+    id = EXCLUDED.id,
+    user_id = EXCLUDED.user_id,
+    auth_provider_type = EXCLUDED.auth_provider_type,
+    external_id = EXCLUDED.external_id,
+    external_refresh_token = EXCLUDED.external_refresh_token,
+    external_refresh_token_expires_at = EXCLUDED.external_refresh_token_expires_at,
+    created_at = EXCLUDED.created_at;
+
+removeAll:
+DELETE FROM user_auth_info;
+
+findById:
+SELECT *
+FROM user_auth_info
+WHERE user_auth_info.id = :id;
+
+findAll:
+SELECT *
+FROM user_auth_info;
+
+findByExternalId:
+SELECT *
+FROM user_auth_info
+WHERE
+    user_auth_info.auth_provider_type = :authProviderType
+    AND user_auth_info.external_id = :externalId;
+
+findByUserId:
+SELECT *
+FROM user_auth_info
+WHERE
+    user_auth_info.user_id = :userId;

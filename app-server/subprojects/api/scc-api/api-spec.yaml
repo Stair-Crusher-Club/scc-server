@@ -68,6 +68,32 @@ paths:
             대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
             클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
 
+  /loginWithKakao:
+    post:
+      summary: 카카오 로그인을 통해 로그인 or 회원가입을 한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kakaoTokens:
+                  $ref: '#/components/schemas/KakaoTokensDto'
+              required:
+                - kakaoTokens
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultDto'
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+          description: |-
+            에러 코드 설명
+            - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
+
   /listAdministrativeAreas:
     post:
       summary: 점포를 검색한다.
@@ -449,9 +475,16 @@ paths:
                 instagramId:
                   type: string
                   description: 변경되지 않았으면 기존 값을 그대로 올려준다.
+                email:
+                  type: string
+                mobilityTools:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UserMobilityToolDto'
               required:
                 - nickname
-                - instagramId
+                - email
+                - mobilityTools
       responses:
         '200':
           content:
@@ -463,6 +496,12 @@ paths:
                     $ref: '#/components/schemas/User'
                 required:
                   - user
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+          description: |-
+            에러 코드 설명
+            - INVALID_NICKNAME : 닉네임이 유효하지 않을 때. e.g. 중복, 2글자 미만 등.
+            - INVALID_EMAIL : 이메일이 유효하지 않을 때. e.g. 중복, 이상한 형태 등.
 
   /deleteUser:
     post:
@@ -573,6 +612,39 @@ components:
       required:
         - value
 
+    KakaoTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        idToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+        - idToken
+
+    AuthTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+      required:
+        - accessToken
+
+    LoginResultDto:
+      type: object
+      properties:
+        authTokens:
+          $ref: '#/components/schemas/AuthTokensDto'
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - authTokens
+        - user
+
     Location:
       description: 위치를 위경도로 표현하기 위한 모델.
       type: object
@@ -623,9 +695,26 @@ components:
           type: string
         instagramId:
           type: string
+        email:
+          type: string
+        mobilityTools:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMobilityToolDto'
       required:
         - id
         - nickname
+        - mobilityTools
+
+    UserMobilityToolDto:
+      type: string
+      enum:
+        - MANUAL_WHEELCHAIR # 수동휠체어
+        - ELECTRIC_WHEELCHAIR # 전동휠체어
+        - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
+        - STROLLER # 유아차 이용자
+        - WALKING_ASSISTANCE_DEVICE # 보행보조기구
+        # TODO: TBD
 
     Place:
       description: 점포 정보.
@@ -709,7 +798,7 @@ components:
         placeId:
           type: string
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
           description: 익명으로 달린 댓글이면 null.
         comment:
           type: string
@@ -720,6 +809,19 @@ components:
         - placeId
         - comment
         - createdAt
+
+    AccessibilityRegistererDto:
+      type: object
+      properties:
+        id:
+          type: string
+        nickname:
+          type: string
+        instagramId:
+          type: string
+      required:
+        - id
+        - nickname
 
     BuildingAccessibility:
       description: 건물의 접근성 정보.
@@ -773,7 +875,7 @@ components:
         buildingId:
           type: string
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
           description: 익명으로 달린 댓글이면 null.
         comment:
           type: string
@@ -932,7 +1034,7 @@ components:
       type: object
       properties:
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
         conqueredCount:
           type: integer
           description: 접근성 정보를 등록한 장소의 수.
@@ -956,9 +1058,13 @@ components:
           x-enum-varnames:
             - INTERNAL_FAILURE # -999999
             - INVALID_AUTHENTICATION # 1
+            - INVALID_NICKNAME # 2
+            - INVALID_EMAIL # 3
           enum:
             - -999999
             - 1
+            - 2
+            - 3
 
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object

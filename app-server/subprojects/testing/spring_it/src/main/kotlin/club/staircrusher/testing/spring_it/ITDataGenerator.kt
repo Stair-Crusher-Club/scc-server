@@ -24,6 +24,7 @@ import club.staircrusher.stdlib.geography.siGunGuById
 import club.staircrusher.stdlib.testing.SccRandom
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
@@ -65,7 +66,9 @@ class ITDataGenerator {
     fun createUser(
         nickname: String = SccRandom.string(12),
         password: String = "password",
-        instagramId: String? = null
+        email: String = "${SccRandom.string(12)}@staircrusher.club",
+        instagramId: String? = null,
+        mobilityTools: List<UserMobilityTool> = emptyList(),
     ): User {
         return userRepository.save(
             User(
@@ -73,6 +76,8 @@ class ITDataGenerator {
                 nickname = nickname,
                 encryptedPassword = passwordEncryptor.encrypt(password.trim()),
                 instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() },
+                email = email,
+                mobilityTools = mobilityTools.toMutableList(),
                 createdAt = clock.instant(),
             )
         )

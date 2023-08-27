@@ -78,18 +78,18 @@ class AccessibilityController(
             buildingAccessibility = result.buildingAccessibility?.toDTO(
                 isUpvoted = false,
                 totalUpvoteCount = 0,
-                registeredUserName = result.userInfo?.nickname,
+                registeredUserName = result.accessibilityRegisterer?.nickname,
             ),
             buildingAccessibilityComments = listOfNotNull(result.buildingAccessibilityComment).map {
-                it.toDTO(userInfo = result.userInfo)
+                it.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
             },
             placeAccessibility = result.placeAccessibility.toDTO(
-                registeredUserInfo = result.userInfo,
+                registeredAccessibilityRegisterer = result.accessibilityRegisterer,
                 authUser = authentication.details,
                 isLastInBuilding = result.isLastPlaceAccessibilityInBuilding,
             ),
             placeAccessibilityComments = listOfNotNull(result.placeAccessibilityComment).map {
-                it.toDTO(userInfo = result.userInfo)
+                it.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
             },
             registeredUserOrder = result.registrationOrder,
         )

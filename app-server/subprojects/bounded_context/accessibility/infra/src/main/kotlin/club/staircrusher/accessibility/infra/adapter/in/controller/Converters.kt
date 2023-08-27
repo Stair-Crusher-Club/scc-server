@@ -2,7 +2,7 @@
 
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.UserInfo
+import club.staircrusher.accessibility.application.AccessibilityRegisterer
 import club.staircrusher.accessibility.application.port.`in`.result.GetAccessibilityResult
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
@@ -14,18 +14,18 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
+import club.staircrusher.api.spec.dto.AccessibilityRegistererDto
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
-import club.staircrusher.api.spec.dto.User
 import club.staircrusher.stdlib.auth.AuthUser
 
-fun BuildingAccessibilityComment.toDTO(userInfo: UserInfo?) = club.staircrusher.api.spec.dto.BuildingAccessibilityComment(
+fun BuildingAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = club.staircrusher.api.spec.dto.BuildingAccessibilityComment(
     id = id,
     buildingId = buildingId,
     comment = comment,
     createdAt = createdAt.toDTO(),
-    user = userInfo?.toDTO(),
+    user = accessibilityRegisterer?.toDTO(),
 )
 
 fun BuildingAccessibility.toDTO(
@@ -51,21 +51,21 @@ fun GetAccessibilityResult.toDTO(authUser: AuthUser?) = AccessibilityInfoDto(
         it.value.toDTO(
             isUpvoted = buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
             totalUpvoteCount = buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0,
-            registeredUserName = it.userInfo?.nickname,
+            registeredUserName = it.accessibilityRegisterer?.nickname,
         )
     },
     placeAccessibility = placeAccessibility?.let {
         it.value.toDTO(
-            registeredUserInfo = it.userInfo,
+            registeredAccessibilityRegisterer = it.accessibilityRegisterer,
             authUser = authUser,
             isLastInBuilding = isLastPlaceAccessibilityInBuilding,
         )
     },
     buildingAccessibilityComments = buildingAccessibilityComments.map {
-        it.value.toDTO(userInfo = it.userInfo)
+        it.value.toDTO(accessibilityRegisterer = it.accessibilityRegisterer)
     },
     placeAccessibilityComments = placeAccessibilityComments.map {
-        it.value.toDTO(userInfo = it.userInfo)
+        it.value.toDTO(accessibilityRegisterer = it.accessibilityRegisterer)
     },
     hasOtherPlacesToRegisterInBuilding = hasOtherPlacesToRegisterInSameBuilding,
 )
@@ -82,16 +82,16 @@ fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
         userId = userId,
     )
 
-fun PlaceAccessibilityComment.toDTO(userInfo: UserInfo?) = club.staircrusher.api.spec.dto.PlaceAccessibilityComment(
+fun PlaceAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = club.staircrusher.api.spec.dto.PlaceAccessibilityComment(
     id = id,
     placeId = placeId,
     comment = comment,
     createdAt = createdAt.toDTO(),
-    user = userInfo?.toDTO(),
+    user = accessibilityRegisterer?.toDTO(),
 )
 
 fun PlaceAccessibility.toDTO(
-    registeredUserInfo: UserInfo?,
+    registeredAccessibilityRegisterer: AccessibilityRegisterer?,
     authUser: AuthUser?,
     isLastInBuilding: Boolean,
 ) = club.staircrusher.api.spec.dto.PlaceAccessibility(
@@ -101,7 +101,7 @@ fun PlaceAccessibility.toDTO(
     hasSlope = hasSlope,
     imageUrls = imageUrls,
     placeId = placeId,
-    registeredUserName = registeredUserInfo?.nickname,
+    registeredUserName = registeredAccessibilityRegisterer?.nickname,
     deletionInfo = if (isDeletable(authUser?.id)) {
         PlaceAccessibilityDeletionInfo(
             isLastInBuilding = isLastInBuilding,
@@ -137,14 +137,14 @@ fun RegisterPlaceAccessibilityRequestDto.toModel(userId: String?) =
         userId = userId,
     )
 
-fun UserInfo.toDTO() = User(
+fun AccessibilityRegisterer.toDTO() = AccessibilityRegistererDto(
     id = userId,
     nickname = nickname,
     instagramId = instagramId,
 )
 
-fun AccessibilityRank.toDTO(userInfo: UserInfo) = club.staircrusher.api.spec.dto.AccessibilityRankDto(
-    user = userInfo.toDTO(),
+fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) = club.staircrusher.api.spec.dto.AccessibilityRankDto(
+    user = accessibilityRegisterer.toDTO(),
     rank = rank,
     conqueredCount = conqueredCount,
 )

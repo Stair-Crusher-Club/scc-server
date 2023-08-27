@@ -1,8 +1,13 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
+import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.stdlib.testing.SccRandom
+import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
+import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
+import club.staircrusher.user.infra.adapter.`in`.converter.toModel
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
@@ -15,14 +20,23 @@ class UpdateUserInfoTest : UserITBase() {
             testDataGenerator.createUser()
         }
 
-        val changedNickname = UUID.randomUUID().toString().take(32)
-        val changedInstagramId = UUID.randomUUID().toString().take(32)
+        val changedNickname = SccRandom.string(32)
+        val changedInstagramId = SccRandom.string(32)
+        val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
+        val changedMobilityTools = listOf(
+            UserMobilityTool.ELECTRIC_WHEELCHAIR,
+            UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
+        )
         assertNotEquals(user.nickname, changedNickname)
         assertNotEquals(user.instagramId, changedInstagramId)
+        assertNotEquals(user.email, changedEmail)
+        assertNotEquals(user.mobilityTools, changedMobilityTools)
 
         val params = UpdateUserInfoPostRequest(
             nickname = changedNickname,
             instagramId = changedInstagramId,
+            email = changedEmail,
+            mobilityTools = changedMobilityTools.map { it.toDTO() },
         )
         mvc
             .sccRequest("/updateUserInfo", params, user = user)
@@ -31,6 +45,114 @@ class UpdateUserInfoTest : UserITBase() {
                 assertEquals(user.id, result.user.id)
                 assertEquals(changedNickname, result.user.nickname)
                 assertEquals(changedInstagramId, result.user.instagramId)
+                assertEquals(changedEmail, result.user.email)
+                assertEquals(changedMobilityTools.sorted(), result.user.mobilityTools.map { it.toModel() }.sorted())
+            }
+    }
+
+    @Test
+    fun `현재와 같은 데이터로 업데이트가 가능하다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = user.nickname,
+            instagramId = user.instagramId,
+            email = user.email!!,
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
+        )
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .apply {
+                val result = getResult(UpdateUserInfoPost200Response::class)
+                assertEquals(user.id, result.user.id)
+                assertEquals(user.nickname, result.user.nickname)
+                assertEquals(user.instagramId, result.user.instagramId)
+                assertEquals(user.email, result.user.email)
+            }
+    }
+
+    @Test
+    fun `중복된 닉네임으로는 변경이 불가능하다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val user2 = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = user2.nickname,
+            instagramId = user.instagramId,
+            email = user.email!!,
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
+        )
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_NICKNAME, result.code)
+            }
+    }
+
+    @Test
+    fun `중복된 이메일로는 변경이 불가능하다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val user2 = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = user.nickname,
+            instagramId = user.instagramId,
+            email = user2.email!!,
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
+        )
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_EMAIL, result.code)
+            }
+    }
+
+    @Test
+    fun `유효하지 않은 포맷의 이메일로는 변경이 불가능하다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = user.nickname,
+            instagramId = user.instagramId,
+            email = "strange",
+            mobilityTools = user.mobilityTools.map { it.toDTO() },
+        )
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_EMAIL, result.code)
             }
     }
 }

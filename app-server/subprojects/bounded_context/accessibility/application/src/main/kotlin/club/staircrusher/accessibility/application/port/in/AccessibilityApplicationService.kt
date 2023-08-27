@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.application.port.`in`
 
-import club.staircrusher.accessibility.application.UserInfo
+import club.staircrusher.accessibility.application.AccessibilityRegisterer
 import club.staircrusher.accessibility.application.port.`in`.result.GetAccessibilityResult
 import club.staircrusher.accessibility.application.port.`in`.result.RegisterBuildingAccessibilityResult
 import club.staircrusher.accessibility.application.port.`in`.result.RegisterPlaceAccessibilityResult
@@ -87,14 +87,14 @@ class AccessibilityApplicationService(
             buildingAccessibilityComments = buildingAccessibilityComments.map {
                 WithUserInfo(
                     value = it,
-                    userInfo = userInfoById[it.userId],
+                    accessibilityRegisterer = userInfoById[it.userId],
                 )
             },
             placeAccessibility = placeAccessibility?.let { WithUserInfo(it, userInfoById[it.userId]) },
             placeAccessibilityComments = placeAccessibilityComments.map {
                 WithUserInfo(
                     value = it,
-                    userInfo = userInfoById[it.userId],
+                    accessibilityRegisterer = userInfoById[it.userId],
                 )
             },
             hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(place.building.id),
@@ -122,7 +122,7 @@ class AccessibilityApplicationService(
         val placeAccessibilityComment: PlaceAccessibilityComment?,
         val buildingAccessibility: BuildingAccessibility?,
         val buildingAccessibilityComment: BuildingAccessibilityComment?,
-        val userInfo: UserInfo?,
+        val accessibilityRegisterer: AccessibilityRegisterer?,
         val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
         val isLastPlaceAccessibilityInBuilding: Boolean,
     )
@@ -142,7 +142,7 @@ class AccessibilityApplicationService(
             placeAccessibilityComment = registerPlaceAccessibilityResult.placeAccessibilityComment,
             buildingAccessibility = registerBuildingAccessibilityResult?.buildingAccessibility,
             buildingAccessibilityComment = registerBuildingAccessibilityResult?.buildingAccessibilityComment,
-            userInfo = registerPlaceAccessibilityResult.userInfo,
+            accessibilityRegisterer = registerPlaceAccessibilityResult.accessibilityRegisterer,
             registrationOrder = registerPlaceAccessibilityResult.registrationOrder,
             isLastPlaceAccessibilityInBuilding = registerPlaceAccessibilityResult.isLastPlaceAccessibilityInBuilding,
         )
@@ -191,7 +191,7 @@ class AccessibilityApplicationService(
         return RegisterBuildingAccessibilityResult(
             buildingAccessibility = buildingAccessibility,
             buildingAccessibilityComment = buildingAccessibilityComment,
-            userInfo = userInfo,
+            accessibilityRegisterer = userInfo,
         )
     }
 
@@ -228,7 +228,7 @@ class AccessibilityApplicationService(
         return RegisterPlaceAccessibilityResult(
             placeAccessibility = result,
             placeAccessibilityComment = placeAccessibilityComment,
-            userInfo = userInfo,
+            accessibilityRegisterer = userInfo,
             registrationOrder = placeAccessibilityRepository.countAll(),
             isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId) ?: false,
         )
@@ -240,7 +240,7 @@ class AccessibilityApplicationService(
         val comment = doRegisterBuildingAccessibilityComment(params)
         WithUserInfo(
             value = comment,
-            userInfo = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
+            accessibilityRegisterer = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
         )
     }
 
@@ -268,7 +268,7 @@ class AccessibilityApplicationService(
         val comment = doRegisterPlaceAccessibilityComment(params)
         WithUserInfo(
             value = comment,
-            userInfo = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
+            accessibilityRegisterer = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
         )
     }
 
