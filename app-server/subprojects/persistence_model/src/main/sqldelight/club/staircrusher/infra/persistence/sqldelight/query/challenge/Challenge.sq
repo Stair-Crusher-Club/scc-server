@@ -3,11 +3,11 @@ INSERT INTO challenge
 VALUES :challenge
 ON CONFLICT(id) DO UPDATE SET
     name = EXCLUDED.name,
-    access_level = EXCLUDED.access_level,
+    is_public = EXCLUDED.is_public,
     invitation_code = EXCLUDED.invitation_code,
     is_complete = EXCLUDED.is_complete,
-    starts_on = EXCLUDED.starts_on,
-    ends_on = EXCLUDED.ends_on,
+    starts_at = EXCLUDED.starts_at,
+    ends_at = EXCLUDED.ends_at,
     goals = EXCLUDED.goals,
     conditions = EXCLUDED.conditions,
     created_at = EXCLUDED.created_at,
