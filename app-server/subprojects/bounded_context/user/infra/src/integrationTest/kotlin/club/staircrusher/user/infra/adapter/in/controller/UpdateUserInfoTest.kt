@@ -1,5 +1,6 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
+import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.stdlib.testing.SccRandom
@@ -95,6 +96,10 @@ class UpdateUserInfoTest : UserITBase() {
                     isBadRequest()
                 }
             }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_NICKNAME, result.code)
+            }
     }
 
     @Test
@@ -120,6 +125,10 @@ class UpdateUserInfoTest : UserITBase() {
                     isBadRequest()
                 }
             }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_EMAIL, result.code)
+            }
     }
 
     @Test
@@ -140,6 +149,10 @@ class UpdateUserInfoTest : UserITBase() {
                 status {
                     isBadRequest()
                 }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_EMAIL, result.code)
             }
     }
 }

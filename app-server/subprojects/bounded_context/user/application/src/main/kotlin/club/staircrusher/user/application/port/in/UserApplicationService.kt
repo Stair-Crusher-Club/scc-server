@@ -91,20 +91,32 @@ class UserApplicationService(
         user.nickname = run {
             val normalizedNickname = nickname.trim()
             if (normalizedNickname.length < 2) {
-                throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
+                throw SccDomainException(
+                    "최소 2자 이상의 닉네임을 설정해주세요.",
+                    SccDomainException.ErrorCode.INVALID_NICKNAME,
+                )
             }
             if (userRepository.findByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
-                throw SccDomainException("${normalizedNickname}은 이미 사용 중인 닉네임입니다.")
+                throw SccDomainException(
+                    "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
+                    SccDomainException.ErrorCode.INVALID_NICKNAME,
+                )
             }
             normalizedNickname
         }
         user.email = run {
             val normalizedEmail = email.trim()
             if (!EmailValidator.isValid(normalizedEmail)) {
-                throw SccDomainException("${normalizedEmail}은 유효한 형태의 이메일이 아닙니다.")
+                throw SccDomainException(
+                    "${normalizedEmail}은 유효한 형태의 이메일이 아닙니다.",
+                    SccDomainException.ErrorCode.INVALID_EMAIL,
+                )
             }
             if (userRepository.findByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
-                throw SccDomainException("${normalizedEmail}은 이미 사용 중인 이메일입니다.")
+                throw SccDomainException(
+                    "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
+                    SccDomainException.ErrorCode.INVALID_EMAIL,
+                )
             }
             normalizedEmail
         }

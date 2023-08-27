@@ -496,6 +496,12 @@ paths:
                     $ref: '#/components/schemas/User'
                 required:
                   - user
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+          description: |-
+            에러 코드 설명
+            - INVALID_NICKNAME : 닉네임이 유효하지 않을 때. e.g. 중복, 2글자 미만 등.
+            - INVALID_EMAIL : 이메일이 유효하지 않을 때. e.g. 중복, 이상한 형태 등.
 
   /deleteUser:
     post:
@@ -1052,9 +1058,13 @@ components:
           x-enum-varnames:
             - INTERNAL_FAILURE # -999999
             - INVALID_AUTHENTICATION # 1
+            - INVALID_NICKNAME # 2
+            - INVALID_EMAIL # 3
           enum:
             - -999999
             - 1
+            - 2
+            - 3
 
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object
