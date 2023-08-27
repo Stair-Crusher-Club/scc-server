@@ -28,3 +28,9 @@ FROM user_auth_info
 WHERE
     user_auth_info.auth_provider_type = :authProviderType
     AND user_auth_info.external_id = :externalId;
+
+findByUserId:
+SELECT *
+FROM user_auth_info
+WHERE
+    user_auth_info.user_id = :userId;

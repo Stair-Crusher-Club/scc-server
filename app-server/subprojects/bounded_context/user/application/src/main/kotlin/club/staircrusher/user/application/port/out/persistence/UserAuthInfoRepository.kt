@@ -6,4 +6,5 @@ import club.staircrusher.user.domain.model.UserAuthProviderType
 
 interface UserAuthInfoRepository : EntityRepository<UserAuthInfo, String> {
     fun findByExternalId(authProviderType: UserAuthProviderType, externalId: String): UserAuthInfo?
+    fun findByUserId(userId: String): List<UserAuthInfo>
 }

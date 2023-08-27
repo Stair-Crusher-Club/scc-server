@@ -8,7 +8,7 @@ import club.staircrusher.user.domain.model.UserAuthInfo
 fun Scc_user.toDomainModel() = club.staircrusher.user.domain.model.User(
     id = id,
     nickname = nickname,
-    encryptedPassword = encrypted_password,
+    encryptedPassword = encrypted_password.takeIf { it.isNotBlank() },
     instagramId = instagram_id,
     createdAt = created_at.toInstant(),
     email = email,
