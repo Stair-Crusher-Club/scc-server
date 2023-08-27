@@ -1,8 +1,8 @@
 package club.staircrusher.accessibility.application.port.`in`.result
 
-import club.staircrusher.accessibility.application.UserInfo
+import club.staircrusher.accessibility.application.AccessibilityRegisterer
 
 data class WithUserInfo<T>(
     val value: T,
-    val userInfo: UserInfo?
+    val accessibilityRegisterer: AccessibilityRegisterer?
 )

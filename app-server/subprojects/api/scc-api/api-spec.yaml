@@ -475,9 +475,16 @@ paths:
                 instagramId:
                   type: string
                   description: 변경되지 않았으면 기존 값을 그대로 올려준다.
+                email:
+                  type: string
+                mobilityTools:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UserMobilityToolDto'
               required:
                 - nickname
-                - instagramId
+                - email
+                - mobilityTools
       responses:
         '200':
           content:
@@ -489,6 +496,12 @@ paths:
                     $ref: '#/components/schemas/User'
                 required:
                   - user
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+          description: |-
+            에러 코드 설명
+            - INVALID_NICKNAME : 닉네임이 유효하지 않을 때. e.g. 중복, 2글자 미만 등.
+            - INVALID_EMAIL : 이메일이 유효하지 않을 때. e.g. 중복, 이상한 형태 등.
 
   /deleteUser:
     post:
@@ -684,10 +697,24 @@ components:
           type: string
         email:
           type: string
-        # TODO: TBD
+        mobilityTools:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMobilityToolDto'
       required:
         - id
         - nickname
+        - mobilityTools
+
+    UserMobilityToolDto:
+      type: string
+      enum:
+        - MANUAL_WHEELCHAIR # 수동휠체어
+        - ELECTRIC_WHEELCHAIR # 전동휠체어
+        - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
+        - STROLLER # 유아차 이용자
+        - WALKING_ASSISTANCE_DEVICE # 보행보조기구
+        # TODO: TBD
 
     Place:
       description: 점포 정보.
@@ -771,7 +798,7 @@ components:
         placeId:
           type: string
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
           description: 익명으로 달린 댓글이면 null.
         comment:
           type: string
@@ -782,6 +809,19 @@ components:
         - placeId
         - comment
         - createdAt
+
+    AccessibilityRegistererDto:
+      type: object
+      properties:
+        id:
+          type: string
+        nickname:
+          type: string
+        instagramId:
+          type: string
+      required:
+        - id
+        - nickname
 
     BuildingAccessibility:
       description: 건물의 접근성 정보.
@@ -835,7 +875,7 @@ components:
         buildingId:
           type: string
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
           description: 익명으로 달린 댓글이면 null.
         comment:
           type: string
@@ -994,7 +1034,7 @@ components:
       type: object
       properties:
         user:
-          $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
         conqueredCount:
           type: integer
           description: 접근성 정보를 등록한 장소의 수.
@@ -1018,9 +1058,13 @@ components:
           x-enum-varnames:
             - INTERNAL_FAILURE # -999999
             - INVALID_AUTHENTICATION # 1
+            - INVALID_NICKNAME # 2
+            - INVALID_EMAIL # 3
           enum:
             - -999999
             - 1
+            - 2
+            - 3
 
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object

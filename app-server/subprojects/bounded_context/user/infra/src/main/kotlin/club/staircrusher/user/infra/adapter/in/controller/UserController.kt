@@ -5,6 +5,7 @@ import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
+import club.staircrusher.user.infra.adapter.`in`.converter.toModel
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,6 +24,8 @@ class UserController(
             userId = authentication.principal,
             nickname = request.nickname,
             instagramId = request.instagramId,
+            email = request.email,
+            mobilityTools = request.mobilityTools.map { it.toModel() },
         )
         return UpdateUserInfoPost200Response(
             user = updatedUser.toDTO(),

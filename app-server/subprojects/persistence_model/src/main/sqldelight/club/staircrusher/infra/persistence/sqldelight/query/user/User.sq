@@ -7,7 +7,9 @@ ON CONFLICT(id) DO UPDATE SET
     encrypted_password = EXCLUDED.encrypted_password,
     instagram_id = EXCLUDED.instagram_id,
     created_at = EXCLUDED.created_at,
-    deleted_at = EXCLUDED.deleted_at;
+    deleted_at = EXCLUDED.deleted_at,
+    email = EXCLUDED.email,
+    mobility_tools = EXCLUDED.mobility_tools;
 
 removeAll:
 DELETE FROM scc_user;
@@ -21,6 +23,11 @@ findByNickname:
 SELECT *
 FROM scc_user
 WHERE scc_user.nickname = :nickname;
+
+findByEmail:
+SELECT *
+FROM scc_user
+WHERE scc_user.email = :email;
 
 findByIdIn:
 SELECT *

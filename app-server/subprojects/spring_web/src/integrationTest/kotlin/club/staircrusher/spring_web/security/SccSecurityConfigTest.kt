@@ -72,6 +72,7 @@ class SccSecurityConfigTest {
             encryptedPassword = "",
             instagramId = null,
             email = "",
+            mobilityTools = mutableListOf(),
             createdAt = Instant.now()
         ))
     }

@@ -12,6 +12,7 @@ fun Scc_user.toDomainModel() = club.staircrusher.user.domain.model.User(
     instagramId = instagram_id,
     createdAt = created_at.toInstant(),
     email = email,
+    mobilityTools = mobility_tools?.toMutableList() ?: mutableListOf()
 ).apply {
     deletedAt = deleted_at?.toInstant()
 }
@@ -22,6 +23,7 @@ fun club.staircrusher.user.domain.model.User.toPersistenceModel() = Scc_user(
     encrypted_password = encryptedPassword ?: "", // SqlDelight 버그로 인해 DROP NOT NULL DDL을 제대로 인식하지 못한다. 어차피 encryptedPassword 필드는 곧 삭제될 것이므로, 그냥 empty string을 넣어준다.
     instagram_id = instagramId,
     email = email,
+    mobility_tools = mobilityTools,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = createdAt.toOffsetDateTime(),
     deleted_at = deletedAt?.toOffsetDateTime(),

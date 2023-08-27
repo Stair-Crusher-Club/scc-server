@@ -5,11 +5,13 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.LocationLis
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserAuthProviderTypeStringColumnAdapter
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserMobilityToolStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
+import club.staircrusher.infra.persistence.sqldelight.migration.Scc_user
 import club.staircrusher.infra.persistence.sqldelight.migration.User_auth_info
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.stdlib.di.annotation.Component
@@ -54,6 +56,9 @@ class DB(dataSource: DataSource) : TransactionManager {
         ),
         user_auth_infoAdapter = User_auth_info.Adapter(
             auth_provider_typeAdapter = UserAuthProviderTypeStringColumnAdapter,
+        ),
+        scc_userAdapter = Scc_user.Adapter(
+            mobility_toolsAdapter = UserMobilityToolStringColumnAdapter,
         )
     )
 

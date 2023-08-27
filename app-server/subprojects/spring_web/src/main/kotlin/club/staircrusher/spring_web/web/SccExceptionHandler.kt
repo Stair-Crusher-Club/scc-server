@@ -59,6 +59,8 @@ class SccExceptionHandler {
             msg = msg,
             code = when (errorCode) {
                 SccDomainException.ErrorCode.INVALID_AUTHENTICATION -> ApiErrorResponse.Code.INVALID_AUTHENTICATION
+                SccDomainException.ErrorCode.INVALID_NICKNAME -> ApiErrorResponse.Code.INVALID_NICKNAME
+                SccDomainException.ErrorCode.INVALID_EMAIL -> ApiErrorResponse.Code.INVALID_EMAIL
                 null -> null
             }
         )
