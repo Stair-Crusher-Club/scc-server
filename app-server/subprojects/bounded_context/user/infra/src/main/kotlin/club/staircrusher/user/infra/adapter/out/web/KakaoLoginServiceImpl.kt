@@ -32,7 +32,7 @@ class KakaoLoginServiceImpl(
         if (kakaoIdToken.issuer != "https://kauth.kakao.com") {
             throw InvalidKakaoIdTokenException("issuer does not match: ${kakaoIdToken.issuer}")
         }
-        if (kakaoIdToken.audience != kakaoLoginProperties.appKey) {
+        if (kakaoIdToken.audience != kakaoLoginProperties.oauthClientId) {
             throw InvalidKakaoIdTokenException("audience does not match")
         }
         if (kakaoIdToken.expiresAt < SccClock.instant()) {

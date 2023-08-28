@@ -44,7 +44,7 @@ class LoginWithKakaoTest : UserITBase() {
         Mockito.`when`(kakaoLoginService.parseIdToken("dummy")).thenReturn(
             KakaoIdToken(
                 issuer = "https://kauth.kakao.com",
-                audience = "appKey",
+                audience = "clientId",
                 expiresAtEpochSecond = SccClock.instant().epochSecond + 10,
                 kakaoSyncUserId = "kakaoSyncUserId",
             )
