@@ -26,4 +26,4 @@ scc:
     password: adminPassword
 
   kakao-login:
-    app-key: test
+    oauth-client-id: test
