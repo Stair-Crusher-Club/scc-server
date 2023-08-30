@@ -108,6 +108,10 @@ class KakaoMapsService(
             @RequestParam(required = false) size: Int? = null,
             @RequestParam(required = false) sort: String? = null,
         ): Mono<SearchResult>
+
+        companion object {
+            internal const val defaultSize = 15
+        }
     }
 
     override suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
@@ -206,7 +210,7 @@ class KakaoMapsService(
             .awaitFirstOrNull()
             ?: return emptyList()
         // 첫 요청한 갯수로 page 나누기
-        val pageablePage = maxOf(0, firstPageResult.meta.pageableCount - 1) / firstPageResult.documents.size + 1
+        val pageablePage = maxOf(0, firstPageResult.meta.pageableCount - 1) / KakaoService.defaultSize + 1 // TODO: KakaoService.defaultSize를 고정적으로 사용하지 말고, searchOption에 넣는 size를 사용해서 페이지 계산하기
 
         val result = firstPageResult.convertToModel().toMutableList()
         if (pageablePage == 1) {
