@@ -455,12 +455,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PlaceListItem'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceListItem'
 
   /updateUserInfo:
     post:
