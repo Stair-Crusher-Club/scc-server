@@ -31,7 +31,13 @@ interface MapsService {
         ) : Region {
             enum class Sort(val value: String) {
                 DISTANCE("distance"), // 가까운 순
-                ACCURACY("accuracy") // 정확도 순
+                ACCURACY("accuracy"); // 정확도 순
+
+                companion object {
+                    fun valueFrom(string: String): Sort? {
+                        return values().firstOrNull { it.value == string.lowercase() }
+                    }
+                }
             }
         }
 
@@ -52,7 +58,13 @@ interface MapsService {
         ) : Region {
             enum class Sort(val value: String) {
                 DISTANCE("distance"), // 가까운 순
-                ACCURACY("accuracy") // 정확도 순
+                ACCURACY("accuracy"); // 정확도 순
+
+                companion object {
+                    fun valueFrom(string: String): Sort? {
+                        return values().firstOrNull { it.value == string.lowercase() }
+                    }
+                }
             }
         }
 

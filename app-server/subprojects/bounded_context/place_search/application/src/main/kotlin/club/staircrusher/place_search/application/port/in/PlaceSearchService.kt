@@ -43,7 +43,7 @@ class PlaceSearchService(
                         centerLocation = it,
                         radiusMeters = distanceMetersLimit.meter.toInt(),
                         sort = sort
-                            ?.let { MapsService.SearchByKeywordOption.CircleRegion.Sort.valueOf(it.lowercase()) }
+                            ?.let { MapsService.SearchByKeywordOption.CircleRegion.Sort.valueFrom(it) }
                             ?: MapsService.SearchByKeywordOption.CircleRegion.Sort.ACCURACY
                     )
                 }
