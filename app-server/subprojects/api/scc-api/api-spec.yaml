@@ -593,213 +593,49 @@ paths:
 components:
   # Reusable schemas (data models)
   schemas:
-    EpochMillisTimestamp:
-      description: 특정 시각을 표현하기 위한 모델.
+    AccessibilityInfoDto:
       type: object
       properties:
-        value:
-          type: integer
-          format: int64
-      required:
-        - value
-
-    KakaoTokensDto:
-      type: object
-      properties:
-        accessToken:
-          type: string
-        refreshToken:
-          type: string
-        idToken:
-          type: string
-      required:
-        - accessToken
-        - refreshToken
-        - idToken
-
-    AuthTokensDto:
-      type: object
-      properties:
-        accessToken:
-          type: string
-      required:
-        - accessToken
-
-    LoginResultDto:
-      type: object
-      properties:
-        authTokens:
-          $ref: '#/components/schemas/AuthTokensDto'
-        user:
-          $ref: '#/components/schemas/User'
-      required:
-        - authTokens
-        - user
-
-    Location:
-      description: 위치를 위경도로 표현하기 위한 모델.
-      type: object
-      properties:
-        lng:
-          type: number
-          format: double
-        lat:
-          type: number
-          format: double
-      required:
-        - lng
-        - lat
-
-    SiGunGu:
-      description: 시군구를 표현하기 위한 모델.
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-      required:
-        - id
-        - name
-
-    EupMyeonDong:
-      description: 읍면동을 표현하기 위한 모델.
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        siGunGuId:
-          type: string
-      required:
-        - id
-        - name
-        - siGunGuId
-
-    User:
-      description: 유저 정보.
-      properties:
-        id:
-          type: string
-        nickname:
-          type: string
-        instagramId:
-          type: string
-        email:
-          type: string
-        mobilityTools:
+        buildingAccessibility:
+          $ref: '#/components/schemas/BuildingAccessibility'
+          description: 정보가 아직 채워지지 않았으면 null.
+        buildingAccessibilityComments:
           type: array
           items:
-            $ref: '#/components/schemas/UserMobilityToolDto'
-      required:
-        - id
-        - nickname
-        - mobilityTools
-
-    UserMobilityToolDto:
-      type: string
-      enum:
-        - MANUAL_WHEELCHAIR # 수동휠체어
-        - ELECTRIC_WHEELCHAIR # 전동휠체어
-        - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
-        - STROLLER # 유아차 이용자
-        - WALKING_ASSISTANCE_DEVICE # 보행보조기구
-        # TODO: TBD
-
-    Place:
-      description: 점포 정보.
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-          description: 점포의 human-readable한 이름.
-        address:
-          type: string
-          description: 점포의 human-readable한 주소.
-      required:
-        - id
-        - name
-        - address
-
-    Building:
-      description: 건물 정보.
-      properties:
-        id:
-          type: string
-        address:
-          type: string
-          description: 건물의 human-readable한 주소.
-      required:
-        - id
-        - address
-
-    StairInfo:
-      type: string
-      enum:
-        - UNDEFINED # e.g. 엘리베이터가 아예 없는 경우, 엘리베이터 계단 정보는 UNDEFINED로 올린다.
-        - NONE
-        - ONE
-        - TWO_TO_FIVE
-        - OVER_SIX
-
-    PlaceAccessibility:
-      description: 점포의 접근성 정보.
-      properties:
-        id:
-          type: string
-        isFirstFloor:
-          type: boolean
-        stairInfo:
-          $ref: '#/components/schemas/StairInfo'
-        hasSlope:
-          type: boolean
-        imageUrls:
+            $ref: '#/components/schemas/BuildingAccessibilityComment'
+          description: 정보가 아직 채워지지 않았으면 empty list.
+        placeAccessibility:
+          $ref: '#/components/schemas/PlaceAccessibility'
+          description: 정보가 아직 채워지지 않았으면 null.
+        placeAccessibilityComments:
           type: array
           items:
-            type: string
-        placeId:
-          type: string
-        registeredUserName:
-          type: string
-          description: 익명으로 등록되었으면 null.
-        deletionInfo:
-          type: object
-          description: 삭제 가능하면 non-null, 삭제 불가능하면 null.
-          properties:
-            isLastInBuilding:
-              type: boolean
-              description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
-          required:
-            - isLastInBuilding
+            $ref: '#/components/schemas/PlaceAccessibilityComment'
+          description: 정보가 아직 채워지지 않았으면 empty list.
+        hasOtherPlacesToRegisterInBuilding:
+          type: boolean
+          description: "'이 건물의 다른 점포 등록하기'를 보여줄지 여부."
       required:
-        - id
-        - isFirstFloor
-        - stairInfo
-        - hasSlope
-        - placeId
-        - imageUrls
+        - buildingAccessibilityComments
+        - placeAccessibilityComments
+        - hasOtherPlacesToRegisterInBuilding
 
-    PlaceAccessibilityComment:
-      description: 점포에 대한 의견.
+    AccessibilityRankDto:
+      type: object
       properties:
-        id:
-          type: string
-        placeId:
-          type: string
         user:
           $ref: '#/components/schemas/AccessibilityRegistererDto'
-          description: 익명으로 달린 댓글이면 null.
-        comment:
-          type: string
-        createdAt:
-          $ref: '#/components/schemas/EpochMillisTimestamp'
+        conqueredCount:
+          type: integer
+          description: 접근성 정보를 등록한 장소의 수.
+        rank:
+          type: integer
+          format: int64
+          description: 현재 나의 랭크. 1부터 시작.
       required:
-        - id
-        - placeId
-        - comment
-        - createdAt
+        - user
+        - conqueredCount
+        - rank
 
     AccessibilityRegistererDto:
       type: object
@@ -813,6 +649,45 @@ components:
       required:
         - id
         - nickname
+
+    ApiErrorResponse:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: reason for error
+        code:
+          type: string # Do not change to integer. Jackson's @JsonProperty does not support number serialization.
+          x-enum-varnames:
+            - INTERNAL_FAILURE # -999999
+            - INVALID_AUTHENTICATION # 1
+            - INVALID_NICKNAME # 2
+            - INVALID_EMAIL # 3
+          enum:
+            - -999999
+            - 1
+            - 2
+            - 3
+
+    AuthTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+      required:
+        - accessToken
+
+    Building:
+      description: 건물 정보.
+      properties:
+        id:
+          type: string
+        address:
+          type: string
+          description: 건물의 human-readable한 주소.
+      required:
+        - id
+        - address
 
     BuildingAccessibility:
       description: 건물의 접근성 정보.
@@ -878,6 +753,194 @@ components:
         - comment
         - createdAt
 
+    CancelBuildingAccessibilityUpvoteRequestDto:
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
+      type: object
+
+    EupMyeonDong:
+      description: 읍면동을 표현하기 위한 모델.
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        siGunGuId:
+          type: string
+      required:
+        - id
+        - name
+        - siGunGuId
+
+    EpochMillisTimestamp:
+      description: 특정 시각을 표현하기 위한 모델.
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int64
+      required:
+        - value
+
+    GiveBuildingAccessibilityUpvoteRequestDto:
+      type: object
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
+
+    KakaoTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        idToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+        - idToken
+
+    ListConqueredPlacesResponseDto:
+      type: object
+      properties:
+        totalNumberOfItems:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceListItem'
+      required:
+        - totalNumberOfItems
+        - items
+
+    Location:
+      description: 위치를 위경도로 표현하기 위한 모델.
+      type: object
+      properties:
+        lng:
+          type: number
+          format: double
+        lat:
+          type: number
+          format: double
+      required:
+        - lng
+        - lat
+
+    LoginResultDto:
+      type: object
+      properties:
+        authTokens:
+          $ref: '#/components/schemas/AuthTokensDto'
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - authTokens
+        - user
+
+    Place:
+      description: 점포 정보.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 점포의 human-readable한 이름.
+        address:
+          type: string
+          description: 점포의 human-readable한 주소.
+      required:
+        - id
+        - name
+        - address
+
+    PlaceAccessibility:
+      description: 점포의 접근성 정보.
+      properties:
+        id:
+          type: string
+        isFirstFloor:
+          type: boolean
+        stairInfo:
+          $ref: '#/components/schemas/StairInfo'
+        hasSlope:
+          type: boolean
+        imageUrls:
+          type: array
+          items:
+            type: string
+        placeId:
+          type: string
+        registeredUserName:
+          type: string
+          description: 익명으로 등록되었으면 null.
+        deletionInfo:
+          type: object
+          description: 삭제 가능하면 non-null, 삭제 불가능하면 null.
+          properties:
+            isLastInBuilding:
+              type: boolean
+              description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
+          required:
+            - isLastInBuilding
+      required:
+        - id
+        - isFirstFloor
+        - stairInfo
+        - hasSlope
+        - placeId
+        - imageUrls
+
+    PlaceAccessibilityComment:
+      description: 점포에 대한 의견.
+      properties:
+        id:
+          type: string
+        placeId:
+          type: string
+        user:
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
+          description: 익명으로 달린 댓글이면 null.
+        comment:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+      required:
+        - id
+        - placeId
+        - comment
+        - createdAt
+
+    PlaceCategoryDto:
+      type: string
+      enum:
+        - RESTAURANT
+        - CAFE
+        - ACCOMODATION
+        - MARKET
+        - CONVENIENCE_STORE
+        - KINDERGARTEN
+        - SCHOOL
+        - ACADEMY
+        - PARKING_LOT
+        - GAS_STATION
+        - SUBWAY_STATION
+        - BANK
+        - CULTURAL_FACILITIES
+        - AGENCY
+        - PUBLIC_OFFICE
+        - ATTRACTION
+        - HOSPITAL
+        - PHARMACY
+
     PlaceListItem:
       type: object
       properties:
@@ -902,67 +965,6 @@ components:
         - hasBuildingAccessibility
         - hasPlaceAccessibility
         - isAccessibilityRegistrable
-
-    PlaceCategoryDto:
-      type: string
-      enum:
-        - RESTAURANT
-        - CAFE
-        - ACCOMODATION
-        - MARKET
-        - CONVENIENCE_STORE
-        - KINDERGARTEN
-        - SCHOOL
-        - ACADEMY
-        - PARKING_LOT
-        - GAS_STATION
-        - SUBWAY_STATION
-        - BANK
-        - CULTURAL_FACILITIES
-        - AGENCY
-        - PUBLIC_OFFICE
-        - ATTRACTION
-        - HOSPITAL
-        - PHARMACY
-
-    SearchKeywordOfPlaceCategoryDto:
-      type: object
-      properties:
-        category:
-          $ref: '#/components/schemas/PlaceCategoryDto'
-        keyword:
-          type: string
-          description: '검색창에 들어가는 문자열. ex) 음식점, 병원, 카페'
-      required:
-        - category
-        - keyword
-
-    AccessibilityInfoDto:
-      type: object
-      properties:
-        buildingAccessibility:
-          $ref: '#/components/schemas/BuildingAccessibility'
-          description: 정보가 아직 채워지지 않았으면 null.
-        buildingAccessibilityComments:
-          type: array
-          items:
-            $ref: '#/components/schemas/BuildingAccessibilityComment'
-          description: 정보가 아직 채워지지 않았으면 empty list.
-        placeAccessibility:
-          $ref: '#/components/schemas/PlaceAccessibility'
-          description: 정보가 아직 채워지지 않았으면 null.
-        placeAccessibilityComments:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlaceAccessibilityComment'
-          description: 정보가 아직 채워지지 않았으면 empty list.
-        hasOtherPlacesToRegisterInBuilding:
-          type: boolean
-          description: "'이 건물의 다른 점포 등록하기'를 보여줄지 여부."
-      required:
-        - buildingAccessibilityComments
-        - placeAccessibilityComments
-        - hasOtherPlacesToRegisterInBuilding
 
     RegisterBuildingAccessibilityRequestDto:
       type: object
@@ -1021,76 +1023,74 @@ components:
         - hasSlope
         - imageUrls
 
-    AccessibilityRankDto:
+    SearchKeywordOfPlaceCategoryDto:
       type: object
       properties:
-        user:
-          $ref: '#/components/schemas/AccessibilityRegistererDto'
-        conqueredCount:
-          type: integer
-          description: 접근성 정보를 등록한 장소의 수.
-        rank:
-          type: integer
-          format: int64
-          description: 현재 나의 랭크. 1부터 시작.
-      required:
-        - user
-        - conqueredCount
-        - rank
-
-    ApiErrorResponse:
-      type: object
-      properties:
-        msg:
+        category:
+          $ref: '#/components/schemas/PlaceCategoryDto'
+        keyword:
           type: string
-          description: reason for error
-        code:
-          type: string # Do not change to integer. Jackson's @JsonProperty does not support number serialization.
-          x-enum-varnames:
-            - INTERNAL_FAILURE # -999999
-            - INVALID_AUTHENTICATION # 1
-            - INVALID_NICKNAME # 2
-            - INVALID_EMAIL # 3
-          enum:
-            - -999999
-            - 1
-            - 2
-            - 3
-
-    ListConqueredPlacesResponseDto:
-      type: object
-      properties:
-        totalNumberOfItems:
-          type: integer
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlaceListItem'
+          description: '검색창에 들어가는 문자열. ex) 음식점, 병원, 카페'
       required:
-        - totalNumberOfItems
-        - items
-
-    GiveBuildingAccessibilityUpvoteRequestDto:
-      type: object
-      properties:
-        buildingAccessibilityId:
-          type: string
-      required:
-        - buildingAccessibilityId
-
-    CancelBuildingAccessibilityUpvoteRequestDto:
-      type: object
-      properties:
-        buildingAccessibilityId:
-          type: string
-      required:
-        - buildingAccessibilityId
+        - category
+        - keyword
 
     SearchPlaceSortDto:
       type: string
       enum:
         - ACCURACY
         - DISTANCE
+
+    SiGunGu:
+      description: 시군구를 표현하기 위한 모델.
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    StairInfo:
+      type: string
+      enum:
+        - UNDEFINED # e.g. 엘리베이터가 아예 없는 경우, 엘리베이터 계단 정보는 UNDEFINED로 올린다.
+        - NONE
+        - ONE
+        - TWO_TO_FIVE
+        - OVER_SIX
+
+    User:
+      description: 유저 정보.
+      properties:
+        id:
+          type: string
+        nickname:
+          type: string
+        instagramId:
+          type: string
+        email:
+          type: string
+        mobilityTools:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMobilityToolDto'
+      required:
+        - id
+        - nickname
+        - mobilityTools
+
+    UserMobilityToolDto:
+      type: string
+      enum:
+        - MANUAL_WHEELCHAIR # 수동휠체어
+        - ELECTRIC_WHEELCHAIR # 전동휠체어
+        - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
+        - STROLLER # 유아차 이용자
+        - WALKING_ASSISTANCE_DEVICE # 보행보조기구
+        # TODO: TBD
 
   responses:
     ApiFailure:
