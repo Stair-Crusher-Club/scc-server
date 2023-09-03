@@ -455,12 +455,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PlaceListItem'
+                $ref: '#/components/schemas/ListConqueredPlacesResponseDto'
 
   /updateUserInfo:
     post:
@@ -1067,6 +1062,19 @@ components:
             - 1
             - 2
             - 3
+
+    ListConqueredPlacesResponseDto:
+      type: object
+      properties:
+        totalNumberOfItems:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceListItem'
+      required:
+        - totalNumberOfItems
+        - items
 
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object
