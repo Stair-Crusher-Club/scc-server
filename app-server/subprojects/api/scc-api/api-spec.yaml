@@ -812,6 +812,25 @@ components:
         - buildingAccessibilityId
       type: object
 
+    ChallengeConditionAccessibilityTypeDto:
+      type: string
+      enum:
+        - UNKNOWN
+        - BUILDING
+        - PLACES
+
+    ChallengeConditionDto:
+      type: object
+      properties:
+        addressMatches:
+          type: array
+          items:
+            type: string
+        accessibilityTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeConditionAccessibilityTypeDto'
+
     ChallengeDto:
       type: object
       properties:
@@ -837,25 +856,6 @@ components:
             $ref: '#/components/schemas/EpochMillisTimestamp'
         createdAt:
           $ref: '#/components/schemas/EpochMillisTimestamp'
-
-    ChallengeConditionDto:
-      type: object
-      properties:
-        addressMatches:
-          type: array
-          items:
-            type: string
-        accessibilityTypes:
-          type: array
-          items:
-            $ref: '#/components/schemas/ChallengeConditionAccessibilityTypeDto'
-
-    ChallengeConditionAccessibilityTypeDto:
-      type: string
-      enum:
-        - UNKNOWN
-        - BUILDING
-        - PLACES
 
     ChallengeRankDto:
       type: object
