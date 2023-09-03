@@ -1,4 +1,4 @@
-package club.staircrusher.user.application.port.out.web
+package club.staircrusher.user.application.port.out.web.login.kakao
 
 import java.time.Instant
 
