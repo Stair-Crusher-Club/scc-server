@@ -12,6 +12,7 @@ class KakaoLoginServiceImpl(
     private val kakaoLoginProperties: KakaoLoginProperties,
 ) : KakaoLoginService {
     override fun parseIdToken(idToken: String): KakaoIdToken {
+        // TODO: 정말 카카오 서버에서 sign한 토큰이 맞는지 검증 필요
         val decodedJWT = JWT.decode(idToken)
         val kakaoIdToken = KakaoIdToken(
             issuer = decodedJWT.getClaim("iss").asString(),
