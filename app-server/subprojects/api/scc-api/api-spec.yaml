@@ -94,6 +94,27 @@ paths:
             에러 코드 설명
             - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
 
+  /loginWithApple:
+    post:
+      summary: 애플 로그인을 통해 로그인 or 회원가입을 한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginWithAppleRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultDto'
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+          description: |-
+            에러 코드 설명
+            - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
+
   /listAdministrativeAreas:
     post:
       summary: 점포를 검색한다.
@@ -621,6 +642,17 @@ components:
         - accessToken
         - refreshToken
         - idToken
+
+    LoginWithAppleRequestDto:
+      type: object
+      properties:
+        identityToken:
+          type: string
+        authorizationCode:
+          type: string
+      required:
+        - identityToken
+        - authorizationCode
 
     AuthTokensDto:
       type: object
