@@ -1062,12 +1062,21 @@ components:
             - 1
             - 2
             - 3
+    ListConqueredPlacesRequestDto:
+      type: object
+      properties:
+        nextToken:
+          type: string
+        limit:
+          type: integer
 
     ListConqueredPlacesResponseDto:
       type: object
       properties:
         totalNumberOfItems:
           type: integer
+        nextToken:
+          type: string
         items:
           type: array
           items:
