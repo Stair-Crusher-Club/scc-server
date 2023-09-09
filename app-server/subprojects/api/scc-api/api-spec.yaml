@@ -1062,21 +1062,27 @@ components:
             - 1
             - 2
             - 3
+
     ListConqueredPlacesRequestDto:
       type: object
       properties:
         nextToken:
           type: string
+          description: 페이지 정보. 없으면 첫 페이지 요소들을 내려준다.
         limit:
           type: integer
+          format: int64
 
     ListConqueredPlacesResponseDto:
       type: object
       properties:
         totalNumberOfItems:
           type: integer
+          format: int64
+          description: 정복한 장소의 전체 갯수
         nextToken:
           type: string
+          description: 다음 페이지 정보. 없으면 더 이상 요청할 값이 없음을 의미한다.
         items:
           type: array
           items:
