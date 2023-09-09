@@ -448,8 +448,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties: { }
+              $ref: '#/components/schemas/ListConqueredPlacesRequestDto'
       responses:
         '200':
           content:
