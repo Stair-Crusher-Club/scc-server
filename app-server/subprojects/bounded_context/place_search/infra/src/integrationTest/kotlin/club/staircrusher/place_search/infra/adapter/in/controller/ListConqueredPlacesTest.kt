@@ -1,6 +1,6 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
-import club.staircrusher.api.spec.dto.PlaceListItem
+import club.staircrusher.api.spec.dto.ListConqueredPlacesResponseDto
 import club.staircrusher.place_search.infra.adapter.`in`.controller.base.PlaceSearchITBase
 import com.fasterxml.jackson.core.type.TypeReference
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,9 +27,9 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
         mvc
             .sccRequest("/listConqueredPlaces", requestBody = null, user = user)
             .apply {
-                val result = getResult(object : TypeReference<List<PlaceListItem>>() {})
-                assertEquals(registeredCount, result.size)
-                result.forEach { item ->
+                val result = getResult(object : TypeReference<ListConqueredPlacesResponseDto>() {})
+                assertEquals(registeredCount, result.totalNumberOfItems)
+                result.items.forEach { item ->
                     val place = places.find { it.id == item.place.id }!!
                     assertEquals(place.building.id, item.building.id)
                     assertTrue(item.hasPlaceAccessibility)
