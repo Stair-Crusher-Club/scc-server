@@ -28,7 +28,7 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
             .sccRequest("/listConqueredPlaces", requestBody = null, user = user)
             .apply {
                 val result = getResult(object : TypeReference<ListConqueredPlacesResponseDto>() {})
-                assertEquals(registeredCount, result.totalNumberOfItems)
+                assertEquals(registeredCount.toLong(), result.totalNumberOfItems)
                 result.items.forEach { item ->
                     val place = places.find { it.id == item.place.id }!!
                     assertEquals(place.building.id, item.building.id)
