@@ -906,8 +906,6 @@ components:
       properties:
         challengeId:
           type: string
-        invitationCode:
-          type: string
 
     GetChallengeResponseDto:
       type: object
@@ -940,6 +938,9 @@ components:
       properties:
         challengeId:
           type: string
+        invitationCode:
+          type: string
+          description: 초대코드가 있어야 참여할 수 있는 챌린지가 있다.
       required:
         - challengeId
 
