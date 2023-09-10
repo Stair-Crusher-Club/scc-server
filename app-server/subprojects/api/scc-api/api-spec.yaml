@@ -868,12 +868,13 @@ components:
           type: integer
           format: int64
           description: 챌린지 안에서 이룬 성과. ex) 365 개 정복
-        userName:
+        nickname:
           type: string
           description: 성과를 이룬 유저 이름.
       required:
         - rank
         - numberOfContribution
+        - nickname
 
     EupMyeonDong:
       description: 읍면동을 표현하기 위한 모델.
