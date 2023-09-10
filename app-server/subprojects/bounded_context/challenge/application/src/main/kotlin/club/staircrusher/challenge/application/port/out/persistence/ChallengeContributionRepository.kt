@@ -1,0 +1,11 @@
+package club.staircrusher.challenge.application.port.out.persistence
+
+import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.stdlib.domain.repository.EntityRepository
+
+interface ChallengeContributionRepository : EntityRepository<ChallengeContribution, String> {
+    fun findByUserId(userId: String): List<ChallengeContribution>
+    fun findByChallengeId(challengeId: String): List<ChallengeContribution>
+    fun countByChallengeId(challengeId: String): Int
+    fun remove(contributionId: String)
+}
