@@ -873,7 +873,7 @@ components:
           type: integer
           format: int64
           description: 현재 랭크. 1부터 시작.
-        numberOfContribution:
+        contributionCount:
           type: integer
           format: int64
           description: 챌린지 안에서 이룬 성과. ex) 365 개 정복
@@ -882,7 +882,7 @@ components:
           description: 성과를 이룬 유저 이름.
       required:
         - rank
-        - numberOfContribution
+        - contributionCount
         - nickname
 
     EupMyeonDong:
@@ -988,11 +988,22 @@ components:
         - refreshToken
         - idToken
 
-    ListChallengesRequestDto:
+    ListChallengesItemDto:
       type: object
       properties:
-        filter:
-          $ref: '#/components/schemas/ListChallengeRequestFilterDto'
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/ChallengeStatusDto'
+        startsAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        endsAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        hasJoined:
+          type: boolean
+          description: 내가 참여중인지 여부
 
     ListChallengesRequestDto:
       type: object
@@ -1009,7 +1020,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/ChallengeDto'
+            $ref: '#/components/schemas/ListChallengesItemDto'
       required:
         - items
 
