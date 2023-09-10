@@ -11,10 +11,14 @@ class ConqueredPlaceController(
     private val listConqueredPlacesQuery: ListConqueredPlacesQuery,
 ) {
     @PostMapping("/listConqueredPlaces")
-    fun listConqueredPlaces(authentication: SccAppAuthentication): ListConqueredPlacesResponseDto {
+    fun listConqueredPlaces(
+        authentication: SccAppAuthentication
+    ): ListConqueredPlacesResponseDto {
         val items = listConqueredPlacesQuery.listConqueredPlaces(authentication.principal)
+        // 페이징 로직은 필요할 때 대응한다.
         return ListConqueredPlacesResponseDto(
-            totalNumberOfItems = items.count(),
+            totalNumberOfItems = items.count().toLong(),
+            nextToken = null,
             items = items.map { it.toDTO() }
         )
     }
