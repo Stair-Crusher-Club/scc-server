@@ -1012,11 +1012,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ChallengeStatusDto'
+        nextToken:
+          type: string
+        limit:
+          type: integer
+          format: int64
+      required:
+        - status
 
     ListChallengesResponseDto:
       description: filter 가 없으면 진행중인, 참여중인 챌린지를 우선적으로 보여준다.
       type: object
       properties:
+        totalCount:
+          type: integer
+          format: int64
+        nextToken:
+          type: string
         items:
           type: array
           items:
