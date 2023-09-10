@@ -853,7 +853,7 @@ components:
         conditions:
           type: array
           items:
-            $ref: '#/components/schemas/EpochMillisTimestamp'
+            $ref: '#/components/schemas/ChallengeConditionDto'
         createdAt:
           $ref: '#/components/schemas/EpochMillisTimestamp'
 
