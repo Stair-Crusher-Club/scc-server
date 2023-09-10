@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS challenge_participation (
 
 CREATE TABLE IF NOT EXISTS challenge_contribution (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
     challenge_id VARCHAR(36) NOT NULL,
     place_accessibility_id VARCHAR(36) NULL,
     place_accessibility_comment_id VARCHAR(36) NULL,

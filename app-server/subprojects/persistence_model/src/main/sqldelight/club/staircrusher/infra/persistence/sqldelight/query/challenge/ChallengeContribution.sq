@@ -1,0 +1,39 @@
+save:
+INSERT INTO challenge_contribution
+VALUES :challenge_contribution
+ON CONFLICT(id) DO UPDATE SET
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at;
+
+findById:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.id = :id;
+
+findByUserId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.user_id = :userId;
+
+findByUserIds:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.user_id IN :userIds;
+
+findByChallengeId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId;
+
+findByChallengeIds:
+SELECT *
+FROM challenge
+WHERE challenge.id IN :challengeIds;
+
+removeById:
+DELETE
+FROM challenge_contribution
+WHERE challenge_contribution.id = :id;
+
+removeAll:
+DELETE FROM challenge_contribution;
