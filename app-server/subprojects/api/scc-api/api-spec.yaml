@@ -18,9 +18,23 @@ servers:
           - 'api.dev'
 
 paths:
-  /signUp:
+  /cancelBuildingAccessibilityUpvote:
     post:
-      summary: 회원가입을 한다.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelBuildingAccessibilityUpvoteRequestDto'
+        required: true
+      responses:
+        '204': { }
+      summary: '''이 정보가 도움이 돼요''를 취소한다.'
+
+  /deleteAccessibility:
+    post:
+      summary: |
+        등록한 접근성 정보를 삭제한다.
+        기본적으로는 장소 정보만 삭제하지만, 삭제하는 장소 정보가 해당 건물의 마지막 장소 정보일 경우 건물 정보도 함께 삭제한다.
       requestBody:
         required: true
         content:
@@ -28,21 +42,255 @@ paths:
             schema:
               type: object
               properties:
-                nickname:
+                placeAccessibilityId:
                   type: string
-                password:
-                  type: string
-                instagram_id:
+                  description: 삭제할 장소 정보의 아이디
+              required:
+                - placeAccessibilityId
+      responses:
+        '204': { }
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+
+  /deleteUser:
+    post:
+      summary: 계정을 삭제한다.
+      responses:
+        '204': { }
+
+  /getAccessibility:
+    post:
+      summary: 건물 & 점포의 접근성 정보를 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placeId:
                   type: string
               required:
-                - nickname
-                - password
+                - placeId
       responses:
-        '204':
-          description: |
-            빈 response body를 내려준다.
-            대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
-            클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessibilityInfoDto'
+
+  /getAccessibilityLeaderboard:
+    post:
+      summary: 현재 탑 랭커들을 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ranks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccessibilityRankDto'
+                required:
+                  - ranks
+
+  /getAccessibilityRank:
+    post:
+      summary: 내 현재 랭크를 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessibilityRank:
+                    $ref: '#/components/schemas/AccessibilityRankDto'
+                required:
+                  - accessibilityRank
+
+  /getCountForNextRank:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties: { }
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  countForNextRank:
+                    type: integer
+                required:
+                  - countForNextRank
+                type: object
+      summary: 다음 랭크로 올라가기 위한 점수를 조회한다.
+
+  /getImageUploadUrls:
+    post:
+      summary: 점포 정보 등록 등의 상황에서 이미지를 업로드하기 위한 URL을 받아 온다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+                  description: 업로드할 이미지 수.
+                filenameExtension:
+                  type: string
+                  description: 업로드할 이미지의 확장자. '.'을 붙이지 말아야 한다. e.g. png, jpeg 등.
+              required:
+                - count
+                - filenameExtension
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                    expireAt:
+                      $ref: '#/components/schemas/EpochMillisTimestamp'
+                      description: url의 만료 시각.
+                  required:
+                    - url
+                    - expireAt
+
+  /giveBuildingAccessibilityUpvote:
+    post:
+      summary: "'이 정보가 도움이 돼요'를 준다."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GiveBuildingAccessibilityUpvoteRequestDto'
+      responses:
+        '204': { }
+
+  /listAdministrativeAreas:
+    post:
+      summary: 점포를 검색한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  eupMyeonDongs:
+                    items:
+                      $ref: '#/components/schemas/EupMyeonDong'
+                    type: array
+                  siGunGus:
+                    items:
+                      $ref: '#/components/schemas/SiGunGu'
+                    type: array
+                type: object
+
+  /listConqueredPlaces:
+    post:
+      summary: 내가 정복한 장소 목록을 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListConqueredPlacesRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListConqueredPlacesResponseDto'
+
+  /listPlacesInBuilding:
+    post:
+      summary: 특정 건물의 점포를 조회한다.
+      description: "'이 건물에 다른 점포 등록하기'를 눌렀을 때 호출된다."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                buildingId:
+                  type: string
+              required:
+                - buildingId
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlaceListItem'
+                required:
+                  - items
+
+  /listSearchKeywordsOfPlaceCategory:
+    post:
+      summary: 특정 카테고리의 점포들을 검색할 수 있게 키워드들을 내려준다.
+      description: "음식점, 카페, 편의점, 병원 같이 키워드를 내려주면 searchPlaces 키워드로 쓸 수 있습니다."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  items:
+                    items:
+                      $ref: '#/components/schemas/SearchKeywordOfPlaceCategoryDto'
+                    type: array
+                required:
+                  - items
+                type: object
 
   /login:
     post:
@@ -94,127 +342,6 @@ paths:
             에러 코드 설명
             - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
 
-  /listAdministrativeAreas:
-    post:
-      summary: 점포를 검색한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: { }
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  siGunGus:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/SiGunGu'
-                  eupMyeonDongs:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/EupMyeonDong'
-
-  /searchPlaces:
-    post:
-      summary: 점포를 검색한다. sort 가 null 인 경우에는 정확도순을 기본으로 한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                searchText:
-                  type: string
-                currentLocation:
-                  $ref: '#/components/schemas/Location'
-                distanceMetersLimit:
-                  type: integer
-                siGunGuId:
-                  type: string
-                eupMyeonDongId:
-                  type: string
-                sort:
-                  $ref: '#/components/schemas/SearchPlaceSortDto'
-              required:
-                - searchText
-                - distanceMetersLimit
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PlaceListItem'
-
-  /getAccessibility:
-    post:
-      summary: 건물 & 점포의 접근성 정보를 조회한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                placeId:
-                  type: string
-              required:
-                - placeId
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccessibilityInfoDto'
-
-  /getImageUploadUrls:
-    post:
-      summary: 점포 정보 등록 등의 상황에서 이미지를 업로드하기 위한 URL을 받아 온다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                count:
-                  type: integer
-                  description: 업로드할 이미지 수.
-                filenameExtension:
-                  type: string
-                  description: 업로드할 이미지의 확장자. '.'을 붙이지 말아야 한다. e.g. png, jpeg 등.
-              required:
-                - count
-                - filenameExtension
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    url:
-                      type: string
-                    expireAt:
-                      $ref: '#/components/schemas/EpochMillisTimestamp'
-                      description: url의 만료 시각.
-                  required:
-                    - url
-                    - expireAt
-
   /registerAccessibility:
     post:
       summary: 건물 & 점포의 접근성 정보를 등록한다.
@@ -261,31 +388,6 @@ paths:
                   - placeAccessibility
                   - placeAccessibilityComments
                   - registeredUserOrder
-  
-  /registerPlaceAccessibility:
-    post:
-      summary: 점포의 접근성 정보를 등록한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterPlaceAccessibilityRequestDto'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessibilityInfo:
-                    $ref: '#/components/schemas/AccessibilityInfoDto'
-                  registeredUserOrder:
-                    type: integer
-                    description: "'n번째 정복자'를 표시해주기 위한 값."
-                required:
-                  - accessibilityInfo
-                  - registeredUserOrder
 
   /registerBuildingAccessibility:
     post:
@@ -301,60 +403,6 @@ paths:
           description: |
             장소 id를 알 수 없으므로 GetAccessibilityInfo를 내려줄 수 없다.
             따라서 건물 장소 등록 이후에 명시적으로 /getAccessibility API를 별도로 호출하도록 한다.
-
-  /listPlacesInBuilding:
-    post:
-      summary: 특정 건물의 점포를 조회한다.
-      description: "'이 건물에 다른 점포 등록하기'를 눌렀을 때 호출된다."
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                buildingId:
-                  type: string
-              required:
-                - buildingId
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PlaceListItem'
-                required:
-                  - items
-
-  /listSearchKeywordsOfPlaceCategory:
-    post:
-      summary: 특정 카테고리의 점포들을 검색할 수 있게 키워드들을 내려준다.
-      description: "음식점, 카페, 편의점, 병원 같이 키워드를 내려주면 searchPlaces 키워드로 쓸 수 있습니다."
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: { }
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/SearchKeywordOfPlaceCategoryDto'
-                required:
-                  - items
 
   /registerBuildingAccessibilityComment:
     post:
@@ -386,6 +434,31 @@ paths:
                 required:
                   - buildingAccessibilityComment
 
+  /registerPlaceAccessibility:
+    post:
+      summary: 점포의 접근성 정보를 등록한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterPlaceAccessibilityRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessibilityInfo:
+                    $ref: '#/components/schemas/AccessibilityInfoDto'
+                  registeredUserOrder:
+                    type: integer
+                    description: "'n번째 정복자'를 표시해주기 위한 값."
+                required:
+                  - accessibilityInfo
+                  - registeredUserOrder
+
   /registerPlaceAccessibilityComment:
     post:
       summary: 점포에 의견을 추가한다.
@@ -416,45 +489,67 @@ paths:
                 required:
                   - placeAccessibilityComment
 
-  /giveBuildingAccessibilityUpvote:
+  /searchPlaces:
     post:
-      summary: "'이 정보가 도움이 돼요'를 준다."
+      summary: 점포를 검색한다. sort 가 null 인 경우에는 정확도순을 기본으로 한다.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GiveBuildingAccessibilityUpvoteRequestDto'
-      responses:
-        '204': { }
-
-  /cancelBuildingAccessibilityUpvote:
-    post:
-      summary: "'이 정보가 도움이 돼요'를 취소한다."
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CancelBuildingAccessibilityUpvoteRequestDto'
-      responses:
-        '204': { }
-
-  /listConqueredPlaces:
-    post:
-      summary: 내가 정복한 장소 목록을 조회한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ListConqueredPlacesRequestDto'
+              type: object
+              properties:
+                searchText:
+                  type: string
+                currentLocation:
+                  $ref: '#/components/schemas/Location'
+                distanceMetersLimit:
+                  type: integer
+                siGunGuId:
+                  type: string
+                eupMyeonDongId:
+                  type: string
+                sort:
+                  $ref: '#/components/schemas/SearchPlaceSortDto'
+              required:
+                - searchText
+                - distanceMetersLimit
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListConqueredPlacesResponseDto'
+                properties:
+                  items:
+                    items:
+                      $ref: '#/components/schemas/PlaceListItem'
+                    type: array
+                type: object
+  /signUp:
+    post:
+      summary: 회원가입을 한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                password:
+                  type: string
+                instagram_id:
+                  type: string
+              required:
+                - nickname
+                - password
+      responses:
+        '204':
+          description: |
+            빈 response body를 내려준다.
+            대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
+            클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
 
   /updateUserInfo:
     post:
@@ -486,12 +581,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 properties:
                   user:
                     $ref: '#/components/schemas/User'
                 required:
                   - user
+                type: object
         '400':
           $ref: '#/components/responses/ApiFailure'
           description: |-
@@ -499,312 +594,52 @@ paths:
             - INVALID_NICKNAME : 닉네임이 유효하지 않을 때. e.g. 중복, 2글자 미만 등.
             - INVALID_EMAIL : 이메일이 유효하지 않을 때. e.g. 중복, 이상한 형태 등.
 
-  /deleteUser:
-    post:
-      summary: 계정을 삭제한다.
-      responses:
-        '204': { }
-
-  /deleteAccessibility:
-    post:
-      summary: |
-        등록한 접근성 정보를 삭제한다.
-        기본적으로는 장소 정보만 삭제하지만, 삭제하는 장소 정보가 해당 건물의 마지막 장소 정보일 경우 건물 정보도 함께 삭제한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                placeAccessibilityId:
-                  type: string
-                  description: 삭제할 장소 정보의 아이디
-              required:
-                - placeAccessibilityId
-      responses:
-        '204': { }
-        '400':
-          $ref: '#/components/responses/ApiFailure'
-
-  /getAccessibilityRank:
-    post:
-      summary: 내 현재 랭크를 조회한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: { }
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessibilityRank:
-                    $ref: '#/components/schemas/AccessibilityRankDto'
-                required:
-                  - accessibilityRank
-
-  /getAccessibilityLeaderboard:
-    post:
-      summary: 현재 탑 랭커들을 조회한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: { }
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ranks:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/AccessibilityRankDto'
-                required:
-                  - ranks
-
-  /getCountForNextRank:
-    post:
-      summary: 다음 랭크로 올라가기 위한 점수를 조회한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: { }
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  countForNextRank: # 다음 랭크로 올라가기 위해 필요한 점수
-                    type: integer
-                required:
-                  - countForNextRank
-
 components:
   # Reusable schemas (data models)
   schemas:
-    EpochMillisTimestamp:
-      description: 특정 시각을 표현하기 위한 모델.
+    AccessibilityInfoDto:
       type: object
       properties:
-        value:
-          type: integer
-          format: int64
-      required:
-        - value
-
-    KakaoTokensDto:
-      type: object
-      properties:
-        accessToken:
-          type: string
-        refreshToken:
-          type: string
-        idToken:
-          type: string
-      required:
-        - accessToken
-        - refreshToken
-        - idToken
-
-    AuthTokensDto:
-      type: object
-      properties:
-        accessToken:
-          type: string
-      required:
-        - accessToken
-
-    LoginResultDto:
-      type: object
-      properties:
-        authTokens:
-          $ref: '#/components/schemas/AuthTokensDto'
-        user:
-          $ref: '#/components/schemas/User'
-      required:
-        - authTokens
-        - user
-
-    Location:
-      description: 위치를 위경도로 표현하기 위한 모델.
-      type: object
-      properties:
-        lng:
-          type: number
-          format: double
-        lat:
-          type: number
-          format: double
-      required:
-        - lng
-        - lat
-
-    SiGunGu:
-      description: 시군구를 표현하기 위한 모델.
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-      required:
-        - id
-        - name
-
-    EupMyeonDong:
-      description: 읍면동을 표현하기 위한 모델.
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        siGunGuId:
-          type: string
-      required:
-        - id
-        - name
-        - siGunGuId
-
-    User:
-      description: 유저 정보.
-      properties:
-        id:
-          type: string
-        nickname:
-          type: string
-        instagramId:
-          type: string
-        email:
-          type: string
-        mobilityTools:
+        buildingAccessibility:
+          $ref: '#/components/schemas/BuildingAccessibility'
+          description: 정보가 아직 채워지지 않았으면 null.
+        buildingAccessibilityComments:
           type: array
           items:
-            $ref: '#/components/schemas/UserMobilityToolDto'
-      required:
-        - id
-        - nickname
-        - mobilityTools
-
-    UserMobilityToolDto:
-      type: string
-      enum:
-        - MANUAL_WHEELCHAIR # 수동휠체어
-        - ELECTRIC_WHEELCHAIR # 전동휠체어
-        - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
-        - STROLLER # 유아차 이용자
-        - WALKING_ASSISTANCE_DEVICE # 보행보조기구
-        # TODO: TBD
-
-    Place:
-      description: 점포 정보.
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-          description: 점포의 human-readable한 이름.
-        address:
-          type: string
-          description: 점포의 human-readable한 주소.
-      required:
-        - id
-        - name
-        - address
-
-    Building:
-      description: 건물 정보.
-      properties:
-        id:
-          type: string
-        address:
-          type: string
-          description: 건물의 human-readable한 주소.
-      required:
-        - id
-        - address
-
-    StairInfo:
-      type: string
-      enum:
-        - UNDEFINED # e.g. 엘리베이터가 아예 없는 경우, 엘리베이터 계단 정보는 UNDEFINED로 올린다.
-        - NONE
-        - ONE
-        - TWO_TO_FIVE
-        - OVER_SIX
-
-    PlaceAccessibility:
-      description: 점포의 접근성 정보.
-      properties:
-        id:
-          type: string
-        isFirstFloor:
-          type: boolean
-        stairInfo:
-          $ref: '#/components/schemas/StairInfo'
-        hasSlope:
-          type: boolean
-        imageUrls:
+            $ref: '#/components/schemas/BuildingAccessibilityComment'
+          description: 정보가 아직 채워지지 않았으면 empty list.
+        placeAccessibility:
+          $ref: '#/components/schemas/PlaceAccessibility'
+          description: 정보가 아직 채워지지 않았으면 null.
+        placeAccessibilityComments:
           type: array
           items:
-            type: string
-        placeId:
-          type: string
-        registeredUserName:
-          type: string
-          description: 익명으로 등록되었으면 null.
-        deletionInfo:
-          type: object
-          description: 삭제 가능하면 non-null, 삭제 불가능하면 null.
-          properties:
-            isLastInBuilding:
-              type: boolean
-              description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
-          required:
-            - isLastInBuilding
+            $ref: '#/components/schemas/PlaceAccessibilityComment'
+          description: 정보가 아직 채워지지 않았으면 empty list.
+        hasOtherPlacesToRegisterInBuilding:
+          type: boolean
+          description: "'이 건물의 다른 점포 등록하기'를 보여줄지 여부."
       required:
-        - id
-        - isFirstFloor
-        - stairInfo
-        - hasSlope
-        - placeId
-        - imageUrls
+        - buildingAccessibilityComments
+        - placeAccessibilityComments
+        - hasOtherPlacesToRegisterInBuilding
 
-    PlaceAccessibilityComment:
-      description: 점포에 대한 의견.
+    AccessibilityRankDto:
+      type: object
       properties:
-        id:
-          type: string
-        placeId:
-          type: string
         user:
           $ref: '#/components/schemas/AccessibilityRegistererDto'
-          description: 익명으로 달린 댓글이면 null.
-        comment:
-          type: string
-        createdAt:
-          $ref: '#/components/schemas/EpochMillisTimestamp'
+        conqueredCount:
+          type: integer
+          description: 접근성 정보를 등록한 장소의 수.
+        rank:
+          type: integer
+          format: int64
+          description: 현재 나의 랭크. 1부터 시작.
       required:
-        - id
-        - placeId
-        - comment
-        - createdAt
+        - user
+        - conqueredCount
+        - rank
 
     AccessibilityRegistererDto:
       type: object
@@ -818,6 +653,45 @@ components:
       required:
         - id
         - nickname
+
+    ApiErrorResponse:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: reason for error
+        code:
+          type: string # Do not change to integer. Jackson's @JsonProperty does not support number serialization.
+          x-enum-varnames:
+            - INTERNAL_FAILURE # -999999
+            - INVALID_AUTHENTICATION # 1
+            - INVALID_NICKNAME # 2
+            - INVALID_EMAIL # 3
+          enum:
+            - -999999
+            - 1
+            - 2
+            - 3
+
+    AuthTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+      required:
+        - accessToken
+
+    Building:
+      description: 건물 정보.
+      properties:
+        id:
+          type: string
+        address:
+          type: string
+          description: 건물의 human-readable한 주소.
+      required:
+        - id
+        - address
 
     BuildingAccessibility:
       description: 건물의 접근성 정보.
@@ -883,6 +757,209 @@ components:
         - comment
         - createdAt
 
+    CancelBuildingAccessibilityUpvoteRequestDto:
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
+      type: object
+
+    EupMyeonDong:
+      description: 읍면동을 표현하기 위한 모델.
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        siGunGuId:
+          type: string
+      required:
+        - id
+        - name
+        - siGunGuId
+
+    EpochMillisTimestamp:
+      description: 특정 시각을 표현하기 위한 모델.
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int64
+      required:
+        - value
+
+    GiveBuildingAccessibilityUpvoteRequestDto:
+      type: object
+      properties:
+        buildingAccessibilityId:
+          type: string
+      required:
+        - buildingAccessibilityId
+
+    KakaoTokensDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        idToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+        - idToken
+
+    ListConqueredPlacesRequestDto:
+      type: object
+      properties:
+        nextToken:
+          type: string
+          description: 페이지 정보. 없으면 첫 페이지 요소들을 내려준다.
+        limit:
+          type: integer
+          format: int64
+
+    ListConqueredPlacesResponseDto:
+      type: object
+      properties:
+        totalNumberOfItems:
+          type: integer
+          format: int64
+          description: 정복한 장소의 전체 갯수
+        nextToken:
+          type: string
+          description: 다음 페이지 정보. 없으면 더 이상 요청할 값이 없음을 의미한다.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceListItem'
+      required:
+        - totalNumberOfItems
+        - items
+
+    Location:
+      description: 위치를 위경도로 표현하기 위한 모델.
+      type: object
+      properties:
+        lng:
+          type: number
+          format: double
+        lat:
+          type: number
+          format: double
+      required:
+        - lng
+        - lat
+
+    LoginResultDto:
+      type: object
+      properties:
+        authTokens:
+          $ref: '#/components/schemas/AuthTokensDto'
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - authTokens
+        - user
+
+    Place:
+      description: 점포 정보.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 점포의 human-readable한 이름.
+        address:
+          type: string
+          description: 점포의 human-readable한 주소.
+      required:
+        - id
+        - name
+        - address
+
+    PlaceAccessibility:
+      description: 점포의 접근성 정보.
+      properties:
+        id:
+          type: string
+        isFirstFloor:
+          type: boolean
+        stairInfo:
+          $ref: '#/components/schemas/StairInfo'
+        hasSlope:
+          type: boolean
+        imageUrls:
+          type: array
+          items:
+            type: string
+        placeId:
+          type: string
+        registeredUserName:
+          type: string
+          description: 익명으로 등록되었으면 null.
+        deletionInfo:
+          type: object
+          description: 삭제 가능하면 non-null, 삭제 불가능하면 null.
+          properties:
+            isLastInBuilding:
+              type: boolean
+              description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
+          required:
+            - isLastInBuilding
+      required:
+        - id
+        - isFirstFloor
+        - stairInfo
+        - hasSlope
+        - placeId
+        - imageUrls
+
+    PlaceAccessibilityComment:
+      description: 점포에 대한 의견.
+      properties:
+        id:
+          type: string
+        placeId:
+          type: string
+        user:
+          $ref: '#/components/schemas/AccessibilityRegistererDto'
+          description: 익명으로 달린 댓글이면 null.
+        comment:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+      required:
+        - id
+        - placeId
+        - comment
+        - createdAt
+
+    PlaceCategoryDto:
+      type: string
+      enum:
+        - RESTAURANT
+        - CAFE
+        - ACCOMODATION
+        - MARKET
+        - CONVENIENCE_STORE
+        - KINDERGARTEN
+        - SCHOOL
+        - ACADEMY
+        - PARKING_LOT
+        - GAS_STATION
+        - SUBWAY_STATION
+        - BANK
+        - CULTURAL_FACILITIES
+        - AGENCY
+        - PUBLIC_OFFICE
+        - ATTRACTION
+        - HOSPITAL
+        - PHARMACY
+
     PlaceListItem:
       type: object
       properties:
@@ -907,67 +984,6 @@ components:
         - hasBuildingAccessibility
         - hasPlaceAccessibility
         - isAccessibilityRegistrable
-
-    PlaceCategoryDto:
-      type: string
-      enum:
-        - RESTAURANT
-        - CAFE
-        - ACCOMODATION
-        - MARKET
-        - CONVENIENCE_STORE
-        - KINDERGARTEN
-        - SCHOOL
-        - ACADEMY
-        - PARKING_LOT
-        - GAS_STATION
-        - SUBWAY_STATION
-        - BANK
-        - CULTURAL_FACILITIES
-        - AGENCY
-        - PUBLIC_OFFICE
-        - ATTRACTION
-        - HOSPITAL
-        - PHARMACY
-
-    SearchKeywordOfPlaceCategoryDto:
-      type: object
-      properties:
-        category:
-          $ref: '#/components/schemas/PlaceCategoryDto'
-        keyword:
-          type: string
-          description: '검색창에 들어가는 문자열. ex) 음식점, 병원, 카페'
-      required:
-        - category
-        - keyword
-
-    AccessibilityInfoDto:
-      type: object
-      properties:
-        buildingAccessibility:
-          $ref: '#/components/schemas/BuildingAccessibility'
-          description: 정보가 아직 채워지지 않았으면 null.
-        buildingAccessibilityComments:
-          type: array
-          items:
-            $ref: '#/components/schemas/BuildingAccessibilityComment'
-          description: 정보가 아직 채워지지 않았으면 empty list.
-        placeAccessibility:
-          $ref: '#/components/schemas/PlaceAccessibility'
-          description: 정보가 아직 채워지지 않았으면 null.
-        placeAccessibilityComments:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlaceAccessibilityComment'
-          description: 정보가 아직 채워지지 않았으면 empty list.
-        hasOtherPlacesToRegisterInBuilding:
-          type: boolean
-          description: "'이 건물의 다른 점포 등록하기'를 보여줄지 여부."
-      required:
-        - buildingAccessibilityComments
-        - placeAccessibilityComments
-        - hasOtherPlacesToRegisterInBuilding
 
     RegisterBuildingAccessibilityRequestDto:
       type: object
@@ -1026,91 +1042,74 @@ components:
         - hasSlope
         - imageUrls
 
-    AccessibilityRankDto:
+    SearchKeywordOfPlaceCategoryDto:
       type: object
       properties:
-        user:
-          $ref: '#/components/schemas/AccessibilityRegistererDto'
-        conqueredCount:
-          type: integer
-          description: 접근성 정보를 등록한 장소의 수.
-        rank:
-          type: integer
-          format: int64
-          description: 현재 나의 랭크. 1부터 시작.
+        category:
+          $ref: '#/components/schemas/PlaceCategoryDto'
+        keyword:
+          type: string
+          description: '검색창에 들어가는 문자열. ex) 음식점, 병원, 카페'
       required:
-        - user
-        - conqueredCount
-        - rank
-
-    ApiErrorResponse:
-      type: object
-      properties:
-        msg:
-          type: string
-          description: reason for error
-        code:
-          type: string # Do not change to integer. Jackson's @JsonProperty does not support number serialization.
-          x-enum-varnames:
-            - INTERNAL_FAILURE # -999999
-            - INVALID_AUTHENTICATION # 1
-            - INVALID_NICKNAME # 2
-            - INVALID_EMAIL # 3
-          enum:
-            - -999999
-            - 1
-            - 2
-            - 3
-
-    ListConqueredPlacesRequestDto:
-      type: object
-      properties:
-        nextToken:
-          type: string
-          description: 페이지 정보. 없으면 첫 페이지 요소들을 내려준다.
-        limit:
-          type: integer
-          format: int64
-
-    ListConqueredPlacesResponseDto:
-      type: object
-      properties:
-        totalNumberOfItems:
-          type: integer
-          format: int64
-          description: 정복한 장소의 전체 갯수
-        nextToken:
-          type: string
-          description: 다음 페이지 정보. 없으면 더 이상 요청할 값이 없음을 의미한다.
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlaceListItem'
-      required:
-        - totalNumberOfItems
-        - items
-
-    GiveBuildingAccessibilityUpvoteRequestDto:
-      type: object
-      properties:
-        buildingAccessibilityId:
-          type: string
-      required:
-        - buildingAccessibilityId
-
-    CancelBuildingAccessibilityUpvoteRequestDto:
-      type: object
-      properties:
-        buildingAccessibilityId:
-          type: string
-      required:
-        - buildingAccessibilityId
+        - category
+        - keyword
 
     SearchPlaceSortDto:
       type: string
       enum:
         - ACCURACY
         - DISTANCE
+
+    SiGunGu:
+      description: 시군구를 표현하기 위한 모델.
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    StairInfo:
+      type: string
+      enum:
+        - UNDEFINED # e.g. 엘리베이터가 아예 없는 경우, 엘리베이터 계단 정보는 UNDEFINED로 올린다.
+        - NONE
+        - ONE
+        - TWO_TO_FIVE
+        - OVER_SIX
+
+    User:
+      description: 유저 정보.
+      properties:
+        id:
+          type: string
+        nickname:
+          type: string
+        instagramId:
+          type: string
+        email:
+          type: string
+        mobilityTools:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMobilityToolDto'
+      required:
+        - id
+        - nickname
+        - mobilityTools
+
+    UserMobilityToolDto:
+      type: string
+      enum:
+        - MANUAL_WHEELCHAIR # 수동휠체어
+        - ELECTRIC_WHEELCHAIR # 전동휠체어
+        - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
+        - STROLLER # 유아차 이용자
+        - WALKING_ASSISTANCE_DEVICE # 보행보조기구
+        # TODO: TBD
 
   responses:
     ApiFailure:
