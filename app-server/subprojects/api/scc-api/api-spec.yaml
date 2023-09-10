@@ -906,6 +906,9 @@ components:
       properties:
         challengeId:
           type: string
+        invitationCode:
+          type: string
+          description: 공개되어있지 않은, 초대코드로만 볼 수 있는 챌린지
 
     GetChallengeResponseDto:
       type: object
@@ -920,6 +923,10 @@ components:
             $ref: '#/components/schemas/ChallengeRankDto'
         hasJoined:
           type: boolean
+          description: 내가 참여하고 있는지에 대한 정보
+        hasPasscode:
+          type: boolean
+          description: 참여코드를 입력해야만 참여할 수 있는 챌린지인지
       required:
         - challenge
         - ranks
@@ -938,9 +945,9 @@ components:
       properties:
         challengeId:
           type: string
-        invitationCode:
+        passcode:
           type: string
-          description: 초대코드가 있어야 참여할 수 있는 챌린지가 있다.
+          description: 참여코드를 입력해야만 참여가 가능한 챌린지에 한해서 필요
       required:
         - challengeId
 

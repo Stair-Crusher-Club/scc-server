@@ -53,7 +53,6 @@ class ChallengeController(
                 createdAt = null
             ),
             ranks = listOf(),
-            hasJoined = false
         )
     }
 
