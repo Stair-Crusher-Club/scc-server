@@ -831,6 +831,13 @@ components:
           items:
             $ref: '#/components/schemas/ChallengeConditionAccessibilityTypeDto'
 
+    ChallengeStatusDto:
+      type: string
+      enum:
+        - InProgress # 진행중
+        - Upcoming # 오픈 예정
+        - Closed # 종료된 챌린지
+
     ChallengeDto:
       type: object
       properties:
@@ -838,6 +845,8 @@ components:
           type: string
         name:
           type: string
+        status:
+          $ref: '#/components/schemas/ChallengeStatusDto'
         isPublic:
           type: boolean
         isComplete:
@@ -985,12 +994,13 @@ components:
         filter:
           $ref: '#/components/schemas/ListChallengeRequestFilterDto'
 
-    ListChallengeRequestFilterDto:
-      type: string
-      enum:
-        - START_AND_NOT_COMPLETE # 진행중
-        - WILL_START # 오픈 예정
-        - END_OR_COMPLETE # 종료된 챌린지
+    ListChallengesRequestDto:
+      type: object
+      properties:
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeStatusDto'
 
     ListChallengesResponseDto:
       description: filter 가 없으면 진행중인, 참여중인 챌린지를 우선적으로 보여준다.
