@@ -125,6 +125,28 @@ paths:
                 required:
                   - accessibilityRank
 
+  /getCountForNextRank:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties: { }
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  countForNextRank:
+                    type: integer
+                required:
+                  - countForNextRank
+                type: object
+      summary: 다음 랭크로 올라가기 위한 점수를 조회한다.
+
   /getImageUploadUrls:
     post:
       summary: 점포 정보 등록 등의 상황에서 이미지를 업로드하기 위한 URL을 받아 온다.
@@ -161,28 +183,6 @@ paths:
                   required:
                     - url
                     - expireAt
-
-  /getCountForNextRank:
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              properties: { }
-              type: object
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                properties:
-                  countForNextRank:
-                    type: integer
-                required:
-                  - countForNextRank
-                type: object
-      summary: 다음 랭크로 올라가기 위한 점수를 조회한다.
 
   /giveBuildingAccessibilityUpvote:
     post:
