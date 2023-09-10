@@ -230,8 +230,13 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties: { }
+              $ref: '#/components/schemas/ListConqueredPlacesRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListConqueredPlacesResponseDto'
 
   /listPlacesInBuilding:
     post:
@@ -514,8 +519,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListConqueredPlacesResponseDto'
-
+                properties:
+                  items:
+                    items:
+                      $ref: '#/components/schemas/PlaceListItem'
+                    type: array
+                type: object
   /signUp:
     post:
       summary: 회원가입을 한다.
