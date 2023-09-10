@@ -950,14 +950,12 @@ components:
           $ref: '#/components/schemas/ChallengeDto'
         ranks:
           type: array
+          description: 10위권까지의 랭킹 정보
           items:
-            $ref: '#/components/schemas/PlaceListItem'
-        hasJoined:
-          type: boolean
+            $ref: '#/components/schemas/ChallengeRankDto'
       required:
         - challenge
         - ranks
-        - hasJoined
 
     KakaoTokensDto:
       type: object
