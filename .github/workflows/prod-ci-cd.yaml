@@ -169,7 +169,7 @@ jobs:
       - name: Notify CD success to slack
         if: success()
         run: |
-          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}"
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[PROD] scc-server version $RELEASE_VERSION is deployed!\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
