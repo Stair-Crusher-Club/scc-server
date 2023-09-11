@@ -4,8 +4,6 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.stdlib.domain.repository.EntityRepository
 
 interface ChallengeRepository : EntityRepository<Challenge, String> {
-    fun findByChallengeId(challengeId: String): Challenge?
-    fun findByChallengeIds(challengeIds: Collection<String>): List<Challenge>
-    fun countAll(): Int
+    fun findByIds(challengeIds: Collection<String>): List<Challenge>
     fun remove(id: String)
 }

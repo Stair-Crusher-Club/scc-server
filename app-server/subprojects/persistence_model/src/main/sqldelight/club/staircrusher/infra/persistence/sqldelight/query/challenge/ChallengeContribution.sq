@@ -2,6 +2,12 @@ save:
 INSERT INTO challenge_contribution
 VALUES :challenge_contribution
 ON CONFLICT(id) DO UPDATE SET
+    user_id = EXCLUDED.user_id,
+    challenge_id = EXCLUDED.challenge_id,
+    place_accessibility_id = EXCLUDED.place_accessibility_id,
+    place_accessibility_comment_id = EXCLUDED.place_accessibility_comment_id,
+    building_accessibility_id = EXCLUDED.building_accessibility_id,
+    building_accessibility_comment_id = EXCLUDED.building_accessibility_comment_id,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
 
@@ -27,8 +33,13 @@ WHERE challenge_contribution.challenge_id = :challengeId;
 
 findByChallengeIds:
 SELECT *
-FROM challenge
-WHERE challenge.id IN :challengeIds;
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id IN :challengeIds;
+
+countByChallengeId:
+SELECT COUNT(1)
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId;
 
 removeById:
 DELETE

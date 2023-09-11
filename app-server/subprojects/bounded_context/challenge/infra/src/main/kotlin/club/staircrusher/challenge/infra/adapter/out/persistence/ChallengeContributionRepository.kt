@@ -2,6 +2,8 @@ package club.staircrusher.challenge.infra.adapter.out.persistence
 
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDomainModel
+import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toPersistenceModel
 import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.stdlib.di.annotation.Component
 
@@ -11,39 +13,56 @@ class ChallengeContributionRepository(
 ) : ChallengeContributionRepository {
     private val queries = db.challengeContributionQueries
 
-    override fun findByUserId(userId: String): List<ChallengeContribution> {
-        TODO("Not yet implemented")
-    }
-
-    override fun findByChallengeId(challengeId: String): List<ChallengeContribution> {
-        TODO("Not yet implemented")
-    }
-
-    override fun countByChallengeId(challengeId: String): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun remove(contributionId: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun save(entity: ChallengeContribution): ChallengeContribution {
-        TODO("Not yet implemented")
-    }
-
-    override fun saveAll(entities: Collection<ChallengeContribution>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun removeAll() {
-        TODO("Not yet implemented")
-    }
-
     override fun findById(id: String): ChallengeContribution {
-        TODO("Not yet implemented")
+        return findByIdOrNull(id) ?: throw IllegalArgumentException("ChallengeContribution of id $id does not exist.")
     }
 
     override fun findByIdOrNull(id: String): ChallengeContribution? {
-        TODO("Not yet implemented")
+        return queries.findById(id).executeAsOneOrNull()?.toDomainModel()
+    }
+
+    override fun findByUserId(userId: String): List<ChallengeContribution> {
+        return queries.findByUserId(userId)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
+    override fun findByUserIds(userIds: List<String>): List<ChallengeContribution> {
+        return queries.findByUserIds(userIds)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
+    override fun findByChallengeId(challengeId: String): List<ChallengeContribution> {
+        return queries.findByChallengeId(challengeId)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
+    override fun findByChallengeIds(challengeIds: List<String>): List<ChallengeContribution> {
+        return queries.findByChallengeIds(challengeIds)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
+    override fun countByChallengeId(challengeId: String): Long {
+        return queries.countByChallengeId(challengeId).executeAsOne()
+    }
+
+    override fun remove(contributionId: String) {
+        queries.removeById(contributionId)
+    }
+
+    override fun save(entity: ChallengeContribution): ChallengeContribution {
+        queries.save(entity.toPersistenceModel())
+        return entity
+    }
+
+    override fun saveAll(entities: Collection<ChallengeContribution>) {
+        entities.forEach(::save)
+    }
+
+    override fun removeAll() {
+        queries.removeAll()
     }
 }

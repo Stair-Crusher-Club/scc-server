@@ -91,8 +91,8 @@ class DB(dataSource: DataSource) : TransactionManager {
     val clubQuestQueries = scc.clubQuestQueries
     val accessibilityAllowedRegionQueries = scc.accessibilityAllowedRegionQueries
     val challengeQueries = scc.challengeQueries
-    val challengeContributionQueries = scc.challengeQueries
-    val challengeParticipationQueries = scc.challengeQueries
+    val challengeContributionQueries = scc.challengeContributionQueries
+    val challengeParticipationQueries = scc.challengeParticipationQueries
 
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {

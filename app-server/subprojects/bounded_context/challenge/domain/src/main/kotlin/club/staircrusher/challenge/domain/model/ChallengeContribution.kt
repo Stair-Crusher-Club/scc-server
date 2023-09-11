@@ -4,6 +4,7 @@ import java.time.Instant
 
 class ChallengeContribution(
     val id: String,
+    val userId: String,
     val challengeId: String,
     val placeAccessibilityId: String?,
     val placeAccessibilityCommentId: String?,
@@ -19,6 +20,7 @@ class ChallengeContribution(
         other as ChallengeContribution
 
         if (id != other.id) return false
+        if (userId != other.userId) return false
         if (challengeId != other.challengeId) return false
         if (placeAccessibilityId != other.placeAccessibilityId) return false
         if (placeAccessibilityCommentId != other.placeAccessibilityCommentId) return false
@@ -30,6 +32,7 @@ class ChallengeContribution(
 
     override fun hashCode(): Int {
         var result = id.hashCode()
+        result = 31 * result + userId.hashCode()
         result = 31 * result + challengeId.hashCode()
         result = 31 * result + (placeAccessibilityId?.hashCode() ?: 0)
         result = 31 * result + (placeAccessibilityCommentId?.hashCode() ?: 0)

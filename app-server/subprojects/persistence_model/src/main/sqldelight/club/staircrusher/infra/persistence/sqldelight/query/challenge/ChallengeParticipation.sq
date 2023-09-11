@@ -1,7 +1,7 @@
 save:
 INSERT INTO challenge_participation
 VALUES :challenge_participation
-ON CONFLICT(challenge_id, user_id) DO UPDATE SET
+ON CONFLICT(id) DO UPDATE SET
     challenge_id = EXCLUDED.challenge_id,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at;
@@ -9,7 +9,7 @@ ON CONFLICT(challenge_id, user_id) DO UPDATE SET
 findById:
 SELECT *
 FROM challenge_participation
-WHERE challenge_participation.user_id = :userId AND challenge_participation.challenge_id = :challengeId;
+WHERE challenge_participation.id = :id;
 
 findByUserId:
 SELECT *

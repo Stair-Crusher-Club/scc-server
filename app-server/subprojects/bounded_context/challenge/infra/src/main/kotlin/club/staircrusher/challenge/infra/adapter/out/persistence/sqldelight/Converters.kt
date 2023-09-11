@@ -39,6 +39,7 @@ fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Ch
 
 fun Challenge_contribution.toDomainModel() = ChallengeContribution(
     id = id,
+    userId = user_id,
     challengeId = challenge_id,
     placeAccessibilityId = place_accessibility_id,
     placeAccessibilityCommentId = place_accessibility_comment_id,
@@ -49,6 +50,7 @@ fun Challenge_contribution.toDomainModel() = ChallengeContribution(
 )
 
 fun ChallengeContribution.toPersistenceModel() = Challenge_contribution(id = "",
+    user_id = userId,
     challenge_id = challengeId,
     place_accessibility_id = placeAccessibilityId,
     place_accessibility_comment_id = placeAccessibilityCommentId,
@@ -59,12 +61,14 @@ fun ChallengeContribution.toPersistenceModel() = Challenge_contribution(id = "",
 )
 
 fun Challenge_participation.toDomainModel() = ChallengeParticipation(
+    id = id,
     challengeId = challenge_id,
     userId = user_id,
     createdAt = created_at.toInstant()
 )
 
 fun ChallengeParticipation.toPersistenceModel() = Challenge_participation(
+    id = id,
     challenge_id = challengeId,
     user_id = userId,
     created_at = createdAt.toOffsetDateTime()

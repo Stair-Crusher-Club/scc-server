@@ -3,6 +3,7 @@ package club.staircrusher.challenge.domain.model
 import java.time.Instant
 
 class ChallengeParticipation(
+    val id: String,
     val challengeId: String,
     val userId: String,
     val createdAt: Instant,
@@ -13,13 +14,15 @@ class ChallengeParticipation(
 
         other as ChallengeParticipation
 
+        if (id != other.id) return false
         if (challengeId != other.challengeId) return false
         if (userId != other.userId) return false
         return createdAt == other.createdAt
     }
 
     override fun hashCode(): Int {
-        var result = challengeId.hashCode()
+        var result = id.hashCode()
+        result = 31 * result + challengeId.hashCode()
         result = 31 * result + userId.hashCode()
         result = 31 * result + createdAt.hashCode()
         return result
