@@ -5,6 +5,7 @@ ON CONFLICT(id) DO UPDATE SET
     name = EXCLUDED.name,
     is_public = EXCLUDED.is_public,
     invitation_code = EXCLUDED.invitation_code,
+    passcode = EXCLUDED.passcode,
     is_complete = EXCLUDED.is_complete,
     starts_at = EXCLUDED.starts_at,
     ends_at = EXCLUDED.ends_at,
