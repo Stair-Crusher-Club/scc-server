@@ -11,6 +11,9 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
+import club.staircrusher.challenge.domain.model.Challenge
+import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.domain.model.Building
@@ -28,6 +31,7 @@ import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
+import java.time.Instant
 
 @Suppress("MagicNumber", "TooManyFunctions")
 @Component
@@ -62,6 +66,8 @@ class ITDataGenerator {
     @Autowired
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
 
+    @Autowired
+    private lateinit var challengeRepository: ChallengeRepository
 
     fun createUser(
         nickname: String = SccRandom.string(12),
@@ -147,7 +153,37 @@ class ITDataGenerator {
         return createPlace(placeName, buildingToUse)
     }
 
-    fun registerPlaceAccessibility(place: Place, user: User? = null): PlaceAccessibility {
+    fun createChallenge(
+        name: String = "",
+        isPublic: Boolean = true,
+        invitationCode: String? = null,
+        passcode: String? = null,
+        isComplete: Boolean = false,
+        startsAt: Instant = clock.instant(),
+        endsAt: Instant? = null,
+        goals: List<Int> = listOf(500, 1000),
+        conditions: List<ChallengeCondition> = listOf(),
+    ): Challenge {
+        return challengeRepository.save(
+            Challenge(
+                id = EntityIdGenerator.generateRandom(),
+                name = name,
+                isPublic = isPublic,
+                invitationCode = invitationCode,
+                passcode = passcode,
+                isComplete = isComplete,
+                startsAt = startsAt,
+                endsAt = endsAt,
+                goals = goals,
+                conditions = conditions,
+                createdAt = clock.instant(),
+                updatedAt = clock.instant(),
+            )
+        )
+    }
+
+    fun registerPlaceAccessibility(place: Place,
+                                   user: User? = null): PlaceAccessibility {
         return placeAccessibilityRepository.save(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
