@@ -183,6 +183,21 @@ paths:
                   required:
                     - url
                     - expireAt
+  /getChallenge:
+    post:
+      summary: 챌린지 리스트에서 공개된 챌린지를 선택하거나 초대코드를 통해 챌린지를 조회한다.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetChallengeRequestDto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetChallengeResponseDto'
 
   /giveBuildingAccessibilityUpvote:
     post:
@@ -195,6 +210,22 @@ paths:
               $ref: '#/components/schemas/GiveBuildingAccessibilityUpvoteRequestDto'
       responses:
         '204': { }
+
+  /joinChallenge:
+    post:
+      summary: 챌린지에 참여한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinChallengeRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinChallengeResponseDto'
 
   /listAdministrativeAreas:
     post:
@@ -221,6 +252,22 @@ paths:
                       $ref: '#/components/schemas/SiGunGu'
                     type: array
                 type: object
+
+  /listChallenges:
+    post:
+      summary: 공개된 챌린지 리스트를 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListChallengesRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListChallengesResponseDto'
 
   /listConqueredPlaces:
     post:
@@ -786,6 +833,79 @@ components:
         - buildingAccessibilityId
       type: object
 
+    ChallengeConditionAccessibilityTypeDto:
+      type: string
+      enum:
+        - UNKNOWN
+        - BUILDING
+        - PLACES
+
+    ChallengeConditionDto:
+      type: object
+      properties:
+        addressMatches:
+          type: array
+          items:
+            type: string
+        accessibilityTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeConditionAccessibilityTypeDto'
+
+    ChallengeStatusDto:
+      type: string
+      enum:
+        - InProgress # 진행중
+        - Upcoming # 오픈 예정
+        - Closed # 종료된 챌린지
+
+    ChallengeDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/ChallengeStatusDto'
+        isPublic:
+          type: boolean
+        isComplete:
+          type: boolean
+        startsAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        endsAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        goals:
+          type: array
+          items:
+            type: integer
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeConditionDto'
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+
+    ChallengeRankDto:
+      type: object
+      properties:
+        rank:
+          type: integer
+          format: int64
+          description: 현재 랭크. 1부터 시작.
+        contributionCount:
+          type: integer
+          format: int64
+          description: 챌린지 안에서 이룬 성과. ex) 365 개 정복
+        nickname:
+          type: string
+          description: 성과를 이룬 유저 이름.
+      required:
+        - rank
+        - contributionCount
+        - nickname
+
     EupMyeonDong:
       description: 읍면동을 표현하기 위한 모델.
       type: object
@@ -811,6 +931,37 @@ components:
       required:
         - value
 
+    GetChallengeRequestDto:
+      type: object
+      properties:
+        challengeId:
+          type: string
+        invitationCode:
+          type: string
+          description: 공개되어있지 않은, 초대코드로만 볼 수 있는 챌린지
+
+    GetChallengeResponseDto:
+      type: object
+      properties:
+        challenge:
+          $ref: '#/components/schemas/ChallengeDto'
+        myRank:
+          $ref: '#/components/schemas/ChallengeRankDto'
+        ranks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeRankDto'
+        hasJoined:
+          type: boolean
+          description: 내가 참여하고 있는지에 대한 정보
+        hasPasscode:
+          type: boolean
+          description: 참여코드를 입력해야만 참여할 수 있는 챌린지인지
+      required:
+        - challenge
+        - ranks
+        - hasJoined
+
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object
       properties:
@@ -818,6 +969,31 @@ components:
           type: string
       required:
         - buildingAccessibilityId
+
+    JoinChallengeRequestDto:
+      type: object
+      properties:
+        challengeId:
+          type: string
+        passcode:
+          type: string
+          description: 참여코드를 입력해야만 참여가 가능한 챌린지에 한해서 필요
+      required:
+        - challengeId
+
+    JoinChallengeResponseDto:
+      type: object
+      properties:
+        challenge:
+          $ref: '#/components/schemas/ChallengeDto'
+        ranks:
+          type: array
+          description: 10위권까지의 랭킹 정보
+          items:
+            $ref: '#/components/schemas/ChallengeRankDto'
+      required:
+        - challenge
+        - ranks
 
     KakaoTokensDto:
       type: object
@@ -832,6 +1008,54 @@ components:
         - accessToken
         - refreshToken
         - idToken
+
+    ListChallengesItemDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/ChallengeStatusDto'
+        startsAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        endsAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        hasJoined:
+          type: boolean
+          description: 내가 참여중인지 여부
+
+    ListChallengesRequestDto:
+      type: object
+      properties:
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeStatusDto'
+        nextToken:
+          type: string
+        limit:
+          type: integer
+          format: int64
+      required:
+        - status
+
+    ListChallengesResponseDto:
+      description: filter 가 없으면 진행중인, 참여중인 챌린지를 우선적으로 보여준다.
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+        nextToken:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListChallengesItemDto'
+      required:
+        - items
 
     ListConqueredPlacesRequestDto:
       type: object
