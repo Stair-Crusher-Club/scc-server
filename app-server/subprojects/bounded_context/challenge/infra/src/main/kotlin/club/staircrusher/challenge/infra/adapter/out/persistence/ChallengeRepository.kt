@@ -23,6 +23,12 @@ class ChallengeRepository(
             ?.toDomainModel()
     }
 
+    override fun findAllOrderByCreatedAtDesc(): List<Challenge> {
+        return queries.findAllOrderByCreatedAtDesc()
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun findByIds(challengeIds: Collection<String>): List<Challenge> {
         return queries.findByIds(challengeIds)
             .executeAsList()

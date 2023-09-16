@@ -9,10 +9,16 @@ ON CONFLICT(id) DO UPDATE SET
     is_complete = EXCLUDED.is_complete,
     starts_at = EXCLUDED.starts_at,
     ends_at = EXCLUDED.ends_at,
-    goals = EXCLUDED.goals,
+    goal = EXCLUDED.goal,
+    milestones = EXCLUDED.milestones,
     conditions = EXCLUDED.conditions,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
+
+findAllOrderByCreatedAtDesc:
+SELECT *
+FROM challenge
+ORDER BY created_at DESC;
 
 findById:
 SELECT *
