@@ -1025,6 +1025,15 @@ components:
         hasJoined:
           type: boolean
           description: 내가 참여중인지 여부
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+      required:
+        - id
+        - name
+        - status
+        - startsAt
+        - hasJoined
+        - createdAt
 
     ListChallengesRequestDto:
       type: object

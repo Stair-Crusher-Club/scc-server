@@ -11,9 +11,11 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.domain.model.Building
@@ -68,6 +70,9 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var challengeRepository: ChallengeRepository
+
+    @Autowired
+    private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
 
     fun createUser(
         nickname: String = SccRandom.string(12),
@@ -178,6 +183,21 @@ class ITDataGenerator {
                 conditions = conditions,
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
+            )
+        )
+    }
+
+    fun participateChallenge(
+        user: User,
+        challenge: Challenge,
+        participateAt: Instant
+    ): ChallengeParticipation {
+        return challengeParticipationRepository.save(
+            ChallengeParticipation(
+                id = EntityIdGenerator.generateRandom(),
+                challengeId = challenge.id,
+                userId = user.id,
+                createdAt = participateAt
             )
         )
     }
