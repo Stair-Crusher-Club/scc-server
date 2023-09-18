@@ -735,11 +735,20 @@ components:
             - INVALID_AUTHENTICATION # 1
             - INVALID_NICKNAME # 2
             - INVALID_EMAIL # 3
+            - INVALID_PASSCODE # 10
+            - ALREADY_JOINED # 11
+            - CHALLENGE_NOT_OPENED # 12
+            - CHALLENGE_CLOSED # 13
+
           enum:
             - -999999
             - 1
             - 2
             - 3
+            - 10 # Challenge
+            - 11
+            - 12
+            - 13
 
     AuthTokensDto:
       type: object
