@@ -18,18 +18,19 @@ CREATE TABLE IF NOT EXISTS challenge (
 );
 
 CREATE TABLE IF NOT EXISTS challenge_participation (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
     challenge_id VARCHAR(36) NOT NULL,
     user_id VARCHAR(36) NOT NULL,
-    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (challenge_id, user_id)
+    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS challenge_contribution (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
     challenge_id VARCHAR(36) NOT NULL,
     place_accessibility_id VARCHAR(36) NULL,
-    building_accessibility_id VARCHAR(36) NULL,
     place_accessibility_comment_id VARCHAR(36) NULL,
+    building_accessibility_id VARCHAR(36) NULL,
     building_accessibility_comment_id VARCHAR(36) NULL,
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP

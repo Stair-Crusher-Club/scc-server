@@ -90,6 +90,10 @@ class DB(dataSource: DataSource) : TransactionManager {
     val userAuthInfoQueries = scc.userAuthInfoQueries
     val clubQuestQueries = scc.clubQuestQueries
     val accessibilityAllowedRegionQueries = scc.accessibilityAllowedRegionQueries
+    val challengeQueries = scc.challengeQueries
+    val challengeContributionQueries = scc.challengeContributionQueries
+    val challengeParticipationQueries = scc.challengeParticipationQueries
+
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {
         // FIXME: 다른 bounded context의 기능을 호출하기 때문에 nested transaction이 반드시 발생한다.
