@@ -852,13 +852,6 @@ components:
           items:
             $ref: '#/components/schemas/ChallengeConditionAccessibilityTypeDto'
 
-    ChallengeStatusDto:
-      type: string
-      enum:
-        - InProgress # 진행중
-        - Upcoming # 오픈 예정
-        - Closed # 종료된 챌린지
-
     ChallengeDto:
       type: object
       properties:
@@ -906,6 +899,13 @@ components:
         - contributionCount
         - nickname
 
+    ChallengeStatusDto:
+      type: string
+      enum:
+        - InProgress # 진행중
+        - Upcoming # 오픈 예정
+        - Closed # 종료된 챌린지
+        -
     EupMyeonDong:
       description: 읍면동을 표현하기 위한 모델.
       type: object
