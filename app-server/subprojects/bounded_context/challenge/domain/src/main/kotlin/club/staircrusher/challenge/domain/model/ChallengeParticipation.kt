@@ -13,18 +13,10 @@ class ChallengeParticipation(
         if (javaClass != other?.javaClass) return false
 
         other as ChallengeParticipation
-
-        if (id != other.id) return false
-        if (challengeId != other.challengeId) return false
-        if (userId != other.userId) return false
-        return createdAt == other.createdAt
+        return id == other.id
     }
 
     override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + challengeId.hashCode()
-        result = 31 * result + userId.hashCode()
-        result = 31 * result + createdAt.hashCode()
-        return result
+        return id.hashCode()
     }
 }
