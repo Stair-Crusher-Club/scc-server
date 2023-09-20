@@ -847,7 +847,7 @@ components:
       enum:
         - UNKNOWN
         - BUILDING
-        - PLACES
+        - PLACE
 
     ChallengeConditionDto:
       type: object

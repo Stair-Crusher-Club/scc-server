@@ -10,6 +10,7 @@ import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.api.spec.dto.ListChallengesRequestDto
 import club.staircrusher.api.spec.dto.ListChallengesResponseDto
 import club.staircrusher.challenge.application.port.`in`.ChallengeService
+import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDto
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toListChallengeDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
@@ -47,20 +48,15 @@ class ChallengeController(
     }
 
     @PostMapping("/joinChallenge")
-    fun joinChallenge(@RequestBody request: JoinChallengeRequestDto): JoinChallengeResponseDto {
+    fun joinChallenge(
+        @RequestBody request: JoinChallengeRequestDto,
+        authentication: SccAppAuthentication,
+    ): JoinChallengeResponseDto {
+        val userId = authentication.principal
+        val joinedChallenge = challengeService.joinChallenge(userId = userId, challengeId = request.challengeId, passcode = request.passcode)
         return JoinChallengeResponseDto(
-            challenge = ChallengeDto(
-                id = null,
-                name = null,
-                isPublic = null,
-                isComplete = null,
-                startsAt = null,
-                endsAt = null,
-                goals = listOf(),
-                conditions = listOf(),
-                createdAt = null
-            ),
-            ranks = listOf(),
+            challenge = joinedChallenge.toDto(criteriaTime = clock.instant()),
+            ranks = listOf()
         )
     }
 

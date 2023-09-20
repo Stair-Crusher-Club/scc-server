@@ -33,6 +33,12 @@ class ChallengeParticipationRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findByChallengeIdAndUserId(challengeId: String, userId: String): ChallengeParticipation? {
+        return queries.findByUserIdAndChallengeId(challengeId, userId)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
     override fun userCountByChallengeId(challengeId: String): Long {
         return queries.userCountByChallengeId(challengeId).executeAsOne()
     }

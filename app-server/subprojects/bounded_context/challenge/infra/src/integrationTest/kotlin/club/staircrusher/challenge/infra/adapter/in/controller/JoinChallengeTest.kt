@@ -27,8 +27,10 @@ class JoinChallengeTest : ChallengeITBase() {
     }
 
     @Test
-    fun `이미 참여하고 있지 않은 챌린지에 참여 요청 시 참여 완료`() {
-        val user = testDataGenerator.createUser()
+    fun `참여하고 있지 않은 챌린지에 참여 요청 시 참여 완료`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
         val inProgressChallenge = registerInProgressChallenge(null)
         val response = mvc
             .sccRequest(
@@ -45,26 +47,11 @@ class JoinChallengeTest : ChallengeITBase() {
 
     @Test
     fun `이미 참여한 챌린지는 이미 참여했음을 알리는 에러가 난다`() {
-        val user = testDataGenerator.createUser()
-        val inProgressChallenge = registerInProgressChallenge(passcode = "test")
-        val response = mvc
-            .sccRequest(
-                "/joinChallenge",
-                JoinChallengeRequestDto(
-                    challengeId = inProgressChallenge.id,
-                    passcode = null
-                ),
-                user = user
-            )
-            .getResult(ApiErrorResponse::class)
-        assert(response.code == ApiErrorResponse.Code.ALREADY_JOINED)
-    }
-
-    @Test
-    fun `참여 코드가 필요한 챌린지에 참여 코드를 알맞게 입력하면 참여 완료`() {
-        val user = testDataGenerator.createUser()
-        val inProgressChallenge = registerInProgressChallenge(passcode = "test")
-        val response = mvc
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        val inProgressChallenge = registerInProgressChallenge(null)
+        mvc
             .sccRequest(
                 "/joinChallenge",
                 JoinChallengeRequestDto(
@@ -74,12 +61,48 @@ class JoinChallengeTest : ChallengeITBase() {
                 user = user
             )
             .getResult(JoinChallengeResponseDto::class)
+            .apply {
+                assert(challenge.id == inProgressChallenge.id)
+            }
+        mvc
+            .sccRequest(
+                "/joinChallenge",
+                JoinChallengeRequestDto(
+                    challengeId = inProgressChallenge.id,
+                    passcode = null
+                ),
+                user = user
+            )
+            .getResult(ApiErrorResponse::class)
+            .apply {
+                assert(this.code == ApiErrorResponse.Code.ALREADY_JOINED)
+            }
+    }
+
+    @Test
+    fun `참여 코드가 필요한 챌린지에 참여 코드를 알맞게 입력하면 참여 완료`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        val inProgressChallenge = registerInProgressChallenge(passcode = "test")
+        val response = mvc
+            .sccRequest(
+                "/joinChallenge",
+                JoinChallengeRequestDto(
+                    challengeId = inProgressChallenge.id,
+                    passcode = "test"
+                ),
+                user = user
+            )
+            .getResult(JoinChallengeResponseDto::class)
         assert(response.challenge.id == inProgressChallenge.id)
     }
 
     @Test
     fun `참여 코드가 필요한 챌린지에 참여코드가 없거나 다르면 에러가 난다`() {
-        val user = testDataGenerator.createUser()
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
         val inProgressChallenge = registerInProgressChallenge(passcode = "test")
         mvc
             .sccRequest(
@@ -111,7 +134,9 @@ class JoinChallengeTest : ChallengeITBase() {
 
     @Test
     fun `종료되거나 오픈예정인 챌린지에는 참여할 수 없다`() {
-        val user = testDataGenerator.createUser()
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
         val upcomingChallenge = registerUpcomingChallenge()
         mvc
             .sccRequest(
@@ -126,7 +151,7 @@ class JoinChallengeTest : ChallengeITBase() {
             .apply {
                 assert(this.code == ApiErrorResponse.Code.CHALLENGE_NOT_OPENED)
             }
-        val closedChallenge = registerUpcomingChallenge()
+        val closedChallenge = registerClosedChallenge()
         mvc
             .sccRequest(
                 "/joinChallenge",

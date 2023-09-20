@@ -35,6 +35,7 @@ class SccExceptionHandler {
                         .body(t.msg)
                 }
             }
+
             is HttpRequestMethodNotSupportedException,
             is HttpMediaTypeNotSupportedException,
             is HttpMessageNotReadableException,
@@ -45,6 +46,7 @@ class SccExceptionHandler {
                     .badRequest()
                     .body(t.message)
             }
+
             else -> {
                 logger.error(t) { "Unexpected Error: ${t.message}" } // 일단은 모든 에러를 ERROR 레벨로 찍고, 불필요한 에러를 제외하는 식으로 간다.
                 ResponseEntity
@@ -61,6 +63,10 @@ class SccExceptionHandler {
                 SccDomainException.ErrorCode.INVALID_AUTHENTICATION -> ApiErrorResponse.Code.INVALID_AUTHENTICATION
                 SccDomainException.ErrorCode.INVALID_NICKNAME -> ApiErrorResponse.Code.INVALID_NICKNAME
                 SccDomainException.ErrorCode.INVALID_EMAIL -> ApiErrorResponse.Code.INVALID_EMAIL
+                SccDomainException.ErrorCode.INVALID_PASSCODE -> ApiErrorResponse.Code.INVALID_PASSCODE
+                SccDomainException.ErrorCode.ALREADY_JOINED -> ApiErrorResponse.Code.ALREADY_JOINED
+                SccDomainException.ErrorCode.CHALLENGE_NOT_OPENED -> ApiErrorResponse.Code.CHALLENGE_NOT_OPENED
+                SccDomainException.ErrorCode.CHALLENGE_CLOSED -> ApiErrorResponse.Code.CHALLENGE_CLOSED
                 null -> null
             }
         )

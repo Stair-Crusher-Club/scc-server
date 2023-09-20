@@ -1,8 +1,13 @@
 package club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight
 
+import club.staircrusher.api.spec.dto.ChallengeConditionAccessibilityTypeDto
+import club.staircrusher.api.spec.dto.ChallengeConditionDto
+import club.staircrusher.api.spec.dto.ChallengeDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
+import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeConditionAccessibilityType
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
@@ -43,6 +48,19 @@ fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Ch
     conditions = conditions,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = updatedAt.toOffsetDateTime()
+)
+
+fun club.staircrusher.challenge.domain.model.Challenge.toDto(criteriaTime: Instant) = ChallengeDto(
+    id = id,
+    name = name,
+    status = this.toStatus(criteriaTime),
+    isPublic = isPublic,
+    isComplete = isComplete,
+    startsAt = EpochMillisTimestamp(startsAt.toEpochMilli()),
+    endsAt = endsAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
+    goals = goals,
+    conditions = conditions.map { it.toDto() },
+    createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
 )
 
 fun club.staircrusher.challenge.domain.model.Challenge.toStatus(criteriaTime: Instant): ChallengeStatusDto = when {
@@ -87,6 +105,16 @@ fun ChallengeParticipation.toPersistenceModel() = Challenge_participation(
     user_id = userId,
     created_at = createdAt.toOffsetDateTime()
 )
+
+fun ChallengeCondition.toDto() = ChallengeConditionDto(
+    addressMatches = addressMatches,
+    accessibilityTypes = accessibilityTypes.map { it.toDto() }
+)
+
+fun ChallengeConditionAccessibilityType.toDto() = when (this) {
+    ChallengeConditionAccessibilityType.PLACE -> ChallengeConditionAccessibilityTypeDto.pLACE
+    ChallengeConditionAccessibilityType.BUILDING -> ChallengeConditionAccessibilityTypeDto.bUILDING
+}
 
 fun club.staircrusher.challenge.domain.model.Challenge.toListChallengeDto(hasJoined: Boolean, criteriaTime: Instant) =
     ListChallengesItemDto(
