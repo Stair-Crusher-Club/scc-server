@@ -73,7 +73,7 @@ class ChallengeService(
         }
     }
 
-
+    @Suppress("ThrowsCount")
     fun joinChallenge(userId: String, challengeId: String, passcode: String?): Challenge {
         return transactionManager.doInTransaction {
             val alreadyJoined = challengeParticipationRepository.findByChallengeIdAndUserId(challengeId, userId) != null
