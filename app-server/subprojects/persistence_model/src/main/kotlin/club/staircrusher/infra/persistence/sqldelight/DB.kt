@@ -64,7 +64,7 @@ class DB(dataSource: DataSource) : TransactionManager {
             mobility_toolsAdapter = UserMobilityToolStringColumnAdapter,
         ),
         challengeAdapter = Challenge.Adapter(
-            goalsAdapter = IntListToTextColumnAdapter,
+            milestonesAdapter = IntListToTextColumnAdapter,
             conditionsAdapter = object : ListToTextColumnAdapter<ChallengeCondition>() {
                 override fun convertElementToTextColumn(element: ChallengeCondition): String {
                     return objectMapper.writeValueAsString(element)

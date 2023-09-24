@@ -11,8 +11,8 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetImageUploadUrlsPost200ResponseInner
 import club.staircrusher.api.spec.dto.GetImageUploadUrlsPostRequest
+import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
-import club.staircrusher.api.spec.dto.RegisterAccessibilityResponseDto
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
@@ -54,7 +54,7 @@ class AccessibilityController(
     fun registerAccessibility(
         @RequestBody request: RegisterAccessibilityPostRequest,
         authentication: SccAppAuthentication,
-    ): RegisterAccessibilityResponseDto {
+    ): RegisterAccessibilityPost200Response {
         val userId = authentication.principal
         val result = accessibilityApplicationService.register(
             createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = userId),
@@ -74,7 +74,7 @@ class AccessibilityController(
                 )
             },
         )
-        return RegisterAccessibilityResponseDto(
+        return RegisterAccessibilityPost200Response(
             buildingAccessibility = result.buildingAccessibility?.toDTO(
                 isUpvoted = false,
                 totalUpvoteCount = 0,
@@ -92,7 +92,7 @@ class AccessibilityController(
                 it.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
             },
             registeredUserOrder = result.registrationOrder,
-            contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
+//            contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
         )
     }
 

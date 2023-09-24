@@ -8,7 +8,7 @@ import club.staircrusher.accessibility.infra.adapter.`in`.controller.toDTO
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
-import club.staircrusher.api.spec.dto.RegisterAccessibilityResponseDto
+import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.place.domain.model.BuildingAddress
@@ -52,7 +52,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
             mvc
                 .sccRequest("/registerAccessibility", params, user = user)
                 .apply {
-                    val result = getResult(RegisterAccessibilityResponseDto::class)
+                    val result = getResult(RegisterAccessibilityPost200Response::class)
                     val buildingAccessibility = result.buildingAccessibility!!
                     assertEquals(place.building.id, buildingAccessibility.buildingId)
                     assertEquals(StairInfo.NONE, buildingAccessibility.entranceStairInfo.toModel())
