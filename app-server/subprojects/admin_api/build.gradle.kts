@@ -13,6 +13,10 @@ tasks.getByName("openApiGenerate") {
     inputs.file("${project.rootDir}/../api-admin/api-spec.yaml")
 }
 
+tasks.getByName("compileKotlin") {
+    inputs.file("${project.rootDir}/../api-admin/api-spec.yaml")
+}
+
 openApiGenerate {
     inputSpec.set("${project.rootDir}/../api-admin/api-spec.yaml")
     packageName.set("club.staircrusher.admin_api.spec")
