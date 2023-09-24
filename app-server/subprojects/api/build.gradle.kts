@@ -14,7 +14,7 @@ tasks.getByName("openApiGenerate") {
 }
 
 tasks.getByName("compileKotlin") {
-    inputs.file("${buildDir.path}/generated-api")
+    inputs.dir("${buildDir.path}/generated-api")
 }
 
 openApiGenerate {
