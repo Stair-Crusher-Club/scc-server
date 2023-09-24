@@ -335,7 +335,7 @@ paths:
           $ref: '#/components/responses/ApiFailure'
           description: |-
             에러 코드 설명
-            - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
+            - INVALID_AUTHENTICATION : 클라이언트에서 올려준 토큰 중 일부가 잘못된 경우.
 
   /loginWithKakao:
     post:
