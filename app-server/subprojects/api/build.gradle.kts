@@ -9,6 +9,14 @@ dependencies {
     implementation(project(":stdlib"))
 }
 
+tasks.getByName("openApiGenerate") {
+    inputs.file("${project.projectDir.path}/scc-api/api-spec.yaml")
+}
+
+tasks.getByName("compileKotlin") {
+    inputs.file("${project.projectDir.path}/scc-api/api-spec.yaml")
+}
+
 openApiGenerate {
     inputSpec.set("${project.projectDir.path}/scc-api/api-spec.yaml")
     packageName.set("club.staircrusher.api.spec")
