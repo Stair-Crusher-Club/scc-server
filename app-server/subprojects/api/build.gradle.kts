@@ -14,7 +14,7 @@ tasks.getByName("openApiGenerate") {
 }
 
 tasks.getByName("compileKotlin") {
-    inputs.file("${project.projectDir.path}/scc-api/api-spec.yaml")
+    inputs.file("${buildDir.path}/generated-api")
 }
 
 openApiGenerate {
