@@ -4,7 +4,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import java.time.Instant
 
-class Challenge internal constructor(
+class Challenge(
     val id: String,
     val name: String,
     val isPublic: Boolean,
