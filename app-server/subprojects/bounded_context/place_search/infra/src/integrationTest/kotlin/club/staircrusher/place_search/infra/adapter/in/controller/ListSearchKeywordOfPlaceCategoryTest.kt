@@ -15,7 +15,7 @@ class ListSearchKeywordOfPlaceCategoryTest : PlaceSearchITBase() {
             .sccRequest("/listSearchKeywordsOfPlaceCategory", null)
             .apply {
                 val result = getResult(object : TypeReference<ListSearchKeywordsOfPlaceCategoryPost200Response>() {})
-                assertEquals(result.items?.size, ListSearchKeywordOfPlaceCategoryUseCase().handle().size)
+                assertEquals(result.items.size, ListSearchKeywordOfPlaceCategoryUseCase().handle().size)
             }
     }
 }

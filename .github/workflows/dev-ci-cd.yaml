@@ -48,7 +48,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Gradle Check
-        run: ./gradlew check
+        run: ./gradlew clean check
 
       - uses: actions/upload-artifact@v3
         name: Upload Check Report If Failed
