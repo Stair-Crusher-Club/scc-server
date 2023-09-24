@@ -27,3 +27,7 @@ scc:
 
   kakao-login:
     oauth-client-id: test
+
+  apple-login:
+    service-id: test
+    client-secret: test

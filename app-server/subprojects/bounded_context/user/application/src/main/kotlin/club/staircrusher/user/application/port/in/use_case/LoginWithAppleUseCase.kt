@@ -8,29 +8,32 @@ import club.staircrusher.user.application.port.`in`.InitialNicknameGenerator
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.persistence.UserRepository
-import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
+import club.staircrusher.user.application.port.out.web.login.apple.AppleLoginService
 import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType
 import club.staircrusher.user.domain.service.UserAuthService
+import kotlinx.coroutines.runBlocking
 import java.time.Duration
 
 @Component
-class LoginWithKakaoUseCase(
+class LoginWithAppleUseCase(
     private val transactionManager: TransactionManager,
-    private val kakaoLoginService: KakaoLoginService,
+    private val appleLoginService: AppleLoginService,
     private val userRepository: UserRepository,
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
 ) {
-    fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String): LoginResult = transactionManager.doInTransaction {
-        val idToken = kakaoLoginService.parseIdToken(rawKakaoIdToken)
+    fun handle(authorizationCode: String): LoginResult = transactionManager.doInTransaction {
+        val appleLoginTokens = runBlocking {
+            appleLoginService.getAppleLoginTokens(authorizationCode)
+        }
 
-        val userAuthInfo = userAuthInfoRepository.findByExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
+        val userAuthInfo = userAuthInfoRepository.findByExternalId(UserAuthProviderType.APPLE, appleLoginTokens.idToken.appleLoginUserId)
         if (userAuthInfo != null) {
             doLoginForExistingUser(userAuthInfo)
         } else {
-            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId)
+            doLoginWithSignUp(appleLoginTokens.refreshToken, appleLoginTokens.idToken.appleLoginUserId)
         }
     }
 
@@ -43,7 +46,7 @@ class LoginWithKakaoUseCase(
         )
     }
 
-    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String): LoginResult {
+    private fun doLoginWithSignUp(appleRefreshToken: String, appleLoginUserId: String): LoginResult {
         val user = userApplicationService.signUp(
             params = UserRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
@@ -57,10 +60,10 @@ class LoginWithKakaoUseCase(
             UserAuthInfo(
                 id = EntityIdGenerator.generateRandom(),
                 userId = user.id,
-                authProviderType = UserAuthProviderType.KAKAO,
-                externalId = kakaoSyncUserId,
-                externalRefreshToken = kakaoRefreshToken,
-                externalRefreshTokenExpiresAt = SccClock.instant() + kakaoRefreshTokenExpirationDuration,
+                authProviderType = UserAuthProviderType.APPLE,
+                externalId = appleLoginUserId,
+                externalRefreshToken = appleRefreshToken,
+                externalRefreshTokenExpiresAt = SccClock.instant() + appleRefreshTokenExpirationDuration,
             )
         )
 
@@ -72,6 +75,6 @@ class LoginWithKakaoUseCase(
     }
 
     companion object {
-        private val kakaoRefreshTokenExpirationDuration = Duration.ofDays(30)
+        private val appleRefreshTokenExpirationDuration = Duration.ofDays(30)
     }
 }

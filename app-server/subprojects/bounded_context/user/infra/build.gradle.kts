@@ -9,8 +9,14 @@ dependencies {
     api(project(":api"))
     implementation(projects.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework:spring-webflux")
+    implementation("io.projectreactor.netty:reactor-netty")
 
     implementation("com.auth0:java-jwt:3.18.1")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
+    val kotlinxSerializationVersion: String by project
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
     integrationTestImplementation(projects.testing.springIt)
 }

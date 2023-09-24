@@ -7,9 +7,9 @@ import club.staircrusher.api.spec.dto.LoginWithKakaoPostRequest
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.persistence.UserRepository
-import club.staircrusher.user.application.port.out.web.InvalidKakaoIdTokenException
-import club.staircrusher.user.application.port.out.web.KakaoIdToken
-import club.staircrusher.user.application.port.out.web.KakaoLoginService
+import club.staircrusher.user.application.port.out.web.login.kakao.InvalidKakaoIdTokenException
+import club.staircrusher.user.application.port.out.web.login.kakao.KakaoIdToken
+import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
 import club.staircrusher.user.domain.model.UserAuthProviderType
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
 import org.junit.jupiter.api.Assertions.assertEquals

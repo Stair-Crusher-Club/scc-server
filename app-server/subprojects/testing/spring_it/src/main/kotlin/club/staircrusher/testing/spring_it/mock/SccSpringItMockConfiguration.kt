@@ -2,7 +2,7 @@ package club.staircrusher.testing.spring_it.mock
 
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.stdlib.clock.SccClock
-import club.staircrusher.user.application.port.out.web.KakaoLoginService
+import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
