@@ -1,12 +1,17 @@
 import globalAxios from 'axios';
-import { DefaultApi } from "./api/api";
+import { DefaultApi, ChallengeApi } from "./api/api";
 import { clearSavedAccessToken, getSavedAccessToken } from "./context/AuthContext";
 
 const basePath = process.env.REACT_APP_BASE_URL || 'http://localhost:8080/admin'
 
 export const ACCESS_TOKEN_HEADER = 'X-SCC-ACCESS-KEY'.toLowerCase();
 
-export const AdminApi = new DefaultApi(undefined, basePath);
+export const AdminApi = new DefaultApi(undefined, basePath); // deprecated; use AdminApis
+
+export const AdminApis = {
+  default: AdminApi,
+  challenge: new ChallengeApi(undefined, basePath),
+}
 
 globalAxios.interceptors.request.use((request) => {
   if (!request.url!.includes("/admin/login")) {

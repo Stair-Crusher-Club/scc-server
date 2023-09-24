@@ -13,6 +13,9 @@ import AuthContext, { getSavedAccessToken } from './context/AuthContext';
 import PageLayout from './PageLayout';
 import AuthGuard from './AuthGuard';
 import "./App.scss";
+import ChallengesPage from "./page/Challenges/ChallengesPage";
+import CreateChallengePage from "./page/CreateChallenge/CreateChallengePage";
+import ChallengePage from "./page/Challenge/ChallengePage";
 
 function App() {
   const isAuthenticated = () => {
@@ -31,6 +34,9 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="clubQuests" element={<ClubQuestsPage />} />
                 <Route path="clubQuest/create" element={<CreateClubQuestPage />} />
+                <Route path="challenges" element={<ChallengesPage />} />
+                <Route path="challenges/:id" element={<ChallengePage />} />
+                <Route path="challenges/create" element={<CreateChallengePage />} />
                 <Route path="accessibilityAllowedRegions" element={<AccessibilityAllowedRegionsPage />} />
                 <Route path="accessibilityAllowedRegion/create" element={<CreateAccessibilityAllowedRegionPage />} />
                 <Route path="accessibilityAllowedRegions/:id" element={<AccessibilityAllowedRegionPage />} />
