@@ -878,10 +878,14 @@ components:
           $ref: '#/components/schemas/EpochMillisTimestamp'
         endsAt:
           $ref: '#/components/schemas/EpochMillisTimestamp'
-        goals:
+        goal:
+          type: integer
+          format: int32
+        milestones:
           type: array
           items:
             type: integer
+            format: int32
         conditions:
           type: array
           items:

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.time.Clock
-import java.util.*
 
 @RestController
 class ChallengeController(
@@ -37,7 +36,8 @@ class ChallengeController(
                 isComplete = null,
                 startsAt = null,
                 endsAt = null,
-                goals = listOf(),
+                goal = 1000,
+                milestones = listOf(),
                 conditions = listOf(),
                 createdAt = null
             ),
@@ -53,7 +53,11 @@ class ChallengeController(
         authentication: SccAppAuthentication,
     ): JoinChallengeResponseDto {
         val userId = authentication.principal
-        val joinedChallenge = challengeService.joinChallenge(userId = userId, challengeId = request.challengeId, passcode = request.passcode)
+        val joinedChallenge = challengeService.joinChallenge(
+            userId = userId,
+            challengeId = request.challengeId,
+            passcode = request.passcode
+        )
         return JoinChallengeResponseDto(
             challenge = joinedChallenge.toDto(criteriaTime = clock.instant()),
             ranks = listOf()

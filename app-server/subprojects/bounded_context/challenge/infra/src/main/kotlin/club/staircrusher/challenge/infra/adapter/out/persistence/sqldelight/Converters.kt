@@ -58,7 +58,8 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(criteriaTime: Insta
     isComplete = isComplete,
     startsAt = EpochMillisTimestamp(startsAt.toEpochMilli()),
     endsAt = endsAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
-    goals = goals,
+    goal = goal,
+    milestones = milestones,
     conditions = conditions.map { it.toDto() },
     createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
 )
