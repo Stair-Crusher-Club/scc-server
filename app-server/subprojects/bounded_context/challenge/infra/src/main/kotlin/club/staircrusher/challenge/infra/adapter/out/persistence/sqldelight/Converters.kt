@@ -81,7 +81,8 @@ fun Challenge_contribution.toDomainModel() = ChallengeContribution(
     updatedAt = updated_at.toInstant()
 )
 
-fun ChallengeContribution.toPersistenceModel() = Challenge_contribution(id = "",
+fun ChallengeContribution.toPersistenceModel() = Challenge_contribution(
+    id = "",
     user_id = userId,
     challenge_id = challengeId,
     place_accessibility_id = placeAccessibilityId,
@@ -136,7 +137,8 @@ fun JoinedChallenges.toChallenge() = club.staircrusher.challenge.domain.model.Ch
     isComplete = is_complete,
     startsAt = starts_at.toInstant(),
     endsAt = ends_at?.toInstant(),
-    goals = goals,
+    goal = goal,
+    milestones = milestones,
     conditions = conditions,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant()
@@ -151,7 +153,8 @@ fun NotJoinedChallenges.toChallenge() = club.staircrusher.challenge.domain.model
     isComplete = is_complete,
     startsAt = starts_at.toInstant(),
     endsAt = ends_at?.toInstant(),
-    goals = goals,
+    goal = goal,
+    milestones = milestones,
     conditions = conditions,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant()

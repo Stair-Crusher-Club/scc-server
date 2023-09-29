@@ -23,6 +23,7 @@ open class ChallengeITBase : SccSpringITBase() {
         repeat(Random.nextInt(3 until 10)) {
             registerInProgressChallenge()
         }
+        registerInProgressChallenge(isInfiniteChallenge = true)
         // 오픈 예정
         repeat(Random.nextInt(3 until 10)) {
             registerUpcomingChallenge()
@@ -34,13 +35,17 @@ open class ChallengeITBase : SccSpringITBase() {
     }
 
 
-    fun registerInProgressChallenge(passcode: String? = null): Challenge {
+    fun registerInProgressChallenge(
+        passcode: String? = null,
+        isInfiniteChallenge: Boolean = false
+    ): Challenge {
         return transactionManager.doInTransaction {
             testDataGenerator.createChallenge(
                 name = "",
                 passcode = passcode,
                 startsAt = clock.instant().minus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
-                endsAt = clock.instant().plus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
+                endsAt = if (isInfiniteChallenge) null
+                else clock.instant().plus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
                 conditions = listOf(
                     ChallengeCondition(
                         addressMatches = listOf(),
@@ -71,7 +76,6 @@ open class ChallengeITBase : SccSpringITBase() {
         }
     }
 
-
     fun registerClosedChallenge(passcode: String? = null): Challenge {
         return transactionManager.doInTransaction {
             val endsAt = clock.instant()
@@ -92,7 +96,11 @@ open class ChallengeITBase : SccSpringITBase() {
         }
     }
 
-    fun participate(user: User, challenge: Challenge, participateAt: Instant = clock.instant()): ChallengeParticipation {
+    fun participate(
+        user: User,
+        challenge: Challenge,
+        participateAt: Instant = clock.instant()
+    ): ChallengeParticipation {
         return transactionManager.doInTransaction {
             testDataGenerator.participateChallenge(user, challenge, participateAt)
         }

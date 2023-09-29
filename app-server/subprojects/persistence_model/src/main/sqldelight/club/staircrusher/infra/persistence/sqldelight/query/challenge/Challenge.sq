@@ -37,7 +37,7 @@ WHERE
     :startRangeOfStartsAt < challenge.starts_at
     AND challenge.starts_at < :endRangeOfStartAt
     AND :startRangeOfEndsAt < challenge.ends_at
-    AND challenge.ends_at < :endRangeOfEndsAt
+    AND (challenge.ends_at IS NULL OR challenge.ends_at < :endRangeOfEndsAt)
 ORDER BY challenge.created_at DESC;
 
 -- userId 가 참여하는 챌린지들
@@ -54,7 +54,7 @@ WHERE
     :startRangeOfStartsAt < challenge.starts_at
     AND challenge.starts_at < :endRangeOfStartAt
     AND :startRangeOfEndsAt < challenge.ends_at
-    AND challenge.ends_at < :endRangeOfEndsAt
+    AND (challenge.ends_at IS NULL OR challenge.ends_at < :endRangeOfEndsAt)
 ORDER BY my_participations.created_at DESC;
 
 -- userId 가 참여하지 않는 챌린지들
@@ -72,7 +72,7 @@ WHERE
     AND :startRangeOfStartsAt < challenge.starts_at
     AND challenge.starts_at < :endRangeOfStartAt
     AND :startRangeOfEndsAt < challenge.ends_at
-    AND challenge.ends_at < :endRangeOfEndsAt
+    AND (challenge.ends_at IS NULL OR challenge.ends_at < :endRangeOfEndsAt)
 ORDER BY challenge.created_at DESC;
 
 removeById:
