@@ -1,4 +1,4 @@
-package club.staircrusher.data_restore
+package club.staircrusher
 
 import java.io.File
 import java.time.Instant
