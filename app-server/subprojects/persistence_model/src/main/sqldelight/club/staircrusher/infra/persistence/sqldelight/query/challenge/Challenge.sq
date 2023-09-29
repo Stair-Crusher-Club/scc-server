@@ -30,6 +30,51 @@ SELECT *
 FROM challenge
 WHERE challenge.id IN :ids;
 
+findByTime:
+SELECT *
+FROM challenge
+WHERE
+    :startRangeOfStartsAt < challenge.starts_at
+    AND challenge.starts_at < :endRangeOfStartAt
+    AND :startRangeOfEndsAt < challenge.ends_at
+    AND (challenge.ends_at IS NULL OR challenge.ends_at < :endRangeOfEndsAt)
+ORDER BY challenge.created_at DESC;
+
+-- userId 가 참여하는 챌린지들
+joinedChallenges:
+SELECT *
+FROM challenge
+    JOIN (
+        SELECT *
+        FROM challenge_participation
+        WHERE challenge_participation.user_id = :userId
+    ) AS my_participations
+    ON challenge.id = my_participations.challenge_id
+WHERE
+    :startRangeOfStartsAt < challenge.starts_at
+    AND challenge.starts_at < :endRangeOfStartAt
+    AND :startRangeOfEndsAt < challenge.ends_at
+    AND (challenge.ends_at IS NULL OR challenge.ends_at < :endRangeOfEndsAt)
+ORDER BY my_participations.created_at DESC;
+
+-- userId 가 참여하지 않는 챌린지들
+notJoinedChallenges:
+SELECT *
+FROM challenge
+    LEFT JOIN (
+        SELECT *
+        FROM challenge_participation
+        WHERE challenge_participation.user_id = :userId
+    ) AS my_participations
+    ON challenge.id = my_participations.challenge_id
+WHERE
+    my_participations.challenge_id IS NULL
+    AND :startRangeOfStartsAt < challenge.starts_at
+    AND challenge.starts_at < :endRangeOfStartAt
+    AND :startRangeOfEndsAt < challenge.ends_at
+    AND (challenge.ends_at IS NULL OR challenge.ends_at < :endRangeOfEndsAt)
+ORDER BY challenge.created_at DESC;
+
 removeById:
 DELETE
 FROM challenge
