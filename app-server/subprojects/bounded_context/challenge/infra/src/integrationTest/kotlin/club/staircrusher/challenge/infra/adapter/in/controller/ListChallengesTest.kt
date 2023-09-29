@@ -53,7 +53,7 @@ class ListChallengesTest : ChallengeITBase() {
             )
             return@sortedWith when {
                 priority.indexOf(c1.status) > priority.indexOf(c2.status) -> 1
-                priority.indexOf(c1.status) < priority.indexOf(c2.status) -> 1
+                priority.indexOf(c1.status) < priority.indexOf(c2.status) -> -1
                 // 그 외 진행 중 / 오픈 예정 / 종료 순 챌린지는 생성순으로 내려준다.
                 else -> when {
                     c1.createdAt.value > c2.createdAt.value -> 1
