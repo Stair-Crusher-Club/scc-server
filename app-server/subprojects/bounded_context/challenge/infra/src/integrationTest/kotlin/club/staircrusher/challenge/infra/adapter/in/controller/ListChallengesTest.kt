@@ -8,6 +8,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengePar
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -78,7 +79,7 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
-        assert(
+        assertTrue(
             inProgressChallenges
                 .map { it.status }
                 .all { it == ChallengeStatusDto.inProgress }
@@ -95,7 +96,7 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
-        assert(
+        assertTrue(
             upcomingChallenges
                 .map { it.status }
                 .all { it == ChallengeStatusDto.upcoming }
@@ -112,7 +113,7 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
-        assert(
+        assertTrue(
             closedChallenges
                 .map { it.status }
                 .all { it == ChallengeStatusDto.closed }
@@ -132,7 +133,7 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
-        assert(
+        assertTrue(
             inProgressOrUpcomingChallenges
                 .map { it.status }
                 .all { it == ChallengeStatusDto.inProgress || it == ChallengeStatusDto.upcoming }
@@ -148,7 +149,7 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
-        assert(
+        assertTrue(
             upcomingOrCloseChallenges
                 .map { it.status }
                 .all { it == ChallengeStatusDto.upcoming || it == ChallengeStatusDto.closed }
@@ -169,11 +170,11 @@ class ListChallengesTest : ChallengeITBase() {
             .getResult(ListChallengesResponseDto::class)
             .items
         val firstChallengeBeforeParticipation = inProgressChallengesBeforeParticipation.first()
-        assert(firstChallengeBeforeParticipation.status == ChallengeStatusDto.inProgress)
-        assert(firstChallengeBeforeParticipation.hasJoined.not())
+        assertTrue(firstChallengeBeforeParticipation.status == ChallengeStatusDto.inProgress)
+        assertTrue(firstChallengeBeforeParticipation.hasJoined.not())
         val lastChallengeBeforeParticipation = inProgressChallengesBeforeParticipation.last()
-        assert(lastChallengeBeforeParticipation.status == ChallengeStatusDto.inProgress)
-        assert(lastChallengeBeforeParticipation.hasJoined.not())
+        assertTrue(lastChallengeBeforeParticipation.status == ChallengeStatusDto.inProgress)
+        assertTrue(lastChallengeBeforeParticipation.hasJoined.not())
 
         val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
         participate(
@@ -197,19 +198,19 @@ class ListChallengesTest : ChallengeITBase() {
             .getResult(ListChallengesResponseDto::class)
             .items
         val firstChallenge = challengesAfterParticipation.getOrNull(0)
-        assert(firstChallenge != null)
-        assert(firstChallenge?.id == lastChallengeBeforeParticipation.id)
-        assert(firstChallenge?.status == ChallengeStatusDto.inProgress)
-        assert(firstChallenge?.hasJoined == true)
+        assertTrue(firstChallenge != null)
+        assertTrue(firstChallenge?.id == lastChallengeBeforeParticipation.id)
+        assertTrue(firstChallenge?.status == ChallengeStatusDto.inProgress)
+        assertTrue(firstChallenge?.hasJoined == true)
         val secondChallenge = challengesAfterParticipation.getOrNull(1)
-        assert(secondChallenge != null)
-        assert(secondChallenge?.id == firstChallengeBeforeParticipation.id)
-        assert(secondChallenge?.status == ChallengeStatusDto.inProgress)
-        assert(secondChallenge?.hasJoined == true)
+        assertTrue(secondChallenge != null)
+        assertTrue(secondChallenge?.id == firstChallengeBeforeParticipation.id)
+        assertTrue(secondChallenge?.status == ChallengeStatusDto.inProgress)
+        assertTrue(secondChallenge?.hasJoined == true)
         val thirdChallenge = challengesAfterParticipation.getOrNull(2)
-        assert(thirdChallenge != null)
-        assert(thirdChallenge?.status == ChallengeStatusDto.inProgress)
-        assert(thirdChallenge?.hasJoined == false)
+        assertTrue(thirdChallenge != null)
+        assertTrue(thirdChallenge?.status == ChallengeStatusDto.inProgress)
+        assertTrue(thirdChallenge?.hasJoined == false)
     }
 
     // TODO: 페이징 때 쓸 테스트코드
