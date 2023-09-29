@@ -38,7 +38,11 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+                    status = listOf(
+                        ChallengeStatusDto.inProgress,
+                        ChallengeStatusDto.upcoming,
+                        ChallengeStatusDto.closed
+                    ),
                     nextToken = null,
                     limit = null
                 ),
@@ -48,9 +52,9 @@ class ListChallengesTest : ChallengeITBase() {
             .items
         val sortedChallenges = challenges.sortedWith { c1, c2 ->
             val priority = listOf(
-                ChallengeStatusDto.closed,
+                ChallengeStatusDto.inProgress,
                 ChallengeStatusDto.upcoming,
-                ChallengeStatusDto.inProgress
+                ChallengeStatusDto.closed,
             )
             return@sortedWith when {
                 priority.indexOf(c1.status) > priority.indexOf(c2.status) -> 1
@@ -189,7 +193,11 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+                    status = listOf(
+                        ChallengeStatusDto.inProgress,
+                        ChallengeStatusDto.upcoming,
+                        ChallengeStatusDto.closed
+                    ),
                     nextToken = null,
                     limit = null
                 ),

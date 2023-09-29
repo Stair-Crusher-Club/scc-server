@@ -98,14 +98,16 @@ class ITDataGenerator {
         placeName: String = "장소장소",
         building: Building,
     ): Place {
-        return placeRepository.save(Place(
-            id = EntityIdGenerator.generateRandom(),
-            name = placeName,
-            location = building.location,
-            building = building,
-            siGunGuId = building.siGunGuId,
-            eupMyeonDongId = building.eupMyeonDongId,
-        ))
+        return placeRepository.save(
+            Place(
+                id = EntityIdGenerator.generateRandom(),
+                name = placeName,
+                location = building.location,
+                building = building,
+                siGunGuId = building.siGunGuId,
+                eupMyeonDongId = building.eupMyeonDongId,
+            )
+        )
     }
 
     fun createBuilding(
@@ -113,22 +115,24 @@ class ITDataGenerator {
         eupMyeonDongId: String = eupMyeonDongById.keys.first(),
         siGunGuId: String = siGunGuById.keys.first(),
     ): Building {
-        return buildingRepository.save(Building(
-            id = EntityIdGenerator.generateRandom(),
-            name = "건물건물",
-            location = location,
-            address = BuildingAddress(
-                siDo = "서울특별시",
-                siGunGu = "성동구",
-                eupMyeonDong = "성수동",
-                li = "",
-                roadName = "왕십리로",
-                mainBuildingNumber = "83",
-                subBuildingNumber = "21",
-            ),
-            siGunGuId = siGunGuId,
-            eupMyeonDongId = eupMyeonDongId,
-        ))
+        return buildingRepository.save(
+            Building(
+                id = EntityIdGenerator.generateRandom(),
+                name = "건물건물",
+                location = location,
+                address = BuildingAddress(
+                    siDo = "서울특별시",
+                    siGunGu = "성동구",
+                    eupMyeonDong = "성수동",
+                    li = "",
+                    roadName = "왕십리로",
+                    mainBuildingNumber = "83",
+                    subBuildingNumber = "21",
+                ),
+                siGunGuId = siGunGuId,
+                eupMyeonDongId = eupMyeonDongId,
+            )
+        )
     }
 
     fun createBuildingAndPlace(
@@ -147,14 +151,16 @@ class ITDataGenerator {
             subBuildingNumber = "21",
         )
     ): Place {
-        val buildingToUse = building ?: buildingRepository.save(Building(
-            id = EntityIdGenerator.generateRandom(),
-            name = "건물건물",
-            location = location,
-            address = buildingAddress,
-            siGunGuId = siGunGuId,
-            eupMyeonDongId = eupMyeonDongId,
-        ))
+        val buildingToUse = building ?: buildingRepository.save(
+            Building(
+                id = EntityIdGenerator.generateRandom(),
+                name = "건물건물",
+                location = location,
+                address = buildingAddress,
+                siGunGuId = siGunGuId,
+                eupMyeonDongId = eupMyeonDongId,
+            )
+        )
         return createPlace(placeName, buildingToUse)
     }
 
@@ -166,7 +172,8 @@ class ITDataGenerator {
         isComplete: Boolean = false,
         startsAt: Instant = clock.instant(),
         endsAt: Instant? = null,
-        goals: List<Int> = listOf(500, 1000),
+        goal: Int = 1000,
+        milestones: List<Int> = listOf(),
         conditions: List<ChallengeCondition> = listOf(),
     ): Challenge {
         return challengeRepository.save(
@@ -179,7 +186,8 @@ class ITDataGenerator {
                 isComplete = isComplete,
                 startsAt = startsAt,
                 endsAt = endsAt,
-                goals = goals,
+                goal = goal,
+                milestones = milestones,
                 conditions = conditions,
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
@@ -202,8 +210,10 @@ class ITDataGenerator {
         )
     }
 
-    fun registerPlaceAccessibility(place: Place,
-                                   user: User? = null): PlaceAccessibility {
+    fun registerPlaceAccessibility(
+        place: Place,
+        user: User? = null
+    ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
@@ -235,14 +245,21 @@ class ITDataGenerator {
         )
     }
 
-    fun registerBuildingAndPlaceAccessibility(place: Place, user: User? = null): Pair<PlaceAccessibility, BuildingAccessibility> {
+    fun registerBuildingAndPlaceAccessibility(
+        place: Place,
+        user: User? = null
+    ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
             registerPlaceAccessibility(place, user),
             registerBuildingAccessibilityIfNotExists(place.building, user),
         )
     }
 
-    fun registerBuildingAccessibilityComment(building: Building, comment: String, user: User? = null): BuildingAccessibilityComment {
+    fun registerBuildingAccessibilityComment(
+        building: Building,
+        comment: String,
+        user: User? = null
+    ): BuildingAccessibilityComment {
         return buildingAccessibilityCommentRepository.save(
             BuildingAccessibilityComment(
                 id = EntityIdGenerator.generateRandom(),
@@ -254,7 +271,11 @@ class ITDataGenerator {
         )
     }
 
-    fun registerPlaceAccessibilityComment(place: Place, comment: String, user: User? = null): PlaceAccessibilityComment {
+    fun registerPlaceAccessibilityComment(
+        place: Place,
+        comment: String,
+        user: User? = null
+    ): PlaceAccessibilityComment {
         return placeAccessibilityCommentRepository.save(
             PlaceAccessibilityComment(
                 id = EntityIdGenerator.generateRandom(),
