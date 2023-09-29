@@ -7,6 +7,7 @@ import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import java.time.Clock
 import java.time.Duration
@@ -78,15 +79,24 @@ class ChallengeService(
         return transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
             val alreadyJoined = challengeParticipationRepository.findByChallengeIdAndUserId(challengeId, userId) != null
             if (alreadyJoined) {
-                throw SccDomainException(msg = "이미 참여한 챌린지입니다.", errorCode = SccDomainException.ErrorCode.ALREADY_JOINED)
+                throw SccDomainException(
+                    msg = "이미 참여한 챌린지입니다.",
+                    errorCode = SccDomainException.ErrorCode.ALREADY_JOINED
+                )
             }
             val challenge = challengeRepository.findById(challengeId)
             if (challenge.passcode != null && challenge.passcode != passcode) {
-                throw SccDomainException(msg = "잘못된 참여코드 입니다.", errorCode = SccDomainException.ErrorCode.INVALID_PASSCODE)
+                throw SccDomainException(
+                    msg = "잘못된 참여코드 입니다.",
+                    errorCode = SccDomainException.ErrorCode.INVALID_PASSCODE
+                )
             }
             val now = clock.instant()
             if (now < challenge.startsAt) {
-                throw SccDomainException(msg = "아직 오픈 전 입니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_NOT_OPENED)
+                throw SccDomainException(
+                    msg = "아직 오픈 전 입니다.",
+                    errorCode = SccDomainException.ErrorCode.CHALLENGE_NOT_OPENED
+                )
             }
             if (challenge.endsAt?.let { it < now } == true) {
                 throw SccDomainException(msg = "이미 종료되었습니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_CLOSED)
