@@ -2,6 +2,7 @@ package club.staircrusher.challenge.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.ChallengeDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
+import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.GetChallengeRequestDto
 import club.staircrusher.api.spec.dto.GetChallengeResponseDto
 import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
@@ -30,16 +31,18 @@ class ChallengeController(
     ): GetChallengeResponseDto {
         return GetChallengeResponseDto(
             challenge = ChallengeDto(
-                id = null,
-                name = null,
-                isPublic = null,
-                isComplete = null,
-                startsAt = null,
+                id = "",
+                name = "",
+                status = ChallengeStatusDto.inProgress,
+                isPublic = true,
+                isComplete = true,
+                startsAt = EpochMillisTimestamp(value = clock.instant().toEpochMilli()),
                 endsAt = null,
                 goal = 1000,
                 milestones = listOf(),
                 conditions = listOf(),
-                createdAt = null
+                participationsCount = 0,
+                contributionsCount = 0,
             ),
             ranks = listOf(),
             hasJoined = false,
@@ -59,7 +62,11 @@ class ChallengeController(
             passcode = request.passcode
         )
         return JoinChallengeResponseDto(
-            challenge = joinedChallenge.toDto(criteriaTime = clock.instant()),
+            challenge = joinedChallenge.toDto(
+                participationCount = 0,
+                contributionCount = 0,
+                criteriaTime = clock.instant()
+            ),
             ranks = listOf()
         )
     }

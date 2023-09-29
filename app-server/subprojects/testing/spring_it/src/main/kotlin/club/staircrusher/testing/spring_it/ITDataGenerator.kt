@@ -11,10 +11,12 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
@@ -73,6 +75,9 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
+
+    @Autowired
+    private lateinit var challengeContributionRepository: ChallengeContributionRepository
 
     fun createUser(
         nickname: String = SccRandom.string(12),
@@ -208,6 +213,38 @@ class ITDataGenerator {
                 createdAt = participateAt
             )
         )
+    }
+
+    fun contributeChallenge(
+        user: User,
+        challenge: Challenge,
+        placeAccessibility: PlaceAccessibility? = null,
+        placeAccessibilityComment: PlaceAccessibilityComment? = null,
+        buildingAccessibility: BuildingAccessibility? = null,
+        buildingAccessibilityComment: BuildingAccessibilityComment? = null,
+        contributeAt: Instant
+    ): ChallengeContribution {
+        val contribution = challengeContributionRepository.save(
+            ChallengeContribution(
+                id = EntityIdGenerator.generateRandom(),
+                userId = user.id,
+                challengeId = challenge.id,
+                placeAccessibilityId = placeAccessibility?.id,
+                placeAccessibilityCommentId = placeAccessibilityComment?.id,
+                buildingAccessibilityId = buildingAccessibility?.id,
+                buildingAccessibilityCommentId = buildingAccessibilityComment?.id,
+                createdAt = contributeAt,
+                updatedAt = contributeAt
+            )
+        )
+        challengeRepository.save(
+            challenge.copy(
+                isComplete = challenge.goal <= challengeContributionRepository.countByChallengeId(
+                    challengeId = challenge.id
+                )
+            )
+        )
+        return contribution
     }
 
     fun registerPlaceAccessibility(

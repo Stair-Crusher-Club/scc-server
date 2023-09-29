@@ -886,12 +886,27 @@ components:
           items:
             type: integer
             format: int32
+        participationsCount:
+          type: integer
+          format: int32
+        contributionsCount:
+          type: integer
+          format: int32
         conditions:
           type: array
           items:
             $ref: '#/components/schemas/ChallengeConditionDto'
-        createdAt:
-          $ref: '#/components/schemas/EpochMillisTimestamp'
+      required:
+        - id
+        - name
+        - status
+        - isPublic
+        - isComplete
+        - startsAt
+        - goal
+        - milestones
+        - participationsCount
+        - contributionsCount
 
     ChallengeRankDto:
       type: object
