@@ -7,6 +7,7 @@ import java.time.Instant
 interface ChallengeRepository : EntityRepository<Challenge, String> {
     fun findAllOrderByCreatedAtDesc(): List<Challenge>
     fun findByIds(challengeIds: Collection<String>): List<Challenge>
+    fun findByInvitationCode(invitationCode: String): Challenge?
     fun findByTime(
         startsAtRange: ClosedRange<Instant>,
         endsAtRange: ClosedRange<Instant>,

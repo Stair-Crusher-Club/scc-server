@@ -31,7 +31,7 @@ class JoinChallengeTest : ChallengeITBase() {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
         }
-        val inProgressChallenge = registerInProgressChallenge(null)
+        val inProgressChallenge = registerInProgressChallenge()
         val response = mvc
             .sccRequest(
                 "/joinChallenge",
@@ -50,7 +50,7 @@ class JoinChallengeTest : ChallengeITBase() {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
         }
-        val inProgressChallenge = registerInProgressChallenge(null)
+        val inProgressChallenge = registerInProgressChallenge()
         mvc
             .sccRequest(
                 "/joinChallenge",

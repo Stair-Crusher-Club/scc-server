@@ -6,6 +6,7 @@ open class SccDomainException(val msg: String, val errorCode: ErrorCode? = null)
         INVALID_NICKNAME,
         INVALID_EMAIL,
         INVALID_PASSCODE,
+        INVALID_ARGUMENTS,
         ALREADY_JOINED,
         CHALLENGE_NOT_OPENED,
         CHALLENGE_CLOSED

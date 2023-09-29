@@ -30,6 +30,11 @@ SELECT *
 FROM challenge
 WHERE challenge.id IN :ids;
 
+findByInvitationCode:
+SELECT *
+FROM challenge
+WHERE challenge.invitation_code = :invitationCode;
+
 findByTime:
 SELECT *
 FROM challenge

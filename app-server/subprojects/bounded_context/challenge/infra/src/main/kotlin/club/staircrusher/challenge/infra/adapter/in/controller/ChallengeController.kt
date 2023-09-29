@@ -1,8 +1,7 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller
 
-import club.staircrusher.api.spec.dto.ChallengeDto
+import club.staircrusher.api.spec.dto.ChallengeRankDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
-import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.GetChallengeRequestDto
 import club.staircrusher.api.spec.dto.GetChallengeResponseDto
 import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
@@ -29,24 +28,21 @@ class ChallengeController(
         @RequestBody request: GetChallengeRequestDto,
         authentication: SccAppAuthentication?,
     ): GetChallengeResponseDto {
+        val result = challengeService.getChallenge(
+            userId = authentication?.principal,
+            challengeId = request.challengeId,
+            invitationCode = request.invitationCode
+        )
         return GetChallengeResponseDto(
-            challenge = ChallengeDto(
-                id = "",
-                name = "",
-                status = ChallengeStatusDto.inProgress,
-                isPublic = true,
-                isComplete = true,
-                startsAt = EpochMillisTimestamp(value = clock.instant().toEpochMilli()),
-                endsAt = null,
-                goal = 1000,
-                milestones = listOf(),
-                conditions = listOf(),
-                participationsCount = 0,
-                contributionsCount = 0,
+            challenge = result.challenge.toDto(
+                participationCount = result.participationsCount,
+                contributionCount = result.contributionsCount,
+                criteriaTime = clock.instant()
             ),
             ranks = listOf(),
-            hasJoined = false,
-            myRank = null
+            hasJoined = result.hasJoined,
+            // TODO: rank 기능 추가 시 수정 필요
+            myRank = if (result.hasJoined) ChallengeRankDto(rank = 0, contributionCount = 0, nickname = "") else null
         )
     }
 
