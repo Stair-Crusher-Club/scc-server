@@ -37,6 +37,18 @@ open class ChallengeITBase : SccSpringITBase() {
                     )
                 )
             }
+            testDataGenerator.createChallenge(
+                name = "",
+                passcode = "",
+                startsAt = clock.instant().minus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
+                endsAt = null,
+                conditions = listOf(
+                    ChallengeCondition(
+                        addressMatches = listOf(),
+                        accessibilityTypes = listOf()
+                    )
+                )
+            )
             // 오픈 예정
             repeat(
                 Random.nextInt(3 until 10)
@@ -80,7 +92,11 @@ open class ChallengeITBase : SccSpringITBase() {
         }
     }
 
-    fun participate(user: User, challenge: Challenge, participateAt: Instant = clock.instant()): ChallengeParticipation {
+    fun participate(
+        user: User,
+        challenge: Challenge,
+        participateAt: Instant = clock.instant()
+    ): ChallengeParticipation {
         return transactionManager.doInTransaction {
             testDataGenerator.participateChallenge(user, challenge, participateAt)
         }
