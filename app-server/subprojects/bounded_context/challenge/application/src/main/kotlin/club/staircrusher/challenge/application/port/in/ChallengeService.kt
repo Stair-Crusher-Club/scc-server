@@ -75,7 +75,7 @@ class ChallengeService(
 
     @Suppress("ThrowsCount")
     fun joinChallenge(userId: String, challengeId: String, passcode: String?): Challenge {
-        return transactionManager.doInTransaction {
+        return transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
             val alreadyJoined = challengeParticipationRepository.findByChallengeIdAndUserId(challengeId, userId) != null
             if (alreadyJoined) {
                 throw SccDomainException(msg = "이미 참여한 챌린지입니다.", errorCode = SccDomainException.ErrorCode.ALREADY_JOINED)
