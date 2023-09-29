@@ -34,6 +34,18 @@ class GetChallengeTest : ChallengeITBase() {
     @Test
     fun `참여자 수, 정복한 장소 수가 맞는지 확인한다`() {
         val challenge = registerInProgressChallenge()
+        // 참여 전 상태 확인
+        val challengeBeforeParticipationAndContribution = mvc.sccRequest(
+            "/getChallenge",
+            GetChallengeRequestDto(
+                challengeId = challenge.id
+            ),
+        )
+            .getResult(GetChallengeResponseDto::class)
+            .challenge
+        assertTrue(challengeBeforeParticipationAndContribution.participationsCount == 0)
+        assertTrue(challengeBeforeParticipationAndContribution.contributionsCount == 0)
+
         val users = transactionManager.doInTransaction {
             (0 until Random.nextLong(from = 1, until = 10))
                 .map {
@@ -57,6 +69,7 @@ class GetChallengeTest : ChallengeITBase() {
             user = users.first()
         )
             .getResult(GetChallengeResponseDto::class)
+        // 참여 후 상태 확인
         assertTrue(getChallengeResponse.challenge.id == challenge.id)
         assertTrue(getChallengeResponse.challenge.participationsCount == users.count())
         assertTrue(getChallengeResponse.challenge.contributionsCount == contributions.count())
