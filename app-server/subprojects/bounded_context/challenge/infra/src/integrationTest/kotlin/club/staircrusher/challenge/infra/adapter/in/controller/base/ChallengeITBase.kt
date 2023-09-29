@@ -19,29 +19,33 @@ open class ChallengeITBase : SccSpringITBase() {
     private lateinit var clock: Clock
 
     fun registerChallenges() {
-        transactionManager.doInTransaction {
-            // 진행 중
-            repeat(
-                Random.nextInt(3 until 10)
-            ) {
-                testDataGenerator.createChallenge(
-                    name = "",
-                    passcode = "",
-                    startsAt = clock.instant().minus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
-                    endsAt = clock.instant().plus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
-                    conditions = listOf(
-                        ChallengeCondition(
-                            addressMatches = listOf(),
-                            accessibilityTypes = listOf()
-                        )
-                    )
-                )
-            }
+        // 진행 중
+        repeat(Random.nextInt(3 until 10)) {
+            registerInProgressChallenge()
+        }
+        registerInProgressChallenge(isInfiniteChallenge = true)
+        // 오픈 예정
+        repeat(Random.nextInt(3 until 10)) {
+            registerUpcomingChallenge()
+        }
+        // 종료된
+        repeat(Random.nextInt(3 until 10)) {
+            registerClosedChallenge()
+        }
+    }
+
+
+    fun registerInProgressChallenge(
+        passcode: String? = null,
+        isInfiniteChallenge: Boolean = false
+    ): Challenge {
+        return transactionManager.doInTransaction {
             testDataGenerator.createChallenge(
                 name = "",
-                passcode = "",
+                passcode = passcode,
                 startsAt = clock.instant().minus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
-                endsAt = null,
+                endsAt = if (isInfiniteChallenge) null
+                else clock.instant().plus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
                 conditions = listOf(
                     ChallengeCondition(
                         addressMatches = listOf(),
@@ -49,46 +53,46 @@ open class ChallengeITBase : SccSpringITBase() {
                     )
                 )
             )
-            // 오픈 예정
-            repeat(
-                Random.nextInt(3 until 10)
-            ) {
-                val startsAt = clock.instant()
-                    .plus(Duration.ofHours(Random.nextLong(1L until 360L)))
-                testDataGenerator.createChallenge(
-                    name = "",
-                    passcode = "",
-                    startsAt = startsAt,
-                    endsAt = startsAt
-                        .plus(Duration.ofHours(Random.nextLong(1L until 360L))),
-                    conditions = listOf(
-                        ChallengeCondition(
-                            addressMatches = listOf(),
-                            accessibilityTypes = listOf()
-                        )
+        }
+    }
+
+    fun registerUpcomingChallenge(passcode: String? = null): Challenge {
+        return transactionManager.doInTransaction {
+            val startsAt = clock.instant()
+                .plus(Duration.ofHours(Random.nextLong(1L until 360L)))
+            testDataGenerator.createChallenge(
+                name = "",
+                passcode = passcode,
+                startsAt = startsAt,
+                endsAt = startsAt
+                    .plus(Duration.ofHours(Random.nextLong(1L until 360L))),
+                conditions = listOf(
+                    ChallengeCondition(
+                        addressMatches = listOf(),
+                        accessibilityTypes = listOf()
                     )
                 )
-            }
-            // 종료된
-            repeat(
-                Random.nextInt(3 until 10)
-            ) {
-                val endsAt = clock.instant()
-                    .minus(Duration.ofHours(Random.nextLong(1L until 360L)))
-                testDataGenerator.createChallenge(
-                    name = "",
-                    passcode = "",
-                    startsAt = endsAt
-                        .minus(Duration.ofHours(Random.nextLong(1L until 360L))),
-                    endsAt = endsAt,
-                    conditions = listOf(
-                        ChallengeCondition(
-                            addressMatches = listOf(),
-                            accessibilityTypes = listOf()
-                        )
+            )
+        }
+    }
+
+    fun registerClosedChallenge(passcode: String? = null): Challenge {
+        return transactionManager.doInTransaction {
+            val endsAt = clock.instant()
+                .minus(Duration.ofHours(Random.nextLong(1L until 360L)))
+            testDataGenerator.createChallenge(
+                name = "",
+                passcode = passcode,
+                startsAt = endsAt
+                    .minus(Duration.ofHours(Random.nextLong(1L until 360L))),
+                endsAt = endsAt,
+                conditions = listOf(
+                    ChallengeCondition(
+                        addressMatches = listOf(),
+                        accessibilityTypes = listOf()
                     )
                 )
-            }
+            )
         }
     }
 

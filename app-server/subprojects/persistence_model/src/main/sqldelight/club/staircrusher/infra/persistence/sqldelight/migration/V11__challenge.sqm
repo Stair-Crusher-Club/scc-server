@@ -25,6 +25,9 @@ CREATE TABLE IF NOT EXISTS challenge_participation (
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX idx_challenge_participation_1 ON challenge_participation(challenge_id);
+CREATE INDEX idx_challenge_participation_2 ON challenge_participation(user_id);
+
 CREATE TABLE IF NOT EXISTS challenge_contribution (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
@@ -36,3 +39,6 @@ CREATE TABLE IF NOT EXISTS challenge_contribution (
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_challenge_contribution_1 ON challenge_contribution(user_id);
+CREATE INDEX idx_challenge_contribution_2 ON challenge_contribution(challenge_id);

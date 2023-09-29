@@ -21,6 +21,13 @@ SELECT *
 FROM challenge_participation
 WHERE challenge_participation.challenge_id = :challengeId;
 
+findByUserIdAndChallengeId:
+SELECT *
+FROM challenge_participation
+WHERE
+    challenge_participation.challenge_id = :challengeId
+    AND challenge_participation.user_id = :userId;
+
 challengeCountByUserId:
 SELECT COUNT(1)
 FROM challenge_participation
