@@ -25,6 +25,7 @@ class ListChallengesTest : ChallengeITBase() {
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
         challengeRepository.removeAll()
+        challengeParticipationRepository.removeAll()
 
         registerChallenges()
     }
