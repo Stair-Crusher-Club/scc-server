@@ -10,8 +10,19 @@ internal fun readTsvAsLines(resourceName: String): List<List<String>> {
     return object {}.javaClass.classLoader.getResource(resourceName)?.readText()
         ?.split("\n")
         ?.drop(1) // 첫 줄은 header라 버린다.
+        ?.filter { it.isNotBlank() }
         ?.map { it.replace("\r", "") }
         ?.map { it.split("\t") }
+        ?: emptyList()
+}
+
+internal fun readCsvAsLines(resourceName: String): List<List<String>> {
+    return object {}.javaClass.classLoader.getResource(resourceName)?.readText()
+        ?.split("\n")
+        ?.drop(1) // 첫 줄은 header라 버린다.
+        ?.filter { it.isNotBlank() }
+        ?.map { it.replace("\r", "") }
+        ?.map { it.split(",") } // FIXME: 데이터 안에 ,가 있을 수 있다.
         ?: emptyList()
 }
 
