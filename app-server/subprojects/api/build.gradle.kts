@@ -14,7 +14,7 @@ tasks.getByName("openApiGenerate") {
 }
 
 tasks.getByName("compileKotlin") {
-    inputs.dir("${buildDir.path}/generated-api")
+    inputs.dir("${project.projectDir.path}/src/main/kotlin")
 }
 
 openApiGenerate {
