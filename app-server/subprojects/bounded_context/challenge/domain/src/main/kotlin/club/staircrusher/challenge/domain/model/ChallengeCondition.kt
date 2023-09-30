@@ -8,7 +8,7 @@ data class ChallengeCondition(
 ) {
     @Suppress("ReturnCount")
     fun isSatisfied(
-        address: String,
+        address: ChallengeAddress,
         actionType: ChallengeActionCondition.Type
     ): Boolean {
         if (addressCondition?.isSatisfied(address) == false) return false
@@ -17,8 +17,10 @@ data class ChallengeCondition(
     }
 }
 
-data class ChallengeAddressCondition(val keywords: List<String>) {
-    fun isSatisfied(address: String): Boolean {
+data class ChallengeAddressCondition(
+    val keywords: List<String>
+) {
+    fun isSatisfied(address: ChallengeAddress): Boolean {
         return keywords.all { address.contains(it) }
     }
 }

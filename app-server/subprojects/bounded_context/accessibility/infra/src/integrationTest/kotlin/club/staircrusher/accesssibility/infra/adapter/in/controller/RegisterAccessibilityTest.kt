@@ -217,8 +217,8 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 testDataGenerator.createChallenge(
                     name = "참여하는 챌린지",
                     isComplete = false,
-                    startsAt = Challenge.MIN_TIME,
-                    endsAt = Challenge.MAX_TIME,
+                    startsAt = Challenge.MIN_TIME.plusSeconds(60),
+                    endsAt = Challenge.MAX_TIME.minusSeconds(60),
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
@@ -250,8 +250,8 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 testDataGenerator.createChallenge(
                     name = "송파동 장소챌린지",
                     isComplete = false,
-                    startsAt = Challenge.MIN_TIME,
-                    endsAt = Challenge.MAX_TIME,
+                    startsAt = Challenge.MIN_TIME.plusSeconds(60),
+                    endsAt = Challenge.MAX_TIME.minusSeconds(60),
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
@@ -263,8 +263,8 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 testDataGenerator.createChallenge(
                     name = "성수동 빌딩챌린지",
                     isComplete = false,
-                    startsAt = Challenge.MIN_TIME,
-                    endsAt = Challenge.MAX_TIME,
+                    startsAt = Challenge.MIN_TIME.plusSeconds(60),
+                    endsAt = Challenge.MAX_TIME.minusSeconds(60),
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
@@ -277,7 +277,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                     name = "오픈전 성수동 챌린지",
                     isComplete = false,
                     startsAt = clock.instant().plusSeconds(60),
-                    endsAt = Challenge.MAX_TIME,
+                    endsAt = Challenge.MAX_TIME.minusSeconds(60),
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
@@ -340,8 +340,8 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 testDataGenerator.createChallenge(
                     name = "참여 안하는 챌린지",
                     isComplete = false,
-                    startsAt = Challenge.MIN_TIME,
-                    endsAt = Challenge.MAX_TIME,
+                    startsAt = Challenge.MIN_TIME.plusSeconds(60),
+                    endsAt = Challenge.MAX_TIME.minusSeconds(60),
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(

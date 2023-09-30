@@ -5,7 +5,9 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengePar
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
+import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
@@ -13,6 +15,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import java.time.Clock
 
+@Component
 class ContributeSatisfiedChallengesUseCase(
     private val transactionManager: TransactionManager,
     private val userRepository: UserRepository,
@@ -21,25 +24,25 @@ class ContributeSatisfiedChallengesUseCase(
     private val challengeParticipationRepository: ChallengeParticipationRepository,
     private val clock: Clock
 ) {
-    sealed class Contribution(val address: String) {
+    sealed class Contribution(val address: ChallengeAddress) {
         data class PlaceAccessibility(
             val placeAccessibilityId: String,
-            val placeAccessibilityAddress: String
-        ) : Contribution(placeAccessibilityId)
+            val placeAccessibilityAddress: ChallengeAddress
+        ) : Contribution(placeAccessibilityAddress)
 
         data class PlaceAccessibilityComment(
             val placeAccessibilityCommentId: String,
-            val placeAccessibilityAddress: String
+            val placeAccessibilityAddress: ChallengeAddress
         ) : Contribution(placeAccessibilityAddress)
 
         data class BuildingAccessibility(
             val buildingAccessibilityId: String,
-            val buildingAccessibilityAddress: String
+            val buildingAccessibilityAddress: ChallengeAddress
         ) : Contribution(buildingAccessibilityAddress)
 
         data class BuildingAccessibilityComment(
             val buildingAccessibilityCommentId: String,
-            val buildingAccessibilityAddress: String
+            val buildingAccessibilityAddress: ChallengeAddress
         ) : Contribution(buildingAccessibilityAddress)
     }
 

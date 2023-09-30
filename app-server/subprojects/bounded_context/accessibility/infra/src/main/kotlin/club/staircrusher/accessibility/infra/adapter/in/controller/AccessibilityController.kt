@@ -17,6 +17,7 @@ import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.challenge.application.port.`in`.use_case.ContributeSatisfiedChallengesUseCase
+import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -151,7 +152,15 @@ class AccessibilityController(
                     userId = userId,
                     contribution = ContributeSatisfiedChallengesUseCase.Contribution.PlaceAccessibility(
                         placeAccessibilityId = placeAccessbility.id,
-                        placeAccessibilityAddress = place.address.toString()
+                        placeAccessibilityAddress = place.address.let {
+                            ChallengeAddress(
+                                siDo = it.siDo,
+                                siGunGu = it.siGunGu,
+                                eupMyeonDong = it.eupMyeonDong,
+                                li = it.li,
+                                roadName = it.roadName
+                            )
+                        }
                     )
                 )
             }
@@ -162,7 +171,15 @@ class AccessibilityController(
                     userId = userId,
                     contribution = ContributeSatisfiedChallengesUseCase.Contribution.BuildingAccessibility(
                         buildingAccessibilityId = buildingAccessibility.id,
-                        buildingAccessibilityAddress = building.address.toString()
+                        buildingAccessibilityAddress = building.address.let {
+                            ChallengeAddress(
+                                siDo = it.siDo,
+                                siGunGu = it.siGunGu,
+                                eupMyeonDong = it.eupMyeonDong,
+                                li = it.li,
+                                roadName = it.roadName
+                            )
+                        }
                     )
                 )
             }
