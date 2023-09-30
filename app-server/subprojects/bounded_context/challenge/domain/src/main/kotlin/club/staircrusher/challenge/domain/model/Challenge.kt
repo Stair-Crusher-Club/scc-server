@@ -2,6 +2,7 @@ package club.staircrusher.challenge.domain.model
 
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import java.time.Duration
 import java.time.Instant
 
 class Challenge(
@@ -60,6 +61,10 @@ class Challenge(
     }
 
     companion object {
+        // Instant.MAX 는 범위 초과로 1000년을 추가해서 쓴다.
+        val MAX_TIME = Instant.EPOCH.plus(Duration.ofDays(365 * 1000))
+        val MIN_TIME = Instant.EPOCH
+
         fun of(createRequest: CreateChallengeRequest): Challenge {
             val now = SccClock.instant()
 

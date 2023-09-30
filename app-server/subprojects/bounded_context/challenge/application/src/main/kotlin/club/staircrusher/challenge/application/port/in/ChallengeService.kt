@@ -11,8 +11,6 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import java.time.Clock
-import java.time.Duration
-import java.time.Instant
 
 @Component
 class ChallengeService(
@@ -22,12 +20,6 @@ class ChallengeService(
     private val challengeParticipationRepository: ChallengeParticipationRepository,
     private val clock: Clock,
 ) {
-    companion object {
-        // Instant.MAX 는 범위 초과로 1000년을 추가해서 쓴다.
-        val MAX = Instant.EPOCH.plus(Duration.ofDays(365 * 1000))
-        val MIN = Instant.EPOCH
-    }
-
     sealed class MyChallengeOption {
         data class Only(val userId: String) : MyChallengeOption()
         data class Without(val userId: String) : MyChallengeOption()
@@ -46,20 +38,20 @@ class ChallengeService(
                 is MyChallengeOption.Only ->
                     challengeRepository.joinedChallenges(
                         userId = option.userId,
-                        startsAtRange = MIN.rangeTo(clock.instant()),
-                        endsAtRange = clock.instant().rangeTo(MAX),
+                        startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
+                        endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
                     )
 
                 is MyChallengeOption.Without ->
                     challengeRepository.notJoinedChallenges(
                         userId = option.userId,
-                        startsAtRange = MIN.rangeTo(clock.instant()),
-                        endsAtRange = clock.instant().rangeTo(MAX),
+                        startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
+                        endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
                     )
 
                 null -> challengeRepository.findByTime(
-                    startsAtRange = MIN.rangeTo(clock.instant()),
-                    endsAtRange = clock.instant().rangeTo(MAX),
+                    startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
+                    endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
                 )
             }
         }
@@ -68,8 +60,8 @@ class ChallengeService(
     fun getUpcomingChallenges(): List<Challenge> {
         return transactionManager.doInTransaction {
             return@doInTransaction challengeRepository.findByTime(
-                startsAtRange = clock.instant().rangeTo(MAX),
-                endsAtRange = clock.instant().rangeTo(MAX),
+                startsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
+                endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
             )
         }
     }
@@ -77,8 +69,8 @@ class ChallengeService(
     fun getClosedChallenges(): List<Challenge> {
         return transactionManager.doInTransaction {
             return@doInTransaction challengeRepository.findByTime(
-                startsAtRange = MIN.rangeTo(clock.instant()),
-                endsAtRange = MIN.rangeTo(clock.instant()),
+                startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
+                endsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
             )
         }
     }

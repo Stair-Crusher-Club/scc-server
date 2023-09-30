@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     api(project(":api"))
+    implementation(projects.boundedContext.place.domain)
+    implementation(projects.boundedContext.challenge.application)
     implementation(projects.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
 

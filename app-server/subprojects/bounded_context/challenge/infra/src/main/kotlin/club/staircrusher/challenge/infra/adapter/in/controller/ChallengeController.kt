@@ -72,6 +72,7 @@ class ChallengeController(
         @RequestBody request: ListChallengesRequestDto,
         authentication: SccAppAuthentication?,
     ): ListChallengesResponseDto {
+        val requestTime = clock.instant()
         val result = request.status
             .flatMap { status ->
                 return@flatMap when (status) {
@@ -80,21 +81,21 @@ class ChallengeController(
                             challengeService.getInProgressChallenges(
                                 ChallengeService.MyChallengeOption.Only(userId = userId)
                             )
-                                .map { it.toListChallengeDto(hasJoined = true, criteriaTime = clock.instant()) } +
+                                .map { it.toListChallengeDto(hasJoined = true, criteriaTime = requestTime) } +
                                 challengeService.getInProgressChallenges(
                                     ChallengeService.MyChallengeOption.Without(userId = userId)
                                 )
-                                    .map { it.toListChallengeDto(hasJoined = false, criteriaTime = clock.instant()) }
+                                    .map { it.toListChallengeDto(hasJoined = false, criteriaTime = requestTime) }
                         }
                             ?: challengeService.getInProgressChallenges()
-                                .map { it.toListChallengeDto(hasJoined = false, clock.instant()) }
+                                .map { it.toListChallengeDto(hasJoined = false, requestTime) }
                     }
 
                     ChallengeStatusDto.upcoming -> challengeService.getUpcomingChallenges()
-                        .map { it.toListChallengeDto(hasJoined = false, criteriaTime = clock.instant()) }
+                        .map { it.toListChallengeDto(hasJoined = false, criteriaTime = requestTime) }
 
                     ChallengeStatusDto.closed -> challengeService.getClosedChallenges()
-                        .map { it.toListChallengeDto(hasJoined = false, criteriaTime = clock.instant()) }
+                        .map { it.toListChallengeDto(hasJoined = false, criteriaTime = requestTime) }
 
                     else -> listOf<ListChallengesItemDto>()
                 }

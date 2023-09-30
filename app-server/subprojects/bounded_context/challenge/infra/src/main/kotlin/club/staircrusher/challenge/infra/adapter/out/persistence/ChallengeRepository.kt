@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.time.toOffsetDateTime
 import java.time.Instant
 
+@Suppress("TooManyFunctions")
 @Component
 class ChallengeRepository(
     val db: DB
