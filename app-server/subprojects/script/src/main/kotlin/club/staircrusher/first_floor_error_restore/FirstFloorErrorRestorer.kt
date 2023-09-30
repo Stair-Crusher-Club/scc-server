@@ -23,6 +23,27 @@ fun main() {
     }
     val placeFloorInfosBy도로명주소 = placeFloorInfos.groupBy { it.도로명주소 }
 
+    val manualCorrectedPlaceAccessibilities = run {
+        // 손으로 직접 1층 정보 뽑은 것들.
+        // https://docs.google.com/spreadsheets/d/1fyfPMPC_bYG7Mn6U7_juLbBWFMgt2ut5P0mH6Y0q8T8/edit#gid=0
+        val lines = readTsvAsLines("first_floor_error_restore/manually_corrected_place_accessibilities.tsv")
+        lines.map {
+            ManuallyCorrectedPlaceAccessibility(
+                placeAccessibilityId = it[1],
+                isFirstFloor = try {
+                    when (it[6]) {
+                        "X" -> false
+                        "O" -> true
+                        else -> throw IllegalArgumentException("wrong value: ${it[6]}")
+                    }
+                } catch (t: Throwable) {
+                    throw t
+                }
+            )
+        }
+    }
+    val manuallyCorrectedPlaceAccessibilityById = manualCorrectedPlaceAccessibilities.associateBy { it.placeAccessibilityId }
+
     val floorInfoWrongPlaceAccessibilities = run {
         // select
         //     *
@@ -63,18 +84,27 @@ fun main() {
                     || placeAccessibility.placeName in it.placeName
                     || it.placeName in placeAccessibility.placeName
             }
-                ?: return@forEach
-            placeAccessibility.actualIsFirstFloor = placeFloorInfo.floor?.let { it == 1 }
+            if (placeFloorInfo?.floor != null) {
+                placeAccessibility.actualIsFirstFloor = placeFloorInfo.floor == 1
+                return@forEach
+            }
+
+            val manuallyCorrectedPlaceAccessibility = manuallyCorrectedPlaceAccessibilityById[placeAccessibility.placeAccessibilityId]
+            if (manuallyCorrectedPlaceAccessibility != null) {
+                placeAccessibility.actualIsFirstFloor = manuallyCorrectedPlaceAccessibility.isFirstFloor
+                return@forEach
+            }
+            println("wtf $placeAccessibility $placeFloorInfo $manuallyCorrectedPlaceAccessibility")
         }
     val (floorInfoChecked, floorInfoNotChecked) = floorInfoWrongPlaceAccessibilities
         .partition { it.isFloorInfoChecked() }
     val updateQueries = floorInfoChecked
         .filter { it.isFloorInfoWrong() }
         .map {
-            "UPDATE place_accessibility SET is_first_floor = ${it.actualIsFirstFloor} WHERE id = '${it.placeAccessibilityId}'";
+            "UPDATE place_accessibility SET is_first_floor = ${it.actualIsFirstFloor} WHERE id = '${it.placeAccessibilityId}';"
         }
-    println(updateQueries)
-    println(floorInfoNotChecked.size)
+    println(updateQueries.joinToString("\n"))
+    println(floorInfoNotChecked.joinToString(",") { "'${it.placeAccessibilityId}'" })
 }
 
 private data class PlaceFloorInfo(
@@ -82,6 +112,11 @@ private data class PlaceFloorInfo(
     val 지번주소: String,
     val 도로명주소: String,
     val floor: Int?,
+)
+
+private data class ManuallyCorrectedPlaceAccessibility(
+    val placeAccessibilityId: String,
+    val isFirstFloor: Boolean,
 )
 
 private data class FloorInfoWrongPlaceAccessibility(
