@@ -11,7 +11,7 @@ class Challenge(
     val isPublic: Boolean,
     val invitationCode: String?,
     val passcode: String?,
-    val isComplete: Boolean,
+    var isComplete: Boolean,
     val startsAt: Instant,
     val endsAt: Instant?,
     val goal: Int,
@@ -26,38 +26,6 @@ class Challenge(
 
     override fun equals(other: Any?): Boolean {
         return other is Challenge && other.id == id
-    }
-
-    fun copy(
-        id: String? = null,
-        name: String? = null,
-        isPublic: Boolean? = null,
-        invitationCode: String?? = null,
-        passcode: String? = null,
-        isComplete: Boolean? = null,
-        startsAt: Instant? = null,
-        endsAt: Instant? = null,
-        goal: Int? = null,
-        milestones: List<Int>? = null,
-        conditions: List<ChallengeCondition>? = null,
-        createdAt: Instant? = null,
-        updatedAt: Instant? = null,
-    ): Challenge {
-        return Challenge(
-            id = id ?: this.id,
-            name = name ?: this.name,
-            isPublic = isPublic ?: this.isPublic,
-            invitationCode = invitationCode ?: this.invitationCode,
-            passcode = passcode ?: this.passcode,
-            isComplete = isComplete ?: this.isComplete,
-            startsAt = startsAt ?: this.startsAt,
-            endsAt = endsAt ?: this.endsAt,
-            goal = goal ?: this.goal,
-            milestones = milestones ?: this.milestones,
-            conditions = conditions ?: this.conditions,
-            createdAt = createdAt ?: this.createdAt,
-            updatedAt = updatedAt ?: this.updatedAt
-        )
     }
 
     companion object {

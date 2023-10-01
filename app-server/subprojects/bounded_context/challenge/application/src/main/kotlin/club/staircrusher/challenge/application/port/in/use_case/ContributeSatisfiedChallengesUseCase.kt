@@ -112,7 +112,11 @@ class ContributeSatisfiedChallengesUseCase(
             )
         )
         val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challengeId)
-        challengeRepository.save(challenge.copy(isComplete = challenge.goal <= contributionsCount))
+        challengeRepository.save(
+            challenge.also {
+                it.isComplete = challenge.goal <= contributionsCount
+            }
+        )
         return challengeContribution
     }
 }

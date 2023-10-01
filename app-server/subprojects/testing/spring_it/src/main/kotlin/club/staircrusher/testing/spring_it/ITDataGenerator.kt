@@ -238,11 +238,11 @@ class ITDataGenerator {
             )
         )
         challengeRepository.save(
-            challenge.copy(
-                isComplete = challenge.goal <= challengeContributionRepository.countByChallengeId(
+            challenge.also {
+                it.isComplete = challenge.goal <= challengeContributionRepository.countByChallengeId(
                     challengeId = challenge.id
                 )
-            )
+            }
         )
         return contribution
     }
