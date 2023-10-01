@@ -77,7 +77,6 @@ class AccessibilityController(
                 )
             },
         )
-        handleChallengesWithRegisterAccessibilityResult(userId, registerResult)
         return RegisterAccessibilityPost200Response(
             buildingAccessibility = registerResult.buildingAccessibility?.toDTO(
                 isUpvoted = false,
@@ -96,7 +95,6 @@ class AccessibilityController(
                 it.toDTO(accessibilityRegisterer = registerResult.accessibilityRegisterer)
             },
             registeredUserOrder = registerResult.registrationOrder,
-//            contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
         )
     }
 
@@ -121,6 +119,7 @@ class AccessibilityController(
         return RegisterPlaceAccessibilityPost200Response(
             accessibilityInfo = getAccessibilityResult.toDTO(authentication.details),
             registeredUserOrder = registerResult.registrationOrder,
+            // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
         )
     }
 
@@ -140,6 +139,7 @@ class AccessibilityController(
                 )
             },
         )
+        // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
     }
 
     private fun handleChallengesWithRegisterAccessibilityResult(

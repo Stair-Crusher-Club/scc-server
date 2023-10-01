@@ -136,6 +136,7 @@ class AccessibilityApplicationService(
         val isLastPlaceAccessibilityInBuilding: Boolean,
     )
 
+    @Deprecated("PlaceAccessibilty, BuildingAccessibility 함수가 분리")
     @Suppress("LongMethod", "ComplexMethod")
     fun register(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
