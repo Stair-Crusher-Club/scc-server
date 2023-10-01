@@ -34,7 +34,6 @@ class AccessibilityRankTest : AccessibilityITBase() {
         placeAccessibilityRepository.removeAll()
         buildingAccessibilityUpvoteRepository.removeAll()
         buildingAccessibilityRepository.removeAll()
-        accessibilityRankRepository
 
         repeat(10) {
             val (user, _, _, _) = registerAccessibility()
