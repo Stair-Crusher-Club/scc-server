@@ -7,7 +7,7 @@ import club.staircrusher.place.domain.model.Building
 
 data class RegisterBuildingAccessibilityResult(
     val building: Building,
-    val buildingAccessibility: BuildingAccessibility?,
+    val buildingAccessibility: BuildingAccessibility,
     val buildingAccessibilityComment: BuildingAccessibilityComment?,
     val accessibilityRegisterer: AccessibilityRegisterer?,
 )

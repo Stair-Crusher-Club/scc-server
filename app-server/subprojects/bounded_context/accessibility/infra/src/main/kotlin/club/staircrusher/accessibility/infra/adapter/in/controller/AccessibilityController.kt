@@ -115,25 +115,23 @@ class AccessibilityController(
                 )
             },
         )
-        registerResult.place.let { place ->
-            registerResult.placeAccessibility.let { placeAccessbility ->
-                contributeSatisfiedChallengesUseCase.handle(
-                    userId = userId,
-                    contribution = ContributeSatisfiedChallengesUseCase.Contribution.PlaceAccessibility(
-                        placeAccessibilityId = placeAccessbility.id,
-                        placeAccessibilityAddress = place.address.let {
-                            ChallengeAddress(
-                                siDo = it.siDo,
-                                siGunGu = it.siGunGu,
-                                eupMyeonDong = it.eupMyeonDong,
-                                li = it.li,
-                                roadName = it.roadName
-                            )
-                        }
+        val place = registerResult.place
+        val placeAccessibility = registerResult.placeAccessibility
+        contributeSatisfiedChallengesUseCase.handle(
+            userId = userId,
+            contribution = ContributeSatisfiedChallengesUseCase.Contribution.PlaceAccessibility(
+                placeAccessibilityId = placeAccessibility.id,
+                placeAccessibilityAddress = place.address.let {
+                    ChallengeAddress(
+                        siDo = it.siDo,
+                        siGunGu = it.siGunGu,
+                        eupMyeonDong = it.eupMyeonDong,
+                        li = it.li,
+                        roadName = it.roadName
                     )
-                )
-            }
-        }
+                }
+            )
+        )
         return RegisterPlaceAccessibilityPost200Response(
             accessibilityInfo = getAccessibilityResult.toDTO(authentication.details),
             registeredUserOrder = registerResult.registrationOrder,
@@ -158,24 +156,22 @@ class AccessibilityController(
             },
         )
         // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
-        result.building.let { building ->
-            result.buildingAccessibility?.let { buildingAccessibility ->
-                contributeSatisfiedChallengesUseCase.handle(
-                    userId = userId,
-                    contribution = ContributeSatisfiedChallengesUseCase.Contribution.BuildingAccessibility(
-                        buildingAccessibilityId = buildingAccessibility.id,
-                        buildingAccessibilityAddress = building.address.let {
-                            ChallengeAddress(
-                                siDo = it.siDo,
-                                siGunGu = it.siGunGu,
-                                eupMyeonDong = it.eupMyeonDong,
-                                li = it.li,
-                                roadName = it.roadName
-                            )
-                        }
+        val building = result.building
+        val buildingAccessibility = result.buildingAccessibility
+        contributeSatisfiedChallengesUseCase.handle(
+            userId = userId,
+            contribution = ContributeSatisfiedChallengesUseCase.Contribution.BuildingAccessibility(
+                buildingAccessibilityId = buildingAccessibility.id,
+                buildingAccessibilityAddress = building.address.let {
+                    ChallengeAddress(
+                        siDo = it.siDo,
+                        siGunGu = it.siGunGu,
+                        eupMyeonDong = it.eupMyeonDong,
+                        li = it.li,
+                        roadName = it.roadName
                     )
-                )
-            }
-        }
+                }
+            )
+        )
     }
 }
