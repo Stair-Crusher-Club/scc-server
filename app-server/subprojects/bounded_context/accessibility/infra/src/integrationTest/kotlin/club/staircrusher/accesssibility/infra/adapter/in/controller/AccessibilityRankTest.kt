@@ -1,5 +1,6 @@
 package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
+import club.staircrusher.accessibility.application.port.out.persistence.AccessibilityRankRepository
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
@@ -16,17 +17,24 @@ import kotlin.random.Random
 
 class AccessibilityRankTest : AccessibilityITBase() {
     @Autowired
+    private lateinit var accessibilityRankRepository: AccessibilityRankRepository
+
+    @Autowired
     private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
+
     @Autowired
     private lateinit var buildingAccessibilityRepository: BuildingAccessibilityRepository
+
     @Autowired
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
+        accessibilityRankRepository.removeAll()
         placeAccessibilityRepository.removeAll()
         buildingAccessibilityUpvoteRepository.removeAll()
         buildingAccessibilityRepository.removeAll()
+        accessibilityRankRepository
 
         repeat(10) {
             val (user, _, _, _) = registerAccessibility()
