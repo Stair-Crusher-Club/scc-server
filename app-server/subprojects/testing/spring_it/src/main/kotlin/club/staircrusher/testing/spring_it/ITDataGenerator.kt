@@ -215,7 +215,7 @@ class ITDataGenerator {
         )
     }
 
-    fun contributeChallenge(
+    fun contributeToChallenge(
         user: User,
         challenge: Challenge,
         placeAccessibility: PlaceAccessibility? = null,

@@ -70,7 +70,7 @@ class ContributeSatisfiedChallengesUseCase(
                 } != null
             }
         return@doInTransaction satisfiedChallenges.map {
-            doContributeChallenge(
+            doContributeToChallenge(
                 userId,
                 challengeId = it.id,
                 contribution
@@ -79,7 +79,7 @@ class ContributeSatisfiedChallengesUseCase(
     }
 
     @Suppress("ThrowsCount")
-    private fun doContributeChallenge(
+    private fun doContributeToChallenge(
         userId: String,
         challengeId: String,
         contribution: Contribution

@@ -103,7 +103,7 @@ open class ChallengeITBase : SccSpringITBase() {
         return transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = null)
             val (placeAccessibility, _) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
-            testDataGenerator.contributeChallenge(
+            testDataGenerator.contributeToChallenge(
                 user = user,
                 challenge = challenge,
                 placeAccessibility = placeAccessibility,
