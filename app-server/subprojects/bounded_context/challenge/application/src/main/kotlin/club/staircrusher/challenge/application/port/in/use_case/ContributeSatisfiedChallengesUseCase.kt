@@ -1,9 +1,9 @@
 package club.staircrusher.challenge.application.port.`in`.use_case
 
+import club.staircrusher.challenge.application.port.`in`.ChallengeService
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
-import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.challenge.domain.model.ChallengeContribution
@@ -19,6 +19,7 @@ import java.time.Clock
 class ContributeSatisfiedChallengesUseCase(
     private val transactionManager: TransactionManager,
     private val userRepository: UserRepository,
+    private val challengeService: ChallengeService,
     private val challengeRepository: ChallengeRepository,
     private val challengeContributionRepository: ChallengeContributionRepository,
     private val challengeParticipationRepository: ChallengeParticipationRepository,
@@ -50,11 +51,7 @@ class ContributeSatisfiedChallengesUseCase(
         userId: String,
         contribution: Contribution
     ): List<ChallengeContribution> = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val myInProgressChallenges = challengeRepository.joinedChallenges(
-            userId = userId,
-            startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
-            endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
-        )
+        val myInProgressChallenges = challengeService.getMyInProgressChallenges(userId)
         val satisfiedChallenges = myInProgressChallenges
             .filter { ch ->
                 ch.conditions.firstOrNull { cond ->

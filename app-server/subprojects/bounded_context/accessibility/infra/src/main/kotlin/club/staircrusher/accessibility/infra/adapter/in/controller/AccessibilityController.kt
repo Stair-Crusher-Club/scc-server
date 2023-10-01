@@ -115,39 +115,8 @@ class AccessibilityController(
                 )
             },
         )
-
-        return RegisterPlaceAccessibilityPost200Response(
-            accessibilityInfo = getAccessibilityResult.toDTO(authentication.details),
-            registeredUserOrder = registerResult.registrationOrder,
-            // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
-        )
-    }
-
-    @PostMapping("/registerBuildingAccessibility")
-    fun registerBuildingAccessibility(
-        @RequestBody request: RegisterBuildingAccessibilityRequestDto,
-        authentication: SccAppAuthentication,
-    ) {
-        val userId = authentication.principal
-        registerBuildingAccessibilityUseCase.handle(
-            createBuildingAccessibilityParams = request.toModel(userId = userId),
-            createBuildingAccessibilityCommentParams = request.comment?.let {
-                BuildingAccessibilityCommentRepository.CreateParams(
-                    buildingId = request.buildingId,
-                    userId = userId,
-                    comment = it,
-                )
-            },
-        )
-        // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
-    }
-
-    private fun handleChallengesWithRegisterAccessibilityResult(
-        userId: String,
-        result: AccessibilityApplicationService.RegisterAccessibilityResult
-    ) {
-        result.place?.let { place ->
-            result.placeAccessibility.let { placeAccessbility ->
+        registerResult.place.let { place ->
+            registerResult.placeAccessibility.let { placeAccessbility ->
                 contributeSatisfiedChallengesUseCase.handle(
                     userId = userId,
                     contribution = ContributeSatisfiedChallengesUseCase.Contribution.PlaceAccessibility(
@@ -165,7 +134,31 @@ class AccessibilityController(
                 )
             }
         }
-        result.building?.let { building ->
+        return RegisterPlaceAccessibilityPost200Response(
+            accessibilityInfo = getAccessibilityResult.toDTO(authentication.details),
+            registeredUserOrder = registerResult.registrationOrder,
+            // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
+        )
+    }
+
+    @PostMapping("/registerBuildingAccessibility")
+    fun registerBuildingAccessibility(
+        @RequestBody request: RegisterBuildingAccessibilityRequestDto,
+        authentication: SccAppAuthentication,
+    ) {
+        val userId = authentication.principal
+        val result = registerBuildingAccessibilityUseCase.handle(
+            createBuildingAccessibilityParams = request.toModel(userId = userId),
+            createBuildingAccessibilityCommentParams = request.comment?.let {
+                BuildingAccessibilityCommentRepository.CreateParams(
+                    buildingId = request.buildingId,
+                    userId = userId,
+                    comment = it,
+                )
+            },
+        )
+        // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
+        result.building.let { building ->
             result.buildingAccessibility?.let { buildingAccessibility ->
                 contributeSatisfiedChallengesUseCase.handle(
                     userId = userId,

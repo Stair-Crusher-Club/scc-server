@@ -232,7 +232,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
         transactionManager.doInTransaction { testDataGenerator.participateChallenge(user, challenge, clock.instant()) }
         mvc
             .sccRequest(
-                "/registerAccessibility",
+                "/registerPlaceAccessibility",
                 getDefaultRequestParamsWithoutBuildingAccessibility(place),
                 user = user
             )
@@ -309,7 +309,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
         }
         mvc
             .sccRequest(
-                "/registerAccessibility",
+                "/registerPlaceAccessibility",
                 getDefaultRequestParamsWithoutBuildingAccessibility(place),
                 user = user
             )
@@ -354,7 +354,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
         }
         mvc
             .sccRequest(
-                "/registerAccessibility",
+                "/registerPlaceAccessibility",
                 getDefaultRequestParamsWithoutBuildingAccessibility(place),
                 user = user
             )
