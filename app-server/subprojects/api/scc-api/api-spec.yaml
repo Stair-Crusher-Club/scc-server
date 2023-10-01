@@ -185,7 +185,23 @@ paths:
                     - expireAt
   /getChallenge:
     post:
-      summary: 챌린지 리스트에서 공개된 챌린지를 선택하거나 초대코드를 통해 챌린지를 조회한다.
+      summary: 챌린지 리스트에서 공개된 챌린지를 선택해서 챌린지를 조회한다.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetChallengeRequestDto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetChallengeResponseDto'
+
+  /getChallengeWithInvitationCode:
+    post:
+      summary: 공개되지 않은 챌린지를 초대코드를 통해 챌린지를 조회한다.
       requestBody:
         content:
           application/json:
@@ -943,9 +959,8 @@ components:
       properties:
         challengeId:
           type: string
-        invitationCode:
-          type: string
-          description: 공개되어있지 않은, 초대코드로만 볼 수 있는 챌린지
+      required:
+        - challengeId
 
     GetChallengeResponseDto:
       type: object
@@ -968,6 +983,16 @@ components:
         - challenge
         - ranks
         - hasJoined
+        - hasPasscode
+
+    GetChallengeWithInvitationCodeRequestDto:
+      type: object
+      properties:
+        invitationCode:
+          type: string
+          description: 공개되어있지 않은, 초대코드로만 볼 수 있는 챌린지
+      required:
+        - invitationCode
 
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object

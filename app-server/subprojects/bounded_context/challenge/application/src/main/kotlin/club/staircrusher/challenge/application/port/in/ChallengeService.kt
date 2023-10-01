@@ -25,13 +25,6 @@ class ChallengeService(
         data class Without(val userId: String) : MyChallengeOption()
     }
 
-    data class GetChallengeResult(
-        val challenge: Challenge,
-        val contributionsCount: Int,
-        val participationsCount: Int,
-        val hasJoined: Boolean
-    )
-
     fun getInProgressChallenges(option: MyChallengeOption? = null): List<Challenge> {
         return transactionManager.doInTransaction {
             return@doInTransaction when (option) {
@@ -71,39 +64,6 @@ class ChallengeService(
             return@doInTransaction challengeRepository.findByTime(
                 startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
                 endsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
-            )
-        }
-    }
-
-    fun getChallenge(
-        userId: String?,
-        challengeId: String?,
-        invitationCode: String?
-    ): GetChallengeResult {
-        if (challengeId == null && invitationCode == null)
-            throw SccDomainException(
-                msg = "챌린지 초대코드나 ID 가 필요합니다.",
-                errorCode = SccDomainException.ErrorCode.INVALID_ARGUMENTS
-            )
-
-        return transactionManager.doInTransaction {
-            val challenge = challengeId?.let { challengeRepository.findById(id = it) }
-                ?: invitationCode?.let { challengeRepository.findByInvitationCode(it) }
-                ?: throw SccDomainException(
-                    msg = "해당 챌린지가 없습니다.",
-                    errorCode = SccDomainException.ErrorCode.INVALID_ARGUMENTS
-                )
-            val participationsCount =
-                challengeParticipationRepository.userCountByChallengeId(challengeId = challenge.id)
-            val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
-            return@doInTransaction GetChallengeResult(
-                challenge = challenge,
-                contributionsCount = contributionsCount.toInt(),
-                participationsCount = participationsCount.toInt(),
-                hasJoined = userId?.let {
-                    challengeParticipationRepository
-                        .findByChallengeIdAndUserId(userId = it, challengeId = challenge.id)
-                } != null
             )
         }
     }

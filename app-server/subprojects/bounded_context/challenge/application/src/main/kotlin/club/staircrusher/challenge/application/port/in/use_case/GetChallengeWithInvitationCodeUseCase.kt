@@ -5,10 +5,11 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengePar
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionManager
 
 @Component
-class GetChallengeUseCase(
+class GetChallengeWithInvitationCodeUseCase(
     private val transactionManager: TransactionManager,
     private val challengeRepository: ChallengeRepository,
     private val challengeContributionRepository: ChallengeContributionRepository,
@@ -21,20 +22,21 @@ class GetChallengeUseCase(
         val hasJoined: Boolean
     )
 
-    fun handle(userId: String? = null, challengeId: String): GetChallengeResult = transactionManager.doInTransaction {
-        val challenge = challengeRepository.findById(challengeId)
+    fun handle(userId: String, invitationCode: String): GetChallengeResult = transactionManager.doInTransaction {
+        val challenge = challengeRepository.findByInvitationCode(invitationCode) ?: throw SccDomainException(
+            "참여코드가 잘못됐습니다.",
+            errorCode = SccDomainException.ErrorCode.INVALID_ARGUMENTS
+        )
         val participationsCount = challengeParticipationRepository.userCountByChallengeId(challengeId = challenge.id)
         val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
         return@doInTransaction GetChallengeResult(
             challenge = challenge,
             contributionsCount = contributionsCount.toInt(),
             participationsCount = participationsCount.toInt(),
-            hasJoined = userId?.let {
-                challengeParticipationRepository.findByChallengeIdAndUserId(
-                    userId = userId,
-                    challengeId = challenge.id
-                )
-            } != null
+            hasJoined = challengeParticipationRepository.findByChallengeIdAndUserId(
+                userId = userId,
+                challengeId = challenge.id
+            ) != null
         )
     }
 }
