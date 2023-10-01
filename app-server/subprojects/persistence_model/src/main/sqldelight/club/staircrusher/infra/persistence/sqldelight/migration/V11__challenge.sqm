@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS challenge (
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX idx_challenge_invitation_code ON challenge(invitation_code);
 
 CREATE TABLE IF NOT EXISTS challenge_participation (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
