@@ -316,6 +316,27 @@ paths:
             대신 Header의 X-SCC-ACCESS-KEY에 access token을 내려준다. (회원가입하면 자동 로그인)
             클라이언트는 이 토큰을 Bearer auth의 토큰으로 사용하면 된다.
 
+  /loginWithApple:
+    post:
+      summary: 애플 로그인을 통해 로그인 or 회원가입을 한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginWithAppleRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultDto'
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+          description: |-
+            에러 코드 설명
+            - INVALID_AUTHENTICATION : 클라이언트에서 올려준 토큰 중 일부가 잘못된 경우.
+
   /loginWithKakao:
     post:
       summary: 카카오 로그인을 통해 로그인 or 회원가입을 한다.
@@ -864,6 +885,17 @@ components:
       required:
         - authTokens
         - user
+
+    LoginWithAppleRequestDto:
+      type: object
+      properties:
+        identityToken:
+          type: string
+        authorizationCode:
+          type: string
+      required:
+        - identityToken
+        - authorizationCode
 
     Place:
       description: 점포 정보.
