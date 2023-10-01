@@ -3,6 +3,7 @@ package club.staircrusher.challenge.infra.adapter.`in`.controller.base
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
+import club.staircrusher.place.domain.model.Place
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.user.domain.model.User
 import org.springframework.beans.factory.annotation.Autowired
@@ -98,10 +99,11 @@ open class ChallengeITBase : SccSpringITBase() {
     fun contributePlaceAccessibility(
         user: User,
         challenge: Challenge,
+        overridingPlace: Place? = null,
         contributeAt: Instant = clock.instant()
     ): ChallengeContribution {
         return transactionManager.doInTransaction {
-            val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = null)
+            val place = overridingPlace ?: testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = null)
             val (placeAccessibility, _) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
             testDataGenerator.contributeToChallenge(
                 user = user,
