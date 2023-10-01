@@ -16,8 +16,6 @@ import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
-import club.staircrusher.challenge.application.port.`in`.use_case.ContributeSatisfiedChallengesUseCase
-import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,7 +27,6 @@ class AccessibilityController(
     private val getImageUploadUrlsUseCase: GetImageUploadUrlsUseCase,
     private val registerPlaceAccessibilityUseCase: RegisterPlaceAccessibilityUseCase,
     private val registerBuildingAccessibilityUseCase: RegisterBuildingAccessibilityUseCase,
-    private val contributeSatisfiedChallengesUseCase: ContributeSatisfiedChallengesUseCase
 ) {
     @PostMapping("/getAccessibility")
     fun getAccessibility(
@@ -115,23 +112,6 @@ class AccessibilityController(
                 )
             },
         )
-        val place = registerResult.place
-        val placeAccessibility = registerResult.placeAccessibility
-        contributeSatisfiedChallengesUseCase.handle(
-            userId = userId,
-            contribution = ContributeSatisfiedChallengesUseCase.Contribution.PlaceAccessibility(
-                placeAccessibilityId = placeAccessibility.id,
-                placeAccessibilityAddress = place.address.let {
-                    ChallengeAddress(
-                        siDo = it.siDo,
-                        siGunGu = it.siGunGu,
-                        eupMyeonDong = it.eupMyeonDong,
-                        li = it.li,
-                        roadName = it.roadName
-                    )
-                }
-            )
-        )
         return RegisterPlaceAccessibilityPost200Response(
             accessibilityInfo = getAccessibilityResult.toDTO(authentication.details),
             registeredUserOrder = registerResult.registrationOrder,
@@ -145,7 +125,8 @@ class AccessibilityController(
         authentication: SccAppAuthentication,
     ) {
         val userId = authentication.principal
-        val result = registerBuildingAccessibilityUseCase.handle(
+        registerBuildingAccessibilityUseCase.handle(
+            userId = userId,
             createBuildingAccessibilityParams = request.toModel(userId = userId),
             createBuildingAccessibilityCommentParams = request.comment?.let {
                 BuildingAccessibilityCommentRepository.CreateParams(
@@ -156,22 +137,5 @@ class AccessibilityController(
             },
         )
         // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
-        val building = result.building
-        val buildingAccessibility = result.buildingAccessibility
-        contributeSatisfiedChallengesUseCase.handle(
-            userId = userId,
-            contribution = ContributeSatisfiedChallengesUseCase.Contribution.BuildingAccessibility(
-                buildingAccessibilityId = buildingAccessibility.id,
-                buildingAccessibilityAddress = building.address.let {
-                    ChallengeAddress(
-                        siDo = it.siDo,
-                        siGunGu = it.siGunGu,
-                        eupMyeonDong = it.eupMyeonDong,
-                        li = it.li,
-                        roadName = it.roadName
-                    )
-                }
-            )
-        )
     }
 }
