@@ -97,7 +97,7 @@ class ChallengeService(
                 try {
                     doContributeToChallenge(
                         userId,
-                        challengeId = it.id,
+                        challenge = it,
                         contribution
                     )
                 } catch (t: Throwable) {
@@ -109,13 +109,11 @@ class ChallengeService(
     @Suppress("ThrowsCount")
     private fun doContributeToChallenge(
         userId: String,
-        challengeId: String,
+        challenge: Challenge,
         contribution: Contribution
     ): ChallengeContribution {
         userRepository.findByIdOrNull(id = userId) ?: throw SccDomainException("해당 유저가 존재하지 않습니다.")
-        val challenge =
-            challengeRepository.findByIdOrNull(id = challengeId) ?: throw SccDomainException("해당 챌린지가 존재하지 않습니다.")
-        challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challengeId)
+        challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challenge.id)
             ?: throw SccDomainException("챌린지에 참여 중이 아닙니다.")
         if (clock.instant() < challenge.startsAt) {
             throw SccDomainException(
@@ -130,7 +128,7 @@ class ChallengeService(
             ChallengeContribution(
                 id = EntityIdGenerator.generateRandom(),
                 userId = userId,
-                challengeId = challengeId,
+                challengeId = challenge.id,
                 placeAccessibilityId = (contribution as? Contribution.PlaceAccessibility)?.placeAccessibilityId,
                 placeAccessibilityCommentId = (contribution as? Contribution.PlaceAccessibilityComment)?.placeAccessibilityCommentId,
                 buildingAccessibilityId = (contribution as? Contribution.BuildingAccessibility)?.buildingAccessibilityId,
@@ -139,7 +137,7 @@ class ChallengeService(
                 updatedAt = clock.instant()
             )
         )
-        val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challengeId)
+        val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
         challengeRepository.save(
             challenge.also {
                 it.isComplete = challenge.goal <= contributionsCount
