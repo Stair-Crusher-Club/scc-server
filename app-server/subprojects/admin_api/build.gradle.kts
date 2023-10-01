@@ -11,6 +11,7 @@ dependencies {
 
 tasks.getByName("openApiGenerate") {
     inputs.file("${project.rootDir}/../api-admin/api-spec.yaml")
+    outputs.dir("${buildDir.path}/generated-api")
 }
 
 tasks.getByName("compileKotlin") {
