@@ -50,7 +50,11 @@ fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Ch
     updated_at = updatedAt.toOffsetDateTime()
 )
 
-fun club.staircrusher.challenge.domain.model.Challenge.toDto(criteriaTime: Instant) = ChallengeDto(
+fun club.staircrusher.challenge.domain.model.Challenge.toDto(
+    participationCount: Int,
+    contributionCount: Int,
+    criteriaTime: Instant
+) = ChallengeDto(
     id = id,
     name = name,
     status = this.toStatus(criteriaTime),
@@ -61,7 +65,8 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(criteriaTime: Insta
     goal = goal,
     milestones = milestones,
     conditions = conditions.map { it.toDto() },
-    createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
+    participationsCount = participationCount,
+    contributionsCount = contributionCount
 )
 
 fun club.staircrusher.challenge.domain.model.Challenge.toStatus(criteriaTime: Instant): ChallengeStatusDto = when {
@@ -83,7 +88,7 @@ fun Challenge_contribution.toDomainModel() = ChallengeContribution(
 )
 
 fun ChallengeContribution.toPersistenceModel() = Challenge_contribution(
-    id = "",
+    id = id,
     user_id = userId,
     challenge_id = challengeId,
     place_accessibility_id = placeAccessibilityId,

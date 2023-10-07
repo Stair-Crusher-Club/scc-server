@@ -38,6 +38,12 @@ class ChallengeRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findByInvitationCode(invitationCode: String): Challenge? {
+        return queries.findByInvitationCode(invitationCode)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
     override fun findByTime(startsAtRange: ClosedRange<Instant>, endsAtRange: ClosedRange<Instant>): List<Challenge> {
         return queries.findByTime(
             startRangeOfStartsAt = startsAtRange.start.toOffsetDateTime(),
@@ -49,7 +55,11 @@ class ChallengeRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun joinedChallenges(userId: String, startsAtRange: ClosedRange<Instant>, endsAtRange: ClosedRange<Instant>): List<Challenge> {
+    override fun joinedChallenges(
+        userId: String,
+        startsAtRange: ClosedRange<Instant>,
+        endsAtRange: ClosedRange<Instant>
+    ): List<Challenge> {
         return queries.joinedChallenges(
             userId = userId,
             startRangeOfStartsAt = startsAtRange.start.toOffsetDateTime(),
@@ -61,7 +71,11 @@ class ChallengeRepository(
             .map { it.toChallenge() }
     }
 
-    override fun notJoinedChallenges(userId: String, startsAtRange: ClosedRange<Instant>, endsAtRange: ClosedRange<Instant>): List<Challenge> {
+    override fun notJoinedChallenges(
+        userId: String,
+        startsAtRange: ClosedRange<Instant>,
+        endsAtRange: ClosedRange<Instant>
+    ): List<Challenge> {
         return queries.notJoinedChallenges(
             userId = userId,
             startRangeOfStartsAt = startsAtRange.start.toOffsetDateTime(),

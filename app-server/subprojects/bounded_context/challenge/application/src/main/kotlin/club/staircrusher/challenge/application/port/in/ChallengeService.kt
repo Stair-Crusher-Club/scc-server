@@ -1,5 +1,6 @@
 package club.staircrusher.challenge.application.port.`in`
 
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
@@ -17,6 +18,7 @@ import java.time.Instant
 class ChallengeService(
     private val transactionManager: TransactionManager,
     private val challengeRepository: ChallengeRepository,
+    private val challengeContributionRepository: ChallengeContributionRepository,
     private val challengeParticipationRepository: ChallengeParticipationRepository,
     private val clock: Clock,
 ) {
@@ -30,6 +32,13 @@ class ChallengeService(
         data class Only(val userId: String) : MyChallengeOption()
         data class Without(val userId: String) : MyChallengeOption()
     }
+
+    data class GetChallengeResult(
+        val challenge: Challenge,
+        val contributionsCount: Int,
+        val participationsCount: Int,
+        val hasJoined: Boolean
+    )
 
     fun getInProgressChallenges(option: MyChallengeOption? = null): List<Challenge> {
         return transactionManager.doInTransaction {
@@ -70,6 +79,39 @@ class ChallengeService(
             return@doInTransaction challengeRepository.findByTime(
                 startsAtRange = MIN.rangeTo(clock.instant()),
                 endsAtRange = MIN.rangeTo(clock.instant()),
+            )
+        }
+    }
+
+    fun getChallenge(
+        userId: String?,
+        challengeId: String?,
+        invitationCode: String?
+    ): GetChallengeResult {
+        if (challengeId == null && invitationCode == null)
+            throw SccDomainException(
+                msg = "챌린지 초대코드나 ID 가 필요합니다.",
+                errorCode = SccDomainException.ErrorCode.INVALID_ARGUMENTS
+            )
+
+        return transactionManager.doInTransaction {
+            val challenge = challengeId?.let { challengeRepository.findById(id = it) }
+                ?: invitationCode?.let { challengeRepository.findByInvitationCode(it) }
+                ?: throw SccDomainException(
+                    msg = "해당 챌린지가 없습니다.",
+                    errorCode = SccDomainException.ErrorCode.INVALID_ARGUMENTS
+                )
+            val participationsCount =
+                challengeParticipationRepository.userCountByChallengeId(challengeId = challenge.id)
+            val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
+            return@doInTransaction GetChallengeResult(
+                challenge = challenge,
+                contributionsCount = contributionsCount.toInt(),
+                participationsCount = participationsCount.toInt(),
+                hasJoined = userId?.let {
+                    challengeParticipationRepository
+                        .findByChallengeIdAndUserId(userId = it, challengeId = challenge.id)
+                } != null
             )
         }
     }

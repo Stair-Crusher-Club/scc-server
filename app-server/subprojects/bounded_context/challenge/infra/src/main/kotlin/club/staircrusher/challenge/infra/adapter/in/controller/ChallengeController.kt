@@ -1,6 +1,6 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller
 
-import club.staircrusher.api.spec.dto.ChallengeDto
+import club.staircrusher.api.spec.dto.ChallengeRankDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.GetChallengeRequestDto
 import club.staircrusher.api.spec.dto.GetChallengeResponseDto
@@ -28,22 +28,21 @@ class ChallengeController(
         @RequestBody request: GetChallengeRequestDto,
         authentication: SccAppAuthentication?,
     ): GetChallengeResponseDto {
+        val result = challengeService.getChallenge(
+            userId = authentication?.principal,
+            challengeId = request.challengeId,
+            invitationCode = request.invitationCode
+        )
         return GetChallengeResponseDto(
-            challenge = ChallengeDto(
-                id = null,
-                name = null,
-                isPublic = null,
-                isComplete = null,
-                startsAt = null,
-                endsAt = null,
-                goal = 1000,
-                milestones = listOf(),
-                conditions = listOf(),
-                createdAt = null
+            challenge = result.challenge.toDto(
+                participationCount = result.participationsCount,
+                contributionCount = result.contributionsCount,
+                criteriaTime = clock.instant()
             ),
             ranks = listOf(),
-            hasJoined = false,
-            myRank = null
+            hasJoined = result.hasJoined,
+            // TODO: rank 기능 추가 시 수정 필요
+            myRank = if (result.hasJoined) ChallengeRankDto(rank = 0, contributionCount = 0, nickname = "") else null
         )
     }
 
@@ -59,7 +58,11 @@ class ChallengeController(
             passcode = request.passcode
         )
         return JoinChallengeResponseDto(
-            challenge = joinedChallenge.toDto(criteriaTime = clock.instant()),
+            challenge = joinedChallenge.toDto(
+                participationCount = 0,
+                contributionCount = 0,
+                criteriaTime = clock.instant()
+            ),
             ranks = listOf()
         )
     }
