@@ -77,7 +77,6 @@ class AccessibilityController(
                 )
             },
         )
-        handleChallengesWithRegisterAccessibilityResult(userId, registerResult)
         return RegisterAccessibilityPost200Response(
             buildingAccessibility = registerResult.buildingAccessibility?.toDTO(
                 isUpvoted = false,
@@ -141,49 +140,5 @@ class AccessibilityController(
             },
         )
         // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
-    }
-
-    private fun handleChallengesWithRegisterAccessibilityResult(
-        userId: String,
-        result: AccessibilityApplicationService.RegisterAccessibilityResult
-    ) {
-        result.place?.let { place ->
-            result.placeAccessibility.let { placeAccessbility ->
-                contributeSatisfiedChallengesUseCase.handle(
-                    userId = userId,
-                    contribution = ContributeSatisfiedChallengesUseCase.Contribution.PlaceAccessibility(
-                        placeAccessibilityId = placeAccessbility.id,
-                        placeAccessibilityAddress = place.address.let {
-                            ChallengeAddress(
-                                siDo = it.siDo,
-                                siGunGu = it.siGunGu,
-                                eupMyeonDong = it.eupMyeonDong,
-                                li = it.li,
-                                roadName = it.roadName
-                            )
-                        }
-                    )
-                )
-            }
-        }
-        result.building?.let { building ->
-            result.buildingAccessibility?.let { buildingAccessibility ->
-                contributeSatisfiedChallengesUseCase.handle(
-                    userId = userId,
-                    contribution = ContributeSatisfiedChallengesUseCase.Contribution.BuildingAccessibility(
-                        buildingAccessibilityId = buildingAccessibility.id,
-                        buildingAccessibilityAddress = building.address.let {
-                            ChallengeAddress(
-                                siDo = it.siDo,
-                                siGunGu = it.siGunGu,
-                                eupMyeonDong = it.eupMyeonDong,
-                                li = it.li,
-                                roadName = it.roadName
-                            )
-                        }
-                    )
-                )
-            }
-        }
     }
 }
