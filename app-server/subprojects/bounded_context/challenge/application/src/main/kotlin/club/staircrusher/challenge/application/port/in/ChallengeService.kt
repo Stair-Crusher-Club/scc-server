@@ -25,6 +25,13 @@ class ChallengeService(
         data class Without(val userId: String) : MyChallengeOption()
     }
 
+    data class GetChallengeResult(
+        val challenge: Challenge,
+        val contributionsCount: Int,
+        val participationsCount: Int,
+        val hasJoined: Boolean
+    )
+
     fun getInProgressChallenges(option: MyChallengeOption? = null): List<Challenge> {
         return transactionManager.doInTransaction {
             return@doInTransaction when (option) {
