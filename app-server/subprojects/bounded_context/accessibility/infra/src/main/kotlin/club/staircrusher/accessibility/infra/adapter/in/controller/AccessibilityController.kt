@@ -16,8 +16,6 @@ import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
-import club.staircrusher.challenge.application.port.`in`.use_case.ContributeSatisfiedChallengesUseCase
-import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,7 +27,6 @@ class AccessibilityController(
     private val getImageUploadUrlsUseCase: GetImageUploadUrlsUseCase,
     private val registerPlaceAccessibilityUseCase: RegisterPlaceAccessibilityUseCase,
     private val registerBuildingAccessibilityUseCase: RegisterBuildingAccessibilityUseCase,
-    private val contributeSatisfiedChallengesUseCase: ContributeSatisfiedChallengesUseCase
 ) {
     @PostMapping("/getAccessibility")
     fun getAccessibility(
