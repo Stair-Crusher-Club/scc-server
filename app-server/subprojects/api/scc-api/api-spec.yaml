@@ -844,25 +844,6 @@ components:
         - buildingAccessibilityId
       type: object
 
-    ChallengeConditionAccessibilityTypeDto:
-      type: string
-      enum:
-        - UNKNOWN
-        - BUILDING
-        - PLACE
-
-    ChallengeConditionDto:
-      type: object
-      properties:
-        addressMatches:
-          type: array
-          items:
-            type: string
-        accessibilityTypes:
-          type: array
-          items:
-            $ref: '#/components/schemas/ChallengeConditionAccessibilityTypeDto'
-
     ChallengeDto:
       type: object
       properties:
@@ -894,10 +875,6 @@ components:
         contributionsCount:
           type: integer
           format: int32
-        conditions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ChallengeConditionDto'
       required:
         - id
         - name

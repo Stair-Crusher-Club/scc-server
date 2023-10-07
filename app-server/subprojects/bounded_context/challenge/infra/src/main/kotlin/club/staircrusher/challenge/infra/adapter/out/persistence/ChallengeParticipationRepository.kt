@@ -7,6 +7,7 @@ import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toPe
 import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.stdlib.di.annotation.Component
 
+@Suppress("TooManyFunctions")
 @Component
 class ChallengeParticipationRepository(
     val db: DB

@@ -7,11 +7,13 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeCon
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
+import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 
 class ListChallengesTest : ChallengeITBase() {
     @Autowired
@@ -22,6 +24,9 @@ class ListChallengesTest : ChallengeITBase() {
 
     @Autowired
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
+
+    @Autowired
+    private lateinit var clock: MockSccClock
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
@@ -185,6 +190,7 @@ class ListChallengesTest : ChallengeITBase() {
             user = user,
             challenge = challengeRepository.findById(lastChallengeBeforeParticipation.id),
         )
+        clock.advanceTime(Duration.ofMinutes(1))
         participate(
             user = user,
             challenge = challengeRepository.findById(firstChallengeBeforeParticipation.id),
@@ -207,12 +213,12 @@ class ListChallengesTest : ChallengeITBase() {
             .items
         val firstChallenge = challengesAfterParticipation.getOrNull(0)
         assertTrue(firstChallenge != null)
-        assertTrue(firstChallenge?.id == lastChallengeBeforeParticipation.id)
+        assertTrue(firstChallenge?.id == firstChallengeBeforeParticipation.id)
         assertTrue(firstChallenge?.status == ChallengeStatusDto.inProgress)
         assertTrue(firstChallenge?.hasJoined == true)
         val secondChallenge = challengesAfterParticipation.getOrNull(1)
         assertTrue(secondChallenge != null)
-        assertTrue(secondChallenge?.id == firstChallengeBeforeParticipation.id)
+        assertTrue(secondChallenge?.id == lastChallengeBeforeParticipation.id)
         assertTrue(secondChallenge?.status == ChallengeStatusDto.inProgress)
         assertTrue(secondChallenge?.hasJoined == true)
         val thirdChallenge = challengesAfterParticipation.getOrNull(2)

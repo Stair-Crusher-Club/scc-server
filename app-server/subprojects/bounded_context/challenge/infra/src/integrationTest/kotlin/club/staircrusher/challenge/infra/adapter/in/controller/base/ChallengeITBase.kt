@@ -51,12 +51,7 @@ open class ChallengeITBase : SccSpringITBase() {
                 startsAt = clock.instant().minus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
                 endsAt = if (isInfiniteChallenge) null
                 else clock.instant().plus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
-                conditions = listOf(
-                    ChallengeCondition(
-                        addressMatches = listOf(),
-                        accessibilityTypes = listOf()
-                    )
-                )
+                conditions = listOf()
             )
         }
     }
@@ -71,12 +66,7 @@ open class ChallengeITBase : SccSpringITBase() {
                 startsAt = startsAt,
                 endsAt = startsAt
                     .plus(Duration.ofHours(Random.nextLong(1L until 360L))),
-                conditions = listOf(
-                    ChallengeCondition(
-                        addressMatches = listOf(),
-                        accessibilityTypes = listOf()
-                    )
-                )
+                conditions = listOf()
             )
         }
     }
@@ -91,12 +81,7 @@ open class ChallengeITBase : SccSpringITBase() {
                 startsAt = endsAt
                     .minus(Duration.ofHours(Random.nextLong(1L until 360L))),
                 endsAt = endsAt,
-                conditions = listOf(
-                    ChallengeCondition(
-                        addressMatches = listOf(),
-                        accessibilityTypes = listOf()
-                    )
-                )
+                conditions = listOf()
             )
         }
     }
@@ -123,24 +108,6 @@ open class ChallengeITBase : SccSpringITBase() {
                 user = user,
                 challenge = challenge,
                 placeAccessibility = placeAccessibility,
-                contributeAt = contributeAt
-            )
-        }
-    }
-
-    fun contributePlaceAccessibilityComment(
-        user: User,
-        challenge: Challenge,
-        contributeAt: Instant = clock.instant()
-    ): ChallengeContribution {
-        return transactionManager.doInTransaction {
-            val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = null)
-            val (placeAccessibility, _) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
-            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
-            testDataGenerator.contributeChallenge(
-                user = user,
-                challenge = challenge,
-                placeAccessibilityComment = placeAccessibilityComment,
                 contributeAt = contributeAt
             )
         }

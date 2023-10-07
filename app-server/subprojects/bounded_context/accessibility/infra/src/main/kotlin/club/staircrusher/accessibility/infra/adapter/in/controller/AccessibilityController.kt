@@ -16,6 +16,8 @@ import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
+import club.staircrusher.challenge.application.port.`in`.use_case.ContributeSatisfiedChallengesUseCase
+import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,6 +29,7 @@ class AccessibilityController(
     private val getImageUploadUrlsUseCase: GetImageUploadUrlsUseCase,
     private val registerPlaceAccessibilityUseCase: RegisterPlaceAccessibilityUseCase,
     private val registerBuildingAccessibilityUseCase: RegisterBuildingAccessibilityUseCase,
+    private val contributeSatisfiedChallengesUseCase: ContributeSatisfiedChallengesUseCase
 ) {
     @PostMapping("/getAccessibility")
     fun getAccessibility(
@@ -56,7 +59,7 @@ class AccessibilityController(
         authentication: SccAppAuthentication,
     ): RegisterAccessibilityPost200Response {
         val userId = authentication.principal
-        val result = accessibilityApplicationService.register(
+        val registerResult = accessibilityApplicationService.register(
             createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = userId),
             createBuildingAccessibilityCommentParams = request.buildingAccessibilityParams?.comment?.let {
                 BuildingAccessibilityCommentRepository.CreateParams(
@@ -74,24 +77,25 @@ class AccessibilityController(
                 )
             },
         )
+        handleChallengesWithRegisterAccessibilityResult(userId, registerResult)
         return RegisterAccessibilityPost200Response(
-            buildingAccessibility = result.buildingAccessibility?.toDTO(
+            buildingAccessibility = registerResult.buildingAccessibility?.toDTO(
                 isUpvoted = false,
                 totalUpvoteCount = 0,
-                registeredUserName = result.accessibilityRegisterer?.nickname,
+                registeredUserName = registerResult.accessibilityRegisterer?.nickname,
             ),
-            buildingAccessibilityComments = listOfNotNull(result.buildingAccessibilityComment).map {
-                it.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
+            buildingAccessibilityComments = listOfNotNull(registerResult.buildingAccessibilityComment).map {
+                it.toDTO(accessibilityRegisterer = registerResult.accessibilityRegisterer)
             },
-            placeAccessibility = result.placeAccessibility.toDTO(
-                registeredAccessibilityRegisterer = result.accessibilityRegisterer,
+            placeAccessibility = registerResult.placeAccessibility.toDTO(
+                registeredAccessibilityRegisterer = registerResult.accessibilityRegisterer,
                 authUser = authentication.details,
-                isLastInBuilding = result.isLastPlaceAccessibilityInBuilding,
+                isLastInBuilding = registerResult.isLastPlaceAccessibilityInBuilding,
             ),
-            placeAccessibilityComments = listOfNotNull(result.placeAccessibilityComment).map {
-                it.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
+            placeAccessibilityComments = listOfNotNull(registerResult.placeAccessibilityComment).map {
+                it.toDTO(accessibilityRegisterer = registerResult.accessibilityRegisterer)
             },
-            registeredUserOrder = result.registrationOrder,
+            registeredUserOrder = registerResult.registrationOrder,
 //            contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
         )
     }
@@ -136,5 +140,49 @@ class AccessibilityController(
                 )
             },
         )
+    }
+
+    private fun handleChallengesWithRegisterAccessibilityResult(
+        userId: String,
+        result: AccessibilityApplicationService.RegisterAccessibilityResult
+    ) {
+        result.place?.let { place ->
+            result.placeAccessibility.let { placeAccessbility ->
+                contributeSatisfiedChallengesUseCase.handle(
+                    userId = userId,
+                    contribution = ContributeSatisfiedChallengesUseCase.Contribution.PlaceAccessibility(
+                        placeAccessibilityId = placeAccessbility.id,
+                        placeAccessibilityAddress = place.address.let {
+                            ChallengeAddress(
+                                siDo = it.siDo,
+                                siGunGu = it.siGunGu,
+                                eupMyeonDong = it.eupMyeonDong,
+                                li = it.li,
+                                roadName = it.roadName
+                            )
+                        }
+                    )
+                )
+            }
+        }
+        result.building?.let { building ->
+            result.buildingAccessibility?.let { buildingAccessibility ->
+                contributeSatisfiedChallengesUseCase.handle(
+                    userId = userId,
+                    contribution = ContributeSatisfiedChallengesUseCase.Contribution.BuildingAccessibility(
+                        buildingAccessibilityId = buildingAccessibility.id,
+                        buildingAccessibilityAddress = building.address.let {
+                            ChallengeAddress(
+                                siDo = it.siDo,
+                                siGunGu = it.siGunGu,
+                                eupMyeonDong = it.eupMyeonDong,
+                                li = it.li,
+                                roadName = it.roadName
+                            )
+                        }
+                    )
+                )
+            }
+        }
     }
 }

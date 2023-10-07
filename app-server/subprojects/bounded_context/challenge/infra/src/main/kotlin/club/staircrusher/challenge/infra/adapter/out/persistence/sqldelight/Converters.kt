@@ -1,13 +1,9 @@
 package club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight
 
-import club.staircrusher.api.spec.dto.ChallengeConditionAccessibilityTypeDto
-import club.staircrusher.api.spec.dto.ChallengeConditionDto
 import club.staircrusher.api.spec.dto.ChallengeDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
-import club.staircrusher.challenge.domain.model.ChallengeCondition
-import club.staircrusher.challenge.domain.model.ChallengeConditionAccessibilityType
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
@@ -64,7 +60,6 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(
     endsAt = endsAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
     goal = goal,
     milestones = milestones,
-    conditions = conditions.map { it.toDto() },
     participationsCount = participationCount,
     contributionsCount = contributionCount
 )
@@ -112,16 +107,6 @@ fun ChallengeParticipation.toPersistenceModel() = Challenge_participation(
     user_id = userId,
     created_at = createdAt.toOffsetDateTime()
 )
-
-fun ChallengeCondition.toDto() = ChallengeConditionDto(
-    addressMatches = addressMatches,
-    accessibilityTypes = accessibilityTypes.map { it.toDto() }
-)
-
-fun ChallengeConditionAccessibilityType.toDto() = when (this) {
-    ChallengeConditionAccessibilityType.PLACE -> ChallengeConditionAccessibilityTypeDto.pLACE
-    ChallengeConditionAccessibilityType.BUILDING -> ChallengeConditionAccessibilityTypeDto.bUILDING
-}
 
 fun club.staircrusher.challenge.domain.model.Challenge.toListChallengeDto(hasJoined: Boolean, criteriaTime: Instant) =
     ListChallengesItemDto(
