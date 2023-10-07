@@ -4,113 +4,145 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeCon
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
-import club.staircrusher.challenge.domain.model.ChallengeParticipation
+import club.staircrusher.challenge.domain.model.ChallengeActionCondition
+import club.staircrusher.challenge.domain.model.ChallengeAddress
+import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
-import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
-import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.user.application.port.out.persistence.UserRepository
 import java.time.Clock
+import java.time.Instant
 
 @Component
 class ChallengeService(
-    private val transactionManager: TransactionManager,
+    private val userRepository: UserRepository,
     private val challengeRepository: ChallengeRepository,
     private val challengeContributionRepository: ChallengeContributionRepository,
     private val challengeParticipationRepository: ChallengeParticipationRepository,
     private val clock: Clock,
 ) {
-    sealed class MyChallengeOption {
-        data class Only(val userId: String) : MyChallengeOption()
-        data class Without(val userId: String) : MyChallengeOption()
+    sealed class Contribution(val address: ChallengeAddress) {
+        data class PlaceAccessibility(
+            val placeAccessibilityId: String,
+            val placeAccessibilityAddress: ChallengeAddress
+        ) : Contribution(placeAccessibilityAddress)
+
+        data class PlaceAccessibilityComment(
+            val placeAccessibilityCommentId: String,
+            val placeAccessibilityAddress: ChallengeAddress
+        ) : Contribution(placeAccessibilityAddress)
+
+        data class BuildingAccessibility(
+            val buildingAccessibilityId: String,
+            val buildingAccessibilityAddress: ChallengeAddress
+        ) : Contribution(buildingAccessibilityAddress)
+
+        data class BuildingAccessibilityComment(
+            val buildingAccessibilityCommentId: String,
+            val buildingAccessibilityAddress: ChallengeAddress
+        ) : Contribution(buildingAccessibilityAddress)
     }
 
-    data class GetChallengeResult(
-        val challenge: Challenge,
-        val contributionsCount: Int,
-        val participationsCount: Int,
-        val hasJoined: Boolean
-    )
+    fun getMyInProgressChallenges(userId: String, criteriaTime: Instant = clock.instant()): List<Challenge> {
+        return challengeRepository.joinedChallenges(
+            userId = userId,
+            startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
+            endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
+        )
+    }
 
-    fun getInProgressChallenges(option: MyChallengeOption? = null): List<Challenge> {
-        return transactionManager.doInTransaction {
-            return@doInTransaction when (option) {
-                is MyChallengeOption.Only ->
-                    challengeRepository.joinedChallenges(
-                        userId = option.userId,
-                        startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
-                        endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
+    fun getInProgressChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
+        return challengeRepository.findByTime(
+            startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
+            endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
+        )
+    }
+
+    fun getUpcomingChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
+        return challengeRepository.findByTime(
+            startsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
+            endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
+        )
+    }
+
+    fun getClosedChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
+        return challengeRepository.findByTime(
+            startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
+            endsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
+        )
+    }
+
+    fun contributeToSatisfiedChallenges(
+        userId: String,
+        contribution: Contribution
+    ): List<ChallengeContribution> {
+        val myInProgressChallenges = getMyInProgressChallenges(userId)
+        val satisfiedChallenges = myInProgressChallenges
+            .filter { ch ->
+                ch.conditions.firstOrNull { cond ->
+                    cond.isSatisfied(
+                        address = contribution.address,
+                        actionType = when (contribution) {
+                            is Contribution.PlaceAccessibility -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
+                            is Contribution.PlaceAccessibilityComment -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
+                            is Contribution.BuildingAccessibility -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
+                            is Contribution.BuildingAccessibilityComment -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
+                        }
                     )
-
-                is MyChallengeOption.Without ->
-                    challengeRepository.notJoinedChallenges(
-                        userId = option.userId,
-                        startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
-                        endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
-                    )
-
-                null -> challengeRepository.findByTime(
-                    startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
-                    endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
-                )
+                } != null
             }
-        }
-    }
-
-    fun getUpcomingChallenges(): List<Challenge> {
-        return transactionManager.doInTransaction {
-            return@doInTransaction challengeRepository.findByTime(
-                startsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
-                endsAtRange = clock.instant().rangeTo(Challenge.MAX_TIME),
-            )
-        }
-    }
-
-    fun getClosedChallenges(): List<Challenge> {
-        return transactionManager.doInTransaction {
-            return@doInTransaction challengeRepository.findByTime(
-                startsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
-                endsAtRange = Challenge.MIN_TIME.rangeTo(clock.instant()),
-            )
-        }
+        return satisfiedChallenges
+            .mapNotNull {
+                try {
+                    doContributeToChallenge(
+                        userId,
+                        challenge = it,
+                        contribution
+                    )
+                } catch (t: Throwable) {
+                    null
+                }
+            }
     }
 
     @Suppress("ThrowsCount")
-    fun joinChallenge(userId: String, challengeId: String, passcode: String?): Challenge {
-        return transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-            val alreadyJoined = challengeParticipationRepository.findByChallengeIdAndUserId(challengeId, userId) != null
-            if (alreadyJoined) {
-                throw SccDomainException(
-                    msg = "이미 참여한 챌린지입니다.",
-                    errorCode = SccDomainException.ErrorCode.ALREADY_JOINED
-                )
-            }
-            val challenge = challengeRepository.findById(challengeId)
-            if (challenge.passcode != null && challenge.passcode != passcode) {
-                throw SccDomainException(
-                    msg = "잘못된 참여코드 입니다.",
-                    errorCode = SccDomainException.ErrorCode.INVALID_PASSCODE
-                )
-            }
-            val now = clock.instant()
-            if (now < challenge.startsAt) {
-                throw SccDomainException(
-                    msg = "아직 오픈 전 입니다.",
-                    errorCode = SccDomainException.ErrorCode.CHALLENGE_NOT_OPENED
-                )
-            }
-            if (challenge.endsAt?.let { it < now } == true) {
-                throw SccDomainException(msg = "이미 종료되었습니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_CLOSED)
-            }
-            challengeParticipationRepository.save(
-                ChallengeParticipation(
-                    id = EntityIdGenerator.generateRandom(),
-                    challengeId = challenge.id,
-                    userId = userId,
-                    createdAt = clock.instant()
-                )
+    private fun doContributeToChallenge(
+        userId: String,
+        challenge: Challenge,
+        contribution: Contribution
+    ): ChallengeContribution {
+        userRepository.findByIdOrNull(id = userId) ?: throw SccDomainException("해당 유저가 존재하지 않습니다.")
+        challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challenge.id)
+            ?: throw SccDomainException("챌린지에 참여 중이 아닙니다.")
+        if (clock.instant() < challenge.startsAt) {
+            throw SccDomainException(
+                "아직 챌린지가 오픈되지 않았습니다",
+                errorCode = SccDomainException.ErrorCode.CHALLENGE_NOT_OPENED
             )
-            return@doInTransaction challenge
         }
+        if (challenge.endsAt?.let { it < clock.instant() } == true) {
+            throw SccDomainException("해당 챌린지는 종료되었습니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_CLOSED)
+        }
+        val challengeContribution = challengeContributionRepository.save(
+            ChallengeContribution(
+                id = EntityIdGenerator.generateRandom(),
+                userId = userId,
+                challengeId = challenge.id,
+                placeAccessibilityId = (contribution as? Contribution.PlaceAccessibility)?.placeAccessibilityId,
+                placeAccessibilityCommentId = (contribution as? Contribution.PlaceAccessibilityComment)?.placeAccessibilityCommentId,
+                buildingAccessibilityId = (contribution as? Contribution.BuildingAccessibility)?.buildingAccessibilityId,
+                buildingAccessibilityCommentId = (contribution as? Contribution.BuildingAccessibilityComment)?.buildingAccessibilityCommentId,
+                createdAt = clock.instant(),
+                updatedAt = clock.instant()
+            )
+        )
+        val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
+        challengeRepository.save(
+            challenge.also {
+                it.isComplete = challenge.goal <= contributionsCount
+            }
+        )
+        return challengeContribution
     }
 }

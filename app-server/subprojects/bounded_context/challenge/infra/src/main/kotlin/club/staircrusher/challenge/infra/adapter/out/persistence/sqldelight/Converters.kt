@@ -47,8 +47,8 @@ fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Ch
 )
 
 fun club.staircrusher.challenge.domain.model.Challenge.toDto(
-    participationCount: Int,
-    contributionCount: Int,
+    participationsCount: Int,
+    contributionsCount: Int,
     criteriaTime: Instant
 ) = ChallengeDto(
     id = id,
@@ -60,8 +60,8 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(
     endsAt = endsAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
     goal = goal,
     milestones = milestones,
-    participationsCount = participationCount,
-    contributionsCount = contributionCount
+    participationsCount = participationsCount,
+    contributionsCount = contributionsCount
 )
 
 fun club.staircrusher.challenge.domain.model.Challenge.toStatus(criteriaTime: Instant): ChallengeStatusDto = when {

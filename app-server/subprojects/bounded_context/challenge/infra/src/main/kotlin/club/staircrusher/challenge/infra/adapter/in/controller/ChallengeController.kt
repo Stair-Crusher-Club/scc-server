@@ -7,12 +7,13 @@ import club.staircrusher.api.spec.dto.GetChallengeResponseDto
 import club.staircrusher.api.spec.dto.GetChallengeWithInvitationCodeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeResponseDto
-import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.api.spec.dto.ListChallengesRequestDto
 import club.staircrusher.api.spec.dto.ListChallengesResponseDto
 import club.staircrusher.challenge.application.port.`in`.ChallengeService
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeWithInvitationCodeUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.JoinChallengeUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.ListChallengesUseCase
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDto
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toListChallengeDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
@@ -26,6 +27,8 @@ class ChallengeController(
     private val challengeService: ChallengeService,
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getChallengeWithInvitationCodeUseCase: GetChallengeWithInvitationCodeUseCase,
+    private val joinChallengeUseCase: JoinChallengeUseCase,
+    private val listChallengesUseCase: ListChallengesUseCase,
     private val clock: Clock
 ) {
     @PostMapping("/getChallenge")
@@ -36,8 +39,8 @@ class ChallengeController(
         val result = getChallengeUseCase.handle(userId = authentication?.principal, challengeId = request.challengeId)
         return GetChallengeResponseDto(
             challenge = result.challenge.toDto(
-                participationCount = result.participationsCount,
-                contributionCount = result.contributionsCount,
+                participationsCount = result.participationsCount,
+                contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
             ranks = listOf(),
@@ -59,8 +62,8 @@ class ChallengeController(
         )
         return GetChallengeResponseDto(
             challenge = result.challenge.toDto(
-                participationCount = result.participationsCount,
-                contributionCount = result.contributionsCount,
+                participationsCount = result.participationsCount,
+                contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
             ranks = listOf(),
@@ -77,15 +80,15 @@ class ChallengeController(
         authentication: SccAppAuthentication,
     ): JoinChallengeResponseDto {
         val userId = authentication.principal
-        val joinedChallenge = challengeService.joinChallenge(
+        val result = joinChallengeUseCase.handle(
             userId = userId,
             challengeId = request.challengeId,
             passcode = request.passcode
         )
         return JoinChallengeResponseDto(
-            challenge = joinedChallenge.toDto(
-                participationCount = 0,
-                contributionCount = 0,
+            challenge = result.challenge.toDto(
+                participationsCount = result.participationsCount,
+                contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
             ranks = listOf()
@@ -98,33 +101,19 @@ class ChallengeController(
         authentication: SccAppAuthentication?,
     ): ListChallengesResponseDto {
         val requestTime = clock.instant()
-        val result = request.status
-            .flatMap { status ->
-                return@flatMap when (status) {
-                    ChallengeStatusDto.inProgress -> {
-                        authentication?.principal?.let { userId ->
-                            challengeService.getInProgressChallenges(
-                                ChallengeService.MyChallengeOption.Only(userId = userId)
-                            )
-                                .map { it.toListChallengeDto(hasJoined = true, criteriaTime = requestTime) } +
-                                challengeService.getInProgressChallenges(
-                                    ChallengeService.MyChallengeOption.Without(userId = userId)
-                                )
-                                    .map { it.toListChallengeDto(hasJoined = false, criteriaTime = requestTime) }
-                        }
-                            ?: challengeService.getInProgressChallenges()
-                                .map { it.toListChallengeDto(hasJoined = false, requestTime) }
-                    }
-
-                    ChallengeStatusDto.upcoming -> challengeService.getUpcomingChallenges()
-                        .map { it.toListChallengeDto(hasJoined = false, criteriaTime = requestTime) }
-
-                    ChallengeStatusDto.closed -> challengeService.getClosedChallenges()
-                        .map { it.toListChallengeDto(hasJoined = false, criteriaTime = requestTime) }
-
-                    else -> listOf<ListChallengesItemDto>()
+        val result = listChallengesUseCase.handle(
+            userId = authentication?.principal,
+            status = request.status.mapNotNull {
+                when (it) {
+                    ChallengeStatusDto.inProgress -> ListChallengesUseCase.Status.IN_PROGRESS
+                    ChallengeStatusDto.upcoming -> ListChallengesUseCase.Status.UPCOMING
+                    ChallengeStatusDto.closed -> ListChallengesUseCase.Status.CLOSED
+                    else -> null
                 }
-            }
+            },
+            criteriaTime = requestTime
+        )
+            .map { it.challenge.toListChallengeDto(hasJoined = it.hasJoined, criteriaTime = requestTime) }
         // TODO: 페이징 구현
         return ListChallengesResponseDto(
             totalCount = result.count().toLong(),
