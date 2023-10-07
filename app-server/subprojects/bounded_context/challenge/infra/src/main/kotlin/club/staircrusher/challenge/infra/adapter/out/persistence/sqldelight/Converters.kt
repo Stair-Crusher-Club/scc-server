@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight
 
 import club.staircrusher.api.spec.dto.ChallengeDto
@@ -13,6 +15,7 @@ import club.staircrusher.infra.persistence.sqldelight.query.challenge.JoinedChal
 import club.staircrusher.infra.persistence.sqldelight.query.challenge.NotJoinedChallenges
 import club.staircrusher.stdlib.time.toOffsetDateTime
 import java.time.Instant
+
 
 fun Challenge.toDomainModel() = club.staircrusher.challenge.domain.model.Challenge(
     id = id,

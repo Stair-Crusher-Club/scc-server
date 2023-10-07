@@ -9,7 +9,6 @@ import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeResponseDto
 import club.staircrusher.api.spec.dto.ListChallengesRequestDto
 import club.staircrusher.api.spec.dto.ListChallengesResponseDto
-import club.staircrusher.challenge.application.port.`in`.ChallengeService
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeWithInvitationCodeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.JoinChallengeUseCase
@@ -24,7 +23,6 @@ import java.time.Clock
 
 @RestController
 class ChallengeController(
-    private val challengeService: ChallengeService,
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getChallengeWithInvitationCodeUseCase: GetChallengeWithInvitationCodeUseCase,
     private val joinChallengeUseCase: JoinChallengeUseCase,
@@ -117,7 +115,7 @@ class ChallengeController(
         // TODO: 페이징 구현
         return ListChallengesResponseDto(
             totalCount = result.count().toLong(),
-            items = result.take(request.limit?.toInt() ?: 128),
+            items = result,
             nextToken = null,
         )
     }

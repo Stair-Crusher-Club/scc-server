@@ -22,6 +22,8 @@ class ChallengeService(
     private val challengeParticipationRepository: ChallengeParticipationRepository,
     private val clock: Clock,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     sealed class Contribution(val address: ChallengeAddress) {
         data class PlaceAccessibility(
             val placeAccessibilityId: String,
@@ -100,7 +102,8 @@ class ChallengeService(
                         challenge = it,
                         contribution
                     )
-                } catch (t: Throwable) {
+                } catch (t: SccDomainException) {
+                    logger.e(t.message)
                     null
                 }
             }
