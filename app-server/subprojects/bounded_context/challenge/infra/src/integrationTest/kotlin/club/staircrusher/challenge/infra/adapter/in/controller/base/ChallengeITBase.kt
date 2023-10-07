@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller.base
 
 import club.staircrusher.challenge.domain.model.Challenge
+import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
