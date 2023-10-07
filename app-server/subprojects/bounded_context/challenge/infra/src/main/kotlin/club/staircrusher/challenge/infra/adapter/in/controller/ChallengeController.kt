@@ -4,12 +4,15 @@ import club.staircrusher.api.spec.dto.ChallengeRankDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.GetChallengeRequestDto
 import club.staircrusher.api.spec.dto.GetChallengeResponseDto
+import club.staircrusher.api.spec.dto.GetChallengeWithInvitationCodeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeResponseDto
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.api.spec.dto.ListChallengesRequestDto
 import club.staircrusher.api.spec.dto.ListChallengesResponseDto
 import club.staircrusher.challenge.application.port.`in`.ChallengeService
+import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeWithInvitationCodeUseCase
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDto
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toListChallengeDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
@@ -21,6 +24,8 @@ import java.time.Clock
 @RestController
 class ChallengeController(
     private val challengeService: ChallengeService,
+    private val getChallengeUseCase: GetChallengeUseCase,
+    private val getChallengeWithInvitationCodeUseCase: GetChallengeWithInvitationCodeUseCase,
     private val clock: Clock
 ) {
     @PostMapping("/getChallenge")
@@ -28,9 +33,28 @@ class ChallengeController(
         @RequestBody request: GetChallengeRequestDto,
         authentication: SccAppAuthentication?,
     ): GetChallengeResponseDto {
-        val result = challengeService.getChallenge(
-            userId = authentication?.principal,
-            challengeId = request.challengeId,
+        val result = getChallengeUseCase.handle(userId = authentication?.principal, challengeId = request.challengeId)
+        return GetChallengeResponseDto(
+            challenge = result.challenge.toDto(
+                participationCount = result.participationsCount,
+                contributionCount = result.contributionsCount,
+                criteriaTime = clock.instant()
+            ),
+            ranks = listOf(),
+            hasJoined = result.hasJoined,
+            hasPasscode = result.challenge.passcode != null,
+            // TODO: rank 반영
+            myRank = if (result.hasJoined) ChallengeRankDto(rank = 0, contributionCount = 0, nickname = "") else null
+        )
+    }
+
+    @PostMapping("/getChallengeWithInvitationCode")
+    fun getChallengeWithInvitationCode(
+        @RequestBody request: GetChallengeWithInvitationCodeRequestDto,
+        authentication: SccAppAuthentication,
+    ): GetChallengeResponseDto {
+        val result = getChallengeWithInvitationCodeUseCase.handle(
+            userId = authentication.principal,
             invitationCode = request.invitationCode
         )
         return GetChallengeResponseDto(
@@ -41,7 +65,8 @@ class ChallengeController(
             ),
             ranks = listOf(),
             hasJoined = result.hasJoined,
-            // TODO: rank 기능 추가 시 수정 필요
+            hasPasscode = result.challenge.passcode != null,
+            // TODO: rank 반영
             myRank = if (result.hasJoined) ChallengeRankDto(rank = 0, contributionCount = 0, nickname = "") else null
         )
     }

@@ -28,7 +28,7 @@ class AdminChallengeController(
 
     @GetMapping("/admin/challenges/{challengeId}")
     fun listAllChallenges(@PathVariable challengeId: String): AdminChallengeDTO {
-        return getChallengeUseCase.handle(challengeId).toAdminDTO()
+        return getChallengeUseCase.handle(userId = null, challengeId = challengeId).challenge.toAdminDTO()
     }
 
     @PostMapping("/admin/challenges")

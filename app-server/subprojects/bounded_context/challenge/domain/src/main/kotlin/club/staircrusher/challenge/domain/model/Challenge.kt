@@ -11,7 +11,7 @@ class Challenge(
     val isPublic: Boolean,
     val invitationCode: String?,
     val passcode: String?,
-    val isComplete: Boolean,
+    var isComplete: Boolean,
     val startsAt: Instant,
     val endsAt: Instant?,
     val goal: Int,

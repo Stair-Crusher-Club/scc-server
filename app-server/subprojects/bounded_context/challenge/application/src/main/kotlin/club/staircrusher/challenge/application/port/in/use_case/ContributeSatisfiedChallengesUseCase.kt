@@ -70,7 +70,7 @@ class ContributeSatisfiedChallengesUseCase(
                 } != null
             }
         return@doInTransaction satisfiedChallenges.map {
-            doContributeChallenge(
+            doContributeToChallenge(
                 userId,
                 challengeId = it.id,
                 contribution
@@ -79,7 +79,7 @@ class ContributeSatisfiedChallengesUseCase(
     }
 
     @Suppress("ThrowsCount")
-    private fun doContributeChallenge(
+    private fun doContributeToChallenge(
         userId: String,
         challengeId: String,
         contribution: Contribution
@@ -112,7 +112,11 @@ class ContributeSatisfiedChallengesUseCase(
             )
         )
         val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challengeId)
-        challengeRepository.save(challenge.copy(isComplete = challenge.goal <= contributionsCount))
+        challengeRepository.save(
+            challenge.also {
+                it.isComplete = challenge.goal <= contributionsCount
+            }
+        )
         return challengeContribution
     }
 }

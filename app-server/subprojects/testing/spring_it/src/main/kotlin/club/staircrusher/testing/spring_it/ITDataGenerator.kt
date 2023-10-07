@@ -215,7 +215,7 @@ class ITDataGenerator {
         )
     }
 
-    fun contributeChallenge(
+    fun contributeToChallenge(
         user: User,
         challenge: Challenge,
         placeAccessibility: PlaceAccessibility? = null,
@@ -238,11 +238,11 @@ class ITDataGenerator {
             )
         )
         challengeRepository.save(
-            challenge.copy(
-                isComplete = challenge.goal <= challengeContributionRepository.countByChallengeId(
+            challenge.also {
+                it.isComplete = challenge.goal <= challengeContributionRepository.countByChallengeId(
                     challengeId = challenge.id
                 )
-            )
+            }
         )
         return contribution
     }

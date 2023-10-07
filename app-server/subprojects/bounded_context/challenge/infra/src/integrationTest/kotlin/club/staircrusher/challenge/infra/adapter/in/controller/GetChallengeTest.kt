@@ -2,6 +2,7 @@ package club.staircrusher.challenge.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.GetChallengeRequestDto
 import club.staircrusher.api.spec.dto.GetChallengeResponseDto
+import club.staircrusher.api.spec.dto.GetChallengeWithInvitationCodeRequestDto
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
@@ -37,9 +38,7 @@ class GetChallengeTest : ChallengeITBase() {
         // 참여 전 상태 확인
         val challengeBeforeParticipationAndContribution = mvc.sccRequest(
             "/getChallenge",
-            GetChallengeRequestDto(
-                challengeId = challenge.id
-            ),
+            GetChallengeRequestDto(challengeId = challenge.id),
         )
             .getResult(GetChallengeResponseDto::class)
             .challenge
@@ -79,13 +78,13 @@ class GetChallengeTest : ChallengeITBase() {
 
     @Test
     fun `참여코드가 있는 챌린지는 참여코드로도 조회가 가능하다`() {
+        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
         val invitationCode = "VCNC 모여라"
         val inProgressChallenge = registerInProgressChallenge(invitationCode = invitationCode)
         val challengeByInvitationCode = mvc.sccRequest(
-            "/getChallenge",
-            GetChallengeRequestDto(
-                invitationCode = invitationCode
-            )
+            "/getChallengeWithInvitationCode",
+            GetChallengeWithInvitationCodeRequestDto(invitationCode = invitationCode),
+            user = user
         )
             .getResult(GetChallengeResponseDto::class)
             .challenge
