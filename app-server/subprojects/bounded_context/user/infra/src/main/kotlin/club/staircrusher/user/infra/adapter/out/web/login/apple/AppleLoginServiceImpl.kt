@@ -53,7 +53,7 @@ internal class AppleLoginServiceImpl(
     // 검증 로직은 https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/verifying_a_user#3383769 를 참고.
     @Suppress("ThrowsCount")
     private fun validateAppleIdToken(appleIdToken: AppleIdToken) {
-        if (appleIdToken.issuer != "https://kauth.kakao.com") {
+        if (appleIdToken.issuer != "https://appleid.apple.com") {
             throw InvalidAppleIdTokenException("issuer does not match: ${appleIdToken.issuer}")
         }
         if (appleIdToken.audience != appleLoginProperties.serviceId) {

@@ -11,10 +11,12 @@ dependencies {
 
 tasks.getByName("openApiGenerate") {
     inputs.file("${project.rootDir}/../api-admin/api-spec.yaml")
+    outputs.dir("${buildDir.path}/generated-api")
+    outputs.dir("${project.projectDir.path}/src/main/kotlin")
 }
 
 tasks.getByName("compileKotlin") {
-    inputs.dir("${buildDir.path}/generated-api")
+    inputs.dir("${project.projectDir.path}/src/main/kotlin")
 }
 
 openApiGenerate {

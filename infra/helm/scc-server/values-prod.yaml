@@ -4,14 +4,14 @@
 
 deploySecret:
   awsRoleArn: arn:aws:iam::291889421067:role/scc-deploy-secret
-replicaCount: 1
+replicaCount: 2
 filesDir: files/prod
 env: prod
 image:
   repository: public.ecr.aws/i6n1n6v2/scc-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.1.7
+  tag: 0.2.2
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
