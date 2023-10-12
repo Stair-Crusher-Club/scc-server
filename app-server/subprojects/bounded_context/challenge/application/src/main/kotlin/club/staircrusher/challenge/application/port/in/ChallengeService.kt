@@ -73,6 +73,13 @@ class ChallengeService(
         )
     }
 
+    fun hasJoined(userId: String, challengeId: String): Boolean {
+        return challengeParticipationRepository.findByChallengeIdAndUserId(
+            userId = userId,
+            challengeId = challengeId
+        ) != null
+    }
+
     fun contributeToSatisfiedChallenges(
         userId: String,
         contribution: Contribution
