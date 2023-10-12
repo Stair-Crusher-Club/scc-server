@@ -28,38 +28,6 @@ class Challenge(
         return other is Challenge && other.id == id
     }
 
-    fun copy(
-        id: String? = null,
-        name: String? = null,
-        isPublic: Boolean? = null,
-        invitationCode: String?? = null,
-        passcode: String? = null,
-        isComplete: Boolean? = null,
-        startsAt: Instant? = null,
-        endsAt: Instant? = null,
-        goal: Int? = null,
-        milestones: List<Int>? = null,
-        conditions: List<ChallengeCondition>? = null,
-        createdAt: Instant? = null,
-        updatedAt: Instant? = null,
-    ): Challenge {
-        return Challenge(
-            id = id ?: this.id,
-            name = name ?: this.name,
-            isPublic = isPublic ?: this.isPublic,
-            invitationCode = invitationCode ?: this.invitationCode,
-            passcode = passcode ?: this.passcode,
-            isComplete = isComplete ?: this.isComplete,
-            startsAt = startsAt ?: this.startsAt,
-            endsAt = endsAt ?: this.endsAt,
-            goal = goal ?: this.goal,
-            milestones = milestones ?: this.milestones,
-            conditions = conditions ?: this.conditions,
-            createdAt = createdAt ?: this.createdAt,
-            updatedAt = updatedAt ?: this.updatedAt
-        )
-    }
-
     companion object {
         // Instant.MAX 는 범위 초과로 1000년을 추가해서 쓴다.
         val MAX_TIME = Instant.EPOCH.plus(Duration.ofDays(365 * 1000))
