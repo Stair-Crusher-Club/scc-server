@@ -131,6 +131,10 @@ class ChallengeService(
         if (challenge.endsAt?.let { it < clock.instant() } == true) {
             throw SccDomainException("해당 챌린지는 종료되었습니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_CLOSED)
         }
+
+        val alreadyContributed = getAlreadyContributedThing(challengeId = challenge.id, contribution = contribution)
+        if (alreadyContributed != null) return alreadyContributed
+
         val challengeContribution = challengeContributionRepository.save(
             ChallengeContribution(
                 id = EntityIdGenerator.generateRandom(),
@@ -151,5 +155,25 @@ class ChallengeService(
             }
         )
         return challengeContribution
+    }
+
+    private fun getAlreadyContributedThing(challengeId: String, contribution: Contribution): ChallengeContribution? {
+        return when (contribution) {
+            is Contribution.PlaceAccessibility -> {
+                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityId(challengeId = challengeId, placeAccessibilityId = contribution.placeAccessibilityId)
+            }
+
+            is Contribution.PlaceAccessibilityComment -> {
+                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityCommentId(challengeId = challengeId, placeAccessibilityCommentId = contribution.placeAccessibilityCommentId)
+            }
+
+            is Contribution.BuildingAccessibility -> {
+                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityId(challengeId = challengeId, buildingAccessibilityId = contribution.buildingAccessibilityId)
+            }
+
+            is Contribution.BuildingAccessibilityComment -> {
+                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityCommentId(challengeId = challengeId, buildingAccessibilityCommentId = contribution.buildingAccessibilityCommentId)
+            }
+        }
     }
 }

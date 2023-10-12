@@ -46,6 +46,30 @@ class ChallengeContributionRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findByChallengeIdAndPlaceAccessibilityId(challengeId: String, placeAccessibilityId: String): ChallengeContribution? {
+        return queries.findByChallengeIdAndPlaceAccessibilityId(challengeId, placeAccessibilityId)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
+    override fun findByChallengeIdAndPlaceAccessibilityCommentId(challengeId: String, placeAccessibilityCommentId: String): ChallengeContribution? {
+        return queries.findByChallengeIdAndPlaceAccessibilityCommentId(challengeId, placeAccessibilityCommentId)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
+    override fun findByChallengeIdAndBuildingAccessibilityId(challengeId: String, buildingAccessibilityId: String): ChallengeContribution? {
+        return queries.findByChallengeIdAndBuildingAccessibilityId(challengeId, buildingAccessibilityId)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
+    override fun findByChallengeIdAndBuildingAccessibilityCommentId(challengeId: String, buildingAccessibilityCommentId: String): ChallengeContribution? {
+        return queries.findByChallengeIdAndBuildingAccessibilityCommentId(challengeId, buildingAccessibilityCommentId)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
     override fun countByChallengeId(challengeId: String): Long {
         return queries.countByChallengeId(challengeId).executeAsOne()
     }
