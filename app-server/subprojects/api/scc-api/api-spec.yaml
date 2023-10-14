@@ -1096,6 +1096,7 @@ components:
           items:
             $ref: '#/components/schemas/ListChallengesItemDto'
       required:
+        - totalCount
         - items
 
     ListConqueredPlacesRequestDto:
