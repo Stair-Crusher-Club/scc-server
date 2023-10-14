@@ -158,7 +158,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
-                            addressCondition = ChallengeAddressCondition(keywords = listOf("성수동")),
+                            addressCondition = ChallengeAddressCondition(rawEupMyeonDongs = listOf("성수동")),
                             actionCondition = ChallengeActionCondition(types = listOf(ChallengeActionCondition.Type.PLACE_ACCESSIBILITY))
                         )
                     ),
@@ -191,7 +191,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
-                            addressCondition = ChallengeAddressCondition(keywords = listOf("송파동")),
+                            addressCondition = ChallengeAddressCondition(rawEupMyeonDongs = listOf("송파동")),
                             actionCondition = ChallengeActionCondition(types = listOf(ChallengeActionCondition.Type.PLACE_ACCESSIBILITY))
                         )
                     ),
@@ -204,7 +204,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
-                            addressCondition = ChallengeAddressCondition(keywords = listOf("성수동")),
+                            addressCondition = ChallengeAddressCondition(rawEupMyeonDongs = listOf("성수동")),
                             actionCondition = ChallengeActionCondition(types = listOf(ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY))
                         )
                     ),
@@ -217,7 +217,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
-                            addressCondition = ChallengeAddressCondition(keywords = listOf("성수동")),
+                            addressCondition = ChallengeAddressCondition(rawEupMyeonDongs = listOf("성수동")),
                             actionCondition = ChallengeActionCondition(types = listOf(ChallengeActionCondition.Type.PLACE_ACCESSIBILITY))
                         )
                     ),
@@ -281,7 +281,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     goal = 1,
                     conditions = listOf(
                         ChallengeCondition(
-                            addressCondition = ChallengeAddressCondition(keywords = listOf("성수동")),
+                            addressCondition = ChallengeAddressCondition(rawEupMyeonDongs = listOf("성수동")),
                             actionCondition = ChallengeActionCondition(types = listOf(ChallengeActionCondition.Type.PLACE_ACCESSIBILITY))
                         )
                     )

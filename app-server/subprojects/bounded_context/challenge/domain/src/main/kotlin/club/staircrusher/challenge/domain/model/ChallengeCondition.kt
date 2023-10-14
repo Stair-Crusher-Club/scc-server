@@ -4,7 +4,7 @@ package club.staircrusher.challenge.domain.model
 // List<ChallengeCondition> 에서 각 Condition 은 OR 조건
 data class ChallengeCondition(
     val addressCondition: ChallengeAddressCondition?,
-    val actionCondition: ChallengeActionCondition?
+    val actionCondition: ChallengeActionCondition?,
 ) {
     @Suppress("ReturnCount")
     fun isSatisfied(
@@ -18,10 +18,10 @@ data class ChallengeCondition(
 }
 
 data class ChallengeAddressCondition(
-    val keywords: List<String>
+    val rawEupMyeonDongs: List<String>?,
 ) {
     fun isSatisfied(address: ChallengeAddress): Boolean {
-        return keywords.all { address.contains(it) }
+        return rawEupMyeonDongs?.contains(address.eupMyeonDong) ?: true
     }
 }
 
