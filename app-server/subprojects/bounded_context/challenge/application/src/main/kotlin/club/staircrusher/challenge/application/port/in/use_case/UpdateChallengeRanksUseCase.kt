@@ -23,13 +23,13 @@ class UpdateChallengeRanksUseCase(
         val challenges = challengeRepository.findAllOrderByCreatedAtDesc()
         challenges.forEach { challenge ->
             val now = SccClock.instant()
-            val lastRank = challengeRankRepository.findByContributionCount(challenge, 0)?.rank ?: 1
+            val lastRank = challengeRankRepository.findByContributionCount(challenge.id, 0)?.rank ?: 1
             val contributions = challengeContributionRepository.findByChallengeId(challenge.id)
 
             val ranks = contributions.groupBy { it.userId }
                 .map { (userId, contributions) ->
                     val contributionCount = contributions.size
-                    val challengeRank = challengeRankRepository.findByUserId(challenge, userId) ?: ChallengeRank(
+                    val challengeRank = challengeRankRepository.findByUserId(challenge.id, userId) ?: ChallengeRank(
                         id = EntityIdGenerator.generateRandom(),
                         challengeId = challenge.id,
                         userId = userId,

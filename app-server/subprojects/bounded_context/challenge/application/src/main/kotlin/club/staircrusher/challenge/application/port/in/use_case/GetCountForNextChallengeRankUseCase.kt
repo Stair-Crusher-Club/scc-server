@@ -27,13 +27,13 @@ class GetCountForNextChallengeRankUseCase(
             throw SccDomainException("참여하지 않은 챌린지 입니다.")
         }
 
-        val currentRank = challengeRankRepository.findByUserId(challenge, userId)
-        val rank = currentRank?.rank ?: challengeRankRepository.findByContributionCount(challenge, 0)?.rank ?: 1
+        val currentRank = challengeRankRepository.findByUserId(challenge.id, userId)
+        val rank = currentRank?.rank ?: challengeRankRepository.findByContributionCount(challenge.id, 0)?.rank ?: 1
 
         if (rank == 1L) {
             0
         } else {
-            val nextRank = challengeRankRepository.findNextRank(challenge, rank)!!
+            val nextRank = challengeRankRepository.findNextRank(challenge.id, rank)!!
             nextRank.contributionCount - (currentRank?.contributionCount ?: 0)
         }
     }

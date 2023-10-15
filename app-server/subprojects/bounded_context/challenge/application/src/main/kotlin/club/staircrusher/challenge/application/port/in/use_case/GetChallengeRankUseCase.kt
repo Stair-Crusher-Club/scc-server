@@ -27,9 +27,9 @@ class GetChallengeRankUseCase(
             throw SccDomainException("참여하지 않은 챌린지 입니다.")
         }
 
-        val challengeRank = challengeRankRepository.findByUserId(challenge, userId) ?: run {
+        val challengeRank = challengeRankRepository.findByUserId(challenge.id, userId) ?: run {
             // if lastRank can not be found, then the user is the first rank
-            val lastRank = challengeRankRepository.findByContributionCount(challenge, 0)?.rank ?: 1
+            val lastRank = challengeRankRepository.findByContributionCount(challenge.id, 0)?.rank ?: 1
             ChallengeRank(
                 id = UUID.randomUUID().toString(),
                 challengeId = challenge.id,
