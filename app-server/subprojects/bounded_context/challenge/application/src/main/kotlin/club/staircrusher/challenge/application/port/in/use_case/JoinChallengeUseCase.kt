@@ -29,14 +29,15 @@ class JoinChallengeUseCase(
 
     fun handle(userId: String, challengeId: String, passcode: String?): JoinChallengeResult =
         transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
+            val challenge = challengeRepository.findById(challengeId)
             val alreadyJoined = challengeParticipationRepository.findByChallengeIdAndUserId(challengeId, userId) != null
             if (alreadyJoined) {
-                throw SccDomainException(
-                    msg = "이미 참여한 챌린지입니다.",
-                    errorCode = SccDomainException.ErrorCode.ALREADY_JOINED
+                return@doInTransaction JoinChallengeResult(
+                    challenge = challenge,
+                    contributionsCount = challengeContributionRepository.countByChallengeId(challengeId).toInt(),
+                    participationsCount = challengeParticipationRepository.userCountByChallengeId(challengeId).toInt()
                 )
             }
-            val challenge = challengeRepository.findById(challengeId)
             if (challenge.passcode != null && challenge.passcode != passcode) {
                 throw SccDomainException(
                     msg = "잘못된 참여코드 입니다.",
