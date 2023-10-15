@@ -62,6 +62,15 @@ class Challenge(
                 }
             }
 
+            createRequest.conditions.forEach { condition ->
+                check(condition.addressCondition?.rawEupMyeonDongs == null || condition.addressCondition.rawEupMyeonDongs.isNotEmpty()) {
+                    "퀘스트 대상 지역은 전체이거나 최소 1곳 이상을 지정해야 합니다."
+                }
+                check(condition.actionCondition?.types == null || condition.actionCondition.types.isNotEmpty()) {
+                    "퀘스트 대상 액션은 최소 1개 이상을 지정해야 합니다."
+                }
+            }
+
             return Challenge(
                 id = EntityIdGenerator.generateRandom(),
                 name = validateAndNormalizeString(createRequest.name),
@@ -73,7 +82,7 @@ class Challenge(
                 endsAt = endsAt,
                 goal = createRequest.goal,
                 milestones = milestones,
-                conditions = emptyList(), // TODO
+                conditions = createRequest.conditions,
                 createdAt = now,
                 updatedAt = now,
             )

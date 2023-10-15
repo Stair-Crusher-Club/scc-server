@@ -483,8 +483,38 @@ components:
 
     AdminChallengeConditionDTO:
       type: object
-      properties: {} # TODO
-      required: [] # TODO
+      properties:
+        addressCondition:
+          $ref: '#/components/schemas/AdminChallengeAddressConditionDTO'
+        actionCondition:
+          $ref: '#/components/schemas/AdminChallengeActionConditionDTO'
+      required: []
+
+    AdminChallengeAddressConditionDTO:
+      type: object
+      properties:
+        rawEupMyeonDongs:
+          type: array
+          items:
+            type: string
+      required: []
+
+    AdminChallengeActionConditionDTO:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminChallengeActionConditionTypeEnumDTO'
+      required: []
+
+    AdminChallengeActionConditionTypeEnumDTO:
+      type: string
+      enum:
+        - BUILDING_ACCESSIBILITY
+        - BUILDING_ACCESSIBILITY_COMMENT
+        - PLACE_ACCESSIBILITY
+        - PLACE_ACCESSIBILITY_COMMENT
 
     AdminCreateChallengeRequestDTO:
       type: object
@@ -511,9 +541,14 @@ components:
           items:
             type: integer
             format: int32
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminChallengeConditionDTO'
       required:
         - name
         - isPublic
         - startsAtMillis
         - goal
         - milestones
+        - conditions

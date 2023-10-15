@@ -9,4 +9,5 @@ data class CreateChallengeRequest(
     val endsAtMillis: Long?,
     val goal: Int,
     val milestones: List<Int>,
+    val conditions: List<ChallengeCondition>,
 )

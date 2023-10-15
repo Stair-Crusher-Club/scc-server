@@ -7,6 +7,9 @@ import './ChallengePage.scss';
 import {DatePicker, TimePrecision} from "@blueprintjs/datetime";
 import {AdminChallengeDTO} from "../../api";
 import {formatDate} from "../../util/date";
+import {MultiSelect2} from "@blueprintjs/select";
+import {adminChallengeActionConditionTypeOptions} from "../../model/challenge";
+import {MultiSelectItem} from "../../component/MultiSelect";
 
 declare global {
   interface Window {
@@ -112,6 +115,29 @@ function ChallengePage() {
                   className="input-group"
                   value={challenge!.milestones.join(",")}
                   disabled={true}
+                />
+              </div>
+              <div>
+                <span>퀘스트 대상 지역 읍면동(쉼표로 구분하며, 지정하지 않으면 모든 지역이 대상이 됩니다) :&nbsp;</span>
+                <InputGroup
+                    className="input-group"
+                    value={challenge!.conditions[0].addressCondition?.rawEupMyeonDongs?.join(',') || ''}
+                    placeholder="전체 지역"
+                    disabled={true}
+                />
+              </div>
+              <div>
+                <span>퀘스트 대상 액션 :&nbsp;</span>
+                <MultiSelect2
+                    className="input-group"
+                    items={adminChallengeActionConditionTypeOptions}
+                    selectedItems={adminChallengeActionConditionTypeOptions.filter(it => challenge!.conditions[0].actionCondition?.types?.includes(it.value) || false)}
+                    itemRenderer={() => null}
+                    onItemSelect={() => {}}
+                    onRemove={() => {}}
+                    tagRenderer={(option) => option.displayName}
+                    placeholder="전체 액션"
+                    disabled={true}
                 />
               </div>
             </div>

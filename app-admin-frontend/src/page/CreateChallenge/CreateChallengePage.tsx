@@ -5,8 +5,15 @@ import {AdminApis} from '../../AdminApi';
 
 import './CreateChallengePage.scss';
 import {DatePicker, TimePrecision} from "@blueprintjs/datetime";
-import {AdminCreateChallengeRequestDTO} from "../../api";
+import {
+  AdminChallengeActionConditionTypeEnumDTO,
+  AdminChallengeConditionDTO,
+  AdminCreateChallengeRequestDTO
+} from "../../api";
 import {formatDate} from "../../util/date";
+import {adminChallengeActionConditionTypeOptions} from "../../model/challenge";
+import {MultiSelect2} from "@blueprintjs/select";
+import {MultiSelectItem, MultiSelectOption} from "../../component/MultiSelect";
 
 declare global {
   interface Window {
@@ -39,6 +46,19 @@ function CreateChallengePage() {
     }
     return milestonesText.split(',').map(it => Number(it.trim())).sort((n1,n2) => n1 - n2);
   }
+  const [conditionEupMyeonDongsText, setConditionEupMyeonDongsText] = useState<string>('');
+  const [conditionActionTypeOptions, setConditionActionTypeOptions] = useState<MultiSelectOption<AdminChallengeActionConditionTypeEnumDTO>[]>(adminChallengeActionConditionTypeOptions);
+  const getConditions = (): AdminChallengeConditionDTO[] => {
+    const conditionEupMyeonDongs = conditionEupMyeonDongsText.split(',').map(it => it.trim()).filter(it => it)
+    return [{
+      addressCondition: {
+        rawEupMyeonDongs: conditionEupMyeonDongs,
+      },
+      actionCondition: {
+        types: conditionActionTypeOptions.length > 0 ? conditionActionTypeOptions.map(it => it.value) : undefined,
+      },
+    }];
+  }
 
   const navigate = useNavigate();
 
@@ -57,6 +77,7 @@ function CreateChallengePage() {
       endsAtMillis: endsAtDate?.getTime(),
       goal,
       milestones: getMilestones(),
+      conditions: getConditions(),
     }
   }
 
@@ -81,6 +102,17 @@ function CreateChallengePage() {
         && goal > 0
         && (getMilestones().length === 0 || getMilestones()[getMilestones().length - 1] < goal)
     );
+  }
+
+  const onSelectConditionActionTypeOptions = (option: MultiSelectOption<AdminChallengeActionConditionTypeEnumDTO>) => {
+    if (conditionActionTypeOptions.some(it => it.value === option.value)) {
+      removeConditionActionTypeOption(option);
+      return;
+    }
+    setConditionActionTypeOptions([...conditionActionTypeOptions, option]);
+  }
+  const removeConditionActionTypeOption = (option: MultiSelectOption<AdminChallengeActionConditionTypeEnumDTO>) => {
+    setConditionActionTypeOptions(conditionActionTypeOptions.filter(it => it.value !== option.value));
   }
 
   return (
@@ -190,6 +222,31 @@ function CreateChallengePage() {
                 )
                 : null
             }
+          </div>
+          <div>
+            <span>퀘스트 대상 지역 읍면동(쉼표로 구분하며, 지정하지 않으면 모든 지역이 대상이 됩니다) :&nbsp;</span>
+            <InputGroup
+                className="input-group"
+                value={conditionEupMyeonDongsText}
+                onChange={(event) => { setConditionEupMyeonDongsText(event.target.value); }}
+                placeholder="전체 지역"
+                disabled={isLoading}
+            />
+          </div>
+          <div>
+            <span>퀘스트 대상 액션 :&nbsp;</span>
+            <MultiSelect2
+                className="input-group"
+                items={adminChallengeActionConditionTypeOptions}
+                selectedItems={conditionActionTypeOptions}
+                itemRenderer={(option, props) => <MultiSelectItem onClick={props.handleClick} option={option} />}
+                onItemSelect={(option) => onSelectConditionActionTypeOptions(option)}
+                onRemove={(option, _) => removeConditionActionTypeOption(option)}
+                onClear={() => setConditionActionTypeOptions([])}
+                tagRenderer={(option) => option.displayName}
+                placeholder="전체 액션"
+                disabled={isLoading}
+            />
           </div>
         </div>
         <div className="input-group">

@@ -6,6 +6,7 @@
     "@blueprintjs/core": "^4.9.3",
     "@blueprintjs/datetime": "^4.4.37",
     "@blueprintjs/docs-theme": "^4.4.3",
+    "@blueprintjs/select": "^4.9.24",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
