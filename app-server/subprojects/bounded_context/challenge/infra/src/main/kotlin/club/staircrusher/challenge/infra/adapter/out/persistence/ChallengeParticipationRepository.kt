@@ -34,10 +34,10 @@ class ChallengeParticipationRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun findByChallengeIdAndUserId(challengeId: String, userId: String): ChallengeParticipation? {
+    override fun findByChallengeIdAndUserId(challengeId: String, userId: String): List<ChallengeParticipation> {
         return queries.findByUserIdAndChallengeId(challengeId, userId)
-            .executeAsOneOrNull()
-            ?.toDomainModel()
+            .executeAsList()
+            .map { it.toDomainModel() }
     }
 
     override fun userCountByChallengeId(challengeId: String): Long {

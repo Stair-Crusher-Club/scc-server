@@ -43,7 +43,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(
+                    statuses = listOf(
                         ChallengeStatusDto.inProgress,
                         ChallengeStatusDto.upcoming,
                         ChallengeStatusDto.closed
@@ -81,7 +81,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.inProgress),
+                    statuses = listOf(ChallengeStatusDto.inProgress),
                     nextToken = null,
                     limit = null
                 )
@@ -98,7 +98,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.upcoming),
+                    statuses = listOf(ChallengeStatusDto.upcoming),
                     nextToken = null,
                     limit = null
                 )
@@ -115,7 +115,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.closed),
+                    statuses = listOf(ChallengeStatusDto.closed),
                     nextToken = null,
                     limit = null
                 )
@@ -135,7 +135,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming),
+                    statuses = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming),
                     nextToken = null,
                     limit = null
                 )
@@ -151,7 +151,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+                    statuses = listOf(ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
                     nextToken = null,
                     limit = null
                 )
@@ -171,7 +171,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(ChallengeStatusDto.inProgress),
+                    statuses = listOf(ChallengeStatusDto.inProgress),
                     nextToken = null,
                     limit = null
                 )
@@ -199,7 +199,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    status = listOf(
+                    statuses = listOf(
                         ChallengeStatusDto.inProgress,
                         ChallengeStatusDto.upcoming,
                         ChallengeStatusDto.closed
@@ -234,7 +234,7 @@ class ListChallengesTest : ChallengeITBase() {
 //            .sccRequest(
 //                "/listChallenges",
 //                ListChallengesRequestDto(
-//                    status = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+//                    statuses = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
 //                    nextToken = null,
 //                    limit = 9
 //                )
@@ -245,7 +245,7 @@ class ListChallengesTest : ChallengeITBase() {
 //            .sccRequest(
 //                "/listChallenges",
 //                ListChallengesRequestDto(
-//                    status = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+//                    statuses = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
 //                    nextToken = null,
 //                    limit = 3
 //                )
@@ -255,7 +255,7 @@ class ListChallengesTest : ChallengeITBase() {
 //            .sccRequest(
 //                "/listChallenges",
 //                ListChallengesRequestDto(
-//                    status = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+//                    statuses = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
 //                    nextToken = firstPage.nextToken,
 //                    limit = 3
 //                )
@@ -265,7 +265,7 @@ class ListChallengesTest : ChallengeITBase() {
 //            .sccRequest(
 //                "/listChallenges",
 //                ListChallengesRequestDto(
-//                    status = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+//                    statuses = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
 //                    nextToken = secondPage.nextToken,
 //                    limit = 3
 //                )

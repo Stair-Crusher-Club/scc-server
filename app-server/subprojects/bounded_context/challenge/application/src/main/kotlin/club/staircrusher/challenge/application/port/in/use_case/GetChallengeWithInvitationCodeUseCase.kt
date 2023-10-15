@@ -1,5 +1,6 @@
 package club.staircrusher.challenge.application.port.`in`.use_case
 
+import club.staircrusher.challenge.application.port.`in`.ChallengeService
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
@@ -13,7 +14,8 @@ class GetChallengeWithInvitationCodeUseCase(
     private val transactionManager: TransactionManager,
     private val challengeRepository: ChallengeRepository,
     private val challengeContributionRepository: ChallengeContributionRepository,
-    private val challengeParticipationRepository: ChallengeParticipationRepository
+    private val challengeParticipationRepository: ChallengeParticipationRepository,
+    private val challengeService: ChallengeService,
 ) {
     data class GetChallengeResult(
         val challenge: Challenge,
@@ -33,10 +35,7 @@ class GetChallengeWithInvitationCodeUseCase(
             challenge = challenge,
             contributionsCount = contributionsCount.toInt(),
             participationsCount = participationsCount.toInt(),
-            hasJoined = challengeParticipationRepository.findByChallengeIdAndUserId(
-                userId = userId,
-                challengeId = challenge.id
-            ) != null
+            hasJoined = challengeService.hasJoined(userId = userId, challengeId = challenge.id)
         )
     }
 }

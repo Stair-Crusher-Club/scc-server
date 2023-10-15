@@ -77,7 +77,7 @@ class ChallengeService(
         return challengeParticipationRepository.findByChallengeIdAndUserId(
             userId = userId,
             challengeId = challengeId
-        ) != null
+        ).isNotEmpty()
     }
 
     fun contributeToSatisfiedChallenges(
@@ -107,8 +107,8 @@ class ChallengeService(
                         challenge = it,
                         contribution
                     )
-                } catch (t: SccDomainException) {
-                    null
+                } catch (@Suppress("SwallowedException") t: SccDomainException) {
+                     null
                 }
             }
     }
@@ -120,8 +120,9 @@ class ChallengeService(
         contribution: Contribution
     ): ChallengeContribution {
         userRepository.findByIdOrNull(id = userId) ?: throw SccDomainException("해당 유저가 존재하지 않습니다.")
-        challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challenge.id)
-            ?: throw SccDomainException("챌린지에 참여 중이 아닙니다.")
+        if (challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challenge.id).isEmpty()) {
+            throw SccDomainException("챌린지에 참여 중이 아닙니다.")
+        }
         if (clock.instant() < challenge.startsAt) {
             throw SccDomainException(
                 "아직 챌린지가 오픈되지 않았습니다",

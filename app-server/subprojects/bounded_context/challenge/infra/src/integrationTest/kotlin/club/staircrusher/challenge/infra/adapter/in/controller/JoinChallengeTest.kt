@@ -7,6 +7,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeCon
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,7 +47,7 @@ class JoinChallengeTest : ChallengeITBase() {
     }
 
     @Test
-    fun `이미 참여한 챌린지는 이미 참여했음을 알리는 에러가 난다`() {
+    fun `이미 참여한 챌린지에 참여하려고 하면 멱등적으로 처리된다`() {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
         }
@@ -73,9 +74,10 @@ class JoinChallengeTest : ChallengeITBase() {
                 ),
                 user = user
             )
-            .getResult(ApiErrorResponse::class)
+            .getResult(JoinChallengeResponseDto::class)
             .apply {
-                assert(this.code == ApiErrorResponse.Code.ALREADY_JOINED)
+                assert(challenge.id == inProgressChallenge.id)
+                assertEquals(1, challengeParticipationRepository.findByChallengeIdAndUserId(challenge.id, user.id).size)
             }
     }
 
