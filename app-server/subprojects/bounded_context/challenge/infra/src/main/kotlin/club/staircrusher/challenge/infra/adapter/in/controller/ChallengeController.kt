@@ -101,7 +101,7 @@ class ChallengeController(
         val requestTime = clock.instant()
         val result = listChallengesUseCase.handle(
             userId = authentication?.principal,
-            status = request.status.mapNotNull {
+            statuses = request.statuses?.mapNotNull {
                 when (it) {
                     ChallengeStatusDto.inProgress -> ListChallengesUseCase.Status.IN_PROGRESS
                     ChallengeStatusDto.upcoming -> ListChallengesUseCase.Status.UPCOMING

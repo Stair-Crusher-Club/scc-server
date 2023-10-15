@@ -1070,7 +1070,7 @@ components:
     ListChallengesRequestDto:
       type: object
       properties:
-        status:
+        statuses:
           type: array
           items:
             $ref: '#/components/schemas/ChallengeStatusDto'

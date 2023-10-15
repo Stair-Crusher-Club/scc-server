@@ -26,11 +26,12 @@ class ListChallengesUseCase(
 
     fun handle(
         userId: String?,
-        status: List<Status>,
+        statuses: List<Status>?,
         criteriaTime: Instant = clock.instant()
     ): List<ListChallengesItem> =
         transactionManager.doInTransaction {
-            return@doInTransaction status.flatMap { s ->
+            val targetStatues = statuses ?: Status.values().toList()
+            return@doInTransaction targetStatues.flatMap { s ->
                 when (s) {
                     Status.IN_PROGRESS -> {
                         val myInProgressChallenges =
