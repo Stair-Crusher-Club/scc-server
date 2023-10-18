@@ -72,22 +72,6 @@ class ChallengeRepository(
             .map { it.toChallenge() }
     }
 
-    override fun notJoinedChallenges(
-        userId: String,
-        startsAtRange: ClosedRange<Instant>,
-        endsAtRange: ClosedRange<Instant>
-    ): List<Challenge> {
-        return queries.notJoinedChallenges(
-            userId = userId,
-            startRangeOfStartsAt = startsAtRange.start.toOffsetDateTime(),
-            endRangeOfStartAt = startsAtRange.endInclusive.toOffsetDateTime(),
-            startRangeOfEndsAt = endsAtRange.start.toOffsetDateTime(),
-            endRangeOfEndsAt = endsAtRange.endInclusive.toOffsetDateTime()
-        )
-            .executeAsList()
-            .map { it.toChallenge() }
-    }
-
     override fun remove(id: String) {
         queries.removeById(id)
     }

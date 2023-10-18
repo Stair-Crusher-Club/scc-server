@@ -19,11 +19,5 @@ interface ChallengeRepository : EntityRepository<Challenge, String> {
         endsAtRange: ClosedRange<Instant>,
     ): List<Challenge>
 
-    fun notJoinedChallenges(
-        userId: String,
-        startsAtRange: ClosedRange<Instant>,
-        endsAtRange: ClosedRange<Instant>,
-    ): List<Challenge>
-
     fun remove(id: String)
 }

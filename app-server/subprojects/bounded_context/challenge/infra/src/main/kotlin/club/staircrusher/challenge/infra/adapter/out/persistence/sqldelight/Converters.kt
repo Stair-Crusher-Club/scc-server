@@ -13,7 +13,6 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_contribution
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_participation
 import club.staircrusher.infra.persistence.sqldelight.query.challenge.FindByUidAndTime
-import club.staircrusher.infra.persistence.sqldelight.query.challenge.NotJoinedChallenges
 import club.staircrusher.stdlib.time.toOffsetDateTime
 import java.time.Instant
 
@@ -124,22 +123,6 @@ fun club.staircrusher.challenge.domain.model.Challenge.toListChallengeDto(hasJoi
     )
 
 fun FindByUidAndTime.toChallenge() = club.staircrusher.challenge.domain.model.Challenge(
-    id = id,
-    name = name,
-    isPublic = is_public,
-    invitationCode = invitation_code,
-    passcode = passcode,
-    isComplete = is_complete,
-    startsAt = starts_at.toInstant(),
-    endsAt = ends_at?.toInstant(),
-    goal = goal,
-    milestones = milestones,
-    conditions = conditions,
-    createdAt = created_at.toInstant(),
-    updatedAt = updated_at.toInstant()
-)
-
-fun NotJoinedChallenges.toChallenge() = club.staircrusher.challenge.domain.model.Challenge(
     id = id,
     name = name,
     isPublic = is_public,
