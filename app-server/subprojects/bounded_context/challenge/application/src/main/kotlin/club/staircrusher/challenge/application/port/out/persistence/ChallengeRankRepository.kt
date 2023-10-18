@@ -9,5 +9,6 @@ interface ChallengeRankRepository : EntityRepository<ChallengeRank, String> {
     fun findByRank(challengeId: String, rank: Long): ChallengeRank?
     fun findNextRank(challengeId: String, rank: Long): ChallengeRank?
     fun findByContributionCount(challengeId: String, contributionCount: Int): ChallengeRank?
+    fun findLastRank(challengeId: String): Long?
     fun findAll(challengeId: String): List<ChallengeRank>
 }

@@ -28,7 +28,7 @@ class GetCountForNextChallengeRankUseCase(
         }
 
         val currentRank = challengeRankRepository.findByUserId(challenge.id, userId)
-        val rank = currentRank?.rank ?: challengeRankRepository.findByContributionCount(challenge.id, 0)?.rank ?: 1
+        val rank = currentRank?.rank ?: challengeRankRepository.findLastRank(challenge.id) ?: 1
 
         if (rank == 1L) {
             0
