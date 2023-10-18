@@ -7,6 +7,9 @@ info:
 
 defaultContentType: application/json
 
+tags:
+  - name: challenge
+
 paths:
   /login:
     post:
@@ -244,6 +247,57 @@ paths:
       responses:
         '204': {}
 
+  /challenges:
+    get:
+      summary: 챌린지 목록을 조회한다.
+      tags:
+        - challenge
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminListChallengesResponseDTO'
+
+    post:
+      summary: 챌린지를 생성한다.
+      tags:
+        - challenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateChallengeRequestDTO'
+      responses:
+        '204': {}
+
+  /challenges/{challengeId}:
+    parameters:
+      - in: path
+        name: challengeId
+        schema:
+          type: string
+        required: true
+
+    get:
+      summary: 챌린지를 조회한다.
+      tags:
+        - challenge
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminChallengeDTO'
+
+    delete:
+      summary: 챌린지를 삭제한다.
+      tags:
+        - challenge
+      responses:
+        '204': {}
+
 components:
   # Reusable schemas (data models)
   schemas:
@@ -370,3 +424,131 @@ components:
         - id
         - type
         - boundaryVertices
+
+    AdminListChallengesResponseDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/AdminChallengeDTO'
+
+    AdminChallengeDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        isPublic:
+          type: boolean
+        invitationCode:
+          type: string
+        passcode:
+          type: string
+        isComplete:
+          type: boolean
+        startsAtMillis:
+          type: integer
+          format: int64
+        endsAtMillis:
+          type: integer
+          format: int64
+        goal:
+          type: integer
+          format: int32
+        milestones:
+          type: array
+          items:
+            type: integer
+            format: int32
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminChallengeConditionDTO'
+        createdAtMillis:
+          type: integer
+          format: int64
+        updatedAtMillis:
+          type: integer
+          format: int64
+      required:
+        - id
+        - name
+        - isPublic
+        - isComplete
+        - startsAtMillis
+        - goal
+        - milestones
+        - conditions
+        - createdAtMillis
+        - updatedAtMillis
+
+    AdminChallengeConditionDTO:
+      type: object
+      properties:
+        addressCondition:
+          $ref: '#/components/schemas/AdminChallengeAddressConditionDTO'
+        actionCondition:
+          $ref: '#/components/schemas/AdminChallengeActionConditionDTO'
+      required: []
+
+    AdminChallengeAddressConditionDTO:
+      type: object
+      properties:
+        rawEupMyeonDongs:
+          type: array
+          items:
+            type: string
+      required: []
+
+    AdminChallengeActionConditionDTO:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminChallengeActionConditionTypeEnumDTO'
+      required: []
+
+    AdminChallengeActionConditionTypeEnumDTO:
+      type: string
+      enum:
+        - BUILDING_ACCESSIBILITY
+        - BUILDING_ACCESSIBILITY_COMMENT
+        - PLACE_ACCESSIBILITY
+        - PLACE_ACCESSIBILITY_COMMENT
+
+    AdminCreateChallengeRequestDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        isPublic:
+          type: boolean
+        invitationCode:
+          type: string
+        passcode:
+          type: string
+        startsAtMillis:
+          type: integer
+          format: int64
+        endsAtMillis:
+          type: integer
+          format: int64
+        goal:
+          type: integer
+          format: int32
+        milestones:
+          type: array
+          items:
+            type: integer
+            format: int32
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminChallengeConditionDTO'
+      required:
+        - name
+        - isPublic
+        - startsAtMillis
+        - goal
+        - milestones
+        - conditions

@@ -56,7 +56,7 @@ class AccessibilityController(
         authentication: SccAppAuthentication,
     ): RegisterAccessibilityPost200Response {
         val userId = authentication.principal
-        val result = accessibilityApplicationService.register(
+        val registerResult = accessibilityApplicationService.register(
             createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = userId),
             createBuildingAccessibilityCommentParams = request.buildingAccessibilityParams?.comment?.let {
                 BuildingAccessibilityCommentRepository.CreateParams(
@@ -75,23 +75,23 @@ class AccessibilityController(
             },
         )
         return RegisterAccessibilityPost200Response(
-            buildingAccessibility = result.buildingAccessibility?.toDTO(
+            buildingAccessibility = registerResult.buildingAccessibility?.toDTO(
                 isUpvoted = false,
                 totalUpvoteCount = 0,
-                registeredUserName = result.accessibilityRegisterer?.nickname,
+                registeredUserName = registerResult.accessibilityRegisterer?.nickname,
             ),
-            buildingAccessibilityComments = listOfNotNull(result.buildingAccessibilityComment).map {
-                it.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
+            buildingAccessibilityComments = listOfNotNull(registerResult.buildingAccessibilityComment).map {
+                it.toDTO(accessibilityRegisterer = registerResult.accessibilityRegisterer)
             },
-            placeAccessibility = result.placeAccessibility.toDTO(
-                registeredAccessibilityRegisterer = result.accessibilityRegisterer,
+            placeAccessibility = registerResult.placeAccessibility.toDTO(
+                registeredAccessibilityRegisterer = registerResult.accessibilityRegisterer,
                 authUser = authentication.details,
-                isLastInBuilding = result.isLastPlaceAccessibilityInBuilding,
+                isLastInBuilding = registerResult.isLastPlaceAccessibilityInBuilding,
             ),
-            placeAccessibilityComments = listOfNotNull(result.placeAccessibilityComment).map {
-                it.toDTO(accessibilityRegisterer = result.accessibilityRegisterer)
+            placeAccessibilityComments = listOfNotNull(registerResult.placeAccessibilityComment).map {
+                it.toDTO(accessibilityRegisterer = registerResult.accessibilityRegisterer)
             },
-            registeredUserOrder = result.registrationOrder,
+            registeredUserOrder = registerResult.registrationOrder,
         )
     }
 
@@ -112,10 +112,10 @@ class AccessibilityController(
                 )
             },
         )
-
         return RegisterPlaceAccessibilityPost200Response(
             accessibilityInfo = getAccessibilityResult.toDTO(authentication.details),
             registeredUserOrder = registerResult.registrationOrder,
+            // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
         )
     }
 
@@ -126,6 +126,7 @@ class AccessibilityController(
     ) {
         val userId = authentication.principal
         registerBuildingAccessibilityUseCase.handle(
+            userId = userId,
             createBuildingAccessibilityParams = request.toModel(userId = userId),
             createBuildingAccessibilityCommentParams = request.comment?.let {
                 BuildingAccessibilityCommentRepository.CreateParams(
@@ -135,5 +136,6 @@ class AccessibilityController(
                 )
             },
         )
+        // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기
     }
 }

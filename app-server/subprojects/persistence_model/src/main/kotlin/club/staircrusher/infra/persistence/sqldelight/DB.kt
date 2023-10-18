@@ -1,5 +1,7 @@
 package club.staircrusher.infra.persistence.sqldelight
 
+import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.LocationListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
@@ -8,6 +10,7 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserAuthPro
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserMobilityToolStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
+import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
@@ -59,6 +62,19 @@ class DB(dataSource: DataSource) : TransactionManager {
         ),
         scc_userAdapter = Scc_user.Adapter(
             mobility_toolsAdapter = UserMobilityToolStringColumnAdapter,
+        ),
+        challengeAdapter = Challenge.Adapter(
+            milestonesAdapter = IntListToTextColumnAdapter,
+            conditionsAdapter = object : ListToTextColumnAdapter<ChallengeCondition>() {
+                override fun convertElementToTextColumn(element: ChallengeCondition): String {
+                    return objectMapper.writeValueAsString(element)
+                }
+
+                override fun convertElementFromTextColumn(text: String): ChallengeCondition {
+                    return objectMapper.readValue(text, ChallengeCondition::class.java)
+                }
+
+            }
         )
     )
 
@@ -74,6 +90,10 @@ class DB(dataSource: DataSource) : TransactionManager {
     val userAuthInfoQueries = scc.userAuthInfoQueries
     val clubQuestQueries = scc.clubQuestQueries
     val accessibilityAllowedRegionQueries = scc.accessibilityAllowedRegionQueries
+    val challengeQueries = scc.challengeQueries
+    val challengeContributionQueries = scc.challengeContributionQueries
+    val challengeParticipationQueries = scc.challengeParticipationQueries
+
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {
         // FIXME: 다른 bounded context의 기능을 호출하기 때문에 nested transaction이 반드시 발생한다.

@@ -33,6 +33,9 @@ function AppMenu() {
         <Link to="/clubQuests">
           <Button minimal={true} text="퀘스트 관리"></Button>
         </Link>
+        <Link to="/challenges">
+          <Button minimal={true} text="챌린지 관리"></Button>
+        </Link>
         <Link to="/accessibilityAllowedRegions">
           <Button minimal={true} text="정보 등록 허용 지역 관리"></Button>
         </Link>

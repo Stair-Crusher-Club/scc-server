@@ -11,6 +11,12 @@ import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
+import club.staircrusher.challenge.domain.model.Challenge
+import club.staircrusher.challenge.domain.model.ChallengeActionCondition
+import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
+import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,20 +25,39 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Clock
 
 class RegisterAccessibilityTest : AccessibilityITBase() {
     @Autowired
     private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
+
     @Autowired
     private lateinit var buildingAccessibilityRepository: BuildingAccessibilityRepository
+
     @Autowired
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
+
+    @Autowired
+    private lateinit var challengeRepository: BuildingAccessibilityRepository
+
+    @Autowired
+    private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
+
+    @Autowired
+    private lateinit var challengeContributionRepository: ChallengeContributionRepository
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
         placeAccessibilityRepository.removeAll()
         buildingAccessibilityUpvoteRepository.removeAll()
         buildingAccessibilityRepository.removeAll()
+
+        challengeRepository.removeAll()
+        challengeParticipationRepository.removeAll()
+        challengeContributionRepository.removeAll()
     }
 
     @Test
@@ -187,6 +212,20 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 ),
                 comment = "건물 코멘트",
             ),
+            placeAccessibilityParams = RegisterPlaceAccessibilityRequestDto(
+                placeId = place.id,
+                isFirstFloor = false,
+                stairInfo = StairInfo.ONE.toDTO(),
+                imageUrls = emptyList(),
+                hasSlope = true,
+                comment = "장소 코멘트",
+            ),
+        )
+    }
+
+    private fun getDefaultRequestParamsWithoutBuildingAccessibility(place: Place): RegisterAccessibilityPostRequest {
+        return RegisterAccessibilityPostRequest(
+            buildingAccessibilityParams = null,
             placeAccessibilityParams = RegisterPlaceAccessibilityRequestDto(
                 placeId = place.id,
                 isFirstFloor = false,

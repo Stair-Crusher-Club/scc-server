@@ -38,7 +38,11 @@ scc:
     api-key: test
 
   kakao-login:
-    client-id: test
+    oauth-client-id: test
+
+  apple-login:
+    service-id: test
+    client-secret: test
 
   s3:
     imageUpload:

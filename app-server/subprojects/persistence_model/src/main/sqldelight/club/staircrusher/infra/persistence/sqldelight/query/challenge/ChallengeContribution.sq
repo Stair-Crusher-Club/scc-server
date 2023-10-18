@@ -1,0 +1,74 @@
+save:
+INSERT INTO challenge_contribution
+VALUES :challenge_contribution
+ON CONFLICT(id) DO UPDATE SET
+    user_id = EXCLUDED.user_id,
+    challenge_id = EXCLUDED.challenge_id,
+    place_accessibility_id = EXCLUDED.place_accessibility_id,
+    place_accessibility_comment_id = EXCLUDED.place_accessibility_comment_id,
+    building_accessibility_id = EXCLUDED.building_accessibility_id,
+    building_accessibility_comment_id = EXCLUDED.building_accessibility_comment_id,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at;
+
+findById:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.id = :id;
+
+findByUserId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.user_id = :userId;
+
+findByUserIds:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.user_id IN :userIds;
+
+findByChallengeId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId;
+
+findByChallengeIds:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id IN :challengeIds;
+
+findByChallengeIdAndPlaceAccessibilityId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId
+    AND challenge_contribution.place_accessibility_id = :placeAccessibilityId;
+
+findByChallengeIdAndPlaceAccessibilityCommentId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId
+    AND challenge_contribution.place_accessibility_comment_id = :placeAccessibilityCommentId;
+
+findByChallengeIdAndBuildingAccessibilityId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId
+    AND challenge_contribution.building_accessibility_id = :buildingAccessibilityId;
+
+findByChallengeIdAndBuildingAccessibilityCommentId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId
+    AND challenge_contribution.building_accessibility_comment_id = :buildingAccessibilityCommentId;
+
+countByChallengeId:
+SELECT COUNT(1)
+FROM challenge_contribution
+WHERE challenge_contribution.challenge_id = :challengeId;
+
+removeById:
+DELETE
+FROM challenge_contribution
+WHERE challenge_contribution.id = :id;
+
+removeAll:
+DELETE FROM challenge_contribution;
