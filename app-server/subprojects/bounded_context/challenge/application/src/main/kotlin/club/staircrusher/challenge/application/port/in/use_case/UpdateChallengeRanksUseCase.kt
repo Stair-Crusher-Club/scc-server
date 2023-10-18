@@ -9,6 +9,8 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import java.time.Duration
+import java.time.Instant
 
 /**
  * Update the users' ranks of all challenges.
@@ -22,6 +24,7 @@ class UpdateChallengeRanksUseCase(
 ) {
     fun handle() {
         val challenges = challengeRepository.findAllOrderByCreatedAtDesc()
+            .filter { (it.endsAt ?: Instant.MAX) > SccClock.instant() - Duration.ofDays(1) }
         challenges.forEach { challenge ->
             val now = SccClock.instant()
             transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
