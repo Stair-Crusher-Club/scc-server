@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
+import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.api.spec.dto.ListChallengesRequestDto
 import club.staircrusher.api.spec.dto.ListChallengesResponseDto
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
@@ -32,12 +33,12 @@ class ListChallengesTest : ChallengeITBase() {
     fun setUp() = transactionManager.doInTransaction {
         challengeRepository.removeAll()
         challengeParticipationRepository.removeAll()
-
-        registerChallenges()
     }
 
     @Test
     fun `진행 중 & 참여 중, 진행 중, 오픈 예정, 종료 순 으로 내려준다`() {
+        val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
+
         val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
         val challenges = mvc
             .sccRequest(
@@ -55,6 +56,9 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
+        assertEquals(registeredChallengesByStatus.values.flatten().size, challenges.size)
+        assertTrue(challenges.isDistinct())
+
         val sortedChallenges = challenges.sortedWith { c1, c2 ->
             val priority = listOf(
                 ChallengeStatusDto.inProgress,
@@ -77,6 +81,8 @@ class ListChallengesTest : ChallengeITBase() {
 
     @Test
     fun `필터가 있는 경우 그에 해당하는 챌린지만 내려온다`() {
+        val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
+
         val inProgressChallenges = mvc
             .sccRequest(
                 "/listChallenges",
@@ -93,6 +99,8 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.inProgress }
         )
+        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.inProgress]?.size, inProgressChallenges.size)
+        assertTrue(inProgressChallenges.isDistinct())
 
         val upcomingChallenges = mvc
             .sccRequest(
@@ -110,6 +118,8 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.upcoming }
         )
+        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.upcoming]?.size, upcomingChallenges.size)
+        assertTrue(upcomingChallenges.isDistinct())
 
         val closedChallenges = mvc
             .sccRequest(
@@ -127,10 +137,14 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.closed }
         )
+        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.closed]?.size, closedChallenges.size)
+        assertTrue(closedChallenges.isDistinct())
     }
 
     @Test
     fun `필터가 여러 개 있는 경우 여러 필터에 해당하는 챌린지만 내려온다`() {
+        val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
+
         val inProgressOrUpcomingChallenges = mvc
             .sccRequest(
                 "/listChallenges",
@@ -147,6 +161,12 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.inProgress || it == ChallengeStatusDto.upcoming }
         )
+        assertEquals(
+            (registeredChallengesByStatus[ChallengeStatusDto.inProgress]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatusDto.upcoming]?.size ?: 0),
+            inProgressOrUpcomingChallenges.size
+        )
+        assertTrue(inProgressOrUpcomingChallenges.isDistinct())
+
         val upcomingOrCloseChallenges = mvc
             .sccRequest(
                 "/listChallenges",
@@ -163,10 +183,17 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.upcoming || it == ChallengeStatusDto.closed }
         )
+        assertEquals(
+            (registeredChallengesByStatus[ChallengeStatusDto.upcoming]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatusDto.closed]?.size ?: 0),
+            inProgressOrUpcomingChallenges.size
+        )
+        assertTrue(upcomingOrCloseChallenges.isDistinct())
     }
 
     @Test
     fun `진행 중 & 참여 중 챌린지는 앞쪽에 참여한 순서대로 차례대로 나온다`() {
+        val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
+
         val inProgressChallengesBeforeParticipation = mvc
             .sccRequest(
                 "/listChallenges",
@@ -178,6 +205,10 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
+
+        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.inProgress]?.size, inProgressChallengesBeforeParticipation.size)
+        assertTrue(inProgressChallengesBeforeParticipation.isDistinct())
+
         val firstChallengeBeforeParticipation = inProgressChallengesBeforeParticipation.first()
         assertTrue(firstChallengeBeforeParticipation.status == ChallengeStatusDto.inProgress)
         assertTrue(firstChallengeBeforeParticipation.hasJoined.not())
@@ -211,20 +242,24 @@ class ListChallengesTest : ChallengeITBase() {
             )
             .getResult(ListChallengesResponseDto::class)
             .items
+
+        assertEquals(registeredChallengesByStatus.values.flatten().size, challengesAfterParticipation.size)
+        assertTrue(challengesAfterParticipation.isDistinct())
+
         val firstChallenge = challengesAfterParticipation.getOrNull(0)
         assertTrue(firstChallenge != null)
-        assertTrue(firstChallenge?.id == firstChallengeBeforeParticipation.id)
-        assertTrue(firstChallenge?.status == ChallengeStatusDto.inProgress)
-        assertTrue(firstChallenge?.hasJoined == true)
+        assertEquals(firstChallengeBeforeParticipation.id, firstChallenge?.id)
+        assertEquals(ChallengeStatusDto.inProgress, firstChallenge?.status)
+        assertEquals(true, firstChallenge?.hasJoined)
         val secondChallenge = challengesAfterParticipation.getOrNull(1)
         assertTrue(secondChallenge != null)
-        assertTrue(secondChallenge?.id == lastChallengeBeforeParticipation.id)
-        assertTrue(secondChallenge?.status == ChallengeStatusDto.inProgress)
-        assertTrue(secondChallenge?.hasJoined == true)
+        assertEquals(lastChallengeBeforeParticipation.id, secondChallenge?.id)
+        assertEquals(ChallengeStatusDto.inProgress, secondChallenge?.status)
+        assertEquals(true, secondChallenge?.hasJoined)
         val thirdChallenge = challengesAfterParticipation.getOrNull(2)
         assertTrue(thirdChallenge != null)
-        assertTrue(thirdChallenge?.status == ChallengeStatusDto.inProgress)
-        assertTrue(thirdChallenge?.hasJoined == false)
+        assertEquals(ChallengeStatusDto.inProgress, thirdChallenge?.status)
+        assertEquals(false, thirdChallenge?.hasJoined)
     }
 
     // TODO: 페이징 때 쓸 테스트코드
@@ -273,4 +308,6 @@ class ListChallengesTest : ChallengeITBase() {
 //            .getResult(ListChallengesResponseDto::class)
 //        assertEquals(challenges, firstPage.items + secondPage.items + thirdPage.items)
 //    }
+
+    private fun List<ListChallengesItemDto>.isDistinct() = this.map { it.id }.let { it.size == it.toSet().size }
 }

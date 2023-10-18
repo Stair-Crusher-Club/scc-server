@@ -1,5 +1,6 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller.base
 
+import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
@@ -19,20 +20,34 @@ open class ChallengeITBase : SccSpringITBase() {
     @Autowired
     private lateinit var clock: Clock
 
-    fun registerChallenges() {
+    /**
+     * @return 생성된 챌린지
+     */
+    fun registerChallenges(): Map<ChallengeStatusDto, List<Challenge>> {
         // 진행 중
+        val inProgressChallenges = mutableListOf<Challenge>()
         repeat(Random.nextInt(3 until 10)) {
-            registerInProgressChallenge()
+            inProgressChallenges += registerInProgressChallenge()
         }
-        registerInProgressChallenge(isInfiniteChallenge = true)
+        inProgressChallenges += registerInProgressChallenge(isInfiniteChallenge = true)
+
         // 오픈 예정
+        val upcomingChallenges = mutableListOf<Challenge>()
         repeat(Random.nextInt(3 until 10)) {
-            registerUpcomingChallenge()
+            upcomingChallenges += registerUpcomingChallenge()
         }
+
         // 종료된
+        val closedChallenges = mutableListOf<Challenge>()
         repeat(Random.nextInt(3 until 10)) {
-            registerClosedChallenge()
+            closedChallenges += registerClosedChallenge()
         }
+
+        return listOf(
+            ChallengeStatusDto.inProgress to inProgressChallenges,
+            ChallengeStatusDto.upcoming to upcomingChallenges,
+            ChallengeStatusDto.closed to closedChallenges,
+        ).toMap()
     }
 
 
