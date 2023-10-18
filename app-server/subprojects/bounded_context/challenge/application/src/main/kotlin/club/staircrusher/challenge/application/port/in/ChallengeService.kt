@@ -7,6 +7,7 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
@@ -45,11 +46,12 @@ class ChallengeService(
     }
 
     fun getMyInProgressChallenges(userId: String, criteriaTime: Instant = clock.instant()): List<Challenge> {
-        return challengeRepository.joinedChallenges(
+        return challengeRepository.findByUidAndTime(
             userId = userId,
             startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
             endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
         )
+            .filter { it.getStatus(criteriaTime) == ChallengeStatus.IN_PROGRESS }
     }
 
     fun getInProgressChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
@@ -57,6 +59,7 @@ class ChallengeService(
             startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
             endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
         )
+            .filter { it.getStatus(criteriaTime) == ChallengeStatus.IN_PROGRESS }
     }
 
     fun getUpcomingChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
@@ -64,6 +67,7 @@ class ChallengeService(
             startsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
             endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
         )
+            .filter { it.getStatus(criteriaTime) == ChallengeStatus.UPCOMING }
     }
 
     fun getClosedChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
@@ -71,6 +75,7 @@ class ChallengeService(
             startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
             endsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
         )
+            .filter { it.getStatus(criteriaTime) == ChallengeStatus.CLOSED }
     }
 
     fun hasJoined(userId: String, challengeId: String): Boolean {

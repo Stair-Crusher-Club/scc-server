@@ -8,10 +8,11 @@ import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
+import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_contribution
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_participation
-import club.staircrusher.infra.persistence.sqldelight.query.challenge.JoinedChallenges
+import club.staircrusher.infra.persistence.sqldelight.query.challenge.FindByUidAndTime
 import club.staircrusher.infra.persistence.sqldelight.query.challenge.NotJoinedChallenges
 import club.staircrusher.stdlib.time.toOffsetDateTime
 import java.time.Instant
@@ -56,7 +57,7 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(
 ) = ChallengeDto(
     id = id,
     name = name,
-    status = this.toStatus(criteriaTime),
+    status = getStatus(criteriaTime).toDto(),
     isPublic = isPublic,
     isComplete = isComplete,
     startsAt = EpochMillisTimestamp(startsAt.toEpochMilli()),
@@ -67,10 +68,10 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(
     contributionsCount = contributionsCount
 )
 
-fun club.staircrusher.challenge.domain.model.Challenge.toStatus(criteriaTime: Instant): ChallengeStatusDto = when {
-    criteriaTime < startsAt -> ChallengeStatusDto.upcoming
-    (endsAt ?: Instant.MAX) < criteriaTime -> ChallengeStatusDto.closed
-    else -> ChallengeStatusDto.inProgress
+fun ChallengeStatus.toDto(): ChallengeStatusDto = when (this) {
+    ChallengeStatus.UPCOMING -> ChallengeStatusDto.upcoming
+    ChallengeStatus.IN_PROGRESS -> ChallengeStatusDto.inProgress
+    ChallengeStatus.CLOSED -> ChallengeStatusDto.closed
 }
 
 fun Challenge_contribution.toDomainModel() = ChallengeContribution(
@@ -115,14 +116,14 @@ fun club.staircrusher.challenge.domain.model.Challenge.toListChallengeDto(hasJoi
     ListChallengesItemDto(
         id = id,
         name = name,
-        status = toStatus(criteriaTime),
+        status = getStatus(criteriaTime).toDto(),
         startsAt = EpochMillisTimestamp(startsAt.toEpochMilli()),
         endsAt = endsAt?.toEpochMilli()?.let { EpochMillisTimestamp(it) },
         hasJoined = hasJoined,
         createdAt = EpochMillisTimestamp(createdAt.toEpochMilli()),
     )
 
-fun JoinedChallenges.toChallenge() = club.staircrusher.challenge.domain.model.Challenge(
+fun FindByUidAndTime.toChallenge() = club.staircrusher.challenge.domain.model.Challenge(
     id = id,
     name = name,
     isPublic = is_public,

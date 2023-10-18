@@ -1,9 +1,9 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller.base
 
-import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
+import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.user.domain.model.User
@@ -23,7 +23,7 @@ open class ChallengeITBase : SccSpringITBase() {
     /**
      * @return 생성된 챌린지
      */
-    fun registerChallenges(): Map<ChallengeStatusDto, List<Challenge>> {
+    fun registerChallenges(): Map<ChallengeStatus, List<Challenge>> {
         // 진행 중
         val inProgressChallenges = mutableListOf<Challenge>()
         repeat(Random.nextInt(3 until 10)) {
@@ -44,9 +44,9 @@ open class ChallengeITBase : SccSpringITBase() {
         }
 
         return listOf(
-            ChallengeStatusDto.inProgress to inProgressChallenges,
-            ChallengeStatusDto.upcoming to upcomingChallenges,
-            ChallengeStatusDto.closed to closedChallenges,
+            ChallengeStatus.IN_PROGRESS to inProgressChallenges,
+            ChallengeStatus.UPCOMING to upcomingChallenges,
+            ChallengeStatus.CLOSED to closedChallenges,
         ).toMap()
     }
 

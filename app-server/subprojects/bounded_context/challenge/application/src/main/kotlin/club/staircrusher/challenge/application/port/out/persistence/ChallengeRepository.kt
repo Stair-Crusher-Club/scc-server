@@ -13,7 +13,7 @@ interface ChallengeRepository : EntityRepository<Challenge, String> {
         endsAtRange: ClosedRange<Instant>,
     ): List<Challenge>
 
-    fun joinedChallenges(
+    fun findByUidAndTime(
         userId: String,
         startsAtRange: ClosedRange<Instant>,
         endsAtRange: ClosedRange<Instant>,

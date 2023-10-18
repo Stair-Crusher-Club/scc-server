@@ -56,12 +56,12 @@ class ChallengeRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun joinedChallenges(
+    override fun findByUidAndTime(
         userId: String,
         startsAtRange: ClosedRange<Instant>,
         endsAtRange: ClosedRange<Instant>
     ): List<Challenge> {
-        return queries.joinedChallenges(
+        return queries.findByUidAndTime(
             userId = userId,
             startRangeOfStartsAt = startsAtRange.start.toOffsetDateTime(),
             endRangeOfStartAt = startsAtRange.endInclusive.toOffsetDateTime(),

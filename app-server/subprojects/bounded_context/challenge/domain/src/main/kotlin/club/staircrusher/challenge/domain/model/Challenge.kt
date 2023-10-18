@@ -20,6 +20,14 @@ class Challenge(
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {
+    fun getStatus(criteriaTime: Instant): ChallengeStatus {
+        return when {
+            criteriaTime < startsAt -> ChallengeStatus.UPCOMING
+            endsAt != null && endsAt < criteriaTime -> ChallengeStatus.CLOSED
+            else -> ChallengeStatus.IN_PROGRESS
+        }
+    }
+
     override fun hashCode(): Int {
         return id.hashCode()
     }

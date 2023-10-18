@@ -7,6 +7,7 @@ import club.staircrusher.api.spec.dto.ListChallengesResponseDto
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
+import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
 import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -99,7 +100,7 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.inProgress }
         )
-        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.inProgress]?.size, inProgressChallenges.size)
+        assertEquals(registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size, inProgressChallenges.size)
         assertTrue(inProgressChallenges.isDistinct())
 
         val upcomingChallenges = mvc
@@ -118,7 +119,7 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.upcoming }
         )
-        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.upcoming]?.size, upcomingChallenges.size)
+        assertEquals(registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size, upcomingChallenges.size)
         assertTrue(upcomingChallenges.isDistinct())
 
         val closedChallenges = mvc
@@ -137,7 +138,7 @@ class ListChallengesTest : ChallengeITBase() {
                 .map { it.status }
                 .all { it == ChallengeStatusDto.closed }
         )
-        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.closed]?.size, closedChallenges.size)
+        assertEquals(registeredChallengesByStatus[ChallengeStatus.CLOSED]?.size, closedChallenges.size)
         assertTrue(closedChallenges.isDistinct())
     }
 
@@ -162,7 +163,7 @@ class ListChallengesTest : ChallengeITBase() {
                 .all { it == ChallengeStatusDto.inProgress || it == ChallengeStatusDto.upcoming }
         )
         assertEquals(
-            (registeredChallengesByStatus[ChallengeStatusDto.inProgress]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatusDto.upcoming]?.size ?: 0),
+            (registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size ?: 0),
             inProgressOrUpcomingChallenges.size
         )
         assertTrue(inProgressOrUpcomingChallenges.isDistinct())
@@ -184,8 +185,8 @@ class ListChallengesTest : ChallengeITBase() {
                 .all { it == ChallengeStatusDto.upcoming || it == ChallengeStatusDto.closed }
         )
         assertEquals(
-            (registeredChallengesByStatus[ChallengeStatusDto.upcoming]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatusDto.closed]?.size ?: 0),
-            inProgressOrUpcomingChallenges.size
+            (registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatus.CLOSED]?.size ?: 0),
+            upcomingOrCloseChallenges.size,
         )
         assertTrue(upcomingOrCloseChallenges.isDistinct())
     }
@@ -206,7 +207,7 @@ class ListChallengesTest : ChallengeITBase() {
             .getResult(ListChallengesResponseDto::class)
             .items
 
-        assertEquals(registeredChallengesByStatus[ChallengeStatusDto.inProgress]?.size, inProgressChallengesBeforeParticipation.size)
+        assertEquals(registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size, inProgressChallengesBeforeParticipation.size)
         assertTrue(inProgressChallengesBeforeParticipation.isDistinct())
 
         val firstChallengeBeforeParticipation = inProgressChallengesBeforeParticipation.first()

@@ -24,12 +24,14 @@ class GetChallengeTest : ChallengeITBase() {
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
 
     @BeforeEach
-    fun setUp() = transactionManager.doInTransaction {
-        challengeRepository.removeAll()
-        challengeParticipationRepository.removeAll()
-        challengeContributionRepository.removeAll()
+    fun setUp() {
+        transactionManager.doInTransaction {
+            challengeRepository.removeAll()
+            challengeParticipationRepository.removeAll()
+            challengeContributionRepository.removeAll()
 
-        registerChallenges()
+            registerChallenges()
+        }
     }
 
     @Test
