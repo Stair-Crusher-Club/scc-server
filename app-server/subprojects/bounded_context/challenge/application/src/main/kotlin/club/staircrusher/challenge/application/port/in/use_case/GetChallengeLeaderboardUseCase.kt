@@ -6,7 +6,6 @@ import club.staircrusher.challenge.domain.model.ChallengeRank
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionManager
-import club.staircrusher.user.application.port.`in`.UserApplicationService
 
 /**
  * Get the leaderboard of a challenge which shows only the top 10 users.
@@ -15,7 +14,7 @@ import club.staircrusher.user.application.port.`in`.UserApplicationService
  * 3 users with the same score, the ranks are 1, 1, 1, 4, 5, 6, 7, 8, 9, 10.
  */
 @Component
-class GetLeaderboardUseCase(
+class GetChallengeLeaderboardUseCase(
     private val transactionManager: TransactionManager,
     private val challengeRepository: ChallengeRepository,
     private val challengeRankRepository: ChallengeRankRepository,
