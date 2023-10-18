@@ -133,7 +133,7 @@ class ChallengeService(
             throw SccDomainException("해당 챌린지는 종료되었습니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_CLOSED)
         }
 
-        val alreadyContributed = getAlreadyContributedThing(challengeId = challenge.id, contribution = contribution)
+        val alreadyContributed = getExistingContribution(challengeId = challenge.id, contribution = contribution)
         if (alreadyContributed != null) return alreadyContributed
 
         val challengeContribution = challengeContributionRepository.save(
@@ -158,7 +158,7 @@ class ChallengeService(
         return challengeContribution
     }
 
-    private fun getAlreadyContributedThing(challengeId: String, contribution: Contribution): ChallengeContribution? {
+    private fun getExistingContribution(challengeId: String, contribution: Contribution): ChallengeContribution? {
         return when (contribution) {
             is Contribution.PlaceAccessibility -> {
                 challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityId(challengeId = challengeId, placeAccessibilityId = contribution.placeAccessibilityId)
