@@ -7,7 +7,7 @@ fi;
 
 IMAGE_TAG="${2:-"latest"}"
 if [[ $1 = "dev" ]]; then
-  IMAGE_TAG="IMAGE_TAG-rc"
+  IMAGE_TAG="$IMAGE_TAG-rc"
 fi;
 
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/q0g6g7m8
