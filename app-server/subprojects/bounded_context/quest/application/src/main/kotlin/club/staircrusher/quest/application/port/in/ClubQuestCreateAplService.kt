@@ -51,6 +51,14 @@ class ClubQuestCreateAplService(
                 chunkByMaxPlaceCountPerQuest(targetBuildings, maxPlaceCountPerQuest)
                     .map { Pair(questCenterLocation, it) }
             }
+            .map { (location, targetBuildings) ->
+                Pair(
+                    location,
+                    targetBuildings.mapIndexed { idx, targetBuilding ->
+                        targetBuilding.copy(name = getBuildingName(idx))
+                    },
+                )
+            }
             .convertToClubQuestCreateDryRunResultItems()
     }
 
