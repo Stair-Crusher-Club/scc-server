@@ -12,6 +12,7 @@ import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeLe
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeRankUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeWithInvitationCodeUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.GetCountForNextChallengeRankUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.JoinChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.ListChallengesUseCase
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDto
@@ -28,6 +29,7 @@ class ChallengeController(
     private val getChallengeWithInvitationCodeUseCase: GetChallengeWithInvitationCodeUseCase,
     private val getChallengeRankUseCase: GetChallengeRankUseCase,
     private val getChallengeLeaderboardUseCase: GetChallengeLeaderboardUseCase,
+    private val getContributionCountForNextChallengeRankUseCase: GetCountForNextChallengeRankUseCase,
     private val joinChallengeUseCase: JoinChallengeUseCase,
     private val listChallengesUseCase: ListChallengesUseCase,
     private val clock: Clock
@@ -47,6 +49,14 @@ class ChallengeController(
         } else {
             null
         }
+        val contributionCountForNextRank = if (result.hasJoined && authentication != null) {
+            getContributionCountForNextChallengeRankUseCase.handle(
+                challengeId = result.challenge.id,
+                userId = authentication.principal
+            )
+        } else {
+            null
+        }
         return GetChallengeResponseDto(
             challenge = result.challenge.toDto(
                 participationsCount = result.participationsCount,
@@ -56,7 +66,8 @@ class ChallengeController(
             ranks = ranks.map { it.toDto("") },
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
-            myRank = myRank?.toDto("")
+            myRank = myRank?.toDto(""),
+            contributionCountForNextRank = contributionCountForNextRank,
         )
     }
 
@@ -78,6 +89,14 @@ class ChallengeController(
         } else {
             null
         }
+        val contributionCountForNextRank = if (result.hasJoined) {
+            getContributionCountForNextChallengeRankUseCase.handle(
+                challengeId = result.challenge.id,
+                userId = authentication.principal
+            )
+        } else {
+            null
+        }
         return GetChallengeResponseDto(
             challenge = result.challenge.toDto(
                 participationsCount = result.participationsCount,
@@ -88,6 +107,7 @@ class ChallengeController(
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
             myRank = myRank?.toDto(""),
+            contributionCountForNextRank = contributionCountForNextRank,
         )
     }
 

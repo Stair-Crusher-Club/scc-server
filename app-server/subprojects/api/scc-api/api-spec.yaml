@@ -1162,6 +1162,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ChallengeRankDto'
+        contributionCountForNextRank:
+          type: integer
+          format: int64
+          description: 다음 랭크에 도달하기 위해 필요한 contribution 수. ex) 10개 정복
         hasJoined:
           type: boolean
           description: 내가 참여하고 있는지에 대한 정보
