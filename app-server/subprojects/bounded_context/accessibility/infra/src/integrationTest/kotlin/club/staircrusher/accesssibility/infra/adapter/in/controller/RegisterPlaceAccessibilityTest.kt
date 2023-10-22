@@ -139,11 +139,11 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             return@doInTransaction Triple(
                 testDataGenerator.createUser(),
                 testDataGenerator.createBuildingAndPlace(
-                    placeName = "밀크빌딩",
+                    placeName = "성수동간판없는집",
                     buildingAddress = BuildingAddress(
                         siDo = "서울특별시",
                         siGunGu = "성동구",
-                        eupMyeonDong = "성수동",
+                        eupMyeonDong = "성수동1가",
                         li = "",
                         roadName = "성수일로4길",
                         mainBuildingNumber = "4",
