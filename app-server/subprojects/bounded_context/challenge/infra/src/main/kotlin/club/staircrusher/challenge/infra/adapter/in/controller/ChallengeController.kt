@@ -63,10 +63,10 @@ class ChallengeController(
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = ranks.map { it.toDto("") },
+            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
-            myRank = myRank?.toDto(""),
+            myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
         )
     }
@@ -103,10 +103,10 @@ class ChallengeController(
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = ranks.map { it.toDto("") },
+            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
-            myRank = myRank?.toDto(""),
+            myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
         )
     }
@@ -129,7 +129,7 @@ class ChallengeController(
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = ranks.map { it.toDto("") }
+            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
         )
     }
 
