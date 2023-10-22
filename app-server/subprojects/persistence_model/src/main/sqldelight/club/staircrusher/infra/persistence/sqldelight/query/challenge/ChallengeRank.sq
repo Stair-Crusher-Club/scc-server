@@ -62,3 +62,7 @@ WHERE
     challenge_rank.challenge_id = :challenge_id AND
     challenge_rank.contribution_count = :contribution_count
 LIMIT 1;
+
+removeAllByChallengeId:
+DELETE FROM challenge_rank
+WHERE challenge_rank.challenge_id = :challenge_id;

@@ -66,6 +66,10 @@ class ChallengeRankRepository(
         queries.removeAll()
     }
 
+    override fun removeAll(challengeId: String) {
+        queries.removeAllByChallengeId(challengeId)
+    }
+
     override fun findById(id: String): ChallengeRank {
         return findByIdOrNull(id) ?: throw IllegalArgumentException("ChallengeRank of id $id does not exist.")
     }
