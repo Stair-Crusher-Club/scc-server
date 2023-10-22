@@ -15,9 +15,12 @@ import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeWi
 import club.staircrusher.challenge.application.port.`in`.use_case.GetCountForNextChallengeRankUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.JoinChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.ListChallengesUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.UpdateChallengeRanksUseCase
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDto
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toListChallengeDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.security.web.util.matcher.IpAddressMatcher
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -32,6 +35,7 @@ class ChallengeController(
     private val getContributionCountForNextChallengeRankUseCase: GetCountForNextChallengeRankUseCase,
     private val joinChallengeUseCase: JoinChallengeUseCase,
     private val listChallengesUseCase: ListChallengesUseCase,
+    private val updateChallengeRanksUseCase: UpdateChallengeRanksUseCase,
     private val clock: Clock
 ) {
     @PostMapping("/getChallenge")
@@ -158,5 +162,18 @@ class ChallengeController(
             items = result,
             nextToken = null,
         )
+    }
+
+    @PostMapping("/updateChallengeRanks")
+    fun updateAccessibilityRanks(request: HttpServletRequest) {
+        val clusterIpAddressMatcher = IpAddressMatcher("10.42.0.0/16")
+        val localIpAddressMatcher = IpAddressMatcher("127.0.0.1/32")
+        if (
+            !clusterIpAddressMatcher.matches(request)
+            && !localIpAddressMatcher.matches(request)
+        ) {
+            throw IllegalArgumentException("Unauthorized")
+        }
+        updateChallengeRanksUseCase.handle()
     }
 }
