@@ -41,7 +41,7 @@ class ChallengeRankRepository(
         return queries.findLastRank(challengeId).executeAsOneOrNull()?.max
     }
 
-    override fun findByContributionCount(challengeId: String, contributionCount: Int): ChallengeRank? {
+    override fun findByContributionCount(challengeId: String, contributionCount: Long): ChallengeRank? {
         return queries.findByContributionCount(challengeId, contributionCount)
             .executeAsOneOrNull()
             ?.toDomainModel()

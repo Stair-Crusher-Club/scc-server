@@ -45,14 +45,14 @@ class UpdateChallengeRanksUseCase(
                             id = EntityIdGenerator.generateRandom(),
                             challengeId = challenge.id,
                             userId = userId,
-                            contributionCount = contributions.size,
+                            contributionCount = contributions.size.toLong(),
                             rank = -1,
                             createdAt = now,
                             updatedAt = now,
                         )
 
                         challengeRank.apply {
-                            contributionCount = contributions.size
+                            contributionCount = contributions.size.toLong()
                             updatedAt = now
                         }
                     }

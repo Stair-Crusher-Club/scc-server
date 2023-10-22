@@ -8,8 +8,8 @@ interface ChallengeRankRepository : EntityRepository<ChallengeRank, String> {
     fun findByUserId(challengeId: String, userId: String): ChallengeRank?
     fun findByRank(challengeId: String, rank: Long): ChallengeRank?
     fun findNextRank(challengeId: String, rank: Long): ChallengeRank?
-    fun findByContributionCount(challengeId: String, contributionCount: Int): ChallengeRank?
+    fun findByContributionCount(challengeId: String, contributionCount: Long): ChallengeRank?
     fun findLastRank(challengeId: String): Long?
     fun findAll(challengeId: String): List<ChallengeRank>
-    fun removeAll(challengeId: String): Unit
+    fun removeAll(challengeId: String)
 }
