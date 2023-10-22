@@ -41,21 +41,20 @@ class UpdateChallengeRanksUseCase(
 
                 val ranks = (contributions.groupBy { it.userId } + userWithNoContribution)
                     .map { (userId, contributions) ->
-                        val contributionCount = contributions.size
                         val challengeRank = challengeRankRepository.findByUserId(challenge.id, userId) ?: ChallengeRank(
                             id = EntityIdGenerator.generateRandom(),
                             challengeId = challenge.id,
                             userId = userId,
-                            contributionCount = contributionCount,
+                            contributionCount = contributions.size,
                             rank = -1,
                             createdAt = now,
                             updatedAt = now,
                         )
 
-                        challengeRank.copy(
-                            contributionCount = contributionCount,
-                            updatedAt = now,
-                        )
+                        challengeRank.apply {
+                            contributionCount = contributions.size
+                            updatedAt = now
+                        }
                     }
 
                 var nextRank = 1L
@@ -64,7 +63,9 @@ class UpdateChallengeRanksUseCase(
                     .flatMap { (_, ranks) ->
                         val currentRank = nextRank
                         nextRank += ranks.size
-                        ranks.map { it.copy(rank = currentRank, updatedAt = now) }
+                        ranks.map {
+                            it.apply { rank = currentRank; updatedAt = now }
+                        }
                     }
                 challengeRankRepository.removeAll(challenge.id)
                 challengeRankRepository.saveAll(updatedRanks)
