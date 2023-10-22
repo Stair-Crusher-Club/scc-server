@@ -21,7 +21,7 @@ data class ChallengeAddressCondition(
     val rawEupMyeonDongs: List<String>?,
 ) {
     fun isSatisfied(address: ChallengeAddress): Boolean {
-        return rawEupMyeonDongs?.any { address.eupMyeonDong.contains(it) } ?: false
+        return rawEupMyeonDongs?.any { address.eupMyeonDong.contains(it) } ?: true
     }
 }
 
