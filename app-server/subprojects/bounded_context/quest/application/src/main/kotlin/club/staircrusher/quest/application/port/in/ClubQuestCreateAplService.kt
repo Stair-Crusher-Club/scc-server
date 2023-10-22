@@ -2,18 +2,18 @@ package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
-import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
+import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
+import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 import club.staircrusher.quest.util.HumanReadablePrefixGenerator
-import club.staircrusher.stdlib.geography.Location
-import kotlinx.coroutines.runBlocking
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.persistence.TransactionManager
+import kotlinx.coroutines.runBlocking
 import java.time.Clock
 
 @Component
@@ -46,14 +46,10 @@ class ClubQuestCreateAplService(
             .filter { it.id !in accessibilityExistingPlaceIds && it.id !in invalidPlaceIds }
             .groupToClubQuestTargetBuildings()
             .let { clubQuestTargetBuildingClusterer.clusterBuildings(it, clusterCount) }
-            .toList().map { (questCenterLocation, targetBuildings) ->
-                Pair(
-                    questCenterLocation,
-                    applyMaxPlaceCountPerQuest(targetBuildings, maxPlaceCountPerQuest)
-                        .mapIndexed { idx, targetBuilding ->
-                            targetBuilding.copy(name = getBuildingName(idx))
-                        },
-                )
+            .toList()
+            .flatMap { (questCenterLocation, targetBuildings) ->
+                chunkByMaxPlaceCountPerQuest(targetBuildings, maxPlaceCountPerQuest)
+                    .map { Pair(questCenterLocation, it) }
             }
             .convertToClubQuestCreateDryRunResultItems()
     }
@@ -69,7 +65,7 @@ class ClubQuestCreateAplService(
 
     private fun List<Place>.groupToClubQuestTargetBuildings(): List<ClubQuestTargetBuilding> {
         return this
-            .groupBy { it.building!!.id }
+            .groupBy { it.building.id }
             .toList().mapIndexed { buildingIdx, (buildingId, places) ->
                 ClubQuestTargetBuilding(
                     buildingId = buildingId,
@@ -103,21 +99,23 @@ class ClubQuestCreateAplService(
             }
     }
 
-    private fun applyMaxPlaceCountPerQuest(
+    /**
+     * 한 클러스터 안의 장소들을 maxPlaceCountPerQuest개 만큼 자른다.
+     */
+    private fun chunkByMaxPlaceCountPerQuest(
         targetBuildings: List<ClubQuestTargetBuilding>,
         maxPlaceCountPerQuest: Int,
-    ): List<ClubQuestTargetBuilding> {
-        val totalTargetPlaces = targetBuildings.sumOf { it.places.count() }
-        if (totalTargetPlaces <= maxPlaceCountPerQuest) {
-            return targetBuildings
-        }
+    ) : List<List<ClubQuestTargetBuilding>> {
         return targetBuildings
             .flatMap { targetBuilding -> targetBuilding.places.map { Pair(targetBuilding, it) } }
             .shuffled()
-            .take(maxPlaceCountPerQuest)
-            .groupBy { it.first }
-            .map { (targetBuilding, pairs) ->
-                targetBuilding.copy(places = pairs.map { it.second })
+            .chunked(maxPlaceCountPerQuest)
+            .map { chunk ->
+                chunk
+                    .groupBy({ it.first }, { it.second })
+                    .map { (targetBuilding, targetPlaces) ->
+                        targetBuilding.copy(places = targetPlaces)
+                    }
             }
     }
 
