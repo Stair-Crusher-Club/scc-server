@@ -1,8 +1,10 @@
 package club.staircrusher.challenge.application.port.`in`.use_case
 
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRankRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
+import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeRank
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
@@ -21,6 +23,7 @@ class UpdateChallengeRanksUseCase(
     private val challengeRepository: ChallengeRepository,
     private val challengeRankRepository: ChallengeRankRepository,
     private val challengeContributionRepository: ChallengeContributionRepository,
+    private val challengeParticipationRepository: ChallengeParticipationRepository,
 ) {
     fun handle() {
         val challenges = challengeRepository.findAllOrderByCreatedAtDesc()
@@ -29,8 +32,14 @@ class UpdateChallengeRanksUseCase(
             val now = SccClock.instant()
             transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
                 val contributions = challengeContributionRepository.findByChallengeId(challenge.id)
+                val participants = challengeParticipationRepository.findByChallengeId(challenge.id)
 
-                val ranks = contributions.groupBy { it.userId }
+                val userIds = participants.map { it.userId }.toSet()
+                val contributionUserIds = contributions.map { it.userId }.toSet()
+                val missingUserIds = userIds - contributionUserIds
+                val userWithNoContribution = missingUserIds.map { userId -> userId to emptyList<ChallengeContribution>() }
+
+                val ranks = (contributions.groupBy { it.userId } + userWithNoContribution)
                     .map { (userId, contributions) ->
                         val contributionCount = contributions.size
                         val challengeRank = challengeRankRepository.findByUserId(challenge.id, userId) ?: ChallengeRank(
@@ -57,7 +66,7 @@ class UpdateChallengeRanksUseCase(
                         nextRank += ranks.size
                         ranks.map { it.copy(rank = currentRank, updatedAt = now) }
                     }
-                challengeRankRepository.removeAll()
+                challengeRankRepository.removeAll(challenge.id)
                 challengeRankRepository.saveAll(updatedRanks)
             }
         }
