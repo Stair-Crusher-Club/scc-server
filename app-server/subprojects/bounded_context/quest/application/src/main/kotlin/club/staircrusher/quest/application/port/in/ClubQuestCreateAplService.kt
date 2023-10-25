@@ -51,6 +51,7 @@ class ClubQuestCreateAplService(
                 chunkByMaxPlaceCountPerQuest(targetBuildings, maxPlaceCountPerQuest)
                     .map { Pair(questCenterLocation, it) }
             }
+            .sortedByDescending { (_, targetBuildings) -> targetBuildings.sumOf { it.places.size } }.take(clusterCount) // clusterCount 개의 퀘스트만 만든다.
             .map { (location, targetBuildings) ->
                 Pair(
                     location,
