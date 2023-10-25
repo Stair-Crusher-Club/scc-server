@@ -7,7 +7,6 @@ dependencies {
     val kotlinLoggingVersion: String by project
 
     implementation(projects.stdlib)
-    implementation(projects.domainEventApi)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
