@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import javax.sql.DataSource
 
 @Component
@@ -49,7 +50,7 @@ class DB(dataSource: DataSource) : TransactionManager {
                 }
 
                 override fun convertElementFromTextColumn(text: String): ClubQuestTargetBuilding {
-                    return objectMapper.readValue(text, ClubQuestTargetBuilding::class.java)
+                    return objectMapper.readValue(text)
                 }
 
             }
@@ -71,7 +72,7 @@ class DB(dataSource: DataSource) : TransactionManager {
                 }
 
                 override fun convertElementFromTextColumn(text: String): ChallengeCondition {
-                    return objectMapper.readValue(text, ChallengeCondition::class.java)
+                    return objectMapper.readValue(text)
                 }
 
             }
@@ -93,6 +94,7 @@ class DB(dataSource: DataSource) : TransactionManager {
     val challengeQueries = scc.challengeQueries
     val challengeContributionQueries = scc.challengeContributionQueries
     val challengeParticipationQueries = scc.challengeParticipationQueries
+    val challengeRankQueries = scc.challengeRankQueries
 
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {

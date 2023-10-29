@@ -9,10 +9,14 @@ import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.challenge.domain.model.ChallengeStatus
+import club.staircrusher.challenge.domain.model.ChallengeRank
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_contribution
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_participation
+import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_rank
 import club.staircrusher.infra.persistence.sqldelight.query.challenge.FindByUidAndTime
+import club.staircrusher.infra.persistence.sqldelight.query.challenge.JoinedChallenges
+import club.staircrusher.infra.persistence.sqldelight.query.challenge.NotJoinedChallenges
 import club.staircrusher.stdlib.time.toOffsetDateTime
 import java.time.Instant
 
@@ -134,6 +138,26 @@ fun FindByUidAndTime.toChallenge() = club.staircrusher.challenge.domain.model.Ch
     goal = goal,
     milestones = milestones,
     conditions = conditions,
+    createdAt = created_at.toInstant(),
+    updatedAt = updated_at.toInstant()
+)
+
+fun ChallengeRank.toPersistenceModel() = Challenge_rank(
+    id = id,
+    challenge_id = challengeId,
+    user_id = userId,
+    contribution_count = contributionCount,
+    rank = rank,
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = updatedAt.toOffsetDateTime()
+)
+
+fun Challenge_rank.toDomainModel() = ChallengeRank(
+    id = id,
+    challengeId = challenge_id,
+    userId = user_id,
+    contributionCount = contribution_count,
+    rank = rank,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant()
 )
