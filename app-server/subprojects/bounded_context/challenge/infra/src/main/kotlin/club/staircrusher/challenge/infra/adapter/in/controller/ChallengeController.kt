@@ -1,6 +1,5 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller
 
-import club.staircrusher.api.spec.dto.ChallengeRankDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.GetChallengeRequestDto
 import club.staircrusher.api.spec.dto.GetChallengeResponseDto
@@ -9,8 +8,11 @@ import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeResponseDto
 import club.staircrusher.api.spec.dto.ListChallengesRequestDto
 import club.staircrusher.api.spec.dto.ListChallengesResponseDto
+import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeLeaderboardUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeRankUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeWithInvitationCodeUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.GetCountForNextChallengeRankUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.JoinChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.ListChallengesUseCase
 import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDto
@@ -25,6 +27,9 @@ import java.time.Clock
 class ChallengeController(
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getChallengeWithInvitationCodeUseCase: GetChallengeWithInvitationCodeUseCase,
+    private val getChallengeRankUseCase: GetChallengeRankUseCase,
+    private val getChallengeLeaderboardUseCase: GetChallengeLeaderboardUseCase,
+    private val getContributionCountForNextChallengeRankUseCase: GetCountForNextChallengeRankUseCase,
     private val joinChallengeUseCase: JoinChallengeUseCase,
     private val listChallengesUseCase: ListChallengesUseCase,
     private val clock: Clock
@@ -35,17 +40,34 @@ class ChallengeController(
         authentication: SccAppAuthentication?,
     ): GetChallengeResponseDto {
         val result = getChallengeUseCase.handle(userId = authentication?.principal, challengeId = request.challengeId)
+        val ranks = getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
+        val myRank = if (result.hasJoined && authentication != null) {
+            getChallengeRankUseCase.handle(
+                challengeId = result.challenge.id,
+                userId = authentication.principal
+            )
+        } else {
+            null
+        }
+        val contributionCountForNextRank = if (result.hasJoined && authentication != null) {
+            getContributionCountForNextChallengeRankUseCase.handle(
+                challengeId = result.challenge.id,
+                userId = authentication.principal
+            )
+        } else {
+            null
+        }
         return GetChallengeResponseDto(
             challenge = result.challenge.toDto(
                 participationsCount = result.participationsCount,
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = listOf(),
+            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
-            // TODO: rank 반영
-            myRank = if (result.hasJoined) ChallengeRankDto(rank = 0, contributionCount = 0, nickname = "") else null
+            myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
+            contributionCountForNextRank = contributionCountForNextRank,
         )
     }
 
@@ -58,17 +80,34 @@ class ChallengeController(
             userId = authentication.principal,
             invitationCode = request.invitationCode
         )
+        val ranks = getChallengeLeaderboardUseCase.handle(result.challenge.id)
+        val myRank = if (result.hasJoined) {
+            getChallengeRankUseCase.handle(
+                challengeId = result.challenge.id,
+                userId = authentication.principal
+            )
+        } else {
+            null
+        }
+        val contributionCountForNextRank = if (result.hasJoined) {
+            getContributionCountForNextChallengeRankUseCase.handle(
+                challengeId = result.challenge.id,
+                userId = authentication.principal
+            )
+        } else {
+            null
+        }
         return GetChallengeResponseDto(
             challenge = result.challenge.toDto(
                 participationsCount = result.participationsCount,
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = listOf(),
+            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
-            // TODO: rank 반영
-            myRank = if (result.hasJoined) ChallengeRankDto(rank = 0, contributionCount = 0, nickname = "") else null
+            myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
+            contributionCountForNextRank = contributionCountForNextRank,
         )
     }
 
@@ -83,13 +122,14 @@ class ChallengeController(
             challengeId = request.challengeId,
             passcode = request.passcode
         )
+        val ranks = getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
         return JoinChallengeResponseDto(
             challenge = result.challenge.toDto(
                 participationsCount = result.participationsCount,
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = listOf()
+            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
         )
     }
 

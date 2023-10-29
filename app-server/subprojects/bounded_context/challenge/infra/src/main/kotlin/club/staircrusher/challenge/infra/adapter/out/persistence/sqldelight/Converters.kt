@@ -3,20 +3,19 @@
 package club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight
 
 import club.staircrusher.api.spec.dto.ChallengeDto
+import club.staircrusher.api.spec.dto.ChallengeRankDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
-import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.challenge.domain.model.ChallengeRank
+import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_contribution
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_participation
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_rank
 import club.staircrusher.infra.persistence.sqldelight.query.challenge.FindByUidAndTime
-import club.staircrusher.infra.persistence.sqldelight.query.challenge.JoinedChallenges
-import club.staircrusher.infra.persistence.sqldelight.query.challenge.NotJoinedChallenges
 import club.staircrusher.stdlib.time.toOffsetDateTime
 import java.time.Instant
 
@@ -160,4 +159,10 @@ fun Challenge_rank.toDomainModel() = ChallengeRank(
     rank = rank,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant()
+)
+
+fun ChallengeRank.toDto(nickname: String) = ChallengeRankDto(
+    contributionCount = contributionCount,
+    rank = rank,
+    nickname = nickname,
 )

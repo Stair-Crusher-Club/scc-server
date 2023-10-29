@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS challenge_rank (
     id VARCHAR(36) NOT NULL,
     challenge_id VARCHAR(36) NOT NULL,
     user_id VARCHAR(36) NOT NULL,
-    contribution_count INT NOT NULL,
+    contribution_count BIGINT NOT NULL,
     rank BIGINT NOT NULL,
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,

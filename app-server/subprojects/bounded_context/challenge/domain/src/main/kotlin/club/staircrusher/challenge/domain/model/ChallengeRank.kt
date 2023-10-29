@@ -6,7 +6,7 @@ class ChallengeRank(
     val id: String,
     val challengeId: String,
     val userId: String,
-    var contributionCount: Int,
+    var contributionCount: Long,
     var rank: Long,
     var createdAt: Instant,
     var updatedAt: Instant,
