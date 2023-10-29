@@ -215,6 +215,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetChallengeResponseDto'
 
+  /getUserInfo:
+    get:
+      summary: 유저 정보를 조회한다.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserInfoResponseDto'
+
   /giveBuildingAccessibilityUpvote:
     post:
       summary: "'이 정보가 도움이 돼요'를 준다."
@@ -1172,6 +1182,19 @@ components:
           description: 공개되어있지 않은, 초대코드로만 볼 수 있는 챌린지
       required:
         - invitationCode
+
+    GetUserInfoRequestDto:
+      type: object
+      properties: {}
+      required: []
+
+    GetUserInfoResponseDto:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - user
 
     GiveBuildingAccessibilityUpvoteRequestDto:
       type: object
