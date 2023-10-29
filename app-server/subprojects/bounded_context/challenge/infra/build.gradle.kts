@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":api"))
+    api(projects.domainEvent)
     implementation(projects.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
 

@@ -34,15 +34,7 @@ class RegisterBuildingAccessibilityUseCase(
                 userId = userId,
                 contribution = ChallengeService.Contribution.BuildingAccessibility(
                     buildingAccessibilityId = registerResult.buildingAccessibility.id,
-                    buildingAccessibilityAddress = registerResult.building.address.let {
-                        ChallengeAddress(
-                            siDo = it.siDo,
-                            siGunGu = it.siGunGu,
-                            eupMyeonDong = it.eupMyeonDong,
-                            li = it.li,
-                            roadName = it.roadName
-                        )
-                    }
+                    buildingAccessibilityAddress = ChallengeAddress(registerResult.building),
                 )
             )
         return@doInTransaction RegisterBuildingAccessibilityUseCaseResult(

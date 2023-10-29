@@ -18,6 +18,10 @@ class NoopTransactionManager : TransactionManager {
         return NoopTransaction<T>().block()
     }
 
+    override fun doAfterCommit(block: () -> Unit) {
+        block()
+    }
+
     private class NoopTransaction<T> : Transaction<T> {
         override fun afterCommit(block: () -> Unit) {
             TODO("Not yet implemented")

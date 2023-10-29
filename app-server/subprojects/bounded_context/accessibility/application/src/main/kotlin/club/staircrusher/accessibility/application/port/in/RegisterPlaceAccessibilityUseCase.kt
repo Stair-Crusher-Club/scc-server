@@ -14,7 +14,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 class RegisterPlaceAccessibilityUseCase(
     private val transactionManager: TransactionManager,
     private val accessibilityApplicationService: AccessibilityApplicationService,
-    private val challengeService: ChallengeService
+    private val challengeService: ChallengeService,
 ) {
     data class RegisterPlaceAccessibilityUseCaseResult(
         val registerPlaceAccessibilityResult: RegisterPlaceAccessibilityResult,
@@ -23,7 +23,7 @@ class RegisterPlaceAccessibilityUseCase(
     )
 
     fun handle(
-        userId: String?,
+        userId: String,
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
     ): RegisterPlaceAccessibilityUseCaseResult = transactionManager.doInTransaction {
@@ -33,23 +33,14 @@ class RegisterPlaceAccessibilityUseCase(
         )
         val getAccessibilityResult =
             accessibilityApplicationService.doGetAccessibility(createPlaceAccessibilityParams.placeId, userId)
-        val challengeContributions = userId?.let { userId ->
-            challengeService.contributeToSatisfiedChallenges(
-                userId = userId,
-                contribution = ChallengeService.Contribution.PlaceAccessibility(
-                    placeAccessibilityId = registerResult.placeAccessibility.id,
-                    placeAccessibilityAddress = registerResult.place.address.let {
-                        ChallengeAddress(
-                            siDo = it.siDo,
-                            siGunGu = it.siGunGu,
-                            eupMyeonDong = it.eupMyeonDong,
-                            li = it.li,
-                            roadName = it.roadName
-                        )
-                    }
-                )
+        val challengeContributions = challengeService.contributeToSatisfiedChallenges(
+            userId = userId,
+            contribution = ChallengeService.Contribution.PlaceAccessibility(
+                placeAccessibilityId = registerResult.placeAccessibility.id,
+                placeAccessibilityAddress = ChallengeAddress(registerResult.place),
             )
-        } ?: listOf()
+        )
+
         return@doInTransaction RegisterPlaceAccessibilityUseCaseResult(
             registerPlaceAccessibilityResult = registerResult,
             getAccessibilityResult = getAccessibilityResult,

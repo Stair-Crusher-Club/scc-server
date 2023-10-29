@@ -24,25 +24,34 @@ class ChallengeService(
     private val clock: Clock,
 ) {
     sealed class Contribution(val address: ChallengeAddress) {
+        abstract val actionType: ChallengeActionCondition.Type
         data class PlaceAccessibility(
             val placeAccessibilityId: String,
-            val placeAccessibilityAddress: ChallengeAddress
-        ) : Contribution(placeAccessibilityAddress)
+            val placeAccessibilityAddress: ChallengeAddress,
+        ) : Contribution(placeAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
+        }
 
         data class PlaceAccessibilityComment(
             val placeAccessibilityCommentId: String,
-            val placeAccessibilityAddress: ChallengeAddress
-        ) : Contribution(placeAccessibilityAddress)
+            val placeAccessibilityAddress: ChallengeAddress,
+        ) : Contribution(placeAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
+        }
 
         data class BuildingAccessibility(
             val buildingAccessibilityId: String,
-            val buildingAccessibilityAddress: ChallengeAddress
-        ) : Contribution(buildingAccessibilityAddress)
+            val buildingAccessibilityAddress: ChallengeAddress,
+        ) : Contribution(buildingAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
+        }
 
         data class BuildingAccessibilityComment(
             val buildingAccessibilityCommentId: String,
             val buildingAccessibilityAddress: ChallengeAddress
-        ) : Contribution(buildingAccessibilityAddress)
+        ) : Contribution(buildingAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
+        }
     }
 
     fun getMyInProgressChallenges(userId: String, criteriaTime: Instant = clock.instant()): List<Challenge> {
@@ -95,12 +104,7 @@ class ChallengeService(
                 ch.conditions.firstOrNull { cond ->
                     cond.isSatisfied(
                         address = contribution.address,
-                        actionType = when (contribution) {
-                            is Contribution.PlaceAccessibility -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
-                            is Contribution.PlaceAccessibilityComment -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
-                            is Contribution.BuildingAccessibility -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
-                            is Contribution.BuildingAccessibilityComment -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
-                        }
+                        actionType = contribution.actionType,
                     )
                 } != null
             }
@@ -181,5 +185,19 @@ class ChallengeService(
                 challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityCommentId(challengeId = challengeId, buildingAccessibilityCommentId = contribution.buildingAccessibilityCommentId)
             }
         }
+    }
+
+    fun deleteContributions(
+        userId: String,
+        contribution: Contribution,
+    ) {
+        val myInProgressChallenges = getMyInProgressChallenges(userId = userId)
+        myInProgressChallenges
+            .mapNotNull { myInProgressChallenge ->
+                getExistingContribution(myInProgressChallenge.id, contribution)
+            }
+            .forEach {
+                challengeContributionRepository.remove(it.id)
+            }
     }
 }
