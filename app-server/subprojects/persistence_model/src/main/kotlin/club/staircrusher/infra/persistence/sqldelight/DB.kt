@@ -130,6 +130,10 @@ class DB(dataSource: DataSource) : TransactionManager {
             driver.isolationLevel = null
         }
     }
+
+    override fun doAfterCommit(block: () -> Unit) {
+        block() // TODO: 올바르게 구현하기
+    }
 }
 
 private val objectMapper = jacksonObjectMapper()

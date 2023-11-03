@@ -1,4 +1,4 @@
-package club.staircrusher.place.infra.adapter.`in`
+package club.staircrusher.place.application.port.`in`
 
 import club.staircrusher.domain_event.dto.BuildingAddressDTO
 import club.staircrusher.domain_event.dto.BuildingDTO

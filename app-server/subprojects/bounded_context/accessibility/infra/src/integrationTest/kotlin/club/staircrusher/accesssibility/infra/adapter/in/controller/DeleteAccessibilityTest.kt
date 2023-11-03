@@ -7,12 +7,23 @@ import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.Acces
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.DeleteAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
+import club.staircrusher.domain_event.PlaceAccessibilityDeletedEvent
+import club.staircrusher.domain_event.PlaceAccessibilityCommentDeletedEvent
+import club.staircrusher.domain_event.BuildingAccessibilityDeletedEvent
+import club.staircrusher.domain_event.BuildingAccessibilityCommentDeletedEvent
+import club.staircrusher.stdlib.domain.event.DomainEventPublisher
 import club.staircrusher.testing.spring_it.mock.MockSccClock
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.reset
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.mock.mockito.MockBean
 import java.time.Duration
 
 class DeleteAccessibilityTest : AccessibilityITBase() {
@@ -24,6 +35,9 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
 
     @Autowired
     lateinit var buildingAccessibilityRepository: BuildingAccessibilityRepository
+
+    @MockBean
+    lateinit var domainEventPublisher: DomainEventPublisher
 
     @Test
     fun `전반적인 테스트`() {
@@ -43,6 +57,12 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
                 }
             }
 
+        runBlocking {
+            verify(domainEventPublisher, times(1)).publishEvent(any<PlaceAccessibilityDeletedEvent>())
+            verify(domainEventPublisher, times(1)).publishEvent(any<PlaceAccessibilityCommentDeletedEvent>())
+            verify(domainEventPublisher, times(0)).publishEvent(any<BuildingAccessibilityDeletedEvent>())
+            verify(domainEventPublisher, times(0)).publishEvent(any<BuildingAccessibilityCommentDeletedEvent>())
+        }
         val getAccessibilityParams1 = GetAccessibilityPostRequest(placeId = place1.id)
         mvc
             .sccRequest("/getAccessibility", getAccessibilityParams1)
@@ -55,6 +75,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
             }
 
         // when: 마지막 남은 장소 정보를 삭제한다
+        reset(domainEventPublisher) // 메소드 호출 횟수를 리셋해준다.
         val deleteAccessibilityParams2 = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility2.id)
         mvc
             .sccRequest("/deleteAccessibility", deleteAccessibilityParams2, user = user)
@@ -66,6 +87,13 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
                 }
             }
 
+        runBlocking {
+            verify(domainEventPublisher, times(1)).publishEvent(any<PlaceAccessibilityDeletedEvent>())
+            verify(domainEventPublisher, times(1)).publishEvent(any<PlaceAccessibilityCommentDeletedEvent>())
+            // 건물 정보는 이중으로 등록되지 않으므로 1개만 삭제되고, 건물 코멘트는 이중 등록이 되므로 2개가 삭제된다.
+            verify(domainEventPublisher, times(1)).publishEvent(any<BuildingAccessibilityDeletedEvent>())
+            verify(domainEventPublisher, times(2)).publishEvent(any<BuildingAccessibilityCommentDeletedEvent>())
+        }
         val getAccessibilityParams2 = GetAccessibilityPostRequest(placeId = place1.id)
         mvc
             .sccRequest("/getAccessibility", getAccessibilityParams2)

@@ -1,5 +1,9 @@
 package club.staircrusher.challenge.domain.model
 
+import club.staircrusher.place.domain.model.Building
+import club.staircrusher.place.domain.model.BuildingAddress
+import club.staircrusher.place.domain.model.Place
+
 data class ChallengeAddress(
     val siDo: String,
     val siGunGu: String,
@@ -14,4 +18,16 @@ data class ChallengeAddress(
             li.contains(keyword) ||
             roadName.contains(keyword)
     }
+
+    constructor(place: Place) : this(place.address)
+
+    constructor(building: Building) : this(building.address)
+
+    constructor(buildingAddress: BuildingAddress) : this(
+        siDo = buildingAddress.siDo,
+        siGunGu = buildingAddress.siGunGu,
+        eupMyeonDong = buildingAddress.eupMyeonDong,
+        li = buildingAddress.li,
+        roadName = buildingAddress.roadName,
+    )
 }

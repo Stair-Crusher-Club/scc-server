@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":api"))
+    api(projects.domainEvent)
     implementation(projects.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
 
@@ -13,4 +14,6 @@ dependencies {
     val awsSdkVersion: String by project
     implementation("software.amazon.awssdk:s3:$awsSdkVersion")
     runtimeOnly("software.amazon.awssdk:sts:$awsSdkVersion") // IRSA를 사용하기 위해서 필요함
+
+    testImplementation(projects.boundedContext.place.application)
 }
