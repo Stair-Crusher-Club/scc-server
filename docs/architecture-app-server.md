@@ -63,7 +63,7 @@ Bounded context의 경계는 프로젝트가 발전함에 따라 얼마든지 �
 
 Domain event의 발행과 구독은 아래의 workflow로 작업할 수 있습니다.
 
-1. Domain event 정의 - `domain_event` 모듈과 `domain_event_api` 모듈에서 domain event를 정의합니다. 정의하는 방식은 다른 domain event가 정의된 방식을 참고해 주세요.
+1. Domain event 정의 - `domain_event` 모듈에서 domain event를 정의합니다. 정의하는 방식은 다른 domain event가 정의된 방식을 참고해 주세요.
 2. Domain event 발행 - `stdlib` 모듈의 `DomainEventPublisher`를 사용해서 domain event를 발행할 수 있습니다.
 3. Domain event 구독 - `stdlib` 모듈의 `DomainEventSubscriber`를 사용해서 domain event를 구독할 수 있습니다.
 

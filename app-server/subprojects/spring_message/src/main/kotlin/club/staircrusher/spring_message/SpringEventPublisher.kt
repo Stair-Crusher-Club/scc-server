@@ -1,15 +1,15 @@
 package club.staircrusher.spring_message
 
-import club.staircrusher.domain_event_api.ProtoEventConverter
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.event.DomainEvent
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.ApplicationEventPublisherAware
 
 @Component
 class SpringEventPublisher(
-    private val protoEventConverter: ProtoEventConverter,
+    private val objectMapper: ObjectMapper,
 ): ApplicationEventPublisherAware, DomainEventPublisher {
     lateinit var eventPublisher: ApplicationEventPublisher
 
@@ -18,7 +18,10 @@ class SpringEventPublisher(
     }
 
     override suspend fun publishEvent(event: DomainEvent) {
-        val message = protoEventConverter.convertEventToProto(event)
-        eventPublisher.publishEvent(ProtoSpringEvent(message))
+        val value = objectMapper.writeValueAsString(event)
+        eventPublisher.publishEvent(JacksonSerializedSpringEvent(
+            type = event.javaClass,
+            value = value,
+        ))
     }
 }
