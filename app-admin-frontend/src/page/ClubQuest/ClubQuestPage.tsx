@@ -86,16 +86,37 @@ function ClubQuestPage() {
       marker.setMap(map);
       newMarkers.push(marker);
 
-      const tooltip = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px;">${target.name}</div>`,
+      let tooltip: kakao.maps.InfoWindow = new window.kakao.maps.InfoWindow({
+        content: `<div style="padding:5px;">${getTooltipDisplayedName(target)}</div>`,
         removable: true
       });
+      if (tooltip.getContent() === currentTooltipRef.current?.getContent()) {
+        tooltip = currentTooltipRef.current;
+        currentTooltipMarker = marker;
+      }
       window.kakao.maps.event.addListener(marker, 'click', () => {
+        console.log(currentTooltipRef.current);
+        currentTooltipRef?.current?.close();
         tooltip.open(map, marker);
+        setCurrentTooltip(tooltip);
       });
     });
 
     setMarkers(newMarkers);
+
+    currentTooltipRef.current?.close();
+    currentTooltipRef.current?.open(map, currentTooltipMarker!);
+  }
+
+  const getTooltipDisplayedName = (targetBuilding: ClubQuestTargetBuildingDTO): string => {
+    const placeName = targetBuilding.places[0].name;
+    let shortenedPlaceName = '';
+    if (placeName.length <= 7) {
+      shortenedPlaceName = placeName;
+    } else {
+      shortenedPlaceName = `${placeName.substring(0, 6)}...`;
+    }
+    return `${targetBuilding.name}: ${shortenedPlaceName}`;
   }
 
   const installMap = (clubQuest: ClubQuestDTO) => {
