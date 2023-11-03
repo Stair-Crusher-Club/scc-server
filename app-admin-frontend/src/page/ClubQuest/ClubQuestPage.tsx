@@ -44,7 +44,7 @@ function ClubQuestPage() {
   }
   const [focusedBuildingUI, _setFocusedBuildingUI] = useState<BuildingUI | null>(null);
   const focusedBuildingUIRef = useRef(focusedBuildingUI);
-  function setFocusedBuildingUI(newValue: BuildingUI) {
+  function setFocusedBuildingUI(newValue: BuildingUI | null) {
     _setFocusedBuildingUI(newValue);
     focusedBuildingUIRef.current = newValue;
   }
@@ -178,6 +178,10 @@ function ClubQuestPage() {
     }
   }
 
+  const unfocusBuildingUI = () => {
+    focusedBuildingUI?.tooltip?.close();
+    setFocusedBuildingUI(null);
+  }
   const showQuestsOnMap = () => {
     if (clubQuest != null) {
       const center = determineCenter(clubQuest.buildings.map(it => it.location ));
@@ -218,7 +222,7 @@ function ClubQuestPage() {
   }
 
   const handleBuildingClick = (building: ClubQuestTargetBuildingDTO) => {
-    const buildingUI = buildingUIs.find(it => it.id === building.buildingId)!;
+    const buildingUI = buildingUIsRef.current.find(it => it.id === building.buildingId)!;
     focusedBuildingUIRef?.current?.tooltip?.close();
     buildingUI.tooltip.open(mapRef.current!, buildingUI.marker);
     setFocusedBuildingUI(buildingUI);
@@ -245,6 +249,7 @@ function ClubQuestPage() {
         <div id="map" className="body-item-fixed-height" />
         <div className="map-manipulate-button-div body-item-fixed-height">
           <ButtonGroup className="map-manipulate-button-container">
+            {clubQuest != null ? <Button text="전체 장소 목록 표시하기" disabled={focusedBuildingUI == null} onClick={unfocusBuildingUI}></Button> : null}
             {clubQuest != null ? <Button text="퀘스트 전체 표시하기" onClick={showQuestsOnMap}></Button> : null}
             {currentLocation != null ? <Button text="현재 위치 표시하기" onClick={showCurrentLocationOnMap}></Button> : <Button text="현재 위치 가져오는 중..." disabled={true} />}
           </ButtonGroup>
@@ -265,7 +270,7 @@ function ClubQuestPage() {
                   </thead>
                   <tbody>
                     {
-                      clubQuest.buildings.flatMap((building) => {
+                      clubQuest.buildings.filter(it => focusedBuildingUI == null || it.buildingId === focusedBuildingUI.id).flatMap((building) => {
                         return building.places.map((place, idx) => {
                           return (
                             <tr onClick={() => handleBuildingClick(building)}>
