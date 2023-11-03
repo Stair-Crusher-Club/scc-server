@@ -250,7 +250,7 @@ function ClubQuestPage() {
         <div className="map-manipulate-button-div body-item-fixed-height">
           <ButtonGroup className="map-manipulate-button-container">
             {clubQuest != null ? <Button text="전체 장소 목록 표시하기" disabled={focusedBuildingUI == null} onClick={unfocusBuildingUI}></Button> : null}
-            {clubQuest != null ? <Button text="퀘스트 전체 표시하기" onClick={showQuestsOnMap}></Button> : null}
+            {clubQuest != null ? <Button text="퀘스트를 지도 중앙에 표시하기" onClick={showQuestsOnMap}></Button> : null}
             {currentLocation != null ? <Button text="현재 위치 표시하기" onClick={showCurrentLocationOnMap}></Button> : <Button text="현재 위치 가져오는 중..." disabled={true} />}
           </ButtonGroup>
         </div>
