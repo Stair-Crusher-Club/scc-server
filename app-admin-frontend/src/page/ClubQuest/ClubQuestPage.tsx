@@ -14,9 +14,15 @@ declare global {
   }
 }
 
+interface BuildingUI {
+  id: string;
+  marker: kakao.maps.Marker;
+  tooltip: kakao.maps.InfoWindow;
+}
+
 function ClubQuestPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [map, _setMap] = useState<any>(null);
+  const [map, _setMap] = useState<kakao.maps.Map | null>(null);
   const mapRef = useRef(map)
   function setMap(newValue: kakao.maps.Map) {
     _setMap(newValue);
@@ -30,17 +36,17 @@ function ClubQuestPage() {
     }
   }
   const [currentLocation, setCurrentLocation] = useState<LocationDTO | null>(null);
-  const [markers, _setMarkers] = useState<kakao.maps.Marker[]>([]);
-  const markersRef = useRef(markers);
-  function setMarkers(newValue: kakao.maps.Marker[]) {
-    _setMarkers(newValue);
-    markersRef.current = newValue;
+  const [buildingUIs, _setBuildingUIs] = useState<BuildingUI[]>([]);
+  const buildingUIsRef = useRef(buildingUIs);
+  function setBuildingUIs(newValue: BuildingUI[]) {
+    _setBuildingUIs(newValue);
+    buildingUIsRef.current = newValue;
   }
-  const [currentTooltip, _setCurrentTooltip] = useState<kakao.maps.InfoWindow | null>(null);
-  const currentTooltipRef = useRef(currentTooltip);
-  function setCurrentTooltip(newValue: kakao.maps.InfoWindow) {
-    _setCurrentTooltip(newValue);
-    currentTooltipRef.current = newValue;
+  const [focusedBuildingUI, _setFocusedBuildingUI] = useState<BuildingUI | null>(null);
+  const focusedBuildingUIRef = useRef(focusedBuildingUI);
+  function setFocusedBuildingUI(newValue: BuildingUI) {
+    _setFocusedBuildingUI(newValue);
+    focusedBuildingUIRef.current = newValue;
   }
 
   const { id: _rawClubQuestId } = useParams();
@@ -75,9 +81,9 @@ function ClubQuestPage() {
   }, [clubQuest]);
 
   const refreshBuildingMarkers = (map: any, clubQuest: ClubQuestDTO) => {
-    markersRef.current.forEach(it => it.setMap(null));
+    buildingUIsRef.current.forEach(it => it.marker.setMap(null));
 
-    const newMarkers: kakao.maps.Marker[] = [];
+    const newBuildingUIs: BuildingUI[] = [];
     let currentTooltipMarker: kakao.maps.Marker | null = null;
     clubQuest.buildings.forEach((target) => {
       const isAllPlaceConquered = target.places.every(it => it.isConquered || it.isClosed || it.isNotAccessible)
@@ -91,28 +97,32 @@ function ClubQuestPage() {
         clickable: true, // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다.
       });
       marker.setMap(map);
-      newMarkers.push(marker);
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        handleBuildingClick(target);
+      });
 
       let tooltip: kakao.maps.InfoWindow = new window.kakao.maps.InfoWindow({
         content: `<div style="padding:5px;">${getTooltipDisplayedName(target)}</div>`,
         removable: true
       });
-      if (tooltip.getContent() === currentTooltipRef.current?.getContent()) {
-        tooltip = currentTooltipRef.current;
+      if (tooltip.getContent() === focusedBuildingUIRef.current?.tooltip.getContent()) {
+        tooltip = focusedBuildingUIRef.current!.tooltip;
         currentTooltipMarker = marker;
       }
-      window.kakao.maps.event.addListener(marker, 'click', () => {
-        console.log(currentTooltipRef.current);
-        currentTooltipRef?.current?.close();
-        tooltip.open(map, marker);
-        setCurrentTooltip(tooltip);
+
+      newBuildingUIs.push({
+        id: target.buildingId,
+        marker,
+        tooltip,
       });
     });
 
-    setMarkers(newMarkers);
+    setBuildingUIs(newBuildingUIs);
 
-    currentTooltipRef.current?.close();
-    currentTooltipRef.current?.open(map, currentTooltipMarker!);
+    // 마커를 다시 그렸으므로, UI상 툴팁이 가장 뒤로 밀려난 상태이다.
+    // 따라서 툴팁을 맨 위로 올려주기 위해 한 번 숨겼다가 다시 그려준다.
+    focusedBuildingUIRef.current?.tooltip?.close();
+    focusedBuildingUIRef.current?.tooltip?.open(map, currentTooltipMarker!);
   }
 
   const getTooltipDisplayedName = (targetBuilding: ClubQuestTargetBuildingDTO): string => {
@@ -171,13 +181,13 @@ function ClubQuestPage() {
   const showQuestsOnMap = () => {
     if (clubQuest != null) {
       const center = determineCenter(clubQuest.buildings.map(it => it.location ));
-      mapRef.current.setLevel(determineLevel(clubQuest.buildings.map(it => it.location)));
-      mapRef.current.panTo(new window.kakao.maps.LatLng(center.lat, center.lng));
+      mapRef.current!.setLevel(determineLevel(clubQuest.buildings.map(it => it.location)));
+      mapRef.current!.panTo(new window.kakao.maps.LatLng(center.lat, center.lng));
     }
   };
   const showCurrentLocationOnMap = () => {
     if (clubQuest != null && currentLocation != null) {
-      mapRef.current.panTo(new window.kakao.maps.LatLng(currentLocation?.lat, currentLocation?.lng));
+      mapRef.current!.panTo(new window.kakao.maps.LatLng(currentLocation?.lat, currentLocation?.lng));
     }
   }
 
@@ -207,9 +217,14 @@ function ClubQuestPage() {
     };
   }
 
-  const focusMap = (building: ClubQuestTargetBuildingDTO) => {
+  const handleBuildingClick = (building: ClubQuestTargetBuildingDTO) => {
+    const buildingUI = buildingUIs.find(it => it.id === building.buildingId)!;
+    focusedBuildingUIRef?.current?.tooltip?.close();
+    buildingUI.tooltip.open(mapRef.current!, buildingUI.marker);
+    setFocusedBuildingUI(buildingUI);
+
     const latLng = new window.kakao.maps.LatLng(building.location.lat, building.location.lng);
-    mapRef.current.panTo(latLng);
+    mapRef.current!.panTo(latLng);
   }
 
   return (
@@ -253,7 +268,7 @@ function ClubQuestPage() {
                       clubQuest.buildings.flatMap((building) => {
                         return building.places.map((place, idx) => {
                           return (
-                            <tr onClick={() => focusMap(building)}>
+                            <tr onClick={() => handleBuildingClick(building)}>
                               <td>{idx === 0 ? building.name : ''}</td>
                               <td>{place.name}</td>
                               <td><Checkbox checked={place.isConquered} disabled={true} large /></td>
