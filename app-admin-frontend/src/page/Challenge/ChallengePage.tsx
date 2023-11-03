@@ -47,7 +47,7 @@ function ChallengePage() {
           <div className="create-challenge-page-body">
             <div>
               <div>
-                <span>패스코드 :&nbsp;</span>
+                <span>참여코드 :&nbsp;</span>
                 <InputGroup
                   className="input-group"
                   value={challenge!.passcode}
