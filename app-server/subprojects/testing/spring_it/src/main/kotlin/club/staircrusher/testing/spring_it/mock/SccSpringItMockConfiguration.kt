@@ -25,6 +25,6 @@ open class SccSpringItMockConfiguration {
     @Bean
     @Primary
     open fun mockSccClock(): SccClock {
-        return MockSccClock()
+        return MockSccClock.getInstance()
     }
 }

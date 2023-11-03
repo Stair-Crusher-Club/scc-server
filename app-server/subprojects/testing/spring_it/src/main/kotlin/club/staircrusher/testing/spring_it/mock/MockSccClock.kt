@@ -6,7 +6,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 
-class MockSccClock : SccClock() {
+class MockSccClock private constructor() : SccClock() {
     private var zone: ZoneId
     private var instant: Instant
 
@@ -27,5 +27,22 @@ class MockSccClock : SccClock() {
 
     fun advanceTime(duration: Duration) {
         instant += duration
+    }
+
+    fun reset() {
+        instant = Instant.now()
+    }
+
+    companion object {
+        private lateinit var instance: MockSccClock
+        private val monitor = Any()
+        fun getInstance(): MockSccClock {
+            return synchronized(monitor) {
+                if (!::instance.isInitialized) {
+                    instance = MockSccClock()
+                }
+                instance
+            }
+        }
     }
 }
