@@ -188,6 +188,17 @@ function ClubQuestPage() {
     <div>
       <h1>{clubQuest?.name}</h1>
       <div className="club-quest-page-body">
+        <p className="body-item-fixed-height">
+          ※ 폐업여부는 ‘네이버지도'로 확인하면 더 정확합니다.
+          <br />
+          ※ 파란색 마커: 정복할 장소가 남아 있음
+          <br />
+          ※ 회색 마커: 정복/폐업/접근불가 중 하나라도 체크 된 경우
+          <br />
+          ※ 앱에서 정보 완료시, 정복란이 자동으로 체크됨
+          <br />
+          ※ 마커 클릭시, 건물번호와 대표 장소가 노출됨
+        </p>
         <div id="map" className="body-item-fixed-height" />
         <div className="map-manipulate-button-div body-item-fixed-height">
           <ButtonGroup className="map-manipulate-button-container">
@@ -195,12 +206,6 @@ function ClubQuestPage() {
             {currentLocation != null ? <Button text="현재 위치 표시하기" onClick={showCurrentLocationOnMap}></Button> : <Button text="현재 위치 가져오는 중..." disabled={true} />}
           </ButtonGroup>
         </div>
-        <p className="body-item-fixed-height">
-          ※ 폐업 여부는 '네이버 지도'로 검색해 확인하시면 편리합니다
-        </p>
-        <p className="body-item-fixed-height">
-          ※ 파란색 마커는 아직 정복할 장소가 남아 있는 건물이고, 회색 마커는 건물 안의 모든 장소가 정복 or 폐업 or 접근 불가인 건물입니다.
-        </p>
         <div className="place-list">
           {
             clubQuest
