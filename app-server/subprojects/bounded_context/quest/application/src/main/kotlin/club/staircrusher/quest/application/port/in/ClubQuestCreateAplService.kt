@@ -142,7 +142,7 @@ class ClubQuestCreateAplService(
     }
 
     private fun getBuildingName(idx: Int): String {
-        return "${idx + 1}번 건물"
+        return "${idx + 1}번"
     }
 
     private fun getQuestNamePostfix(idx: Int): String {
