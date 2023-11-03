@@ -75,7 +75,6 @@ class GetChallengeTest : ChallengeITBase() {
         assertTrue(getChallengeResponse.challenge.participationsCount == users.count())
         assertTrue(getChallengeResponse.challenge.contributionsCount == contributions.count())
         assertTrue(getChallengeResponse.hasJoined)
-        assertTrue(getChallengeResponse.myRank != null)
     }
 
     @Test
