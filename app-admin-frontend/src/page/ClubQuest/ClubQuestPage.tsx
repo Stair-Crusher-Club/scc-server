@@ -36,6 +36,12 @@ function ClubQuestPage() {
     _setMarkers(newValue);
     markersRef.current = newValue;
   }
+  const [currentTooltip, _setCurrentTooltip] = useState<kakao.maps.InfoWindow | null>(null);
+  const currentTooltipRef = useRef(currentTooltip);
+  function setCurrentTooltip(newValue: kakao.maps.InfoWindow) {
+    _setCurrentTooltip(newValue);
+    currentTooltipRef.current = newValue;
+  }
 
   const { id: _rawClubQuestId } = useParams();
   const clubQuestId = _rawClubQuestId!
@@ -72,13 +78,14 @@ function ClubQuestPage() {
     markersRef.current.forEach(it => it.setMap(null));
 
     const newMarkers: kakao.maps.Marker[] = [];
+    let currentTooltipMarker: kakao.maps.Marker | null = null;
     clubQuest.buildings.forEach((target) => {
       const isAllPlaceConquered = target.places.every(it => it.isConquered || it.isClosed || it.isNotAccessible)
       const finishedQuestMarkerImage = new window.kakao.maps.MarkerImage(
           '/finishedQuestMarker.png',
           new window.kakao.maps.Size(24, 36),
       );
-      const marker = new window.kakao.maps.Marker({
+      const marker: kakao.maps.Marker = new window.kakao.maps.Marker({
         position: new window.kakao.maps.LatLng(target.location.lat, target.location.lng),
         image: isAllPlaceConquered ? finishedQuestMarkerImage : null,
         clickable: true, // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다.
