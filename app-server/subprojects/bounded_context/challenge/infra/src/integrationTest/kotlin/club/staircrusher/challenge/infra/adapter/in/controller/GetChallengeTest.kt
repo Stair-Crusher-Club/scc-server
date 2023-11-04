@@ -62,6 +62,13 @@ class GetChallengeTest : ChallengeITBase() {
                     challenge = challenge
                 )
             }
+
+        mvc.sccRequest(
+            "/updateChallengeRanks",
+            null,
+        )
+            .andReturn()
+
         val getChallengeResponse = mvc.sccRequest(
             "/getChallenge",
             GetChallengeRequestDto(
@@ -70,13 +77,6 @@ class GetChallengeTest : ChallengeITBase() {
             user = users.first()
         )
             .getResult(GetChallengeResponseDto::class)
-
-        mvc.sccRequest(
-            "/updateChallengeRanks",
-            null,
-        )
-            .andReturn()
-
         // 참여 후 상태 확인
         assertTrue(getChallengeResponse.challenge.id == challenge.id)
         assertTrue(getChallengeResponse.challenge.participationsCount == users.count())
