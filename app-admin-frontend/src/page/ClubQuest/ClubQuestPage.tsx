@@ -128,12 +128,16 @@ function ClubQuestPage() {
   const getTooltipDisplayedName = (targetBuilding: ClubQuestTargetBuildingDTO): string => {
     const placeName = targetBuilding.places[0].name;
     let shortenedPlaceName = '';
-    if (placeName.length <= 7) {
+    if (placeName.length <= 4) {
       shortenedPlaceName = placeName;
     } else {
-      shortenedPlaceName = `${placeName.substring(0, 6)}...`;
+      shortenedPlaceName = `${placeName.substring(0, 3)}...`;
     }
-    return `${targetBuilding.name}: ${shortenedPlaceName}`;
+    return `${getBuildingName(targetBuilding)}: ${shortenedPlaceName}`;
+  }
+
+  const getBuildingName = (targetBuilding: ClubQuestTargetBuildingDTO): string => {
+    return `${targetBuilding.name} (${targetBuilding.places.length}개)`;
   }
 
   const installMap = (clubQuest: ClubQuestDTO) => {
@@ -274,7 +278,7 @@ function ClubQuestPage() {
                         return building.places.map((place, idx) => {
                           return (
                             <tr onClick={() => handleBuildingClick(building)}>
-                              <td>{idx === 0 ? building.name : ''}</td>
+                              <td>{idx === 0 ? getBuildingName(building) : ''}</td>
                               <td>{place.name}</td>
                               <td><Checkbox checked={place.isConquered} disabled={true} large /></td>
                               <td><Checkbox checked={place.isClosed} disabled={isLoading} large onChange={onPlaceIsClosedChange(place)} /></td>
