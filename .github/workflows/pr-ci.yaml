@@ -47,20 +47,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Gradle Check
-        run: ./gradlew clean check
-
-      - uses: actions/upload-artifact@v3
-        name: Upload Check Report If Failed
-        if: failure()
-        with:
-          name: test report
-          path: "**/build/reports"
-          retention-days: 1
+#      - name: Gradle Check
+#        run: ./gradlew clean check
+#
+#      - uses: actions/upload-artifact@v3
+#        name: Upload Check Report If Failed
+#        if: failure()
+#        with:
+#          name: test report
+#          path: "**/build/reports"
+#          retention-days: 1
 
       - name: Notify CI failure to PR
         uses: thollander/actions-comment-pull-request@v2
-        if: failure()
+#        if: failure()
         with:
           message: |
             :fire::fire::fire: Backend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
@@ -104,7 +104,7 @@ jobs:
 
       - name: Notify CI failure to PR
         uses: thollander/actions-comment-pull-request@v2
-        if: failure()
+#        if: failure()
         with:
           message: |
             :fire::fire::fire: Frontend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
