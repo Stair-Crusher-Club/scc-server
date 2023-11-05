@@ -102,5 +102,5 @@ jobs:
         if: failure()
         with:
           message: |
-            :fire::fire::fire: Frontend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            :fire::fire::fire: Frontend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) :fire::fire::fire:
 
