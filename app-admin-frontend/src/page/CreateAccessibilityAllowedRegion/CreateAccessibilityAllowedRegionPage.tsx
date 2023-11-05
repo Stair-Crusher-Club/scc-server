@@ -37,7 +37,7 @@ function CreateAccessibilityAllowedRegionPage() {
     return promise.finally(() => setIsLoading(false));
   }
 
-  useEffect(installMapOnce, []);
+  useEffect(installMapOnce);
 
   function installMapOnce() {
     if (map) {
@@ -116,9 +116,9 @@ function CreateAccessibilityAllowedRegionPage() {
               disabled={isLoading}
             />
           </div>
-          <Button icon="confirm" text="확정하기 (정보 등록 허용 지역 생성)" onClick={createAccessibilityAllowedRegion} disabled={isLoading || boundaryVertices.length == 0 || !regionName}></Button>
-          <Button icon="trash" text="마지막 점 없애기" onClick={onDeleteLastVertex} disabled={isLoading || boundaryVertices.length == 0}></Button>
-          <Button icon="trash" text="모든 점 없애기" onClick={onDeleteAllVertices} disabled={isLoading || boundaryVertices.length == 0}></Button>
+          <Button icon="confirm" text="확정하기 (정보 등록 허용 지역 생성)" onClick={createAccessibilityAllowedRegion} disabled={isLoading || boundaryVertices.length === 0 || !regionName}></Button>
+          <Button icon="trash" text="마지막 점 없애기" onClick={onDeleteLastVertex} disabled={isLoading || boundaryVertices.length === 0}></Button>
+          <Button icon="trash" text="모든 점 없애기" onClick={onDeleteAllVertices} disabled={isLoading || boundaryVertices.length === 0}></Button>
         </div>
       </div>
     </div>

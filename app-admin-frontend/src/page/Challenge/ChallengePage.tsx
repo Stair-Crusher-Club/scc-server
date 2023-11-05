@@ -9,7 +9,6 @@ import {AdminChallengeDTO} from "../../api";
 import {formatDate} from "../../util/date";
 import {MultiSelect2} from "@blueprintjs/select";
 import {adminChallengeActionConditionTypeOptions} from "../../model/challenge";
-import {MultiSelectItem} from "../../component/MultiSelect";
 
 declare global {
   interface Window {
@@ -18,25 +17,17 @@ declare global {
 }
 
 function ChallengePage() {
-  const [isLoading, setIsLoading] = useState(false);
   const [challenge, setChallenge] = useState<AdminChallengeDTO>();
-
-  function withLoading(promise: Promise<any>): Promise<any> {
-    setIsLoading(true);
-    return promise.finally(() => setIsLoading(false));
-  }
 
   const { id: _rawChallengeId } = useParams();
   const challengeId = _rawChallengeId!
   useEffect(() => {
-    withLoading(
-      AdminApis.challenge.challengesChallengeIdGet(challengeId)
-        .then((res) => {
-          const challenge = res.data;
-          setChallenge(challenge);
-        })
-    );
-  }, []);
+    AdminApis.challenge.challengesChallengeIdGet(challengeId)
+      .then((res) => {
+        const challenge = res.data;
+        setChallenge(challenge);
+      })
+  });
 
   return (
     challenge == null

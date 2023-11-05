@@ -41,7 +41,7 @@ function CreateChallengePage() {
   const [goal, setGoal] = useState<number>(1);
   const [milestonesText, setMilestonesText] = useState<string>('');
   const getMilestones = (): number[] => {
-    if (milestonesText.trim() == '') {
+    if (milestonesText.trim() === '') {
       return [];
     }
     return milestonesText.split(',').map(it => Number(it.trim())).sort((n1,n2) => n1 - n2);
@@ -72,7 +72,7 @@ function CreateChallengePage() {
       name: challengeName,
       isPublic,
       invitationCode: isPublic ? undefined : invitationCode,
-      passcode: passcode == null || passcode == '' ? undefined : passcode!.trim(),
+      passcode: passcode == null || passcode === '' ? undefined : passcode!.trim(),
       startsAtMillis: startsAtDate.getTime(),
       endsAtMillis: endsAtDate?.getTime(),
       goal,
@@ -97,8 +97,8 @@ function CreateChallengePage() {
   const isFormValid = () => {
     const request = getCreateChallengeRequestDTO();
     return (
-        request.name != ''
-        && (isPublic || (request.invitationCode != null && request.invitationCode != ''))
+        request.name !== ''
+        && (isPublic || (request.invitationCode != null && request.invitationCode !== ''))
         && goal > 0
         && (getMilestones().length === 0 || getMilestones()[getMilestones().length - 1] < goal)
     );
@@ -154,7 +154,7 @@ function CreateChallengePage() {
               disabled={isLoading || isPublic}
             />
             {
-              !isPublic && (invitationCode == null || invitationCode == '')
+              !isPublic && (invitationCode == null || invitationCode === '')
                 ? (
                   <span style={{'color': 'red'}}>비공개 챌린지는 초대 코드를 지정해야 합니다.</span>
                 )
