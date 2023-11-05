@@ -6,7 +6,6 @@ interface AuthContextType {
   isAuthenticated: () => boolean;
 }
 
-const accessToken = getSavedAccessToken();
 export default React.createContext<AuthContextType>({
   isAuthenticated: () => false,
 });

@@ -1,0 +1,106 @@
+name: pr-ci
+on:
+  pull_request:
+    on:
+      - synchronize
+  workflow_dispatch: # for manual trigger
+
+permissions:
+  id-token: write
+  pull-requests: write
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: postgres:14.5-alpine
+        ports:
+          - 15432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: scc_test
+
+    defaults:
+      run:
+        working-directory: app-server
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 19
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      # https://github.com/actions/cache/blob/main/examples.md#java---gradle
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Gradle Check
+        run: ./gradlew clean check
+
+      - uses: actions/upload-artifact@v3
+        name: Upload Check Report If Failed
+        if: failure()
+        with:
+          name: test report
+          path: "**/build/reports"
+          retention-days: 1
+
+      - name: Notify CI failure to PR
+        uses: thollander/actions-comment-pull-request@v2
+        if: failure()
+        with:
+          message: |
+            :fire::fire::fire: Backend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) :fire::fire::fire:
+
+  frontend-ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: app-admin-frontend
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install & Run openapi-generator
+        run: |
+          mkdir -p ~/bin/openapitools
+          curl https://raw.githubusercontent.com/OpenAPITools/openapi-generator/master/bin/utils/openapi-generator-cli.sh > ~/bin/openapitools/openapi-generator-cli
+          chmod u+x ~/bin/openapitools/openapi-generator-cli
+          export PATH=$PATH:~/bin/openapitools/
+
+          mv ~/bin/openapitools/openapi-generator-cli ~/bin/openapitools/openapi-generator
+
+          ./generate-api-spec.sh
+
+      - name: Build
+        run: |
+          npm install -f
+          npm run build:dev
+
+      - name: Notify CI failure to PR
+        uses: thollander/actions-comment-pull-request@v2
+        if: failure()
+        with:
+          message: |
+            :fire::fire::fire: Frontend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) :fire::fire::fire:
+

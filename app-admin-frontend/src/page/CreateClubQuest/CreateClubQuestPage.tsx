@@ -51,7 +51,7 @@ function CreateClubQuestPage() {
     return promise.finally(() => setIsLoading(false));
   }
 
-  useEffect(installMapOnce, []);
+  useEffect(installMapOnce);
   useEffect(() => {
     createOrUpdateQuestCenterIndicator();
   }, [questCenter, questRadius]);
