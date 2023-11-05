@@ -44,7 +44,11 @@ class ChallengeController(
         authentication: SccAppAuthentication?,
     ): GetChallengeResponseDto {
         val result = getChallengeUseCase.handle(userId = authentication?.principal, challengeId = request.challengeId)
-        val ranks = getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
+        val ranks = if (result.hasJoined && authentication != null) {
+            getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
+        } else {
+            emptyList()
+        }
         val myRank = if (result.hasJoined && authentication != null) {
             getChallengeRankUseCase.handle(
                 challengeId = result.challenge.id,
