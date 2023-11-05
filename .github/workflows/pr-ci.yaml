@@ -2,6 +2,7 @@ name: pr-ci
 on:
   pull_request:
     on:
+      - open
       - synchronize
   workflow_dispatch: # for manual trigger
 
