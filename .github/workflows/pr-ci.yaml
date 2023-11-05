@@ -48,29 +48,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-#      - name: Gradle Check
-#        run: ./gradlew clean check
-#
-#      - uses: actions/upload-artifact@v3
-#        name: Upload Check Report If Failed
-#        if: failure()
-#        with:
-#          name: test report
-#          path: "**/build/reports"
-#          retention-days: 1
+      - name: Gradle Check
+        run: ./gradlew clean check
+
+      - uses: actions/upload-artifact@v3
+        name: Upload Check Report If Failed
+        if: failure()
+        with:
+          name: test report
+          path: "**/build/reports"
+          retention-days: 1
 
       - name: Notify CI failure to PR
         uses: thollander/actions-comment-pull-request@v2
-#        if: failure()
+        if: failure()
         with:
           message: |
-            :fire::fire::fire: Backend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-#      - name: Notify CI failure to slack
-#        if: failure()
-#        run: |
-#          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-#          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] Backend CI failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+            :fire::fire::fire: Backend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) :fire::fire::fire:
 
   frontend-ci:
     runs-on: ubuntu-latest
@@ -105,13 +99,8 @@ jobs:
 
       - name: Notify CI failure to PR
         uses: thollander/actions-comment-pull-request@v2
-#        if: failure()
+        if: failure()
         with:
           message: |
             :fire::fire::fire: Frontend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
-#      - name: Notify CI failure to slack
-#        if: failure()
-#        run: |
-#          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-#          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] Frontend CI failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
