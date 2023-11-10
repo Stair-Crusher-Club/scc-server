@@ -66,7 +66,7 @@ function ClubQuestPage() {
           installMap(clubQuest);
         })
     );
-  });
+  }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
       withLoading(

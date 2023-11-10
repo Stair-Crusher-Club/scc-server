@@ -37,7 +37,7 @@ function CreateAccessibilityAllowedRegionPage() {
     return promise.finally(() => setIsLoading(false));
   }
 
-  useEffect(installMapOnce);
+  useEffect(installMapOnce, []);
 
   function installMapOnce() {
     if (map) {

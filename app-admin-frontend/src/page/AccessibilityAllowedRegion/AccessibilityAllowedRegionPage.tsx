@@ -38,7 +38,7 @@ function AccessibilityAllowedRegionPage() {
           installMap(accessibilityAllowedRegion);
         })
     );
-  });
+  }, []);
 
   const installMap = (accessibilityAllowedRegion: AccessibilityAllowedRegionDTO) => {
     if (map == null) {

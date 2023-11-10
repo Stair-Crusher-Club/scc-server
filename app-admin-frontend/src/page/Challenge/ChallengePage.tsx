@@ -27,7 +27,7 @@ function ChallengePage() {
         const challenge = res.data;
         setChallenge(challenge);
       })
-  });
+  }, []);
 
   return (
     challenge == null
