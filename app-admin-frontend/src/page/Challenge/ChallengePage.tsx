@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {Checkbox, InputGroup, NumericInput, Tag} from '@blueprintjs/core';
+import {Checkbox, InputGroup, NumericInput, Tag, TextArea} from '@blueprintjs/core';
 import {AdminApis} from '../../AdminApi';
 
 import './ChallengePage.scss';
@@ -128,6 +128,17 @@ function ChallengePage() {
                     onRemove={() => {}}
                     tagRenderer={(option) => option.displayName}
                     placeholder="전체 액션"
+                    disabled={true}
+                />
+              </div>
+              <div>
+                <span>퀘스트 설명</span>
+                <br />
+                <TextArea
+                    className="input-group"
+                    style={{'width': '600px'}}
+                    value={challenge!.description}
+                    growVertically={true}
                     disabled={true}
                 />
               </div>

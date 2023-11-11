@@ -180,6 +180,7 @@ class ITDataGenerator {
         goal: Int = 1000,
         milestones: List<Int> = listOf(),
         conditions: List<ChallengeCondition> = listOf(),
+        description: String = "",
     ): Challenge {
         return challengeRepository.save(
             Challenge(
@@ -196,6 +197,7 @@ class ITDataGenerator {
                 conditions = conditions,
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
+                description = description,
             )
         )
     }

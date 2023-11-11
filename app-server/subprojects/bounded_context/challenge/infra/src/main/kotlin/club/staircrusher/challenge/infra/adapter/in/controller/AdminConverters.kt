@@ -26,6 +26,7 @@ fun Challenge.toAdminDTO() = AdminChallengeDTO(
     conditions = conditions.map { it.toAdminDTO() },
     createdAtMillis = createdAt.toEpochMilli(),
     updatedAtMillis = updatedAt.toEpochMilli(),
+    description = description,
 )
 
 fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
@@ -38,6 +39,7 @@ fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
     goal = goal,
     milestones = milestones,
     conditions = conditions.map { it.toModel() },
+    description = description,
 )
 
 fun AdminChallengeConditionDTO.toModel() = ChallengeCondition(
