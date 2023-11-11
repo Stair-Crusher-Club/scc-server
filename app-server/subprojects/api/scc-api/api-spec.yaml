@@ -901,6 +901,8 @@ components:
         contributionsCount:
           type: integer
           format: int32
+        description:
+          type: string
       required:
         - id
         - name
@@ -912,6 +914,7 @@ components:
         - milestones
         - participationsCount
         - contributionsCount
+        - description
 
     ChallengeRankDto:
       type: object

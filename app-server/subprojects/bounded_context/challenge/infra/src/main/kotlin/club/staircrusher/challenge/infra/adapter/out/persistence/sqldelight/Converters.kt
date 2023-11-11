@@ -33,7 +33,8 @@ fun Challenge.toDomainModel() = club.staircrusher.challenge.domain.model.Challen
     milestones = milestones,
     conditions = conditions,
     createdAt = created_at.toInstant(),
-    updatedAt = updated_at.toInstant()
+    updatedAt = updated_at.toInstant(),
+    description = description,
 )
 
 fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Challenge(
@@ -49,7 +50,8 @@ fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Ch
     milestones = milestones,
     conditions = conditions,
     created_at = createdAt.toOffsetDateTime(),
-    updated_at = updatedAt.toOffsetDateTime()
+    updated_at = updatedAt.toOffsetDateTime(),
+    description = description,
 )
 
 fun club.staircrusher.challenge.domain.model.Challenge.toDto(
@@ -67,7 +69,8 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(
     goal = goal,
     milestones = milestones,
     participationsCount = participationsCount,
-    contributionsCount = contributionsCount
+    contributionsCount = contributionsCount,
+    description = description,
 )
 
 fun ChallengeStatus.toDto(): ChallengeStatusDto = when (this) {
@@ -138,7 +141,8 @@ fun FindByUidAndTime.toChallenge() = club.staircrusher.challenge.domain.model.Ch
     milestones = milestones,
     conditions = conditions,
     createdAt = created_at.toInstant(),
-    updatedAt = updated_at.toInstant()
+    updatedAt = updated_at.toInstant(),
+    description = description,
 )
 
 fun ChallengeRank.toPersistenceModel() = Challenge_rank(

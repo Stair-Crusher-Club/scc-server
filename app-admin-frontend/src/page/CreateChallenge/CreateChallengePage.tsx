@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Button, Checkbox, InputGroup, NumericInput, Tag} from '@blueprintjs/core';
+import {Button, Checkbox, InputGroup, NumericInput, Tag, TextArea} from '@blueprintjs/core';
 import {AdminApis} from '../../AdminApi';
 
 import './CreateChallengePage.scss';
@@ -59,6 +59,7 @@ function CreateChallengePage() {
       },
     }];
   }
+  const [description, setDescription] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -78,6 +79,7 @@ function CreateChallengePage() {
       goal,
       milestones: getMilestones(),
       conditions: getConditions(),
+      description,
     }
   }
 
@@ -245,6 +247,18 @@ function CreateChallengePage() {
                 onClear={() => setConditionActionTypeOptions([])}
                 tagRenderer={(option) => option.displayName}
                 placeholder="전체 액션"
+                disabled={isLoading}
+            />
+          </div>
+          <div>
+            <span>퀘스트 설명</span>
+            <br />
+            <TextArea
+                className="input-group"
+                style={{'width': '600px'}}
+                value={description}
+                onChange={(event) => { setDescription(event.target.value); }}
+                growVertically={true}
                 disabled={isLoading}
             />
           </div>

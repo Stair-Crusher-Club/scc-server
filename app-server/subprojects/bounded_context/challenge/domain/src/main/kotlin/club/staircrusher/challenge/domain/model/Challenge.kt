@@ -19,6 +19,7 @@ class Challenge(
     val conditions: List<ChallengeCondition>,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val description: String,
 ) {
     fun getStatus(criteriaTime: Instant): ChallengeStatus {
         return when {
@@ -93,6 +94,7 @@ class Challenge(
                 conditions = createRequest.conditions,
                 createdAt = now,
                 updatedAt = now,
+                description = createRequest.description.trim(),
             )
         }
 

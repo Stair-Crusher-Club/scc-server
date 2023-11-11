@@ -469,6 +469,8 @@ components:
         updatedAtMillis:
           type: integer
           format: int64
+        description:
+          type: string
       required:
         - id
         - name
@@ -480,6 +482,7 @@ components:
         - conditions
         - createdAtMillis
         - updatedAtMillis
+        - description
 
     AdminChallengeConditionDTO:
       type: object
@@ -545,6 +548,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdminChallengeConditionDTO'
+        description:
+          type: string
       required:
         - name
         - isPublic
@@ -552,3 +557,4 @@ components:
         - goal
         - milestones
         - conditions
+        - description
