@@ -34,3 +34,9 @@ SELECT *
 FROM user_auth_info
 WHERE
     user_auth_info.user_id = :userId;
+
+removeByUserId:
+DELETE
+FROM user_auth_info
+WHERE
+    user_auth_info.user_id = :userId;

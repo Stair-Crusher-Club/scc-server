@@ -36,4 +36,10 @@ class InMemoryUserAuthInfoRepository : UserAuthInfoRepository {
     override fun findByUserId(userId: String): List<UserAuthInfo> {
         return userById.values.filter { it.userId == userId }
     }
+
+    override fun removeByUserId(userId: String) {
+        userById.values.filter { it.userId == userId }.forEach {
+            userById.remove(it.id)
+        }
+    }
 }

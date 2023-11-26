@@ -44,4 +44,8 @@ class UserAuthInfoRepository(
             .executeAsList()
             .map { it.toDomainModel() }
     }
+
+    override fun removeByUserId(userId: String) {
+        queries.removeByUserId(userId)
+    }
 }

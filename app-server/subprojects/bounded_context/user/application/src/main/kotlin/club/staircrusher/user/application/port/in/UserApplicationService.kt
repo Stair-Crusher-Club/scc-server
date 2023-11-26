@@ -6,6 +6,7 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.validation.email.EmailValidator
+import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
@@ -20,6 +21,7 @@ class UserApplicationService(
     private val userRepository: UserRepository,
     private val userAuthService: UserAuthService,
     private val passwordEncryptor: PasswordEncryptor,
+    private val userAuthInfoRepository: UserAuthInfoRepository,
     private val clock: Clock,
 ) {
     @Deprecated("닉네임 로그인은 사라질 예정")
@@ -132,6 +134,8 @@ class UserApplicationService(
         val user = userRepository.findById(userId)
         user.delete(clock.instant())
         userRepository.save(user)
+
+        userAuthInfoRepository.removeByUserId(userId)
     }
 
     fun getUser(userId: String): User? = transactionManager.doInTransaction {
