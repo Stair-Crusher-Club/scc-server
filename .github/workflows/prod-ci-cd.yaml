@@ -211,6 +211,8 @@ jobs:
 
       - name: Commit and push image tag for main branch
         run: |
+          git config --global user.email "staircrusherclub.dev@gmail.com"
+          git config --global user.name "Stair-Crusher-Club"
           git diff
           git add .
           git commit -m "[skip ci] Prod deploy: $RELEASE_VERSION"
