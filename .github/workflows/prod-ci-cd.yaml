@@ -197,6 +197,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: refs/heads/main
+          token: ${{ secrets.STAIRCRUSHERCLUB_ACCOUNT_GH_TOKEN }}
 
       - name: Update image tag for scc-server
         uses: mikefarah/yq@master
@@ -210,8 +211,6 @@ jobs:
 
       - name: Commit and push image tag for main branch
         run: |
-          git config --global user.email "staircrusherclub.dev@gmail.com"
-          git config --global user.name "Stair-Crusher-Club"
           git diff
           git add .
           git commit -m "[skip ci] Prod deploy: $RELEASE_VERSION"
