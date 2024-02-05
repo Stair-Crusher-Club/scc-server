@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [[ $1 != "dev" && $1 != "prod" ]]; then
   echo 'Usage: ./docker-push.sh (dev|prod) [<release-version>]; <release-version> is "latest" by default'
   exit 0
