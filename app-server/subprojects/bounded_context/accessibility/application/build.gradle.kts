@@ -3,5 +3,5 @@ dependencies {
     implementation(projects.boundedContext.place.application)
     implementation(projects.boundedContext.challenge.application)
 
-    implementation(projects.domainEvent)
+    implementation(projects.apiSpecification.domainEvent)
 }

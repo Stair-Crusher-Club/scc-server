@@ -4,12 +4,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":api"))
-    api(projects.domainEvent)
-    implementation(projects.persistenceModel)
+    api(projects.apiSpecification.api)
+    api(projects.apiSpecification.domainEvent)
+    implementation(projects.crossCuttingConcern.infra.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    integrationTestImplementation(projects.testing.springIt)
+    integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 
     val awsSdkVersion: String by project
     implementation("software.amazon.awssdk:s3:$awsSdkVersion")

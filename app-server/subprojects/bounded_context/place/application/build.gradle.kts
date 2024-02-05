@@ -1,3 +1,3 @@
 dependencies {
-    implementation(projects.domainEvent)
+    implementation(projects.apiSpecification.domainEvent)
 }

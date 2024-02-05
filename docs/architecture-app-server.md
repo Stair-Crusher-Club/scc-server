@@ -12,9 +12,16 @@
 
 계단정복지도 서버 프로젝트는 강력한 의존성 관리를 위해 **코드의 논리적 단위를 패키지가 아닌 gradle module 단위로 분리**하고, 반드시 필요한 의존성만 gradle dependency로 선언합니다.
 
-gradle module은 모두 `subprojects/` 디렉토리 아래에 존재하며, 크게 두 가지 종류의 module로 나뉩니다.
+gradle module은 모두 `subprojects/` 디렉토리 아래에 존재하며, 크게 네 가지 종류의 module로 나뉩니다.
+- API specification module - 계단정복지도 서비스의 서버 프로젝트에서 필요로 하는 다양한 API 명세를 정의합니다.
+  - `api` module - 계단정복지도 서비스 클라이언트와의 API 명세
+  - `admin_api` module - 계단정복지도 어드민 클라이언트와의 API 명세
+  - `domain_event` module - 계단정복지도 백엔드 시스템에서 사용하는 도메인 이벤트 명세
 - [Bounded context module](/docs/architecture-app-server.md#bounded-context의-식별-및-분리) - 계단정복지도 서비스의 가장 핵심적인 도메인 로직과 유즈 케이스가 담긴 모듈입니다.
 - [Cross-cutting concerns module](/docs/architecture-app-server.md#cross-cutting-concerns-modules) - bounded context에서 공통적으로 필요로 하는 cross-cutting concerns를 해결하기 위한 모듈입니다.
+- Deploying apps module - 계단정복지도 백엔드에 배포하기 위한 아티팩트를 형성하는 module입니다.
+  - `scc_server` module - 계단정복지도 monolith 서버 아티팩트 빌드를 위한 module
+  - `local_script` module - 로컬에서 실행하기 위한 스크립트를 모아둔 module
 
 ## DDD
 
@@ -70,8 +77,12 @@ Domain event의 발행과 구독은 아래의 workflow로 작업할 수 있습�
 ## Cross-cutting concerns modules
 
 계단정복지도 서버 프로젝트는 다양한 cross-cutting concerns를 지원하기 위한 gradle module을 제공합니다(alphabetical order).
-* packaging - 계단정복지도 서버 프로젝트의 코드를 하나로 묶어 배포 가능한 artifact를 만듭니다.
-* spring_message - Domain event의 발행 / 구독 시스템을 실제로 구현합니다.
-* spring_web - Spring MVC 환경에서 필요한 기능을 제공합니다. e.g. 보안 및 에러 핸들링에 필요한 util 등. 
-* stdlib - BC를 개발할 때 공통적으로 필요한 기능을 제공합니다. 경계가 다소 모호한데, BC의 특정 계층이 아닌 전체 계층에서 사용 가능하면 보통 stdlib에 들어갑니다.
-* testing - 테스트를 작성할 때 공통적으로 필요한 기능을 제공합니다. e.g. 테스트 데이터 생성, integration test 작성 템플릿 등.
+`cross_cutting_concerns` module은 `stdlib` module과 DDD의 각 레이어(domain, application, infra) + test source set을 위한 module로 나뉩니다.
+- `stdlib` - BC를 개발할 때 공통적으로 필요한 기능을 제공합니다. 경계가 다소 모호한데, BC의 특정 계층이 아닌 전체 계층에서 사용 가능하면 보통 stdlib에 들어갑니다.
+- `domain` - 아직 없습니다.
+- `application` - 아직 없습니다.
+- `infra`
+  - `spring_message` - Domain event의 발행 / 구독 시스템을 실제로 구현합니다.
+  - `spring_web` - Spring MVC 환경에서 필요한 기능을 제공합니다. e.g. 보안 및 에러 핸들링에 필요한 util 등. 
+- `test`
+  - `spring_it` - Spring MVC 환경에서 integration test를 작성할 때 공통적으로 필요한 기능을 제공합니다.

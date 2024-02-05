@@ -7,9 +7,9 @@ dependencies {
     val kotlinLoggingVersion: String by project
     val kotlinxSerializationVersion: String by project
 
-    implementation(projects.stdlib)
-    implementation(projects.persistenceModel)
-    implementation(projects.domainEvent)
+    implementation(projects.crossCuttingConcern.stdlib)
+    implementation(projects.crossCuttingConcern.infra.persistenceModel)
+    implementation(projects.apiSpecification.domainEvent)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-webflux")

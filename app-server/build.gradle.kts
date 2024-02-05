@@ -18,7 +18,13 @@ tasks.bootJar { enabled = false }
 group = "club.staircrusher"
 version = "1.0.0-SNAPSHOT"
 
-val detektExcludedProjects = listOf(project(":admin_api"), project("api"), project(":script"))
+val rootProject = project
+
+val detektExcludedProjects = listOf(
+    project(":api_specification:admin_api"),
+    project(":api_specification:api"),
+    project(":deploying_apps:local_script"),
+)
 subprojects {
     apply(plugin = "kotlin")
 
@@ -35,7 +41,7 @@ subprojects {
 
     dependencies {
         if (project.name == "infra") {
-            implementation(project(":spring_web"))
+            implementation(rootProject.projects.crossCuttingConcern.infra.springWeb)
         }
     }
 
@@ -124,7 +130,7 @@ subprojects {
         listOfNotNull(domainProject, applicationProject, infraProject)
             .forEach {
                 it.dependencies {
-                    implementation(project(":stdlib"))
+                    implementation(rootProject.projects.crossCuttingConcern.stdlib)
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
                 }
             }
@@ -134,16 +140,16 @@ subprojects {
 
 /**
  * 모든 bounded context를 모아서 modular monolith artifact(= bootJar)를 만들기 위한 설정.
- * 1. packaging project에 모든 infra project를 dependency로 추가해준다.
+ * 1. deployingApps.sccServer project에 모든 infra project를 dependency로 추가해준다.
  * 2. 각 bounded context의 domain/application/infra project의 output jar 이름을 customize 해준다.
- *    기본 이름은 전부 <layer 이름>.jar인데, 이러면 packaging에서 bootJar를 만들 때 jar 이름이 충돌해서 에러가 난다.
+ *    기본 이름은 전부 <layer 이름>.jar인데, 이러면 deployingApps.sccServer에서 bootJar를 만들 때 jar 이름이 충돌해서 에러가 난다.
  *    따라서 각 project의 jar 이름이 모두 다르도록 설정해준다.
  */
-val packagingProject = project.childProjects["packaging"]!!
+val sccServerProject = project.childProjects["deploying_apps"]!!.childProjects["scc_server"]!!
 val layerProjectPathRegex = Regex("^:bounded_context:([^:]+):(domain|application|infra)\$")
 subprojects {
     if (project.path.endsWith(":infra")) {
-        packagingProject.dependencies {
+        sccServerProject.dependencies {
             implementation(project)
         }
     }
