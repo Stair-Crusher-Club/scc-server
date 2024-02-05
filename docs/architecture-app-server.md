@@ -82,6 +82,7 @@ Domain event의 발행과 구독은 아래의 workflow로 작업할 수 있습�
 - `domain` - 아직 없습니다.
 - `application` - 아직 없습니다.
 - `infra`
+  - `persistence_model` - SqlDelight 기반으로 데이터베이스와 통신하기 위한 여러 구현체를 제공합니다. 2024.01 기준 `.sqm` / `.sq` 파일도 함께 포함되어 있는데, 최소한 `.sq` 파일은 장기적으로 각 BC의 infra module로 옮겨가야 하지만 현재 SqlDelight의 기술적인 제약 상 `cross_cutting_concern` module로 빠지게 되었습니다.
   - `spring_message` - Domain event의 발행 / 구독 시스템을 실제로 구현합니다.
   - `spring_web` - Spring MVC 환경에서 필요한 기능을 제공합니다. e.g. 보안 및 에러 핸들링에 필요한 util 등. 
 - `test`
