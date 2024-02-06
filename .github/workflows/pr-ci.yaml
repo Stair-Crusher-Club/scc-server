@@ -91,7 +91,7 @@ jobs:
 
           mv ~/bin/openapitools/openapi-generator-cli ~/bin/openapitools/openapi-generator
 
-          ./generate-api-spec.sh
+          OPENAPI_GENERATOR_VERSION=7.1.0 ./generate-api-spec.sh
 
       - name: Build
         run: |

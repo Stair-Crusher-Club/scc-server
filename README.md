@@ -35,6 +35,8 @@ git subtree push --prefix app-server/subprojects/api/scc-api scc-api main
 ./generate-api-spec.sh
 ```
 
+이때 openapi-generator CLI의 버전은 7.1.0 이하여야 합니다. 7.2.0부터는 axios 버전이 1.x.x로 올라가서 호환이 깨집니다.
+
 ### 로컬에서 빌드하기 / 서버 띄우기
 
 로컬에서 빌드하거나 서버를 띄우기 위해서는 DB가 필요합니다.
