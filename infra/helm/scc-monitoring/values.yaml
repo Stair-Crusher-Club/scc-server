@@ -1,0 +1,48 @@
+# refs: https://github.com/prometheus-community/helm-charts/blob/5bd2f828f67aea8861f31433edb9c5c503fe5fcc/charts/kube-prometheus-stack/values.yaml
+kube-prometheus-stack:
+  alertmanager:
+    enabled: true
+    config:
+      global:
+        resolve_timeout: 5m
+      inhibit_rules:
+        - source_matchers:
+            - 'severity = critical'
+          target_matchers:
+            - 'severity =~ warning|info'
+          equal:
+            - 'namespace'
+            - 'alertname'
+        - source_matchers:
+            - 'severity = warning'
+          target_matchers:
+            - 'severity = info'
+          equal:
+            - 'namespace'
+            - 'alertname'
+        - source_matchers:
+            - 'alertname = InfoInhibitor'
+          target_matchers:
+            - 'severity = info'
+          equal:
+            - 'namespace'
+        - target_matchers:
+            - 'alertname = InfoInhibitor'
+      route:
+        group_by: [ 'namespace' ]
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 12h
+        receiver: 'slack-agnica'
+        routes:
+          - receiver: 'slack-agnica'
+            matchers:
+              - alertname = "Watchdog"
+      templates:
+        - '/etc/alertmanager/config/*.tmpl'
+      receivers:
+        - name: 'null'
+        - name: 'slack-agnica'
+          slack_configs:
+            - send_resolved: true
+              api_url: https://hooks.slack.com/services/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
