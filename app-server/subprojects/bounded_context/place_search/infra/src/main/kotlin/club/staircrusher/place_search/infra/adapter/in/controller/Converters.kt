@@ -15,6 +15,7 @@ fun Place.toDTO() = club.staircrusher.api.spec.dto.Place(
 fun Building.toDTO() = club.staircrusher.api.spec.dto.Building(
     id = id,
     address = address.toString(),
+    location = address.location.toDTO(),
 )
 
 fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
