@@ -794,6 +794,9 @@ components:
         address:
           type: string
           description: 건물의 human-readable한 주소.
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 건물의 위경도.
       required:
         - id
         - address
