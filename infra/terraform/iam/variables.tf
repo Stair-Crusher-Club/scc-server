@@ -8,5 +8,7 @@ variable "developer" {
     "suhwan.jee",
     "yongseong.kim",
     "gwangjae.han",
+    "hoisung.yoo",
+    "sangmin.kim"
   ]
 }
