@@ -1,5 +1,6 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
+import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.PlaceCategoryDto
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place.domain.model.Building
@@ -15,6 +16,7 @@ fun Place.toDTO() = club.staircrusher.api.spec.dto.Place(
 fun Building.toDTO() = club.staircrusher.api.spec.dto.Building(
     id = id,
     address = address.toString(),
+    location = location.toDTO(),
 )
 
 fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
