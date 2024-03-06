@@ -53,7 +53,7 @@ resource "aws_iam_role" "github_action_ci_cd" {
         "Action": "sts:AssumeRoleWithWebIdentity",
         "Condition": {
           "StringLike": {
-            "token.actions.githubusercontent.com:sub": "repo:Stair-Crusher-Club/scc-server:*"
+            "token.actions.githubusercontent.com:sub": "repo:Stair-Crusher-Club/*"
           },
           "StringEquals": {
             "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
