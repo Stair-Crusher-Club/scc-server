@@ -73,52 +73,52 @@ jobs:
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] Backend CI failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
-  frontend-ci:
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: app-admin-frontend
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install & Run openapi-generator
-        run: |
-          mkdir -p ~/bin/openapitools
-          curl https://raw.githubusercontent.com/OpenAPITools/openapi-generator/master/bin/utils/openapi-generator-cli.sh > ~/bin/openapitools/openapi-generator-cli
-          chmod u+x ~/bin/openapitools/openapi-generator-cli
-          export PATH=$PATH:~/bin/openapitools/
-
-          mv ~/bin/openapitools/openapi-generator-cli ~/bin/openapitools/openapi-generator
-
-          OPENAPI_GENERATOR_VERSION=7.1.0 ./generate-api-spec.sh
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::291889421067:role/github-action-ci-cd
-          aws-region: ap-northeast-2
-
-      - name: Build and Push Image
-        run: ./docker-push.sh dev
-
-      - name: Notify CI failure to slack
-        if: failure()
-        run: |
-          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] Frontend CI failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+#  frontend-ci:
+#    runs-on: ubuntu-latest
+#
+#    defaults:
+#      run:
+#        working-directory: app-admin-frontend
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Setup Node
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 18
+#
+#      - name: Install & Run openapi-generator
+#        run: |
+#          mkdir -p ~/bin/openapitools
+#          curl https://raw.githubusercontent.com/OpenAPITools/openapi-generator/master/bin/utils/openapi-generator-cli.sh > ~/bin/openapitools/openapi-generator-cli
+#          chmod u+x ~/bin/openapitools/openapi-generator-cli
+#          export PATH=$PATH:~/bin/openapitools/
+#
+#          mv ~/bin/openapitools/openapi-generator-cli ~/bin/openapitools/openapi-generator
+#
+#          OPENAPI_GENERATOR_VERSION=7.1.0 ./generate-api-spec.sh
+#
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v2
+#        with:
+#          role-to-assume: arn:aws:iam::291889421067:role/github-action-ci-cd
+#          aws-region: ap-northeast-2
+#
+#      - name: Build and Push Image
+#        run: ./docker-push.sh dev
+#
+#      - name: Notify CI failure to slack
+#        if: failure()
+#        run: |
+#          CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+#          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] Frontend CI failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
   cd:
     runs-on: ubuntu-latest
     needs:
       - backend-ci
-      - frontend-ci
+#      - frontend-ci
 
     steps:
       - uses: actions/checkout@v3
@@ -148,14 +148,14 @@ jobs:
         run: |
           kubectl rollout restart deploy/scc-server -n dev
 
-      - name: Upgrade scc-admin-frontend helm chart
-        working-directory: infra/helm/scc-admin-frontend
-        run: |
-          helm upgrade --install --namespace dev -f values-dev.yaml scc-admin-frontend ./
-
-      - name: Restart deploy/scc-admin-frontend # tag를 latest-rc로 고정해서 사용하기 때문에 helm upgrade --install만 해서는 새 버전의 이미지가 배포되지 않는다. 따라서 강제로 rollout을 해준다.
-        run: |
-          kubectl rollout restart deploy/scc-admin-frontend -n dev
+#      - name: Upgrade scc-admin-frontend helm chart
+#        working-directory: infra/helm/scc-admin-frontend
+#        run: |
+#          helm upgrade --install --namespace dev -f values-dev.yaml scc-admin-frontend ./
+#
+#      - name: Restart deploy/scc-admin-frontend # tag를 latest-rc로 고정해서 사용하기 때문에 helm upgrade --install만 해서는 새 버전의 이미지가 배포되지 않는다. 따라서 강제로 rollout을 해준다.
+#        run: |
+#          kubectl rollout restart deploy/scc-admin-frontend -n dev
 
       - name: Notify CD failure to slack
         if: failure()
