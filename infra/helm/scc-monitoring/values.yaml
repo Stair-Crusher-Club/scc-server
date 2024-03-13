@@ -22,15 +22,14 @@ openobserve-collector:
   enabled: true
   # Default values for openobserve-collector.
   exporters:
-    # TODO: 여기에 secret 어떻게 넣을지 고민
     otlphttp/openobserve:
-      endpoint: https://api.openobserve.ai/api/default/
+      endpoint: ""
       headers:
-        Authorization: Basic < base64 encoded auth >
+        Authorization: ""
     otlphttp/openobserve_k8s_events:
-      endpoint: https://api.openobserve.ai/api/default/
+      endpoint: ""
       headers:
-        Authorization: Basic < base64 encoded auth >
+        Authorization: ""
         stream-name: k8s_events
 
   replicaCount: 1
