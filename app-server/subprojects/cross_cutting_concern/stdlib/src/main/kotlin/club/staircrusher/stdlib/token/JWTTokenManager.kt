@@ -21,8 +21,9 @@ class JWTTokenManager(
     private val clock: Clock,
 ) : TokenManager {
     companion object {
-        private val TOKEN_EXPIRATION = Duration.ofDays(30)
+        private val TOKEN_EXPIRATION = Duration.ofDays(365)
     }
+
     private val objectMapper = jacksonObjectMapper()
 
     private val jwtAlgorithm = Algorithm.HMAC512(secret)
