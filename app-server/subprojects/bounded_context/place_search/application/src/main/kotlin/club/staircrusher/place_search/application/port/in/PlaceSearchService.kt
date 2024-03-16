@@ -48,7 +48,19 @@ class PlaceSearchService(
                     )
                 }
             ),
-        )
+        ).let {
+            if (it.isEmpty() && currentLocation != null) {
+                // Kakao 지도 API의 경우, 최대 검색 반경이 25km밖에 되지 않는다.
+                // 그래서 서울에서 제주 스타벅스를 검색하는 경우 검색 결과가 안 뜨는 등의 이슈가 있다.
+                // 이러한 문제를 우회하기 위해, 검색 결과가 없는 경우에는 currentLocation을 빼고 검색을 다시 시도해본다.
+                placeService.findAllByKeyword(
+                    keyword = searchText,
+                    option = MapsService.SearchByKeywordOption(),
+                )
+            } else {
+                it
+            }
+        }
         return places.map { it.toSearchPlacesResult(currentLocation) }
     }
 
