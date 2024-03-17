@@ -8,6 +8,8 @@ import club.staircrusher.place.application.port.`in`.PlaceService
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
+import club.staircrusher.user.application.port.`in`.UserApplicationService
+import club.staircrusher.user.domain.model.User
 import java.time.Instant
 
 @Component
@@ -15,6 +17,7 @@ class AdminSearchAccessibilitiesUseCase(
     private val placeService: PlaceService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
+    private val userAplService: UserApplicationService,
 ) {
     data class Result(
         val items: List<Item>,
@@ -22,7 +25,9 @@ class AdminSearchAccessibilitiesUseCase(
     ) {
         data class Item(
             val placeAccessibility: PlaceAccessibility,
+            val placeAccessibilityRegisteredUser: User?,
             val buildingAccessibility: BuildingAccessibility?,
+            val buildingAccessibilityRegisteredUser: User?,
             val place: Place,
         )
     }
@@ -54,6 +59,10 @@ class AdminSearchAccessibilitiesUseCase(
         val buildingAccessibilityByBuildingId = buildingAccessibilityRepository
             .findByBuildingIds(placeById.values.map { it.building.id })
             .associateBy { it.buildingId }
+        val userById = userAplService.getUsers(
+            userIds = placeAccessibilities.mapNotNull { it.userId } +
+                buildingAccessibilityByBuildingId.values.mapNotNull { it.userId },
+        ).associateBy { it.id }
 
         val nextCursorValue = if (placeAccessibilities.size > normalizedLimit) {
             Cursor(placeAccessibilities[normalizedLimit - 1]).value
@@ -62,11 +71,14 @@ class AdminSearchAccessibilitiesUseCase(
         }
 
         return Result(
-            items = placeAccessibilities.map {
-                val place = placeById[it.placeId]!!
+            items = placeAccessibilities.map { placeAccessibility ->
+                val place = placeById[placeAccessibility.placeId]!!
+                val buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id]
                 Result.Item(
-                    placeAccessibility = it,
-                    buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id],
+                    placeAccessibility = placeAccessibility,
+                    placeAccessibilityRegisteredUser = userById[placeAccessibility.userId],
+                    buildingAccessibility = buildingAccessibility,
+                    buildingAccessibilityRegisteredUser = buildingAccessibility?.userId?.let { userById[it] },
                     place = place,
                 )
             },
