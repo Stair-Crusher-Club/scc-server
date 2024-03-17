@@ -647,7 +647,6 @@ components:
           $ref: '#/components/schemas/AdminBuildingAccessibilityDTO'
       required:
         - placeAccessibility
-        - buildingAccessibility
 
     AdminPlaceAccessibilityDTO:
       type: object
@@ -711,7 +710,6 @@ components:
         - hasElevator
         - elevatorStairInfo
         - elevatorImageUrls
-        - buildingName
 
     AdminStairInfoDTO:
       type: string
