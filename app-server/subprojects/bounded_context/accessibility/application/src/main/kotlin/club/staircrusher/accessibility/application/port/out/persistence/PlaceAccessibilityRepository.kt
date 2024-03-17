@@ -4,7 +4,9 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.stdlib.domain.repository.EntityRepository
 import club.staircrusher.stdlib.geography.EupMyeonDong
+import java.time.Instant
 
+@Suppress("TooManyFunctions")
 interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, String> {
     fun findByPlaceIds(placeIds: Collection<String>): List<PlaceAccessibility>
     fun findByPlaceId(placeId: String): PlaceAccessibility?
@@ -13,6 +15,13 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     fun countByUserId(userId: String): Int
     fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean
     fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
+    fun findByPlaceNameContainsPagingByCreatedAtDesc(
+        placeName: String,
+        cursorCreatedAt: Instant,
+        cursorId: String,
+        limit: Int,
+    ): List<PlaceAccessibility>
+    fun findAllPagingByCreatedAtDesc(cursorCreatedAt: Instant, cursorId: String, limit: Int): List<PlaceAccessibility>
     fun countAll(): Int
     fun remove(id: String)
     data class CreateParams(
