@@ -356,7 +356,7 @@ paths:
         required: true
 
     delete:
-      operationId: deletePlaceAccessibility
+      operationId: deleteBuildingAccessibility
       summary: 건물 정보를 삭제한다.
       tags:
         - accessibility
