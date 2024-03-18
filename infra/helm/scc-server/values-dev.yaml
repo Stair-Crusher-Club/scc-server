@@ -30,7 +30,7 @@ serviceAccount:
   name: ""
 
 podAnnotations:
-  instrumentation.opentelemetry.io/inject-java: "true"
+  instrumentation.opentelemetry.io/inject-java: "openobserve-collector/openobserve-java"
 
 podSecurityContext:
   fsGroup: 2000
