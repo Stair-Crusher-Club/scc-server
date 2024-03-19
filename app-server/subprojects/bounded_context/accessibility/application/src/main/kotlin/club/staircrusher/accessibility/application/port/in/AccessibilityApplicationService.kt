@@ -221,6 +221,9 @@ class AccessibilityApplicationService(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
     ): RegisterPlaceAccessibilityResult {
+        if (createPlaceAccessibilityParams.isValid().not()) {
+            throw SccDomainException("잘못된 접근성 정보입니다. 필수 항목을 모두 입력해주세요.")
+        }
         if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
             throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
         }
@@ -233,9 +236,13 @@ class AccessibilityApplicationService(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = createPlaceAccessibilityParams.placeId,
+                floors = createPlaceAccessibilityParams.floors,
                 isFirstFloor = createPlaceAccessibilityParams.isFirstFloor,
+                isStairOnlyOption = createPlaceAccessibilityParams.isStairOnlyOption,
                 stairInfo = createPlaceAccessibilityParams.stairInfo,
+                stairHeightLevel = createPlaceAccessibilityParams.stairHeightLevel,
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
+                entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = clock.instant(),

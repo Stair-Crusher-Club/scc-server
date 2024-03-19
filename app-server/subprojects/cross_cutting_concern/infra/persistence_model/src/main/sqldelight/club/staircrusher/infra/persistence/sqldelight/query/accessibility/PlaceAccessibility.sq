@@ -3,9 +3,13 @@ INSERT INTO place_accessibility
 VALUES :place_accessibility
 ON CONFLICT(id) DO UPDATE SET
     place_id = EXCLUDED.place_id,
+    floors = EXCLUDED.floors,
     is_first_floor = EXCLUDED.is_first_floor,
+    is_stair_only_option = EXCLUDED.is_stair_only_option,
     stair_info = EXCLUDED.stair_info,
+    stair_height_level = EXCLUDED.stair_height_level,
     has_slope = EXCLUDED.has_slope,
+    entrance_door_types = EXCLUDED.entrance_door_types,
     image_urls = EXCLUDED.image_urls,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at,

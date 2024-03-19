@@ -7,9 +7,13 @@ import java.time.Instant
 data class PlaceAccessibility(
     val id: String,
     val placeId: String,
+    val floors: List<Int>?,
     val isFirstFloor: Boolean,
+    val isStairOnlyOption: Boolean?,
     val stairInfo: StairInfo,
+    val stairHeightLevel: StairHeightLevel?,
     val hasSlope: Boolean,
+    val entranceDoorTypes: List<EntranceDoorType>?,
     val imageUrls: List<String>,
     val userId: String?,
     val createdAt: Instant,
