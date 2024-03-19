@@ -24,7 +24,7 @@ version: 0.1.0
 appVersion: "1.16.0"
 dependencies:
   - name: opentelemetry-operator
-    version: 0.48.0
+    version: 0.49.1
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   - name: openobserve-collector
     version: 0.3.1
