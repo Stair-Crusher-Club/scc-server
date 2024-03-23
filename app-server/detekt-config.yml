@@ -18,4 +18,6 @@ naming:
 performance:
   SpreadOperator:
     active: false
-
+exceptions:
+  TooGenericExceptionCaught:
+    active: false

@@ -39,6 +39,9 @@ class BuildingAccessibilityRepository(
     }
 
     override fun findByBuildingIds(buildingIds: Collection<String>): List<BuildingAccessibility> {
+        if (buildingIds.isEmpty()) {
+            return emptyList()
+        }
         return queries.findByBuildingIds(buildingIds = buildingIds)
             .executeAsList()
             .map { it.toDomainModel() }
