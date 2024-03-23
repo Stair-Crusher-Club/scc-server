@@ -6,6 +6,7 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.place.application.port.`in`.PlaceService
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.user.application.port.`in`.UserApplicationService
@@ -71,7 +72,7 @@ class AdminSearchAccessibilitiesUseCase(
         }
 
         return Result(
-            items = placeAccessibilities.map { placeAccessibility ->
+            items = placeAccessibilities.take(normalizedLimit).map { placeAccessibility ->
                 val place = placeById[placeAccessibility.placeId]!!
                 val buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id]
                 Result.Item(
@@ -109,7 +110,7 @@ class AdminSearchAccessibilitiesUseCase(
                 }
             }
 
-            val INITIAL = Cursor(id = "", createdAt = Instant.EPOCH)
+            val INITIAL = Cursor(id = "", createdAt = SccClock.instant())
         }
     }
 

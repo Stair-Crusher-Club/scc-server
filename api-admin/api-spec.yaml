@@ -299,7 +299,7 @@ paths:
       responses:
         '204': {}
 
-  /admin/accessibilities/search:
+  /accessibilities/search:
     get:
       parameters:
         - in: query
@@ -330,7 +330,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminSearchAccessibilitiesResultDTO'
 
-  /admin/place-accessibilities/{id}:
+  /place-accessibilities/{id}:
     parameters:
       - in: path
         name: id
@@ -347,7 +347,7 @@ paths:
         204:
           description: 삭제 성공
 
-  /admin/building-accessibilities/{id}:
+  /building-accessibilities/{id}:
     parameters:
       - in: path
         name: id
