@@ -1,6 +1,7 @@
-package club.staircrusher.place_count
+package club.staircrusher.place
 
 import club.staircrusher.readTsvAsLines
+import club.staircrusher.TargetRegionInfo
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoProperties
@@ -12,12 +13,6 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 
 private const val kakaoApiKey = "fake key"
-
-private data class TargetRegionInfo(
-    val name: String,
-    val lng: Double,
-    val lat: Double,
-)
 
 private data class CategoryGroup(
     val name: String,
@@ -66,6 +61,7 @@ fun main() {
 
 private fun getTargetRegionInfos(): List<TargetRegionInfo> {
     val targetStationInfos = readTsvAsLines("place_count/target_station_infos.tsv")
+
     data class Station(
         val subwayLine: String,
         val name: String,
@@ -73,6 +69,7 @@ private fun getTargetRegionInfos(): List<TargetRegionInfo> {
         val fullname: String
             get() = "$name $subwayLine"
     }
+
     val stations = targetStationInfos.map { (rawSubwayLine, rawStationName) ->
         val normalizedStationName = rawStationName
             .replace(Regex("\\(.*\\)"), "")
@@ -141,6 +138,7 @@ private fun getTargetRegionPlaceCounts(regionInfos: List<TargetRegionInfo>): Lis
                         println(result.getException())
                         "-1"
                     }
+
                     is Result.Success -> {
                         Regex("\"total_count\":\\s*(\\d*)").find(result.value)?.groups?.get(1)?.value ?: "-1"
                     }
