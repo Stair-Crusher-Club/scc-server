@@ -217,6 +217,7 @@ class AccessibilityApplicationService(
         )
     }
 
+    @Suppress("ThrowsCount")
     internal fun doRegisterPlaceAccessibility(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
