@@ -14,8 +14,8 @@ import club.staircrusher.api.spec.dto.GetImageUploadUrlsPostRequest
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
-import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
+import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -99,7 +99,7 @@ class AccessibilityController(
     fun registerPlaceAccessibility(
         @RequestBody request: RegisterPlaceAccessibilityRequestDto,
         authentication: SccAppAuthentication,
-    ): RegisterPlaceAccessibilityPost200Response {
+    ): RegisterPlaceAccessibilityResponseDto {
         val userId = authentication.principal
         val (registerResult, getAccessibilityResult) = registerPlaceAccessibilityUseCase.handle(
             userId = authentication.principal,
@@ -112,7 +112,7 @@ class AccessibilityController(
                 )
             },
         )
-        return RegisterPlaceAccessibilityPost200Response(
+        return RegisterPlaceAccessibilityResponseDto(
             accessibilityInfo = getAccessibilityResult.toDTO(authentication.details),
             registeredUserOrder = registerResult.registrationOrder,
             // contributedChallenges = listOf() // TODO: 내가 참여하는 챌린지 중 만족하는 challenge 내려주기

@@ -259,7 +259,7 @@ class ITDataGenerator {
         stairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
         hasSlope: Boolean = true,
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
-        user: User?
+        user: User? = null
     ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
             PlaceAccessibility(
