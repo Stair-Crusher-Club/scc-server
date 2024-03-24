@@ -7,8 +7,8 @@ import club.staircrusher.accessibility.infra.adapter.`in`.controller.toDTO
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.EntranceDoorType
-import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
+import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
 import club.staircrusher.api.spec.dto.StairHeightLevel
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
@@ -64,8 +64,8 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             mvc
                 .sccRequest("/registerPlaceAccessibility", params, user = user)
                 .apply {
-                    val result = getResult(RegisterPlaceAccessibilityPost200Response::class)
-                    val accessibilityInfo = result.accessibilityInfo
+                    val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
+                    val accessibilityInfo = result.accessibilityInfo!!
                     assertNull(accessibilityInfo.buildingAccessibility)
                     assertTrue(accessibilityInfo.buildingAccessibilityComments.isEmpty())
 
@@ -97,12 +97,12 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             mvc
                 .sccRequest("/registerPlaceAccessibility", nthFloorParams, user = user)
                 .apply {
-                    val result = getResult(RegisterPlaceAccessibilityPost200Response::class)
-                    val accessibilityInfo = result.accessibilityInfo
+                    val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
+                    val accessibilityInfo = result.accessibilityInfo!!
                     assertNull(accessibilityInfo.buildingAccessibility)
                     assertTrue(accessibilityInfo.buildingAccessibilityComments.isEmpty())
 
-                    val placeAccessibility = accessibilityInfo.placeAccessibility!!
+                    val placeAccessibility = accessibilityInfo!!.placeAccessibility!!
                     assertEquals(place.id, placeAccessibility.placeId)
                     assertArrayEquals(nthFloorParams.floors?.toIntArray(), placeAccessibility.floors?.toIntArray())
                     assertFalse(placeAccessibility.isFirstFloor)
@@ -130,8 +130,8 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest("/registerPlaceAccessibility", firstFloorPlaceParams, user = user)
             .apply {
-                val result = getResult(RegisterPlaceAccessibilityPost200Response::class)
-                val accessibilityInfo = result.accessibilityInfo
+                val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
+                val accessibilityInfo = result.accessibilityInfo!!
                 assertNull(accessibilityInfo.buildingAccessibility)
                 assertTrue(accessibilityInfo.buildingAccessibilityComments.isEmpty())
 
