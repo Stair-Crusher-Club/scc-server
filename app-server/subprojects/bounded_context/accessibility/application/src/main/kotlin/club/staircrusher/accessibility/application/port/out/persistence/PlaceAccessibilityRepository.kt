@@ -32,13 +32,8 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     ) {
         fun isValid(): Boolean {
             // 0401 버전에서 추가된 항목이 모두 있거나 모두 없거나
-            if (floors == null && isStairOnlyOption == null && stairHeightLevel == null && entranceDoorTypes == null) {
-               return true
-            }
-            if (floors != null && isStairOnlyOption != null && stairHeightLevel != null && entranceDoorTypes != null) {
-                return true
-            }
-            return false
+            return listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it == null }
+                || listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it != null }
         }
     }
 }
