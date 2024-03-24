@@ -6,6 +6,7 @@ import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toDTO
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
+import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.EntranceDoorType
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
@@ -122,22 +123,21 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     assertEquals(expectedRegisteredUserOrder, result.registeredUserOrder)
                 }
         }
+    }
 
-        // 1층인 경우
+    @Test
+    fun `출입문 유형 입력에서 "문 없음" 과 다른 출입문 유형(미닫이, 여닫이 등)을 같이 입력할 수 없다`() {
         val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
         val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
-        val firstFloorPlaceParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, listOf(1))
+        val nthFloorParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, listOf(3, 4), entranceDoorTypes = listOf(EntranceDoorType.none, EntranceDoorType.automatic))
         mvc
-            .sccRequest("/registerPlaceAccessibility", firstFloorPlaceParams, user = user)
+            .sccRequest("/registerPlaceAccessibility", nthFloorParams, user = user)
+            .andExpect {
+                status { isBadRequest() }
+            }
             .apply {
-                val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
-                val accessibilityInfo = result.accessibilityInfo!!
-                assertNull(accessibilityInfo.buildingAccessibility)
-                assertTrue(accessibilityInfo.buildingAccessibilityComments.isEmpty())
-
-                val placeAccessibility = accessibilityInfo.placeAccessibility!!
-                assertEquals(place.id, placeAccessibility.placeId)
-                assertTrue(placeAccessibility.isFirstFloor)
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_ARGUMENTS, result.code)
             }
     }
 
