@@ -1,6 +1,9 @@
 dependencies:
-- name: kube-prometheus-stack
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 56.6.2
-digest: sha256:9cabf099ca6b6d6267fe9fbe4db9b1c2ef311795b0a4cbf94cf781276c2ff600
-generated: "2024-02-05T17:55:13.166201+09:00"
+- name: opentelemetry-operator
+  repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+  version: 0.48.0
+- name: openobserve-collector
+  repository: https://charts.openobserve.ai
+  version: 0.3.1
+digest: sha256:bc6f82f23e468cf4df9ca5ede2859aefc069711b37d84b765236dc00225968e5
+generated: "2024-03-11T23:30:51.414395+09:00"
