@@ -8,3 +8,6 @@ ALTER TABLE place_accessibility ADD COLUMN floors TEXT AS List<Int> NOT NULL DEF
 ALTER TABLE place_accessibility ADD COLUMN is_stair_only_option BOOLEAN NULL;
 ALTER TABLE place_accessibility ADD COLUMN stair_height_level VARCHAR(32) AS StairHeightLevel NULL;
 ALTER TABLE place_accessibility ADD COLUMN entrance_door_types TEXT AS List<EntranceDoorType> NOT NULL DEFAULT '[]';
+
+ALTER TABLE building_accessibility ADD COLUMN stair_height_level VARCHAR(32) AS StairHeightLevel NULL;
+ALTER TABLE building_accessibility ADD COLUMN entrance_door_types TEXT AS List<EntranceDoorType> NOT NULL DEFAULT '[]';
