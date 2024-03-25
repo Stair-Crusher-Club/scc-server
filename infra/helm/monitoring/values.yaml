@@ -1,8 +1,3 @@
-deploySecret:
-  awsRoleArn: arn:aws:iam::291889421067:role/scc-deploy-secret
-
-filesDir: files
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -280,6 +275,15 @@ openobserve-collector:
           k8s.pod.memory_request_utilization:
             enabled: true
     processors:
+      filter/keep-scc:
+        error_mode: ignore
+        logs:
+          log_record:
+            - resource.attributes["k8s.namespace.name"]!=nil and resource.attributes["k8s.namespace.name"]!="scc"
+        metrics:
+          metric:
+            - resource.attributes["k8s.namespace.name"]!=nil and resource.attributes["k8s.namespace.name"]!="scc"
+            - resource.attributes["namespace"]!=nil and resource.attributes["namespace"]!="scc"
       resourcedetection:
         detectors: [system, env, k8snode]
         override: true
@@ -353,15 +357,15 @@ openobserve-collector:
       pipelines:
         logs:
           receivers: [filelog/std]
-          processors: [batch, k8sattributes]
+          processors: [batch, k8sattributes, filter/keep-scc]
           exporters: [otlphttp/openobserve]
         metrics:
           receivers: [kubeletstats]
-          processors: [batch, k8sattributes]
+          processors: [batch, k8sattributes, filter/keep-scc]
           exporters: [otlphttp/openobserve]
         traces:
           receivers: [otlp]
-          processors: [batch, k8sattributes]
+          processors: [batch, k8sattributes, filter/keep-scc]
           exporters: [otlphttp/openobserve]
 
   gateway:
@@ -545,6 +549,15 @@ openobserve-collector:
                   target_label: metrics_path
 
     processors:
+      filter/keep-scc:
+        error_mode: ignore
+        logs:
+          log_record:
+            - resource.attributes["k8s.namespace.name"]!="scc"
+        metrics:
+          metric:
+            - resource.attributes["k8s.namespace.name"]!="scc"
+            - resource.attributes["namespace"]!="scc"
       resourcedetection:
         detectors: [env]
         override: true
@@ -670,13 +683,13 @@ openobserve-collector:
       pipelines:
         logs/k8s_events:
           receivers: [k8s_events]
-          processors: [batch, k8sattributes, resourcedetection]
+          processors: [batch, k8sattributes, resourcedetection, filter/keep-scc]
           exporters: [otlphttp/openobserve_k8s_events]
         metrics:
           receivers: [k8s_cluster, prometheus, spanmetrics, servicegraph]
-          processors: [batch, k8sattributes, resourcedetection]
+          processors: [batch, k8sattributes, resourcedetection, filter/keep-scc]
           exporters: [otlphttp/openobserve]
         traces:
           receivers: [otlp]
-          processors: [batch, k8sattributes, resourcedetection]
+          processors: [batch, k8sattributes, resourcedetection, filter/keep-scc]
           exporters: [otlphttp/openobserve, spanmetrics, servicegraph]
