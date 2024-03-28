@@ -284,6 +284,46 @@ openobserve-collector:
           metric:
             - resource.attributes["k8s.namespace.name"]!=nil and resource.attributes["k8s.namespace.name"]!="scc"
             - resource.attributes["namespace"]!=nil and resource.attributes["namespace"]!="scc"
+      tail_sampling:
+        decision_wait: 10s
+        num_traces: 100
+        expected_new_traces_per_sec: 10
+        policies: [
+          {
+            # Rule 1: low sampling for readiness/liveness probes
+            name: team_a-probe,
+            type: and,
+            and:
+              {
+                and_sub_policy:
+                  [
+                    {
+                      # filter by route
+                      name: route-live-ready-policy,
+                      type: string_attribute,
+                      string_attribute:
+                        {
+                          key: http.route,
+                          values: [ /livez, /readyz, /** ],
+                          enabled_regex_matching: false,
+                        },
+                    },
+                    {
+                      # apply probabilistic sampling
+                      name: probabilistic-policy,
+                      type: probabilistic,
+                      probabilistic: { sampling_percentage: 0.1 },
+                    },
+                  ],
+              },
+          },
+          {
+            # Rule 2: always sample if there is an error
+            name: trace-status-policy,
+            type: status_code,
+            status_code: { status_codes: [ ERROR ] },
+          },
+        ]
       resourcedetection:
         detectors: [system, env, k8snode]
         override: true
@@ -365,7 +405,7 @@ openobserve-collector:
           exporters: [otlphttp/openobserve]
         traces:
           receivers: [otlp]
-          processors: [batch, k8sattributes, filter/keep-scc]
+          processors: [batch, k8sattributes, tail_sampling]
           exporters: [otlphttp/openobserve]
 
   gateway:
@@ -558,6 +598,46 @@ openobserve-collector:
           metric:
             - resource.attributes["k8s.namespace.name"]!="scc"
             - resource.attributes["namespace"]!="scc"
+      tail_sampling:
+        decision_wait: 10s
+        num_traces: 100
+        expected_new_traces_per_sec: 10
+        policies: [
+          {
+            # Rule 1: low sampling for readiness/liveness probes
+            name: team_a-probe,
+            type: and,
+            and:
+              {
+                and_sub_policy:
+                  [
+                    {
+                      # filter by route
+                      name: route-live-ready-policy,
+                      type: string_attribute,
+                      string_attribute:
+                        {
+                          key: http.route,
+                          values: [ /livez, /readyz, /** ],
+                          enabled_regex_matching: false,
+                        },
+                    },
+                    {
+                      # apply probabilistic sampling
+                      name: probabilistic-policy,
+                      type: probabilistic,
+                      probabilistic: { sampling_percentage: 0.1 },
+                    },
+                  ],
+              },
+          },
+          {
+            # Rule 2: always sample if there is an error
+            name: trace-status-policy,
+            type: status_code,
+            status_code: { status_codes: [ ERROR ] },
+          },
+        ]
       resourcedetection:
         detectors: [env]
         override: true
@@ -691,5 +771,5 @@ openobserve-collector:
           exporters: [otlphttp/openobserve]
         traces:
           receivers: [otlp]
-          processors: [batch, k8sattributes, resourcedetection, filter/keep-scc]
+          processors: [batch, k8sattributes, resourcedetection, tail_sampling]
           exporters: [otlphttp/openobserve, spanmetrics, servicegraph]
