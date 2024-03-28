@@ -217,6 +217,7 @@ class AccessibilityApplicationService(
         )
     }
 
+    @Suppress("ThrowsCount")
     internal fun doRegisterPlaceAccessibility(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
@@ -233,9 +234,13 @@ class AccessibilityApplicationService(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = createPlaceAccessibilityParams.placeId,
+                floors = createPlaceAccessibilityParams.floors,
                 isFirstFloor = createPlaceAccessibilityParams.isFirstFloor,
+                isStairOnlyOption = createPlaceAccessibilityParams.isStairOnlyOption,
                 stairInfo = createPlaceAccessibilityParams.stairInfo,
+                stairHeightLevel = createPlaceAccessibilityParams.stairHeightLevel,
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
+                entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = clock.instant(),
