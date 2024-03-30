@@ -235,7 +235,8 @@ class AccessibilityApplicationService(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = createPlaceAccessibilityParams.placeId,
                 floors = createPlaceAccessibilityParams.floors,
-                isFirstFloor = createPlaceAccessibilityParams.isFirstFloor,
+                isFirstFloor = createPlaceAccessibilityParams.floors?.let { it.size == 1 && it.firstOrNull() == 1 }
+                    ?: false,
                 isStairOnlyOption = createPlaceAccessibilityParams.isStairOnlyOption,
                 stairInfo = createPlaceAccessibilityParams.stairInfo,
                 stairHeightLevel = createPlaceAccessibilityParams.stairHeightLevel,

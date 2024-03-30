@@ -22,7 +22,6 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         val placeId: String,
         val userId: String?,
         val floors: List<Int>?,
-        val isFirstFloor: Boolean,
         val isStairOnlyOption: Boolean?,
         val stairInfo: StairInfo,
         val stairHeightLevel: StairHeightLevel?,
