@@ -9,8 +9,10 @@ import club.staircrusher.accessibility.application.port.out.persistence.PlaceAcc
 import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
+import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
+import club.staircrusher.accessibility.domain.model.StairHeightLevel
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
@@ -35,10 +37,13 @@ fun BuildingAccessibility.toDTO(
 ) = club.staircrusher.api.spec.dto.BuildingAccessibility(
     id = id,
     entranceStairInfo = entranceStairInfo.toDTO(),
+    entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
     entranceImageUrls = entranceImageUrls,
     hasSlope = hasSlope,
     hasElevator = hasElevator,
+    entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
     elevatorStairInfo = elevatorStairInfo.toDTO(),
+    elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
     elevatorImageUrls = elevatorImageUrls,
     buildingId = buildingId,
     isUpvoted = isUpvoted,
@@ -74,10 +79,13 @@ fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
     BuildingAccessibilityRepository.CreateParams(
         buildingId = buildingId,
         entranceStairInfo = entranceStairInfo.toModel(),
+        entranceStairHeightLevel = entranceStairHeightLevel?.toModel(),
         entranceImageUrls = entranceImageUrls,
         hasSlope = hasSlope,
         hasElevator = hasElevator,
+        entranceDoorTypes = entranceDoorTypes?.map { it.toModel() },
         elevatorStairInfo = elevatorStairInfo.toModel(),
+        elevatorStairHeightLevel = elevatorStairHeightLevel?.toModel(),
         elevatorImageUrls = elevatorImageUrls,
         userId = userId,
     )
@@ -96,11 +104,15 @@ fun PlaceAccessibility.toDTO(
     isLastInBuilding: Boolean,
 ) = club.staircrusher.api.spec.dto.PlaceAccessibility(
     id = id,
-    isFirstFloor = isFirstFloor,
-    stairInfo = stairInfo.toDTO(),
-    hasSlope = hasSlope,
-    imageUrls = imageUrls,
     placeId = placeId,
+    floors = floors,
+    isFirstFloor = isFirstFloor,
+    isStairOnlyOption = isStairOnlyOption,
+    imageUrls = imageUrls,
+    stairInfo = stairInfo.toDTO(),
+    stairHeightLevel = stairHeightLevel?.toDTO(),
+    hasSlope = hasSlope,
+    entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
     registeredUserName = registeredAccessibilityRegisterer?.nickname,
     deletionInfo = if (isDeletable(authUser?.id)) {
         PlaceAccessibilityDeletionInfo(
@@ -127,13 +139,46 @@ fun StairInfo.toDTO() = when (this) {
     StairInfo.OVER_SIX -> club.staircrusher.api.spec.dto.StairInfo.oVERSIX
 }
 
+fun club.staircrusher.api.spec.dto.StairHeightLevel.toModel() = when (this) {
+    club.staircrusher.api.spec.dto.StairHeightLevel.hALFTHUMB -> StairHeightLevel.HALF_THUMB
+    club.staircrusher.api.spec.dto.StairHeightLevel.tHUMB -> StairHeightLevel.THUMB
+    club.staircrusher.api.spec.dto.StairHeightLevel.oVERTHUMB -> StairHeightLevel.OVER_THUMB
+}
+
+fun StairHeightLevel.toDTO() = when (this) {
+    StairHeightLevel.HALF_THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.hALFTHUMB
+    StairHeightLevel.THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.tHUMB
+    StairHeightLevel.OVER_THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.oVERTHUMB
+}
+
+fun club.staircrusher.api.spec.dto.EntranceDoorType.toModel() = when (this) {
+    club.staircrusher.api.spec.dto.EntranceDoorType.none -> EntranceDoorType.None
+    club.staircrusher.api.spec.dto.EntranceDoorType.hinged -> EntranceDoorType.Hinged
+    club.staircrusher.api.spec.dto.EntranceDoorType.sliding -> EntranceDoorType.Sliding
+    club.staircrusher.api.spec.dto.EntranceDoorType.revolving -> EntranceDoorType.Revolving
+    club.staircrusher.api.spec.dto.EntranceDoorType.automatic -> EntranceDoorType.Automatic
+    club.staircrusher.api.spec.dto.EntranceDoorType.eTC -> EntranceDoorType.ETC
+}
+
+fun EntranceDoorType.toDTO() = when (this) {
+    EntranceDoorType.None -> club.staircrusher.api.spec.dto.EntranceDoorType.none
+    EntranceDoorType.Hinged -> club.staircrusher.api.spec.dto.EntranceDoorType.hinged
+    EntranceDoorType.Sliding -> club.staircrusher.api.spec.dto.EntranceDoorType.sliding
+    EntranceDoorType.Revolving -> club.staircrusher.api.spec.dto.EntranceDoorType.revolving
+    EntranceDoorType.Automatic -> club.staircrusher.api.spec.dto.EntranceDoorType.automatic
+    EntranceDoorType.ETC -> club.staircrusher.api.spec.dto.EntranceDoorType.eTC
+}
+
 fun RegisterPlaceAccessibilityRequestDto.toModel(userId: String?) =
     PlaceAccessibilityRepository.CreateParams(
         placeId = placeId,
-        isFirstFloor = isFirstFloor,
+        floors = isFirstFloor?.let { if (it) listOf(1) else null } ?: floors,
+        isStairOnlyOption = isStairOnlyOption,
         stairInfo = stairInfo.toModel(),
+        stairHeightLevel = stairHeightLevel?.toModel(),
         hasSlope = hasSlope,
         imageUrls = imageUrls,
+        entranceDoorTypes = entranceDoorTypes?.map { it.toModel() },
         userId = userId,
     )
 

@@ -1,10 +1,12 @@
 package club.staircrusher.infra.persistence.sqldelight
 
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoorTypeListStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.LocationListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.StairHeightLevelStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserAuthProviderTypeStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserMobilityToolStringColumnAdapter
@@ -37,11 +39,17 @@ class DB(dataSource: DataSource) : TransactionManager {
             categoryAdapter = PlaceCategoryStringColumnAdapter,
         ),
         place_accessibilityAdapter = Place_accessibility.Adapter(
-            image_urlsAdapter = StringListToTextColumnAdapter
+            image_urlsAdapter = StringListToTextColumnAdapter,
+            floorsAdapter = IntListToTextColumnAdapter,
+            stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
+            entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
         ),
         building_accessibilityAdapter = Building_accessibility.Adapter(
             entrance_image_urlsAdapter = StringListToTextColumnAdapter,
             elevator_image_urlsAdapter = StringListToTextColumnAdapter,
+            entrance_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
+            entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
+            elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter
         ),
         club_questAdapter = Club_quest.Adapter(
             target_buildingsAdapter = object : ListToTextColumnAdapter<ClubQuestTargetBuilding>() {
@@ -52,7 +60,6 @@ class DB(dataSource: DataSource) : TransactionManager {
                 override fun convertElementFromTextColumn(text: String): ClubQuestTargetBuilding {
                     return objectMapper.readValue(text)
                 }
-
             }
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(

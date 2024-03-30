@@ -1,6 +1,8 @@
 package club.staircrusher.accessibility.application.port.out.persistence
 
+import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
+import club.staircrusher.accessibility.domain.model.StairHeightLevel
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.stdlib.domain.repository.EntityRepository
 import club.staircrusher.stdlib.geography.EupMyeonDong
@@ -15,12 +17,24 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
     fun countAll(): Int
     fun remove(id: String)
+
     data class CreateParams(
         val placeId: String,
-        val isFirstFloor: Boolean,
-        val stairInfo: StairInfo,
-        val hasSlope: Boolean,
         val userId: String?,
+        val floors: List<Int>?,
+        val isStairOnlyOption: Boolean?,
+        val stairInfo: StairInfo,
+        val stairHeightLevel: StairHeightLevel?,
+        val hasSlope: Boolean,
+        val entranceDoorTypes: List<EntranceDoorType>?,
         val imageUrls: List<String>,
-    )
+    ) {
+        fun isValid(): Boolean {
+            // 0401 버전에서 추가된 항목이 모두 있거나 모두 없거나
+            val isInputValid = listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it == null } || listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it != null }
+            val isDoorTypesInvalid = entranceDoorTypes?.isEmpty() == true || entranceDoorTypes?.let { it.contains(EntranceDoorType.None) && it.count() > 1 }
+                ?: false
+            return isInputValid && isDoorTypesInvalid.not()
+        }
+    }
 }
