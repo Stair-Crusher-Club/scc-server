@@ -129,14 +129,18 @@ private fun parseTsvToBuildingList(): List<BuildingAccessibility> {
         }
         val elevatorStairInfo = line[14].parseToStairInfo()
 
+        // TODO: 새로운 필드 채우기?
         BuildingAccessibility(
             id = EntityIdGenerator.generateRandom(),
             buildingId = Building.generateId(roadAddress),
             entranceStairInfo = entranceStairInfo,
+            entranceStairHeightLevel = null,
             entranceImageUrls = imageUrls, // TODO: 입구 사진과 엘레베이터 사진으로 나누기
             hasSlope = hasSlope,
             hasElevator = hasElevator,
+            entranceDoorTypes = emptyList(),
             elevatorStairInfo = elevatorStairInfo,
+            elevatorStairHeightLevel = null,
             elevatorImageUrls = emptyList(),
             userId = null,
             createdAt = Instant.now(),
