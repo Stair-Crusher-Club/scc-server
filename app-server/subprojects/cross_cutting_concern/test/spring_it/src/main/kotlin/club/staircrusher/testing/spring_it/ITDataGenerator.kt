@@ -279,16 +279,28 @@ class ITDataGenerator {
         )
     }
 
-    fun registerBuildingAccessibilityIfNotExists(building: Building, user: User? = null): BuildingAccessibility {
+    fun registerBuildingAccessibilityIfNotExists(
+        building: Building,
+        entranceStairInfo: StairInfo = StairInfo.NONE,
+        entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.THUMB,
+        hasSlope: Boolean = true,
+        hasElevator: Boolean = true,
+        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
+        elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
+        user: User? = null
+    ): BuildingAccessibility {
         return buildingAccessibilityRepository.findByBuildingId(building.id) ?: buildingAccessibilityRepository.save(
             BuildingAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 buildingId = building.id,
-                entranceStairInfo = StairInfo.NONE,
+                entranceStairInfo = entranceStairInfo,
+                entranceStairHeightLevel = entranceStairHeightLevel,
                 entranceImageUrls = emptyList(),
-                hasSlope = true,
-                hasElevator = true,
+                hasSlope = hasSlope,
+                hasElevator = hasElevator,
+                entranceDoorTypes = entranceDoorTypes,
                 elevatorStairInfo = StairInfo.NONE,
+                elevatorStairHeightLevel = elevatorStairHeightLevel,
                 elevatorImageUrls = emptyList(),
                 userId = user?.id,
                 createdAt = clock.instant(),
@@ -302,7 +314,7 @@ class ITDataGenerator {
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
             registerPlaceAccessibility(place = place, user = user),
-            registerBuildingAccessibilityIfNotExists(place.building, user),
+            registerBuildingAccessibilityIfNotExists(place.building, user = user),
         )
     }
 
