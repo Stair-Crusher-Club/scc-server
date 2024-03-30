@@ -1224,8 +1224,9 @@ components:
           type: array
           items:
             type: integer
-        isFirstFloor: # deprecated
+        isFirstFloor:
           type: boolean
+          deprecated: true
           description: '1층인지 여부. 240401 출시한 버전부터 이 필드는 사용하지 않고, floors 필드를 사용하도록 한다.'
         isStairOnlyOption:
           type: boolean
@@ -1369,7 +1370,6 @@ components:
       properties:
         placeId:
           type: string
-        # 층 정보
         floors:
           type: array
           items:
@@ -1377,10 +1377,10 @@ components:
         isStairOnlyOption:
           type: boolean
           description: '다른 층으로 가는 방법이 계단만 있는지 여부'
-        isFirstFloor: # deprecated
+        isFirstFloor:
           type: boolean
+          deprecated: true
           description: '1층인지 여부. 240401 출시한 버전부터 이 필드는 사용하지 않고, floors 필드를 사용하도록 한다.'
-        # 매장 입구 정보
         imageUrls:
           type: array
           items:
@@ -1395,7 +1395,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EntranceDoorType'
-        # 의견 추가
         comment:
           type: string
       required:
