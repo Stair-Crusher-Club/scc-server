@@ -4,7 +4,8 @@ import kotlin.Int;
 import kotlin.collections.List;
 
 -- floors, entrance type 이 빈 list 면 입력받지 않았다고 판단
-ALTER TABLE place_accessibility ADD COLUMN floors TEXT AS List<Int> NOT NULL DEFAULT '[]';
-ALTER TABLE place_accessibility ADD COLUMN is_stair_only_option BOOLEAN NULL;
-ALTER TABLE place_accessibility ADD COLUMN stair_height_level VARCHAR(32) AS StairHeightLevel NULL;
-ALTER TABLE place_accessibility ADD COLUMN entrance_door_types TEXT AS List<EntranceDoorType> NOT NULL DEFAULT '[]';
+ALTER TABLE place_accessibility
+    ADD COLUMN floors TEXT AS List<Int> NOT NULL DEFAULT '[]',
+    ADD COLUMN is_stair_only_option BOOLEAN NULL,
+    ADD COLUMN stair_height_level VARCHAR(32) AS StairHeightLevel NULL,
+    ADD COLUMN entrance_door_types TEXT AS List<EntranceDoorType> NOT NULL DEFAULT '[]';
