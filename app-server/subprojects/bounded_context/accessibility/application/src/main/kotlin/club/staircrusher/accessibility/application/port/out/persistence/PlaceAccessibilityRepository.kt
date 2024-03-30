@@ -33,7 +33,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         fun isValid(): Boolean {
             // 0401 버전에서 추가된 항목이 모두 있거나 모두 없거나
             val isInputValid = listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it == null } || listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it != null }
-            val isDoorTypesInvalid = entranceDoorTypes?.let { it.contains(EntranceDoorType.None) && it.count() > 1 }
+            val isDoorTypesInvalid = entranceDoorTypes?.isEmpty() == true || entranceDoorTypes?.let { it.contains(EntranceDoorType.None) && it.count() > 1 }
                 ?: false
             return isInputValid && isDoorTypesInvalid.not()
         }
