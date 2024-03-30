@@ -9,3 +9,8 @@ ALTER TABLE place_accessibility
     ADD COLUMN is_stair_only_option BOOLEAN NULL,
     ADD COLUMN stair_height_level VARCHAR(32) AS StairHeightLevel NULL,
     ADD COLUMN entrance_door_types TEXT AS List<EntranceDoorType> NOT NULL DEFAULT '[]';
+
+ALTER TABLE building_accessibility
+    ADD COLUMN entrance_stair_height_level VARCHAR(32) AS StairHeightLevel NULL,
+    ADD COLUMN entrance_door_types TEXT AS List<EntranceDoorType> NOT NULL DEFAULT '[]',
+    ADD COLUMN elevator_stair_height_level VARCHAR(32) AS StairHeightLevel NULL;

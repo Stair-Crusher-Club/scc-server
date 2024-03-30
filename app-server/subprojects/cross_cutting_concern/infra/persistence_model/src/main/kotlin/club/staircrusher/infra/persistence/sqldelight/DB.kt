@@ -47,6 +47,9 @@ class DB(dataSource: DataSource) : TransactionManager {
         building_accessibilityAdapter = Building_accessibility.Adapter(
             entrance_image_urlsAdapter = StringListToTextColumnAdapter,
             elevator_image_urlsAdapter = StringListToTextColumnAdapter,
+            entrance_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
+            entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
+            elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter
         ),
         club_questAdapter = Club_quest.Adapter(
             target_buildingsAdapter = object : ListToTextColumnAdapter<ClubQuestTargetBuilding>() {

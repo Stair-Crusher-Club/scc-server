@@ -799,16 +799,24 @@ components:
           type: string
         entranceStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        entranceStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         entranceImageUrls:
           type: array
           items:
             type: string
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntranceDoorType'
         hasSlope:
           type: boolean
         hasElevator:
           type: boolean
         elevatorStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        elevatorStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         elevatorImageUrls:
           type: array
           items:
@@ -1340,16 +1348,24 @@ components:
           type: string
         entranceStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        entranceStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         entranceImageUrls:
           type: array
           items:
             type: string
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntranceDoorType'
         hasSlope:
           type: boolean
         hasElevator:
           type: boolean
         elevatorStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        elevatorStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         elevatorImageUrls:
           type: array
           items:

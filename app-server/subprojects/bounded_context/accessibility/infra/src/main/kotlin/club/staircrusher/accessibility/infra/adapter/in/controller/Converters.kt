@@ -37,10 +37,13 @@ fun BuildingAccessibility.toDTO(
 ) = club.staircrusher.api.spec.dto.BuildingAccessibility(
     id = id,
     entranceStairInfo = entranceStairInfo.toDTO(),
+    entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
     entranceImageUrls = entranceImageUrls,
     hasSlope = hasSlope,
     hasElevator = hasElevator,
+    entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
     elevatorStairInfo = elevatorStairInfo.toDTO(),
+    elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
     elevatorImageUrls = elevatorImageUrls,
     buildingId = buildingId,
     isUpvoted = isUpvoted,
@@ -76,10 +79,13 @@ fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
     BuildingAccessibilityRepository.CreateParams(
         buildingId = buildingId,
         entranceStairInfo = entranceStairInfo.toModel(),
+        entranceStairHeightLevel = entranceStairHeightLevel?.toModel(),
         entranceImageUrls = entranceImageUrls,
         hasSlope = hasSlope,
         hasElevator = hasElevator,
+        entranceDoorTypes = entranceDoorTypes?.map { it.toModel() },
         elevatorStairInfo = elevatorStairInfo.toModel(),
+        elevatorStairHeightLevel = elevatorStairHeightLevel?.toModel(),
         elevatorImageUrls = elevatorImageUrls,
         userId = userId,
     )
