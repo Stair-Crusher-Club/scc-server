@@ -113,13 +113,13 @@ class AccessibilityApplicationService(
         placeAccessibilityRepository.findByPlaceId(placeId)
     }
 
-    fun listPlaceAndBuildingAccessibility(places: List<Place>): List<Pair<PlaceAccessibility, BuildingAccessibility>> {
+    fun listPlaceAndBuildingAccessibility(places: List<Place>): List<Pair<PlaceAccessibility?, BuildingAccessibility?>> {
         val placeIds = places.map { it.id }
         return transactionManager.doInTransaction {
             val pas = placeAccessibilityRepository.findByPlaceIds(placeIds)
             val bas = buildingAccessibilityRepository.findByPlaceIds(placeIds)
             places.map {
-                pas.first { pa -> pa.placeId == it.id } to bas.first { ba -> ba.buildingId == it.building.id }
+                pas.firstOrNull { pa -> pa.placeId == it.id } to bas.firstOrNull { ba -> ba.buildingId == it.building.id }
             }
         }
     }
