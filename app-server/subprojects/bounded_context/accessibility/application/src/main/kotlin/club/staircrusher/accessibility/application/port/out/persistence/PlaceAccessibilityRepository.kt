@@ -29,24 +29,26 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         val entranceDoorTypes: List<EntranceDoorType>?,
         val imageUrls: List<String>,
     ) {
+
+        @Suppress("VariableNaming", "ReturnCount")
         fun isValid(): Boolean {
             // 0401 이전 버전에서는 floors, stairHeightLevel, entranceDoorTypes 를 올려줄 수 없다
             if (listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it == null }) {
                 return true
             }
             // 0401 이후 버전에서는 floors, stairHeightLevel, entranceDoorTypes 를 모두 올려줘야한다.
-            val 새로운폼에서_필수_필드가_채워졌는가 = listOf(floors, stairHeightLevel, entranceDoorTypes).all { it != null }
-            if (새로운폼에서_필수_필드가_채워졌는가.not()) {
+            val 새로운_폼에서_필수_필드가_채워졌는가 = listOf(floors, stairHeightLevel, entranceDoorTypes).all { it != null }
+            if (새로운_폼에서_필수_필드가_채워졌는가.not()) {
                 return false
             }
-            val 복수층일때_다른층으로_이동하는_방법이_있는가 = floors?.size == 1 && floors?.let { it.size > 1 && isStairOnlyOption == null } ?: true
+            val 복수층일때_다른층으로_이동하는_방법이_있는가 = floors!!.size == 1 || floors.let { it.size > 1 && isStairOnlyOption != null }
             if (복수층일때_다른층으로_이동하는_방법이_있는가.not()) {
                 return false
             }
-            val 문유형_없음은_다른유형과_같이_올라올수_없다 = entranceDoorTypes?.let { it.contains(EntranceDoorType.None) && it.size > 1 }
-            val isDoorTypesInvalid =
-                entranceDoorTypes?.isEmpty() == true || entranceDoorTypes?.let { it.contains(EntranceDoorType.None) && it.count() > 1 }
-                    ?: false
+            val 문유형_없음은_다른_문유형과_같이_등록할_수_없다 = entranceDoorTypes!!.isNotEmpty() && entranceDoorTypes.let { it.contains(EntranceDoorType.None) && it.size > 1 }.not()
+            if (문유형_없음은_다른_문유형과_같이_등록할_수_없다.not()) {
+                return false
+            }
             return true
         }
     }
