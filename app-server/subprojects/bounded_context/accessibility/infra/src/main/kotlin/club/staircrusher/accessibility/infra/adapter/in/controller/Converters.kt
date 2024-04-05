@@ -172,7 +172,8 @@ fun EntranceDoorType.toDTO() = when (this) {
 fun RegisterPlaceAccessibilityRequestDto.toModel(userId: String?) =
     PlaceAccessibilityRepository.CreateParams(
         placeId = placeId,
-        floors = isFirstFloor?.let { if (it) listOf(1) else null } ?: floors,
+        floors = floors,
+        isFirstFloor = isFirstFloor,
         isStairOnlyOption = isStairOnlyOption,
         stairInfo = stairInfo.toModel(),
         stairHeightLevel = stairHeightLevel?.toModel(),
