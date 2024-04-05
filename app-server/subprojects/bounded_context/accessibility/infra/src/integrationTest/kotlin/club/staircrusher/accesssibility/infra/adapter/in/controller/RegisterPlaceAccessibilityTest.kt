@@ -94,7 +94,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             val expectedRegisteredUserOrder = idx + 1
             val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
             val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
-            val nthFloorParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, listOf(3, 4))
+            val nthFloorParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, listOf(3))
             mvc
                 .sccRequest("/registerPlaceAccessibility", nthFloorParams, user = user)
                 .apply {
@@ -103,7 +103,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     assertNull(accessibilityInfo.buildingAccessibility)
                     assertTrue(accessibilityInfo.buildingAccessibilityComments.isEmpty())
 
-                    val placeAccessibility = accessibilityInfo!!.placeAccessibility!!
+                    val placeAccessibility = accessibilityInfo.placeAccessibility!!
                     assertEquals(place.id, placeAccessibility.placeId)
                     assertArrayEquals(nthFloorParams.floors?.toIntArray(), placeAccessibility.floors?.toIntArray())
                     assertFalse(placeAccessibility.isFirstFloor)
@@ -124,6 +124,26 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 }
         }
     }
+
+    @Test
+    fun `장소가 복수 층인 경우에는 다른 층으로 이동하는 방법 정보를 등록해야한다`() {
+        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
+        val multipleFloorsParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, floors = listOf(3, 4), isStairOnlyOption = true)
+        mvc
+            .sccRequest("/registerPlaceAccessibility", multipleFloorsParams, user = user)
+            .andExpect { status { is2xxSuccessful() } }
+
+        val multipleFloorsParamsWithoutOption = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, floors = listOf(3, 4), isStairOnlyOption = null)
+        mvc
+            .sccRequest("/registerPlaceAccessibility", multipleFloorsParamsWithoutOption, user = user)
+            .andExpect { status { isBadRequest() } }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_ARGUMENTS, result.code)
+            }
+    }
+
 
     @Test
     fun `출입문 유형 입력에서 "문 없음" 과 다른 출입문 유형(미닫이, 여닫이 등)을 같이 입력할 수 없다`() {
@@ -369,7 +389,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     private fun getRegisterPlaceAccessibilityRequestParamsAfter240401(
         place: Place,
         floors: List<Int> = listOf(1),
-        isStairOnlyOption: Boolean = false,
+        isStairOnlyOption: Boolean? = null,
         stairInfo: StairInfo = StairInfo.ONE,
         stairHeightLevel: StairHeightLevel = StairHeightLevel.hALFTHUMB,
         hasSlope: Boolean = true,
