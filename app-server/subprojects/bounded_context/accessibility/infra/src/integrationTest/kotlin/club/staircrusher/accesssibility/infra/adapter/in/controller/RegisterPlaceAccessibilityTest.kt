@@ -72,7 +72,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
                     val placeAccessibility = accessibilityInfo.placeAccessibility!!
                     assertEquals(place.id, placeAccessibility.placeId)
-                    assertFalse(placeAccessibility.isFirstFloor)
+                    assertEquals(params.isFirstFloor, placeAccessibility.isFirstFloor)
                     assertEquals(StairInfo.ONE, placeAccessibility.stairInfo.toModel())
                     assertTrue(placeAccessibility.hasSlope)
                     assertTrue(placeAccessibility.imageUrls.isEmpty())
@@ -378,7 +378,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     private fun getDefaultRegisterPlaceAccessibilityRequestParamsBefore240401(place: Place): RegisterPlaceAccessibilityRequestDto {
         return RegisterPlaceAccessibilityRequestDto(
             placeId = place.id,
-            isFirstFloor = false,
+            isFirstFloor = true,
             stairInfo = StairInfo.ONE.toDTO(),
             imageUrls = emptyList(),
             hasSlope = true,
