@@ -542,16 +542,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  accessibilityInfo:
-                    $ref: '#/components/schemas/AccessibilityInfoDto'
-                  registeredUserOrder:
-                    type: integer
-                    description: "'n번째 정복자'를 표시해주기 위한 값."
-                required:
-                  - accessibilityInfo
-                  - registeredUserOrder
+                $ref: '#/components/schemas/RegisterPlaceAccessibilityResponseDto'
 
   /registerPlaceAccessibilityComment:
     post:
@@ -808,16 +799,24 @@ components:
           type: string
         entranceStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        entranceStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         entranceImageUrls:
           type: array
           items:
             type: string
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntranceDoorType'
         hasSlope:
           type: boolean
         hasElevator:
           type: boolean
         elevatorStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        elevatorStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         elevatorImageUrls:
           type: array
           items:
@@ -945,6 +944,16 @@ components:
         - Upcoming # 오픈 예정
         - Closed # 종료된 챌린지
 
+    EntranceDoorType:
+      type: string
+      enum:
+        - None
+        - Hinged
+        - Sliding
+        - Revolving
+        - Automatic
+        - ETC
+
     EupMyeonDong:
       description: 읍면동을 표현하기 위한 모델.
       type: object
@@ -1016,8 +1025,8 @@ components:
 
     GetUserInfoRequestDto:
       type: object
-      properties: {}
-      required: []
+      properties: { }
+      required: [ ]
 
     GetUserInfoResponseDto:
       type: object
@@ -1217,18 +1226,33 @@ components:
       properties:
         id:
           type: string
+        placeId:
+          type: string
+        floors:
+          type: array
+          items:
+            type: integer
         isFirstFloor:
           type: boolean
-        stairInfo:
-          $ref: '#/components/schemas/StairInfo'
-        hasSlope:
+          deprecated: true
+          description: '1층인지 여부. 240401 출시한 버전부터 이 필드는 사용하지 않고, floors 필드를 사용하도록 한다.'
+        isStairOnlyOption:
           type: boolean
+          description: '다른 층으로 가는 방법이 계단만 있는지 여부'
         imageUrls:
           type: array
           items:
             type: string
-        placeId:
-          type: string
+        stairInfo:
+          $ref: '#/components/schemas/StairInfo'
+        stairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
+        hasSlope:
+          type: boolean
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntranceDoorType'
         registeredUserName:
           type: string
           description: 익명으로 등록되었으면 null.
@@ -1243,11 +1267,11 @@ components:
             - isLastInBuilding
       required:
         - id
-        - isFirstFloor
-        - stairInfo
-        - hasSlope
         - placeId
         - imageUrls
+        - stairInfo
+        - hasSlope
+        - isFirstFloor
 
     PlaceAccessibilityComment:
       description: 점포에 대한 의견.
@@ -1324,16 +1348,24 @@ components:
           type: string
         entranceStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        entranceStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         entranceImageUrls:
           type: array
           items:
             type: string
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntranceDoorType'
         hasSlope:
           type: boolean
         hasElevator:
           type: boolean
         elevatorStairInfo:
           $ref: '#/components/schemas/StairInfo'
+        elevatorStairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
         elevatorImageUrls:
           type: array
           items:
@@ -1354,24 +1386,50 @@ components:
       properties:
         placeId:
           type: string
+        floors:
+          type: array
+          items:
+            type: integer
+        isStairOnlyOption:
+          type: boolean
+          description: '다른 층으로 가는 방법이 계단만 있는지 여부'
         isFirstFloor:
           type: boolean
-        stairInfo:
-          $ref: '#/components/schemas/StairInfo'
-        hasSlope:
-          type: boolean
+          deprecated: true
+          description: '1층인지 여부. 240401 출시한 버전부터 이 필드는 사용하지 않고, floors 필드를 사용하도록 한다.'
         imageUrls:
           type: array
           items:
             type: string
+        stairInfo:
+          $ref: '#/components/schemas/StairInfo'
+        stairHeightLevel:
+          $ref: '#/components/schemas/StairHeightLevel'
+        hasSlope:
+          type: boolean
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntranceDoorType'
         comment:
           type: string
       required:
         - placeId
-        - isFirstFloor
+        - imageUrls
         - stairInfo
         - hasSlope
-        - imageUrls
+
+    RegisterPlaceAccessibilityResponseDto:
+      type: object
+      properties:
+        accessibilityInfo:
+            $ref: '#/components/schemas/AccessibilityInfoDto'
+        registeredUserOrder:
+            type: integer
+            description: "'n번째 정복자'를 표시해주기 위한 값."
+        required:
+          - accessibilityInfo
+          - registeredUserOrder
 
     SearchKeywordOfPlaceCategoryDto:
       type: object
@@ -1402,6 +1460,13 @@ components:
       required:
         - id
         - name
+
+    StairHeightLevel:
+      type: string
+      enum:
+        - HALF_THUMB
+        - THUMB
+        - OVER_THUMB
 
     StairInfo:
       type: string

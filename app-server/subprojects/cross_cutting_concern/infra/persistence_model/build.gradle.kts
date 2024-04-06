@@ -5,9 +5,10 @@ plugins {
 
 dependencies {
     implementation(projects.crossCuttingConcern.stdlib)
+    implementation(projects.boundedContext.accessibility.domain)
+    implementation(projects.boundedContext.challenge.domain)
     implementation(projects.boundedContext.quest.domain)
     implementation(projects.boundedContext.user.domain)
-    implementation(projects.boundedContext.challenge.domain)
 
     val sqlDelightVersion: String by project
     api("app.cash.sqldelight:runtime-jvm:$sqlDelightVersion")

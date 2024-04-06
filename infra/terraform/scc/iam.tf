@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "scc_deploy_secret" {
       variable = "k3s.staircrusher.club:sub"
       values   = [
         "system:serviceaccount:scc:scc-server-deploy-secret",
-        "system:serviceaccount:scc-redash:scc-redash-deploy-secret"
+        "system:serviceaccount:scc-redash:scc-redash-deploy-secret",
       ]
     }
   }
