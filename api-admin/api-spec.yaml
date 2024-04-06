@@ -668,6 +668,9 @@ components:
         registeredUserName:
           type: string
           description: 익명으로 등록되었으면 null.
+        createdAtMillis:
+          type: integer
+          format: int64
       required:
         - id
         - isFirstFloor
@@ -675,6 +678,7 @@ components:
         - hasSlope
         - placeName
         - imageUrls
+        - createdAtMillis
 
     AdminBuildingAccessibilityDTO:
       type: object
@@ -702,6 +706,9 @@ components:
         registeredUserName:
           type: string
           description: 익명으로 등록되었으면 null.
+        createdAtMillis:
+          type: integer
+          format: int64
       required:
         - id
         - entranceStairInfo
@@ -710,6 +717,7 @@ components:
         - hasElevator
         - elevatorStairInfo
         - elevatorImageUrls
+        - createdAtMillis
 
     AdminStairInfoDTO:
       type: string

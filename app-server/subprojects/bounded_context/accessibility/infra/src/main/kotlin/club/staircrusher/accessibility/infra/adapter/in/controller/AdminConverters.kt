@@ -27,6 +27,7 @@ fun PlaceAccessibility.toAdminDTO(
     imageUrls = imageUrls,
     placeName = placeName,
     registeredUserName = registeredUserName,
+    createdAtMillis = createdAt.toEpochMilli(),
 )
 
 fun BuildingAccessibility.toAdminDTO(
@@ -42,6 +43,7 @@ fun BuildingAccessibility.toAdminDTO(
     elevatorImageUrls = elevatorImageUrls,
     buildingName = buildingName,
     registeredUserName = registeredUserName,
+    createdAtMillis = createdAt.toEpochMilli(),
 )
 
 fun StairInfo.toAdminDTO() = when (this) {
