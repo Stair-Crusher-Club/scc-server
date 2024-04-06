@@ -9,6 +9,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 import club.staircrusher.stdlib.time.toOffsetDateTime
+import java.time.Instant
 
 @Suppress("TooManyFunctions")
 @Component
@@ -73,6 +74,36 @@ class PlaceAccessibilityRepository(
 
     override fun findByBuildingId(buildingId: String): List<PlaceAccessibility> {
         return queries.findByBuildingId(buildingId = buildingId)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
+    override fun findByPlaceNameContainsPagingByCreatedAtDesc(
+        placeName: String,
+        cursorCreatedAt: Instant,
+        cursorId: String,
+        limit: Int
+    ): List<PlaceAccessibility> {
+        return queries.findByPlaceNameContainsPagingByCreatedAtDesc(
+            placeNameLike = "%$placeName%",
+            cursorCreatedAt = cursorCreatedAt.toOffsetDateTime(),
+            cursorId = cursorId,
+            limit = limit.toLong(),
+        )
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
+    override fun findAllPagingByCreatedAtDesc(
+        cursorCreatedAt: Instant,
+        cursorId: String,
+        limit: Int
+    ): List<PlaceAccessibility> {
+        return queries.findAllPagingByCreatedAtDesc(
+            cursorCreatedAt = cursorCreatedAt.toOffsetDateTime(),
+            cursorId = cursorId,
+            limit = limit.toLong(),
+        )
             .executeAsList()
             .map { it.toDomainModel() }
     }

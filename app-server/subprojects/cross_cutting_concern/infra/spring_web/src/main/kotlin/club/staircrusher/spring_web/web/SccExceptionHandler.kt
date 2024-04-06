@@ -22,7 +22,7 @@ class SccExceptionHandler {
     fun handleThrowable(t: Throwable): ResponseEntity<String> {
         return when (t) {
             is SccDomainException -> {
-                logger.info(t) { "Bad Request: $t" }
+                logger.info(t) { "Bad Request: $t, cause: ${t.cause}" }
                 if (t.errorCode != null) {
                     ResponseEntity
                         .badRequest()
