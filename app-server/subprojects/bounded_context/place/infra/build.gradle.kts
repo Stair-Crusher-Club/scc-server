@@ -15,7 +15,6 @@ dependencies {
     implementation("org.springframework:spring-webflux")
     implementation("io.projectreactor.netty:reactor-netty")
 
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 

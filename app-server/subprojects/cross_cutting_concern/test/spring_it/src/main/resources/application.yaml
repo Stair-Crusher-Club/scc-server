@@ -16,6 +16,11 @@ scc:
   kakao:
     apiKey: test
 
+  naver:
+    open-api:
+      client-id: test
+      client-secret: test
+
   s3:
     imageUpload:
       bucketName: test

@@ -43,6 +43,11 @@ scc:
   kakao-login:
     oauth-client-id: test
 
+  naver:
+    open-api:
+      client-id: test
+      client-secret: test
+
   apple-login:
     service-id: test
     client-secret: test
