@@ -3,9 +3,13 @@ INSERT INTO place_accessibility
 VALUES :place_accessibility
 ON CONFLICT(id) DO UPDATE SET
     place_id = EXCLUDED.place_id,
+    floors = EXCLUDED.floors,
     is_first_floor = EXCLUDED.is_first_floor,
+    is_stair_only_option = EXCLUDED.is_stair_only_option,
     stair_info = EXCLUDED.stair_info,
+    stair_height_level = EXCLUDED.stair_height_level,
     has_slope = EXCLUDED.has_slope,
+    entrance_door_types = EXCLUDED.entrance_door_types,
     image_urls = EXCLUDED.image_urls,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at,
@@ -66,6 +70,31 @@ INNER JOIN place p ON p.id = pa.place_id
 INNER JOIN building b ON b.id = p.building_id
 WHERE b.id = :buildingId
     AND pa.deleted_at IS NULL;
+
+findByPlaceNameContainsPagingByCreatedAtDesc:
+SELECT pa.*
+FROM place_accessibility pa
+INNER JOIN place p ON p.id = pa.place_id
+WHERE
+    p.name LIKE :placeNameLike
+    AND (
+        (pa.created_at = :cursorCreatedAt AND pa.id < :cursorId)
+        OR (pa.created_at < :cursorCreatedAt)
+    )
+    AND pa.deleted_at IS NULL
+ORDER BY pa.created_at DESC
+LIMIT :limit;
+
+findAllPagingByCreatedAtDesc:
+SELECT pa.*
+FROM place_accessibility pa
+WHERE
+    (
+        (pa.created_at = :cursorCreatedAt AND pa.id < :cursorId)
+        OR (pa.created_at < :cursorCreatedAt)
+    )
+ORDER BY pa.created_at DESC
+LIMIT :limit;
 
 countAll:
 SELECT COUNT(*)

@@ -50,15 +50,20 @@ private fun parseTsvToPlaceList(): List<PlaceAccessibility> {
         val userName = line[9]
         val userId = userName.parseToUserId()
 
+        // TODO: 새로운 필드 채우기?
         Pair(placeName, PlaceAccessibility(
             id = EntityIdGenerator.generateRandom(),
             placeId = "", // 지도 api를 대량으로 호출하기 전에 파싱 성공을 확인하기 위해 placeId를 제외한 필드부터 채운다.
+            floors = null,
             isFirstFloor = isFirstFloor,
+            isStairOnlyOption = null,
             stairInfo = stairInfo,
+            stairHeightLevel = null,
             hasSlope = hasSlope,
             imageUrls = imageUrls,
             userId = userId,
             createdAt = Instant.now(),
+            entranceDoorTypes = null,
             deletedAt = null,
         ))
     }
@@ -124,14 +129,18 @@ private fun parseTsvToBuildingList(): List<BuildingAccessibility> {
         }
         val elevatorStairInfo = line[14].parseToStairInfo()
 
+        // TODO: 새로운 필드 채우기?
         BuildingAccessibility(
             id = EntityIdGenerator.generateRandom(),
             buildingId = Building.generateId(roadAddress),
             entranceStairInfo = entranceStairInfo,
+            entranceStairHeightLevel = null,
             entranceImageUrls = imageUrls, // TODO: 입구 사진과 엘레베이터 사진으로 나누기
             hasSlope = hasSlope,
             hasElevator = hasElevator,
+            entranceDoorTypes = emptyList(),
             elevatorStairInfo = elevatorStairInfo,
+            elevatorStairHeightLevel = null,
             elevatorImageUrls = emptyList(),
             userId = null,
             createdAt = Instant.now(),

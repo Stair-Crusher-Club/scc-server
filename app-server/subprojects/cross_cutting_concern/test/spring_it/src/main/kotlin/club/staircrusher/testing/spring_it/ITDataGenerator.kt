@@ -8,8 +8,10 @@ import club.staircrusher.accessibility.application.port.out.persistence.PlaceAcc
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
+import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
+import club.staircrusher.accessibility.domain.model.StairHeightLevel
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
@@ -251,15 +253,25 @@ class ITDataGenerator {
 
     fun registerPlaceAccessibility(
         place: Place,
+        floors: List<Int> = listOf(1),
+        isStairOnlyOption: Boolean = false,
+        stairInfo: StairInfo = StairInfo.ONE,
+        stairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
+        hasSlope: Boolean = true,
+        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         user: User? = null
     ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = place.id,
+                floors = floors,
                 isFirstFloor = true,
-                stairInfo = StairInfo.NONE,
-                hasSlope = true,
+                isStairOnlyOption = isStairOnlyOption,
+                stairInfo = stairInfo,
+                stairHeightLevel = stairHeightLevel,
+                hasSlope = hasSlope,
+                entranceDoorTypes = entranceDoorTypes,
                 imageUrls = emptyList(),
                 userId = user?.id,
                 createdAt = clock.instant(),
@@ -267,16 +279,28 @@ class ITDataGenerator {
         )
     }
 
-    fun registerBuildingAccessibilityIfNotExists(building: Building, user: User? = null): BuildingAccessibility {
+    fun registerBuildingAccessibilityIfNotExists(
+        building: Building,
+        entranceStairInfo: StairInfo = StairInfo.NONE,
+        entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.THUMB,
+        hasSlope: Boolean = true,
+        hasElevator: Boolean = true,
+        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
+        elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
+        user: User? = null
+    ): BuildingAccessibility {
         return buildingAccessibilityRepository.findByBuildingId(building.id) ?: buildingAccessibilityRepository.save(
             BuildingAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 buildingId = building.id,
-                entranceStairInfo = StairInfo.NONE,
+                entranceStairInfo = entranceStairInfo,
+                entranceStairHeightLevel = entranceStairHeightLevel,
                 entranceImageUrls = emptyList(),
-                hasSlope = true,
-                hasElevator = true,
+                hasSlope = hasSlope,
+                hasElevator = hasElevator,
+                entranceDoorTypes = entranceDoorTypes,
                 elevatorStairInfo = StairInfo.NONE,
+                elevatorStairHeightLevel = elevatorStairHeightLevel,
                 elevatorImageUrls = emptyList(),
                 userId = user?.id,
                 createdAt = clock.instant(),
@@ -289,8 +313,8 @@ class ITDataGenerator {
         user: User? = null
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
-            registerPlaceAccessibility(place, user),
-            registerBuildingAccessibilityIfNotExists(place.building, user),
+            registerPlaceAccessibility(place = place, user = user),
+            registerBuildingAccessibilityIfNotExists(place.building, user = user),
         )
     }
 

@@ -174,6 +174,9 @@ class AccessibilityApplicationService(
         createBuildingAccessibilityParams: BuildingAccessibilityRepository.CreateParams,
         createBuildingAccessibilityCommentParams: BuildingAccessibilityCommentRepository.CreateParams?,
     ): RegisterBuildingAccessibilityResult {
+        if (createBuildingAccessibilityParams.isValid().not()) {
+            throw SccDomainException("잘못된 접근성 정보입니다. 필수 입력을 빠트렸거나 조건을 다시 한 번 확인해주세요.", SccDomainException.ErrorCode.INVALID_ARGUMENTS)
+        }
         val buildingId = createBuildingAccessibilityParams.buildingId
         if (buildingAccessibilityRepository.findByBuildingId(buildingId) != null) {
             throw SccDomainException("이미 접근성 정보가 등록된 건물입니다.")
@@ -194,10 +197,13 @@ class AccessibilityApplicationService(
                     id = EntityIdGenerator.generateRandom(),
                     buildingId = it.buildingId,
                     entranceStairInfo = it.entranceStairInfo,
+                    entranceStairHeightLevel = it.entranceStairHeightLevel,
                     entranceImageUrls = it.entranceImageUrls,
                     hasSlope = it.hasSlope,
                     hasElevator = it.hasElevator,
+                    entranceDoorTypes = it.entranceDoorTypes,
                     elevatorStairInfo = it.elevatorStairInfo,
+                    elevatorStairHeightLevel = it.elevatorStairHeightLevel,
                     elevatorImageUrls = it.elevatorImageUrls,
                     userId = it.userId,
                     createdAt = clock.instant(),
@@ -217,6 +223,7 @@ class AccessibilityApplicationService(
         )
     }
 
+    @Suppress("ThrowsCount")
     internal fun doRegisterPlaceAccessibility(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
@@ -233,9 +240,14 @@ class AccessibilityApplicationService(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = createPlaceAccessibilityParams.placeId,
-                isFirstFloor = createPlaceAccessibilityParams.isFirstFloor,
+                floors = createPlaceAccessibilityParams.floors,
+                isFirstFloor = createPlaceAccessibilityParams.isFirstFloor
+                    ?: createPlaceAccessibilityParams.floors?.let { it.size == 1 && it.first() == 1 } ?: false,
+                isStairOnlyOption = createPlaceAccessibilityParams.isStairOnlyOption,
                 stairInfo = createPlaceAccessibilityParams.stairInfo,
+                stairHeightLevel = createPlaceAccessibilityParams.stairHeightLevel,
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
+                entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = clock.instant(),

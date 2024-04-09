@@ -6,8 +6,11 @@ import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toDTO
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
-import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityPost200Response
+import club.staircrusher.api.spec.dto.ApiErrorResponse
+import club.staircrusher.api.spec.dto.EntranceDoorType
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
+import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
+import club.staircrusher.api.spec.dto.StairHeightLevel
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.domain.model.Challenge
@@ -16,6 +19,7 @@ import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
 import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -51,28 +55,24 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun testRegisterPlaceAccessibility() {
+    fun `240401 이전 버전에서 층 정보(1층인지), 매장 입구 정보(계단, 경사로 유무), 의견이 정상적으로 등록된다`() {
         repeat(3) { idx ->
             val expectedRegisteredUserOrder = idx + 1
-            val user = transactionManager.doInTransaction {
-                testDataGenerator.createUser()
-            }
-            val place = transactionManager.doInTransaction {
-                testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
-            }
+            val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+            val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
 
-            val params = getDefaultRequestParams(place)
+            val params = getDefaultRegisterPlaceAccessibilityRequestParamsBefore240401(place)
             mvc
                 .sccRequest("/registerPlaceAccessibility", params, user = user)
                 .apply {
-                    val result = getResult(RegisterPlaceAccessibilityPost200Response::class)
-                    val accessibilityInfo = result.accessibilityInfo
+                    val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
+                    val accessibilityInfo = result.accessibilityInfo!!
                     assertNull(accessibilityInfo.buildingAccessibility)
                     assertTrue(accessibilityInfo.buildingAccessibilityComments.isEmpty())
 
                     val placeAccessibility = accessibilityInfo.placeAccessibility!!
                     assertEquals(place.id, placeAccessibility.placeId)
-                    assertFalse(placeAccessibility.isFirstFloor)
+                    assertEquals(params.isFirstFloor, placeAccessibility.isFirstFloor)
                     assertEquals(StairInfo.ONE, placeAccessibility.stairInfo.toModel())
                     assertTrue(placeAccessibility.hasSlope)
                     assertTrue(placeAccessibility.imageUrls.isEmpty())
@@ -89,6 +89,79 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
+    fun `기존 정보에서 추가된 정보(몇층인지, 계단 높이 단위, 출입문 유형)가 정상적으로 등록된다`() {
+        repeat(3) { idx ->
+            val expectedRegisteredUserOrder = idx + 1
+            val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+            val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
+            val nthFloorParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, listOf(3))
+            mvc
+                .sccRequest("/registerPlaceAccessibility", nthFloorParams, user = user)
+                .apply {
+                    val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
+                    val accessibilityInfo = result.accessibilityInfo!!
+                    assertNull(accessibilityInfo.buildingAccessibility)
+                    assertTrue(accessibilityInfo.buildingAccessibilityComments.isEmpty())
+
+                    val placeAccessibility = accessibilityInfo.placeAccessibility!!
+                    assertEquals(place.id, placeAccessibility.placeId)
+                    assertArrayEquals(nthFloorParams.floors?.toIntArray(), placeAccessibility.floors?.toIntArray())
+                    assertFalse(placeAccessibility.isFirstFloor)
+                    assertEquals(nthFloorParams.isStairOnlyOption, placeAccessibility.isStairOnlyOption)
+                    assertEquals(nthFloorParams.stairInfo, placeAccessibility.stairInfo)
+                    assertEquals(nthFloorParams.stairHeightLevel, placeAccessibility.stairHeightLevel)
+                    assertEquals(nthFloorParams.hasSlope, placeAccessibility.hasSlope)
+                    assertArrayEquals(nthFloorParams.imageUrls.toTypedArray(), placeAccessibility.imageUrls.toTypedArray())
+                    assertArrayEquals(nthFloorParams.entranceDoorTypes?.toTypedArray(), placeAccessibility.entranceDoorTypes?.toTypedArray())
+
+                    val placeAccessibilityComments = accessibilityInfo.placeAccessibilityComments
+                    assertEquals(1, placeAccessibilityComments.size)
+                    assertEquals(place.id, placeAccessibilityComments[0].placeId)
+                    assertEquals(user.id, placeAccessibilityComments[0].user!!.id)
+                    assertEquals("장소 코멘트", placeAccessibilityComments[0].comment)
+
+                    assertEquals(expectedRegisteredUserOrder, result.registeredUserOrder)
+                }
+        }
+    }
+
+    @Test
+    fun `장소가 복수 층인 경우에는 다른 층으로 이동하는 방법 정보를 등록해야한다`() {
+        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
+        val multipleFloorsParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, floors = listOf(3, 4), isStairOnlyOption = true)
+        mvc
+            .sccRequest("/registerPlaceAccessibility", multipleFloorsParams, user = user)
+            .andExpect { status { is2xxSuccessful() } }
+
+        val multipleFloorsParamsWithoutOption = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, floors = listOf(3, 4), isStairOnlyOption = null)
+        mvc
+            .sccRequest("/registerPlaceAccessibility", multipleFloorsParamsWithoutOption, user = user)
+            .andExpect { status { isBadRequest() } }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_ARGUMENTS, result.code)
+            }
+    }
+
+
+    @Test
+    fun `출입문 유형 입력에서 "문 없음" 과 다른 출입문 유형(미닫이, 여닫이 등)을 같이 입력할 수 없다`() {
+        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
+        val nthFloorParams = getRegisterPlaceAccessibilityRequestParamsAfter240401(place, listOf(3, 4), entranceDoorTypes = listOf(EntranceDoorType.none, EntranceDoorType.automatic))
+        mvc
+            .sccRequest("/registerPlaceAccessibility", nthFloorParams, user = user)
+            .andExpect {
+                status { isBadRequest() }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_ARGUMENTS, result.code)
+            }
+    }
+
+    @Test
     fun `로그인되어 있지 않으면 등록이 안 된다`() {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
@@ -97,7 +170,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
         }
         mvc
-            .sccRequest("/registerPlaceAccessibility", getDefaultRequestParams(place))
+            .sccRequest("/registerPlaceAccessibility", getRegisterPlaceAccessibilityRequestParamsAfter240401(place, listOf(2)))
             .andExpect {
                 status {
                     isUnauthorized()
@@ -125,7 +198,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             )
         }
         mvc
-            .sccRequest("/registerPlaceAccessibility", getDefaultRequestParams(place), user = user)
+            .sccRequest("/registerPlaceAccessibility", getRegisterPlaceAccessibilityRequestParamsAfter240401(place), user = user)
             .andExpect {
                 status {
                     isBadRequest()
@@ -169,7 +242,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
-                getDefaultRequestParams(place),
+                getRegisterPlaceAccessibilityRequestParamsAfter240401(place),
                 user = user
             )
             .andExpect { status { is2xxSuccessful() } }
@@ -246,7 +319,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
-                getDefaultRequestParams(place),
+                getRegisterPlaceAccessibilityRequestParamsAfter240401(place),
                 user = user
             )
             .andExpect { status { is2xxSuccessful() } }
@@ -291,7 +364,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
-                getDefaultRequestParams(place),
+                getRegisterPlaceAccessibilityRequestParamsAfter240401(place),
                 user = user
             )
             .andExpect { status { is2xxSuccessful() } }
@@ -301,13 +374,36 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         assertTrue(contributions.isEmpty())
     }
 
-    private fun getDefaultRequestParams(place: Place): RegisterPlaceAccessibilityRequestDto {
+    // 240401 이후 버전부터 몇층인지, 계단 높이 단위, 출입문 유형을 추가로 등록할 수 있다.
+    private fun getDefaultRegisterPlaceAccessibilityRequestParamsBefore240401(place: Place): RegisterPlaceAccessibilityRequestDto {
         return RegisterPlaceAccessibilityRequestDto(
             placeId = place.id,
-            isFirstFloor = false,
+            isFirstFloor = true,
             stairInfo = StairInfo.ONE.toDTO(),
             imageUrls = emptyList(),
             hasSlope = true,
+            comment = "장소 코멘트",
+        )
+    }
+
+    private fun getRegisterPlaceAccessibilityRequestParamsAfter240401(
+        place: Place,
+        floors: List<Int> = listOf(1),
+        isStairOnlyOption: Boolean? = null,
+        stairInfo: StairInfo = StairInfo.ONE,
+        stairHeightLevel: StairHeightLevel = StairHeightLevel.hALFTHUMB,
+        hasSlope: Boolean = true,
+        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.sliding, EntranceDoorType.automatic)
+    ): RegisterPlaceAccessibilityRequestDto {
+        return RegisterPlaceAccessibilityRequestDto(
+            placeId = place.id,
+            floors = floors,
+            isStairOnlyOption = isStairOnlyOption,
+            imageUrls = emptyList(),
+            stairInfo = stairInfo.toDTO(),
+            stairHeightLevel = stairHeightLevel,
+            hasSlope = hasSlope,
+            entranceDoorTypes = entranceDoorTypes,
             comment = "장소 코멘트",
         )
     }
