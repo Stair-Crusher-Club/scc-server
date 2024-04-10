@@ -308,6 +308,18 @@ paths:
             type: string
           required: false
         - in: query
+          name: createdAtFromLocalDate
+          description: yyyy-MM-dd 형식
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: createdAtToLocalDate
+          description: yyyy-MM-dd 형식
+          schema:
+            type: string
+          required: false
+        - in: query
           name: cursor
           schema:
             type: string

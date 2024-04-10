@@ -78,28 +78,18 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun findByPlaceNameContainsPagingByCreatedAtDesc(
-        placeName: String,
+    override fun searchForAdmin(
+        placeName: String?,
+        createdAtFrom: Instant?,
+        createdAtToExclusive: Instant?,
         cursorCreatedAt: Instant,
         cursorId: String,
         limit: Int
     ): List<PlaceAccessibility> {
-        return queries.findByPlaceNameContainsPagingByCreatedAtDesc(
-            placeNameLike = "%$placeName%",
-            cursorCreatedAt = cursorCreatedAt.toOffsetDateTime(),
-            cursorId = cursorId,
-            limit = limit.toLong(),
-        )
-            .executeAsList()
-            .map { it.toDomainModel() }
-    }
-
-    override fun findAllPagingByCreatedAtDesc(
-        cursorCreatedAt: Instant,
-        cursorId: String,
-        limit: Int
-    ): List<PlaceAccessibility> {
-        return queries.findAllPagingByCreatedAtDesc(
+        return queries.searchForAdmin(
+            placeNameLike = placeName?.let { "%$it%" },
+            createdAtFrom = (createdAtFrom ?: Instant.EPOCH).toOffsetDateTime(),
+            createdAtToExclusive = (createdAtToExclusive ?: Instant.MAX)?.toOffsetDateTime(),
             cursorCreatedAt = cursorCreatedAt.toOffsetDateTime(),
             cursorId = cursorId,
             limit = limit.toLong(),
