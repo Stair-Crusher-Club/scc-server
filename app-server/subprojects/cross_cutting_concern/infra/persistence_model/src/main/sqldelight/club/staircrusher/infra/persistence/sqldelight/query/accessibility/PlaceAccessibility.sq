@@ -71,28 +71,19 @@ INNER JOIN building b ON b.id = p.building_id
 WHERE b.id = :buildingId
     AND pa.deleted_at IS NULL;
 
-findByPlaceNameContainsPagingByCreatedAtDesc:
+searchForAdmin:
 SELECT pa.*
 FROM place_accessibility pa
 INNER JOIN place p ON p.id = pa.place_id
 WHERE
-    p.name LIKE :placeNameLike
+    (:placeNameLike IS NULL OR p.name LIKE :placeNameLike)
+    AND (:createdAtFrom IS NULL OR pa.created_at >= :createdAtFrom)
+    AND (:createdAtToExclusive IS NULL OR pa.created_at < :createdAtToExclusive)
     AND (
         (pa.created_at = :cursorCreatedAt AND pa.id < :cursorId)
         OR (pa.created_at < :cursorCreatedAt)
     )
     AND pa.deleted_at IS NULL
-ORDER BY pa.created_at DESC
-LIMIT :limit;
-
-findAllPagingByCreatedAtDesc:
-SELECT pa.*
-FROM place_accessibility pa
-WHERE
-    (
-        (pa.created_at = :cursorCreatedAt AND pa.id < :cursorId)
-        OR (pa.created_at < :cursorCreatedAt)
-    )
 ORDER BY pa.created_at DESC
 LIMIT :limit;
 

@@ -17,13 +17,14 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     fun countByUserId(userId: String): Int
     fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean
     fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
-    fun findByPlaceNameContainsPagingByCreatedAtDesc(
-        placeName: String,
+    fun searchForAdmin(
+        placeName: String?,
+        createdAtFrom: Instant?,
+        createdAtToExclusive: Instant?,
         cursorCreatedAt: Instant,
         cursorId: String,
         limit: Int,
     ): List<PlaceAccessibility>
-    fun findAllPagingByCreatedAtDesc(cursorCreatedAt: Instant, cursorId: String, limit: Int): List<PlaceAccessibility>
     fun countAll(): Int
     fun remove(id: String)
 

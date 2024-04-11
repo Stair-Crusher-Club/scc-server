@@ -5,12 +5,14 @@ import club.staircrusher.accessibility.application.port.`in`.AdminDeletePlaceAcc
 import club.staircrusher.accessibility.application.port.`in`.AdminSearchAccessibilitiesUseCase
 import club.staircrusher.admin_api.spec.dto.AdminAccessibilityDTO
 import club.staircrusher.admin_api.spec.dto.AdminSearchAccessibilitiesResultDTO
+import club.staircrusher.stdlib.util.string.emptyToNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 
 @RestController
 class AdminAccessibilityController(
@@ -21,11 +23,15 @@ class AdminAccessibilityController(
     @GetMapping("/admin/accessibilities/search")
     fun searchAccessibilities(
         @RequestParam(required = false) placeName: String?,
+        @RequestParam(required = false) createdAtFromLocalDate: String?,
+        @RequestParam(required = false) createdAtToLocalDate: String?,
         @RequestParam(required = false) cursor: String?,
         @RequestParam(required = false) limit: Int?,
     ): AdminSearchAccessibilitiesResultDTO {
         val result = adminSearchAccessibilitiesUseCase.handle(
             placeName = placeName,
+            createdAtFromLocalDate = createdAtFromLocalDate?.emptyToNull()?.let { LocalDate.parse(it) },
+            createdAtToLocalDate = createdAtToLocalDate?.emptyToNull()?.let { LocalDate.parse(it) },
             cursorValue = cursor,
             limit = limit,
         )
