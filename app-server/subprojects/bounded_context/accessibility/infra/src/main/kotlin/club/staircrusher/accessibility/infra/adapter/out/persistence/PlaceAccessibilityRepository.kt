@@ -9,7 +9,6 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 import club.staircrusher.stdlib.time.toOffsetDateTime
-import java.time.Duration
 import java.time.Instant
 
 @Suppress("TooManyFunctions")
