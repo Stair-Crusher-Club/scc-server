@@ -123,6 +123,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Notify CD start to slack
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{\"attachments\":[{\"color\":\"#46AE74\",\"title\":\"[DEV] Scc-Server Deploy Started\", \"text\":\"version - latest\"}]}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+
       - name: Install kubeconfig
         env:
           SCC_K3S_KUBECONFIG: ${{ secrets.SCC_K3S_KUBECONFIG }}
@@ -161,10 +165,10 @@ jobs:
         if: failure()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] scc-server deployment failed. <!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"attachments\":[{\"color\":\"#FF0000\",\"title\":\"[DEV] Scc-Server Deployment Failed\", \"text\":\"<!subteam^S052B9W7129> (<$CURRENT_GITHUB_ACTION_RUN_URL|github action run url>)\"}]}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
 
       - name: Notify CD success to slack
         if: success()
         run: |
           CURRENT_GITHUB_ACTION_RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"[DEV] scc-server with latest version is deployed!\"}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
+          curl -X POST -H 'Content-type: application/json' --data "{\"attachments\":[{\"color\":\"#0000FF\",\"title\":\"[DEV] Scc-Server Deploy Success\"}]}" ${{ secrets.SLACK_URL_SCC_SERVER_CHANNEL }} -v
