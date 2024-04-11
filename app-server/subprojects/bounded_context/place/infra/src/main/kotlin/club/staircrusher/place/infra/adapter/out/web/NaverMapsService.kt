@@ -162,7 +162,7 @@ class NaverMapsService(
             val location: Location
                 get() = Location(mapx.toDouble() / 1e7, mapy.toDouble() / 1e7)
 
-            @Suppress("MagicNumber")
+            @Suppress("MagicNumber", "VariableNaming")
             fun parseToBuildingAddress(): BuildingAddress {
                 val addressNameTokens = address.split(" ")
                 val siDo = addressNameTokens[0]
@@ -170,7 +170,22 @@ class NaverMapsService(
                 val eupMyeonDong = addressNameTokens[2]
                 val li = addressNameTokens[3].takeIf { it.endsWith("리") } ?: ""
 
-                val (roadName, buildingNumber) = this.roadAddress.split(" ").takeLast(2)
+                /**
+                 * 네이버는 도로명주소에 상세주소(e.g., 106동 803호)]와 상호명(e.g., 문화식당)이 같이 나오는 경우가 있으므로
+                 * 건물번호를 찾아내기 위해서 건물번호 형식이 나올 때 까지 drop 한다.
+                 *
+                 * https://www.juso.go.kr/CommonPageLink.do?link=/street/GuideBook
+                 * 도로명주소 공식 가이드북에 따르면 건물 번호의 경우 아래와 같이 부여한다.
+                 *
+                 * 1. 건물번호 e.g., 102
+                 * 2. 건물번호 + 부번 e.g., 23-2
+                 * 3. 지하의 사용 e.g., 지하11
+                 */
+                val 건물번호_정규식 = """(지하)?\d+(-\d+)?""".toRegex()
+                val (roadName, buildingNumber) = this.roadAddress
+                    .split(" ")
+                    .dropLastWhile { !건물번호_정규식.matches(it) }
+                    .takeLast(2)
                 val buildingNumberTokens = buildingNumber.split("-")
                 val (mainBuildingNumber, subBuildingNumber) = if (buildingNumberTokens.size == 1) {
                     Pair(buildingNumberTokens[0], "")

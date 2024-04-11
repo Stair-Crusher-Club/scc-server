@@ -77,7 +77,7 @@ class InProcessClubQuestTargetPlaceSearcher(
                     async {
                         placeService.findAllByKeyword(
                             keyword = building.address.toString(),
-                            option = MapsService.SearchByKeywordOption(),
+                            option = MapsService.SearchByKeywordOption(runCrossValidation = true),
                         )
                     }
                 }

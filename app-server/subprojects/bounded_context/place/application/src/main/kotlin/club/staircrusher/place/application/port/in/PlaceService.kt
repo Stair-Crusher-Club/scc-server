@@ -7,6 +7,10 @@ import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
 import club.staircrusher.stdlib.place.PlaceCategory
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import mu.KotlinLogging
 
 @Component
 class PlaceService(
@@ -14,6 +18,7 @@ class PlaceService(
     private val eventPublisher: DomainEventPublisher,
     private val mapsServices: List<MapsService>,
 ) {
+    private val logger = KotlinLogging.logger {}
     private val mapsService = mapsServices.first()
     private val secondaryMapsService = mapsServices.getOrNull(1)
 
@@ -21,26 +26,28 @@ class PlaceService(
         return placeRepository.findByIdOrNull(placeId)
     }
 
-    suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
+    suspend fun findAllByKeyword(
+        keyword: String,
+        option: MapsService.SearchByKeywordOption,
+    ): List<Place> = coroutineScope {
         if (keyword.isBlank()) {
-            return emptyList()
+            return@coroutineScope emptyList()
         }
+
         var places = mapsService.findAllByKeyword(keyword, option)
-        if (places.isEmpty() && secondaryMapsService != null) {
-            places = secondaryMapsService.findAllByKeyword(keyword, option)
+        if (option.runCrossValidation) {
+            val existingPlaces = places.map { async { runCrossValidation(it, option) } }.awaitAll()
+            places = places.filterIndexed { index, _ -> existingPlaces[index] }
         }
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
-        return places
+        places
     }
 
     suspend fun findAllByCategory(
         category: PlaceCategory,
-        option: MapsService.SearchByCategoryOption
+        option: MapsService.SearchByCategoryOption,
     ): List<Place> {
-        var places = mapsService.findAllByCategory(category, option)
-        if (places.isEmpty() && secondaryMapsService != null) {
-            places = secondaryMapsService.findAllByCategory(category, option)
-        }
+        val places = mapsService.findAllByCategory(category, option)
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
@@ -51,5 +58,34 @@ class PlaceService(
 
     fun findByBuildingId(buildingId: String): List<Place> {
         return placeRepository.findByBuildingId(buildingId)
+    }
+
+    /**
+     * it uses secondary maps service to cross validate the place from primary maps service.
+     * @return true if the place does exist on the secondary maps service, false otherwise.
+     */
+    @Suppress("ReturnCount")
+    private suspend fun runCrossValidation(
+        place: Place,
+        option: MapsService.SearchByKeywordOption,
+    ): Boolean {
+        if (secondaryMapsService == null) {
+            logger.error { "Secondary maps service is not available. Can not run cross validation" }
+            return true
+        }
+
+        val keyword = "${place.address.siGunGu} ${place.address.eupMyeonDong} ${place.name}"
+        val result = secondaryMapsService.findFirstByKeyword(keyword, option) ?: return false
+
+        /**
+         * this is very heuristic way to validate that addresses of two places are same.
+         * it might not be accurate and need to check more fields of building address.
+         *
+         * the reason why siDo name is not checked is kakao returns "경기" but naver returns
+         * "경기도" for the same address.
+         */
+        return place.address.siGunGu == result.address.siGunGu
+            && place.address.eupMyeonDong == result.address.eupMyeonDong
+            && place.address.mainBuildingNumber == result.address.mainBuildingNumber
     }
 }
