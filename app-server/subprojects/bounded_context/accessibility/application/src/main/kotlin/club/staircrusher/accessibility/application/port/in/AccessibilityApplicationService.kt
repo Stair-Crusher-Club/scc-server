@@ -329,8 +329,12 @@ class AccessibilityApplicationService(
         )
     }
 
-    fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> = transactionManager.doInTransaction {
-        placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
+    fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> {
+        if (placeIds.isEmpty()) return emptyList()
+
+        return transactionManager.doInTransaction {
+            placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
+        }
     }
 
     fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
