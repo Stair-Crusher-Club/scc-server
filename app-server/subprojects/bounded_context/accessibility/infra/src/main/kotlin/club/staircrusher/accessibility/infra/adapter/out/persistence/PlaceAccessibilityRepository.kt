@@ -90,7 +90,7 @@ class PlaceAccessibilityRepository(
         return queries.searchForAdmin(
             placeNameLike = placeName?.let { "%$it%" },
             createdAtFrom = (createdAtFrom ?: Instant.EPOCH).toOffsetDateTime(),
-            createdAtToExclusive = (createdAtToExclusive ?: (Instant.MAX - Duration.ofDays(1))).toOffsetDateTime(),
+            createdAtToExclusive = (createdAtToExclusive ?: SccClock.instant()).toOffsetDateTime(),
             cursorCreatedAt = cursorCreatedAt.toOffsetDateTime(),
             cursorId = cursorId,
             limit = limit.toLong(),
