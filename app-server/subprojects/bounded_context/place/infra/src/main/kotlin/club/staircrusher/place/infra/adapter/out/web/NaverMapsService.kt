@@ -103,7 +103,8 @@ class NaverMapsService(
         keyword: String,
         option: MapsService.SearchByKeywordOption,
     ): List<Place> {
-        throw NotImplementedError("Not implemented yet")
+        return fetchPageForSearchByKeyword(keyword)
+            .convertToModel()
     }
 
     override suspend fun findFirstByKeyword(
@@ -113,6 +114,14 @@ class NaverMapsService(
         return fetchPageForSearchByKeyword(keyword)
             .convertToModel()
             .firstOrNull()
+    }
+
+    override suspend fun findAllByCategory(
+        category: PlaceCategory,
+        option: MapsService.SearchByCategoryOption,
+    ): List<Place> {
+        return fetchPageForSearchByKeyword(category.humanReadableName)
+            .convertToModel()
     }
 
     private suspend fun fetchPageForSearchByKeyword(
@@ -127,13 +136,6 @@ class NaverMapsService(
         return naverOpenApiService.localSearch(
             query = keyword,
         ).awaitFirst()
-    }
-
-    override suspend fun findAllByCategory(
-        category: PlaceCategory,
-        option: MapsService.SearchByCategoryOption,
-    ): List<Place> {
-        throw NotImplementedError("Not implemented yet")
     }
 
     @Serializable

@@ -12,8 +12,11 @@ import club.staircrusher.stdlib.place.PlaceCategory
 class PlaceService(
     private val placeRepository: PlaceRepository,
     private val eventPublisher: DomainEventPublisher,
-    private val mapsService: MapsService,
+    private val mapsServices: List<MapsService>,
 ) {
+    private val mapsService = mapsServices.first()
+    private val secondaryMapsService = mapsServices.getOrNull(1)
+
     fun findPlace(placeId: String): Place? {
         return placeRepository.findByIdOrNull(placeId)
     }
@@ -22,7 +25,10 @@ class PlaceService(
         if (keyword.isBlank()) {
             return emptyList()
         }
-        val places = mapsService.findAllByKeyword(keyword, option)
+        var places = mapsService.findAllByKeyword(keyword, option)
+        if (places.isEmpty() && secondaryMapsService != null) {
+            places = secondaryMapsService.findAllByKeyword(keyword, option)
+        }
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
@@ -31,7 +37,10 @@ class PlaceService(
         category: PlaceCategory,
         option: MapsService.SearchByCategoryOption
     ): List<Place> {
-        val places = mapsService.findAllByCategory(category, option)
+        var places = mapsService.findAllByCategory(category, option)
+        if (places.isEmpty() && secondaryMapsService != null) {
+            places = secondaryMapsService.findAllByCategory(category, option)
+        }
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
