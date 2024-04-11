@@ -5,6 +5,7 @@ import club.staircrusher.accessibility.application.port.`in`.AdminDeletePlaceAcc
 import club.staircrusher.accessibility.application.port.`in`.AdminSearchAccessibilitiesUseCase
 import club.staircrusher.admin_api.spec.dto.AdminAccessibilityDTO
 import club.staircrusher.admin_api.spec.dto.AdminSearchAccessibilitiesResultDTO
+import club.staircrusher.stdlib.util.string.emptyToNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -51,8 +52,6 @@ class AdminAccessibilityController(
             cursor = result.cursor,
         )
     }
-
-    private fun String.emptyToNull() = if (this.isBlank()) null else this
 
     @DeleteMapping("/admin/place-accessibilities/{id}")
     fun deletePlaceAccessibility(
