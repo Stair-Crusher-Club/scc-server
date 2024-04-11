@@ -9,6 +9,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 import club.staircrusher.stdlib.time.toOffsetDateTime
+import java.time.Duration
 import java.time.Instant
 
 @Suppress("TooManyFunctions")
@@ -89,7 +90,7 @@ class PlaceAccessibilityRepository(
         return queries.searchForAdmin(
             placeNameLike = placeName?.let { "%$it%" },
             createdAtFrom = (createdAtFrom ?: Instant.EPOCH).toOffsetDateTime(),
-            createdAtToExclusive = (createdAtToExclusive ?: Instant.MAX).toOffsetDateTime(),
+            createdAtToExclusive = (createdAtToExclusive ?: (Instant.MAX - Duration.ofDays(1))).toOffsetDateTime(),
             cursorCreatedAt = cursorCreatedAt.toOffsetDateTime(),
             cursorId = cursorId,
             limit = limit.toLong(),
