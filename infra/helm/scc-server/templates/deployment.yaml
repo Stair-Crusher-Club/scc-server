@@ -48,6 +48,8 @@ spec:
               value: "{{ .Values.aws.roleArn }}"
             - name: AWS_WEB_IDENTITY_TOKEN_FILE
               value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+            - name: OTEL_METRICS_EXPORTER
+              value: none
           ports:
             - name: http
               containerPort: 8080
