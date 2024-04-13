@@ -22,6 +22,10 @@ dependencies {
     runtimeOnly("io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion")
     runtimeOnly("io.sentry:sentry-logback:$sentryVersion")
 
+    val logbackJsonVersion: String by project
+    runtimeOnly("ch.qos.logback.contrib:logback-jackson:$logbackJsonVersion")
+    runtimeOnly("ch.qos.logback.contrib:logback-json-classic:$logbackJsonVersion")
+
     implementation(projects.crossCuttingConcern.infra.springWeb)
     implementation(projects.crossCuttingConcern.infra.springMessage)
     implementation(projects.crossCuttingConcern.stdlib)

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="1 minutes">
+    <springProperty name="SERVICE_NAME" source="spring.application.name"/>
+    <springProperty name="ROOT_LOGGING_LEVEL" source="logback.root.level" defaultValue="INFO"/>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <!--  JSON 형식으로 로그를 남김  -->
+    <appender name="JSON_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+                <includeContextName>false</includeContextName>
+                <timestampFormat>yyyy-MM-dd HH:mm:ss.SSSX</timestampFormat>
+                <timestampFormatTimezoneId>Etc/UTC</timestampFormatTimezoneId>
+                <appendLineSeparator>true</appendLineSeparator>
+                <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                    <prettyPrint>false</prettyPrint>
+                </jsonFormatter>
+            </layout>
+        </encoder>
+    </appender>
+
+    <!--  색상이 있는 상태로 콘솔에 로그를 남김  -->
+    <appender name="COLOR_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%clr([%d{yyyy-MM-dd HH:mm:ss.SSS}]){blue}%clr([%thread]){cyan}%clr([uid:%X{le.user-id}]){yellow}[%X{le.client-ip}]%clr([%X{le.client-native-version},%X{le.client-bundle-version},%X{le.platform}]){magenta}[%X{le.http-method}][%X{le.endpoint-uri}] %clr(%5p) %clr(%logger{36}){cyan} - %msg%n%wEx</Pattern>
+        </layout>
+    </appender>
+
+    <!--  색상이 없는 상태로 콘솔에 로그를 남김  -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread][uid:%X{le.user-id}][%X{le.client-ip}][%X{le.client-native-version},%X{le.client-bundle-version},%X{le.platform}][%X{le.http-method}][%X{le.endpoint-uri}] %-5level %logger{36} - %msg%n%wEx</Pattern>
+        </layout>
+    </appender>
+
+    <!-- for root logger -->
+    <root level="${ROOT_LOGGING_LEVEL}">
+        <springProfile name="local">
+            <appender-ref ref="COLOR_CONSOLE"/>
+        </springProfile>
+        <springProfile name="!local">
+            <appender-ref ref="JSON_STDOUT"/>
+        </springProfile>
+    </root>
+
+</configuration>
