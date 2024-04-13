@@ -48,6 +48,10 @@ sentry:
     enabled: true
   environment: dev
 
+otel:
+  metrics:
+    exporter: none
+
 scc:
   s3:
     imageUpload:
