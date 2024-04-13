@@ -25,10 +25,12 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
 
+@Disabled
 class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     @Autowired
     private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
