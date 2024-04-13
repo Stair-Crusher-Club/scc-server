@@ -50,17 +50,17 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
             // 0401 이후 버전에서는 floors, stairHeightLevel, entranceDoorTypes 를 모두 올려줘야한다.
             val 새로운_폼에서_필수_필드가_채워졌는가 = listOf(floors, stairHeightLevel, entranceDoorTypes).all { it != null }
             if (새로운_폼에서_필수_필드가_채워졌는가.not()) {
-                println("새로운_폼에서_필수_필드가_채워졌는가.not()")
+                println("새로운_폼에서_필수_필드가_채워졌는가.not(); $this")
             }
             val 단층인가 = floors!!.size == 1
             val 복수층이면서_다른_층으로_이동하는_방법이_있는가 = floors.let { it.size > 1 && isStairOnlyOption != null }
             if ((단층인가 || 복수층이면서_다른_층으로_이동하는_방법이_있는가).not()) {
-                println("(단층인가 || 복수층이면서_다른_층으로_이동하는_방법이_있는가).not()")
+                println("(단층인가 || 복수층이면서_다른_층으로_이동하는_방법이_있는가).not(); $this")
             }
             val 문유형을_등록했는가 = entranceDoorTypes!!.isEmpty()
             val 문유형_없음은_다른_문유형과_같이_등록할_수_없다 = entranceDoorTypes.isNotEmpty() && entranceDoorTypes.let { it.contains(EntranceDoorType.None) && it.size > 1 }.not()
             if ((문유형을_등록했는가 || 문유형_없음은_다른_문유형과_같이_등록할_수_없다).not()) {
-                println("(문유형을_등록했는가 || 문유형_없음은_다른_문유형과_같이_등록할_수_없다).not()")
+                println("(문유형을_등록했는가 || 문유형_없음은_다른_문유형과_같이_등록할_수_없다).not(); $this")
             }
             return true
         }
