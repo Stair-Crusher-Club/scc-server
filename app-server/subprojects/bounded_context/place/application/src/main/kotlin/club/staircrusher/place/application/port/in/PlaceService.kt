@@ -36,7 +36,7 @@ class PlaceService(
 
         var places = mapsService.findAllByKeyword(keyword, option)
         if (option.runCrossValidation) {
-            val existingPlaces = places.map { async { runCrossValidation(it, option) } }.awaitAll()
+            val existingPlaces = places.map { async { crossValidate(it, option) } }.awaitAll()
             places = places.filterIndexed { index, _ -> existingPlaces[index] }
         }
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
@@ -65,7 +65,7 @@ class PlaceService(
      * @return true if the place does exist on the secondary maps service, false otherwise.
      */
     @Suppress("ReturnCount")
-    private suspend fun runCrossValidation(
+    suspend fun crossValidate(
         place: Place,
         option: MapsService.SearchByKeywordOption,
     ): Boolean {
