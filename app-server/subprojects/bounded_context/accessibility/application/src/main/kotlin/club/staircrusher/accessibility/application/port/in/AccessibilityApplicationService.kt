@@ -115,12 +115,11 @@ class AccessibilityApplicationService(
 
     fun listPlaceAndBuildingAccessibility(places: List<Place>): List<Pair<PlaceAccessibility?, BuildingAccessibility?>> {
         val placeIds = places.map { it.id }
-        return transactionManager.doInTransaction {
-            val pas = placeAccessibilityRepository.findByPlaceIds(placeIds)
-            val bas = buildingAccessibilityRepository.findByPlaceIds(placeIds)
-            places.map {
-                pas.firstOrNull { pa -> pa.placeId == it.id } to bas.firstOrNull { ba -> ba.buildingId == it.building.id }
-            }
+        // 현재 place 당 pa, ba 는 정책상 1개 이므로 단순 associateBy 해준다.
+        val pas = placeAccessibilityRepository.findByPlaceIds(placeIds).associateBy { it.placeId }
+        val bas = buildingAccessibilityRepository.findByPlaceIds(placeIds).associateBy { it.buildingId }
+        return places.map {
+            pas[it.id] to bas[it.building.id]
         }
     }
 
