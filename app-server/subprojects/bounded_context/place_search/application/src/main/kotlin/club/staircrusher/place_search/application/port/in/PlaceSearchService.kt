@@ -51,7 +51,7 @@ class PlaceSearchService(
         ).let {
             if (it.isEmpty() && currentLocation != null) {
                 // Kakao 지도 API의 경우, 최대 검색 반경이 25km밖에 되지 않는다.
-                // 그래서 서울에서 제주 스타벅스를 검색하는 경우 검색 결과가 안 뜨는 등의 이슈가 있다.
+                // 그래서 서울에서 제주 스타벅스를 검색하는 경우 검색 결과가 안뜨는 등의 이슈가 있다.
                 // 이러한 문제를 우회하기 위해, 검색 결과가 없는 경우에는 currentLocation을 빼고 검색을 다시 시도해본다.
                 placeService.findAllByKeyword(
                     keyword = searchText,
@@ -61,7 +61,7 @@ class PlaceSearchService(
                 it
             }
         }
-        return places.map { it.toSearchPlacesResult(currentLocation) }
+        return places.toSearchPlacesResult(currentLocation)
     }
 
     suspend fun listPlacesInBuilding(buildingId: String): List<SearchPlacesResult> {
@@ -71,19 +71,21 @@ class PlaceSearchService(
         val placesInPersistence = placeService.findByBuildingId(buildingId)
         return (placesBySearch + placesInPersistence)
             .removeDuplicates()
-            .map { it.toSearchPlacesResult(currentLocation = null) }
+            .toSearchPlacesResult(currentLocation = null)
     }
 
-    private fun Place.toSearchPlacesResult(currentLocation: Location?): SearchPlacesResult {
-        val placeAccessibility = accessibilityApplicationService.getPlaceAccessibility(id)
-        val buildingAccessibility = accessibilityApplicationService.getBuildingAccessibility(id)
-        return SearchPlacesResult(
-            place = this,
-            buildingAccessibility = buildingAccessibility,
-            placeAccessibility = placeAccessibility,
-            distance = currentLocation?.let { LocationUtils.calculateDistance(it, location) },
-            isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(id),
-        )
+    private fun List<Place>.toSearchPlacesResult(currentLocation: Location?): List<SearchPlacesResult> {
+        return accessibilityApplicationService.listPlaceAndBuildingAccessibility(this)
+            .zip(this) { (pa, ba), p -> Triple(pa, ba, p) }
+            .map { (pa, ba, p) ->
+                SearchPlacesResult(
+                    place = p,
+                    buildingAccessibility = ba,
+                    placeAccessibility = pa,
+                    distance = currentLocation?.let { LocationUtils.calculateDistance(it, p.location) },
+                    isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p.building),
+                )
+            }
     }
 
     private fun List<Place>.removeDuplicates(): List<Place> {
