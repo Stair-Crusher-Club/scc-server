@@ -34,7 +34,47 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
 
     @Test
     fun `정상적으로 등록된다`() {
-        repeat(3) { idx ->
+        val buildingsAndParams = transactionManager.doInTransaction {
+            listOf(
+                // 입구계단X,경사로X,엘리베이터O,엘리베이터계단X,회전문
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.NONE, entranceStairHeightLevel = null,
+                        hasSlope = false,
+                        hasElevator = true, elevatorStairInfo = StairInfo.NONE, elevatorStairHeightLevel = null,
+                        entranceDoorTypes = listOf(EntranceDoorType.Revolving)
+                    )
+                },
+                // 입구계단X,경사로O,엘리베이터O,엘리베이터계단O,여닫이
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.NONE, entranceStairHeightLevel = null,
+                        hasSlope = true,
+                        hasElevator = true, elevatorStairInfo = StairInfo.OVER_SIX, elevatorStairHeightLevel = StairHeightLevel.HALF_THUMB,
+                        entranceDoorTypes = listOf(EntranceDoorType.Hinged)
+                    )
+                },
+                // 입구계단O,경사로O,엘리베이터O,엘리베이터계단O,자동미닫이
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.TWO_TO_FIVE, entranceStairHeightLevel = StairHeightLevel.HALF_THUMB,
+                        hasSlope = true,
+                        hasElevator = true, elevatorStairInfo = StairInfo.OVER_SIX, elevatorStairHeightLevel = StairHeightLevel.OVER_THUMB,
+                        entranceDoorTypes = listOf(EntranceDoorType.Automatic, EntranceDoorType.Sliding)
+                    )
+                },
+                // 입구계단O,경사로O,엘리베이터X,문없음
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.ONE, entranceStairHeightLevel = StairHeightLevel.THUMB,
+                        hasSlope = true,
+                        hasElevator = false, elevatorStairInfo = StairInfo.NONE, elevatorStairHeightLevel = null,
+                        entranceDoorTypes = listOf(EntranceDoorType.None)
+                    )
+                },
+            )
+        }
+        buildingsAndParams.forEachIndexed { idx, (building, params) ->
             val expectedRegisteredUserOrder = idx + 1
             val user = transactionManager.doInTransaction {
                 testDataGenerator.createUser()
@@ -190,24 +230,39 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
 
     private fun getDefaultRequestParams(
         building: Building,
-        entranceStairInfo: StairInfo = StairInfo.ONE,
-        entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
-        hasSlope: Boolean = true,
-        hasElevator: Boolean = true,
-        elevatorStairInfo: StairInfo = StairInfo.TWO_TO_FIVE,
-        elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.OVER_THUMB,
-        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic)
+    ): RegisterBuildingAccessibilityRequestDto {
+        return getRequestParams(
+            building = building,
+            entranceStairInfo = StairInfo.TWO_TO_FIVE,
+            entranceStairHeightLevel = StairHeightLevel.OVER_THUMB,
+            hasSlope = true,
+            hasElevator = true,
+            elevatorStairInfo = StairInfo.OVER_SIX,
+            elevatorStairHeightLevel = StairHeightLevel.HALF_THUMB,
+            entranceDoorTypes = listOf(EntranceDoorType.Automatic, EntranceDoorType.Sliding),
+        )
+    }
+
+    private fun getRequestParams(
+        building: Building,
+        entranceStairInfo: StairInfo,
+        entranceStairHeightLevel: StairHeightLevel?,
+        hasSlope: Boolean,
+        hasElevator: Boolean,
+        elevatorStairInfo: StairInfo,
+        elevatorStairHeightLevel: StairHeightLevel?,
+        entranceDoorTypes: List<EntranceDoorType>
     ): RegisterBuildingAccessibilityRequestDto {
         return RegisterBuildingAccessibilityRequestDto(
             buildingId = building.id,
             entranceStairInfo = entranceStairInfo.toDTO(),
-            entranceStairHeightLevel = entranceStairHeightLevel.toDTO(),
+            entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
             entranceImageUrls = listOf("buildingAccessibilityEntranceImage"),
             hasSlope = hasSlope,
             hasElevator = hasElevator,
             entranceDoorTypes = entranceDoorTypes.map { it.toDTO() },
             elevatorStairInfo = elevatorStairInfo.toDTO(),
-            elevatorStairHeightLevel = elevatorStairHeightLevel.toDTO(),
+            elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
             elevatorImageUrls = listOf(
                 "buildingAccessibilityElevatorImage1",
                 "buildingAccessibilityElevatorImage2",
