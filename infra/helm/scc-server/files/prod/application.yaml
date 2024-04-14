@@ -6,6 +6,9 @@ server:
       force: true
 
 spring:
+  profiles:
+    active: prod
+
   datasource:
     username: scc
     url: jdbc:postgresql://ls-69d68cd036e3b1665f22027b3469cdb456fca15c.cmc9lkaaidnz.ap-northeast-2.rds.amazonaws.com:5432/scc

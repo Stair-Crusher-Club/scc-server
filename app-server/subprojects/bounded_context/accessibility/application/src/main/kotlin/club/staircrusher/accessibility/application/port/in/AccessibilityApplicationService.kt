@@ -248,8 +248,8 @@ class AccessibilityApplicationService(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = createPlaceAccessibilityParams.placeId,
                 floors = createPlaceAccessibilityParams.floors,
-                isFirstFloor = createPlaceAccessibilityParams.floors?.let { it.size == 1 && it.firstOrNull() == 1 }
-                    ?: false,
+                isFirstFloor = createPlaceAccessibilityParams.isFirstFloor
+                    ?: createPlaceAccessibilityParams.floors?.let { it.size == 1 && it.first() == 1 } ?: false,
                 isStairOnlyOption = createPlaceAccessibilityParams.isStairOnlyOption,
                 stairInfo = createPlaceAccessibilityParams.stairInfo,
                 stairHeightLevel = createPlaceAccessibilityParams.stairHeightLevel,
@@ -336,8 +336,12 @@ class AccessibilityApplicationService(
         )
     }
 
-    fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> = transactionManager.doInTransaction {
-        placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
+    fun filterAccessibilityExistingPlaceIds(placeIds: List<String>): List<String> {
+        if (placeIds.isEmpty()) return emptyList()
+
+        return transactionManager.doInTransaction {
+            placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
+        }
     }
 
     fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {

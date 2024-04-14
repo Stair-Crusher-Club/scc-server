@@ -11,7 +11,7 @@ image:
   repository: public.ecr.aws/i6n1n6v2/scc-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.4.6
+  tag: 0.5.6
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -23,7 +23,8 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-podAnnotations: {}
+podAnnotations:
+  instrumentation.opentelemetry.io/inject-java: "monitoring/openobserve-java"
 podSecurityContext:
   fsGroup: 2000
 securityContext:
