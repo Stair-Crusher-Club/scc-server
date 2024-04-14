@@ -43,7 +43,7 @@ class AdminClubQuestController(
     }
 
     @PostMapping("/admin/clubQuests/create/dryRun")
-    fun createClubQuestDryRun(@RequestBody request: ClubQuestsCreateDryRunPostRequest): List<ClubQuestCreateDryRunResultItemDTO> {
+    suspend fun createClubQuestDryRun(@RequestBody request: ClubQuestsCreateDryRunPostRequest): List<ClubQuestCreateDryRunResultItemDTO> {
         val result = clubQuestCreateAplService.createDryRun(
             centerLocation = request.centerLocation.toModel(),
             radiusMeters = request.radiusMeters,
