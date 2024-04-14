@@ -103,8 +103,7 @@ class NaverMapsService(
         keyword: String,
         option: MapsService.SearchByKeywordOption,
     ): List<Place> {
-        return fetchPageForSearchByKeyword(keyword)
-            .convertToModel()
+        throw NotImplementedError()
     }
 
     override suspend fun findFirstByKeyword(
@@ -120,8 +119,7 @@ class NaverMapsService(
         category: PlaceCategory,
         option: MapsService.SearchByCategoryOption,
     ): List<Place> {
-        return fetchPageForSearchByKeyword(category.humanReadableName)
-            .convertToModel()
+        throw NotImplementedError()
     }
 
     private suspend fun fetchPageForSearchByKeyword(
