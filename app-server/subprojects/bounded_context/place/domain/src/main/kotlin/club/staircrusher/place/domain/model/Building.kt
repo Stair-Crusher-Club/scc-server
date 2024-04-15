@@ -17,4 +17,12 @@ data class Building(
             length = 36,
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other is Building && other.id == this.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 }

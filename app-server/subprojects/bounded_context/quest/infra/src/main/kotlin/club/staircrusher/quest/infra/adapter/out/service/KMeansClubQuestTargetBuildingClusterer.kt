@@ -1,13 +1,13 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
+import club.staircrusher.place.domain.model.Building
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
-import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.infra.kmeans.Centroid
 import club.staircrusher.quest.infra.kmeans.EuclideanDistance
 import club.staircrusher.quest.infra.kmeans.KMeans
 import club.staircrusher.quest.infra.kmeans.Record
-import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.geography.Location
 
 @Component
 class KMeansClubQuestTargetBuildingClusterer : ClubQuestTargetBuildingClusterer {
@@ -17,14 +17,14 @@ class KMeansClubQuestTargetBuildingClusterer : ClubQuestTargetBuildingClusterer 
     }
 
     @Suppress("ReturnCount")
-    override fun clusterBuildings(buildings: List<ClubQuestTargetBuilding>, clusterCount: Int): Map<Location, List<ClubQuestTargetBuilding>> {
+    override fun clusterBuildings(buildings: List<Building>, clusterCount: Int): Map<Location, List<Building>> {
         if (clusterCount <= 0) {
             return emptyMap()
         }
-        val buildingById = buildings.associateBy { it.buildingId }
+        val buildingById = buildings.associateBy { it.id }
         val records = buildings.map {
             Record(
-                it.buildingId,
+                it.id,
                 mapOf(
                     "lng" to it.location.lng,
                     "lat" to it.location.lat,
