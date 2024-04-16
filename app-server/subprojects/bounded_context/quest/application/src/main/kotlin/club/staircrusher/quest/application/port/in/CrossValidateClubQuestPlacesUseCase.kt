@@ -32,7 +32,7 @@ class CrossValidateClubQuestPlacesUseCase(
                 val closedPlaceIds = runBlocking {
                     val isNotClosedList = clubQuestTargetPlacesSearcher.crossValidatePlaces(places)
                     places.zip(isNotClosedList)
-                        .filterNot { (_, isNotClosed) -> isNotClosed }
+                        .filter { (_, isNotClosed) -> !isNotClosed }
                         .map { (place, _) -> place.id }
                 }
                 logger.info("[$questId] closedPlaceIds: $closedPlaceIds")
