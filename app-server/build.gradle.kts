@@ -43,6 +43,8 @@ subprojects {
         if (project.name == "infra") {
             implementation(rootProject.projects.crossCuttingConcern.infra.springWeb)
         }
+        val kotlinLoggingVersion: String by project
+        implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
     }
 
     tasks.test {

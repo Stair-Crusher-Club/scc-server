@@ -62,10 +62,12 @@ class ClubQuestCreateAplService(
             .take(clusterCount) // clusterCount 개의 퀘스트만 만든다.
             .map { (location, targetBuildings) ->
                 val b = targetBuildings
-                    .flatMap { (_, places) ->
-                        val validationResults = clubQuestTargetPlacesSearcher.crossValidatePlaces(places)
-                        places.filterIndexed { index, _ -> validationResults[index] }
-                    }
+                    // 네이버 지도 api의 rate limit이 너무 낮아서 임시로 비활성화한다.
+                    .flatMap { it.value }
+//                    .flatMap { (_, places) ->
+//                        val validationResults = clubQuestTargetPlacesSearcher.crossValidatePlaces(places)
+//                        places.filterIndexed { index, _ -> validationResults[index] }
+//                    }
                     .take(maxPlaceCountPerQuest)
                     .groupToClubQuestTargetBuildings()
 
