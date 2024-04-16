@@ -47,7 +47,7 @@ class CrossValidateClubQuestPlacesUseCase(
                     clubQuestRepository.save(quest)
                 }
             } catch (t: Throwable) {
-                logger.error("[$questId] CrossValidateClubQuestPlaces failed", t)
+                logger.error(t) { "[$questId] CrossValidateClubQuestPlaces failed" }
             }
             logger.info("[$questId] Finish CrossValidateClubQuestPlaces")
         }
