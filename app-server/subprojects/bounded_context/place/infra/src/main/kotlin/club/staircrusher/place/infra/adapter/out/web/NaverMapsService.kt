@@ -45,7 +45,7 @@ class NaverMapsService(
     }
 
     @Suppress("UnstableApiUsage", "MagicNumber")
-    private val rateLimiter = RateLimiter.create(100.0)
+    private val rateLimiter = RateLimiter.create(20.0)
 
     private val httpClient = HttpClient.create()
         .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT.toMillis().toInt())
