@@ -166,7 +166,7 @@ class NaverMapsService(
                 val siDo = addressNameTokens[0]
                 val siGunGu = addressNameTokens[1]
                 val eupMyeonDong = addressNameTokens[2]
-                val li = addressNameTokens[3].takeIf { it.endsWith("리") } ?: ""
+                val li = addressNameTokens.getOrNull(3)?.takeIf { it.endsWith("리") } ?: ""
 
                 /**
                  * 네이버는 도로명주소에 상세주소(e.g., 106동 803호)]와 상호명(e.g., 문화식당)이 같이 나오는 경우가 있으므로
