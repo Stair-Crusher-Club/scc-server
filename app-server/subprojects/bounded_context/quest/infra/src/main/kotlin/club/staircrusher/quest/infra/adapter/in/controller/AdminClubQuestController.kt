@@ -11,6 +11,7 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
+import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlacesUseCase
 import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.infra.adapter.`in`.converter.toDTO
@@ -31,6 +32,7 @@ class AdminClubQuestController(
     private val clubQuestSetIsClosedUseCase: ClubQuestSetIsClosedUseCase,
     private val clubQuestSetIsNotAccessibleUseCase: ClubQuestSetIsNotAccessibleUseCase,
     private val clubQuestRepository: ClubQuestRepository,
+    private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
 ) {
     @GetMapping("/admin/clubQuests")
     fun listClubQuests(): List<ClubQuestsGet200ResponseInner> {
@@ -95,5 +97,10 @@ class AdminClubQuestController(
             request.placeId,
             request.isNotAccessible,
         ).toDTO()
+    }
+
+    @PutMapping("/admin/clubQuests/{clubQuestId}/crossValidate")
+    fun crossValidate(@PathVariable clubQuestId: String) {
+        return crossValidateClubQuestPlacesUseCase.handle(clubQuestId)
     }
 }
