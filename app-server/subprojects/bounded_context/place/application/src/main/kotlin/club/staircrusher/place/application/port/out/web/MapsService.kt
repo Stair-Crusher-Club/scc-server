@@ -22,6 +22,7 @@ interface MapsService {
 
     data class SearchByKeywordOption(
         val region: Region? = null,
+        val runCrossValidation: Boolean = false,
     ) {
         sealed interface Region
         data class CircleRegion(

@@ -1,18 +1,18 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
-import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.application.port.`in`.PlaceService
+import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
+import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
+import club.staircrusher.stdlib.geography.LocationUtils
 import club.staircrusher.stdlib.place.PlaceCategory
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.geography.Length
-import club.staircrusher.stdlib.geography.LocationUtils
 import kotlin.math.ceil
 
 @Component
@@ -38,6 +38,12 @@ class InProcessClubQuestTargetPlaceSearcher(
         val radius = Length.ofMeters(radiusMeters)
         val buildingsInRegion = searchBuildingsInRegion(centerLocation, radius)
         return searchPlacesInBuildings(buildingsInRegion, centerLocation, radius)
+    }
+
+    override suspend fun crossValidatePlaces(places: List<Place>): List<Boolean> = coroutineScope {
+        places
+            .map { async { placeService.crossValidate(it, MapsService.SearchByKeywordOption()) } }
+            .awaitAll()
     }
 
     private suspend fun searchBuildingsInRegion(centerLocation: Location, radius: Length): List<Building> {

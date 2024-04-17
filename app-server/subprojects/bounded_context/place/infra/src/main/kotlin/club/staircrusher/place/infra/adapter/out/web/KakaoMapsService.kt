@@ -11,6 +11,7 @@ import com.google.common.util.concurrent.RateLimiter
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
+import jakarta.annotation.Priority
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -31,6 +32,7 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @Component
+@Priority(Int.MAX_VALUE - 1)
 class KakaoMapsService(
     kakaoProperties: KakaoProperties,
 ) : MapsService {
