@@ -27,5 +27,6 @@ class ListConqueredPlacesQuery(
                 isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(place.building),
             )
         }
+            .sortedByDescending { it.placeAccessibility?.createdAt }
     }
 }

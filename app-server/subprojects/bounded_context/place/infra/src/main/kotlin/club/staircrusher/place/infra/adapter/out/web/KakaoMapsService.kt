@@ -32,7 +32,7 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @Component
-@Priority(value = Int.MAX_VALUE - 1)
+@Priority(Int.MAX_VALUE - 1)
 class KakaoMapsService(
     kakaoProperties: KakaoProperties,
 ) : MapsService {
