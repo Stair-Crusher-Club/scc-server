@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.mock.mockito.SpyBean
 
 class SearchPlacesTest : PlaceSearchITBase() {
-    @MockBean
+    @SpyBean
     private lateinit var mapsService: MapsService
 
     @Test

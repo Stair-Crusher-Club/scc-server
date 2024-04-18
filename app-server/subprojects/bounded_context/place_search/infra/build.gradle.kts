@@ -14,4 +14,6 @@ dependencies {
     integrationTestImplementation(projects.boundedContext.place.application)
     integrationTestImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
+    integrationTestImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+
 }

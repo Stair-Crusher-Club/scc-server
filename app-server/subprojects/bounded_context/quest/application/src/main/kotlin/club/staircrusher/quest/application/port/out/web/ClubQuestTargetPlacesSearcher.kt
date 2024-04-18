@@ -5,4 +5,5 @@ import club.staircrusher.stdlib.geography.Location
 
 interface ClubQuestTargetPlacesSearcher {
     suspend fun searchPlaces(centerLocation: Location, radiusMeters: Int): List<Place>
+    suspend fun crossValidatePlaces(places: List<Place>): List<Boolean>
 }
