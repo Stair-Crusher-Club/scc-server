@@ -593,11 +593,11 @@ openobserve-collector:
         error_mode: ignore
         logs:
           log_record:
-            - resource.attributes["k8s.namespace.name"]!="scc"
+            - resource.attributes["k8s.namespace.name"]!=nil and resource.attributes["k8s.namespace.name"]!="scc"
         metrics:
           metric:
-            - resource.attributes["k8s.namespace.name"]!="scc"
-            - resource.attributes["namespace"]!="scc"
+            - resource.attributes["k8s.namespace.name"]!=nil and resource.attributes["k8s.namespace.name"]!="scc"
+            - resource.attributes["namespace"]!=nil and resource.attributes["namespace"]!="scc"
       tail_sampling:
         decision_wait: 10s
         num_traces: 100

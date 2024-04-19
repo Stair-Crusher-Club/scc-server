@@ -4,7 +4,7 @@ import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.place.PlaceCategory
 
-class MockMapsService : MapsService {
+open class MockMapsService : MapsService {
     override suspend fun findAllByKeyword(keyword: String, option: MapsService.SearchByKeywordOption): List<Place> {
         return emptyList()
     }
