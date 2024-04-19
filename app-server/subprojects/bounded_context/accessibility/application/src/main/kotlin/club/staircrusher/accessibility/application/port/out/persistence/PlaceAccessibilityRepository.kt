@@ -25,6 +25,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         cursorId: String,
         limit: Int,
     ): List<PlaceAccessibility>
+
     fun countAll(): Int
     fun remove(id: String)
 
@@ -47,20 +48,28 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
             if (listOf(floors, isStairOnlyOption, stairHeightLevel, entranceDoorTypes).all { it == null }) {
                 return true
             }
-            // 0401 이후 버전에서는 floors, stairHeightLevel, entranceDoorTypes 를 모두 올려줘야한다.
-            val 새로운_폼에서_필수_필드가_채워졌는가 = listOf(floors, stairHeightLevel, entranceDoorTypes).all { it != null }
+            // 0401 이후 버전에서는 floors, entranceDoorTypes 는 필수 / isStairOnlyOption 는 floors 에 따라, stairHeightLevel 은 stairInfo 에 따라 입력을 받는다.
+            val 새로운_폼에서_필수_필드가_채워졌는가 = listOf(floors, entranceDoorTypes).all { it != null }
             if (새로운_폼에서_필수_필드가_채워졌는가.not()) {
-                println("새로운_폼에서_필수_필드가_채워졌는가.not(); $this")
+                return false
             }
-            val 단층인가 = floors!!.size == 1
-            val 복수층이면서_다른_층으로_이동하는_방법이_있는가 = floors.let { it.size > 1 && isStairOnlyOption != null }
-            if ((단층인가 || 복수층이면서_다른_층으로_이동하는_방법이_있는가).not()) {
-                println("(단층인가 || 복수층이면서_다른_층으로_이동하는_방법이_있는가).not(); $this")
+
+            val 복수층인가 = floors!!.size > 1
+            val 다른_층으로_가는_정보를_입력하지_않았다 = isStairOnlyOption == null
+            if (복수층인가 && 다른_층으로_가는_정보를_입력하지_않았다) {
+                return false
             }
-            val 문유형을_등록했는가 = entranceDoorTypes!!.isEmpty()
-            val 문유형_없음은_다른_문유형과_같이_등록할_수_없다 = entranceDoorTypes.isNotEmpty() && entranceDoorTypes.let { it.contains(EntranceDoorType.None) && it.size > 1 }.not()
-            if ((문유형을_등록했는가 || 문유형_없음은_다른_문유형과_같이_등록할_수_없다).not()) {
-                println("(문유형을_등록했는가 || 문유형_없음은_다른_문유형과_같이_등록할_수_없다).not(); $this")
+
+            val 계단이_있는가 = stairInfo != StairInfo.NONE
+            val 계단_높이를_입력하지_않았다 = stairHeightLevel == null
+            if (계단이_있는가 && 계단_높이를_입력하지_않았다) {
+                return false
+            }
+
+            val 문이_없다 = entranceDoorTypes!!.contains(EntranceDoorType.None)
+            val 문유형이_여러가지인가 = entranceDoorTypes.count() > 1
+            if (문이_없다 && 문유형이_여러가지인가) {
+                return false
             }
             return true
         }

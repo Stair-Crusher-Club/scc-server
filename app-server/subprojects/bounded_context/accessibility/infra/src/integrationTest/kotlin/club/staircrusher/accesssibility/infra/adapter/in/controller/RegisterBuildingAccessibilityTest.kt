@@ -34,14 +34,49 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
 
     @Test
     fun `정상적으로 등록된다`() {
-        repeat(3) { idx ->
-            val expectedRegisteredUserOrder = idx + 1
-            val user = transactionManager.doInTransaction {
-                testDataGenerator.createUser()
-            }
-            val place = transactionManager.doInTransaction {
-                testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
-            }
+        val buildingsAndParams = transactionManager.doInTransaction {
+            listOf(
+                // 입구계단X,경사로X,엘리베이터O,엘리베이터계단X,회전문
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.NONE, entranceStairHeightLevel = null,
+                        hasSlope = false,
+                        hasElevator = true, elevatorStairInfo = StairInfo.NONE, elevatorStairHeightLevel = null,
+                        entranceDoorTypes = listOf(EntranceDoorType.Revolving)
+                    )
+                },
+                // 입구계단X,경사로O,엘리베이터O,엘리베이터계단O,여닫이
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.NONE, entranceStairHeightLevel = null,
+                        hasSlope = true,
+                        hasElevator = true, elevatorStairInfo = StairInfo.OVER_SIX, elevatorStairHeightLevel = StairHeightLevel.HALF_THUMB,
+                        entranceDoorTypes = listOf(EntranceDoorType.Hinged)
+                    )
+                },
+                // 입구계단O,경사로O,엘리베이터O,엘리베이터계단O,자동미닫이
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.TWO_TO_FIVE, entranceStairHeightLevel = StairHeightLevel.HALF_THUMB,
+                        hasSlope = true,
+                        hasElevator = true, elevatorStairInfo = StairInfo.OVER_SIX, elevatorStairHeightLevel = StairHeightLevel.OVER_THUMB,
+                        entranceDoorTypes = listOf(EntranceDoorType.Automatic, EntranceDoorType.Sliding)
+                    )
+                },
+                // 입구계단O,경사로O,엘리베이터X,문없음
+                testDataGenerator.createBuilding().let { building ->
+                    building to getRequestParams(
+                        building, entranceStairInfo = StairInfo.ONE, entranceStairHeightLevel = StairHeightLevel.THUMB,
+                        hasSlope = true,
+                        hasElevator = false, elevatorStairInfo = StairInfo.NONE, elevatorStairHeightLevel = null,
+                        entranceDoorTypes = listOf(EntranceDoorType.None)
+                    )
+                },
+            )
+        }
+        buildingsAndParams.forEachIndexed { idx, (building, params) ->
+            val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+            val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
 
             val params = getDefaultRequestParams(place.building)
             mvc.sccRequest("/registerBuildingAccessibility", params, user = user)
@@ -76,40 +111,81 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
 
     @Test
     fun `240401 이전 버전에서도 정상적으로 등록된다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val placesAndParams = transactionManager.doInTransaction {
+            listOf(
+                // 입구계단X,경사로X,엘리베이터X,엘리베이터계단X
+                testDataGenerator.createBuildingAndPlace(placeName = "장소장소").let { place ->
+                    place to getRequestParamsBefore2404(
+                        place.building,
+                        entranceStairInfo = StairInfo.NONE,
+                        hasSlope = false,
+                        hasElevator = false,
+                        elevatorStairInfo = StairInfo.UNDEFINED
+                    )
+                },
+                // 입구계단O,경사로O,엘리베이터X,엘리베이터계단X
+                testDataGenerator.createBuildingAndPlace(placeName = "장소장소").let { place ->
+                    place to getRequestParamsBefore2404(
+                        place.building,
+                        entranceStairInfo = StairInfo.TWO_TO_FIVE,
+                        hasSlope = true,
+                        hasElevator = false,
+                        elevatorStairInfo = StairInfo.UNDEFINED
+                    )
+                },
+                // 입구계단X,경사로O,엘리베이터O,엘리베이터계단O
+                testDataGenerator.createBuildingAndPlace(placeName = "장소장소").let { place ->
+                    place to getRequestParamsBefore2404(
+                        place.building,
+                        entranceStairInfo = StairInfo.NONE,
+                        hasSlope = true,
+                        hasElevator = true,
+                        elevatorStairInfo = StairInfo.TWO_TO_FIVE
+                    )
+                },
+                // 입구계단O,경사로O,엘리베이터O,엘리베이터계단O
+                testDataGenerator.createBuildingAndPlace(placeName = "장소장소").let { place ->
+                    place to getRequestParamsBefore2404(
+                        place.building,
+                        entranceStairInfo = StairInfo.OVER_SIX,
+                        hasSlope = true,
+                        hasElevator = true,
+                        elevatorStairInfo = StairInfo.OVER_SIX
+                    )
+                },
+            )
         }
-        val place = transactionManager.doInTransaction {
-            testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
-        }
-        val params = getDefaultRequestParamsBefore2404(place.building)
-        mvc.sccRequest("/registerBuildingAccessibility", params, user = user)
-        mvc
-            .sccRequest("/getAccessibility", GetAccessibilityPostRequest(place.id), user = user)
-            .apply {
-                val result = getResult(AccessibilityInfoDto::class)
-                val buildingAccessibility = result.buildingAccessibility!!
-                assertEquals(place.building.id, buildingAccessibility.buildingId)
-                assertEquals(params.entranceStairInfo, buildingAccessibility.entranceStairInfo)
-                assertEquals(params.entranceStairHeightLevel, null)
-                assertEquals(params.entranceImageUrls.size, buildingAccessibility.entranceImageUrls.size)
-                assertEquals(params.entranceImageUrls[0], buildingAccessibility.entranceImageUrls[0])
-                assertEquals(params.hasSlope, buildingAccessibility.hasSlope)
-                assertEquals(params.hasElevator, buildingAccessibility.hasElevator)
-                assertEquals(params.entranceDoorTypes, null)
-                assertEquals(params.elevatorStairInfo, buildingAccessibility.elevatorStairInfo)
-                assertEquals(params.elevatorStairHeightLevel, null)
-                assertEquals(2, buildingAccessibility.elevatorImageUrls.size)
-                assertEquals(params.elevatorImageUrls[0], buildingAccessibility.elevatorImageUrls[0])
-                assertEquals(params.elevatorImageUrls[1], buildingAccessibility.elevatorImageUrls[1])
-                assertFalse(buildingAccessibility.isUpvoted)
-                assertEquals(0, buildingAccessibility.totalUpvoteCount)
 
-                assertEquals(1, result.buildingAccessibilityComments.size)
-                assertEquals(place.building.id, result.buildingAccessibilityComments[0].buildingId)
-                assertEquals(user.id, result.buildingAccessibilityComments[0].user!!.id)
-                assertEquals("건물 코멘트", result.buildingAccessibilityComments[0].comment)
-            }
+        placesAndParams.forEachIndexed { index, (place, params) ->
+            mvc.sccRequest("/registerBuildingAccessibility", params, user = user)
+            mvc
+                .sccRequest("/getAccessibility", GetAccessibilityPostRequest(place.id), user = user)
+                .apply {
+                    val result = getResult(AccessibilityInfoDto::class)
+                    val buildingAccessibility = result.buildingAccessibility!!
+                    assertEquals(place.building.id, buildingAccessibility.buildingId)
+                    assertEquals(params.entranceStairInfo, buildingAccessibility.entranceStairInfo)
+                    assertEquals(params.entranceStairHeightLevel, null)
+                    assertEquals(params.entranceImageUrls.size, buildingAccessibility.entranceImageUrls.size)
+                    assertEquals(params.entranceImageUrls[0], buildingAccessibility.entranceImageUrls[0])
+                    assertEquals(params.hasSlope, buildingAccessibility.hasSlope)
+                    assertEquals(params.hasElevator, buildingAccessibility.hasElevator)
+                    assertEquals(params.entranceDoorTypes, null)
+                    assertEquals(params.elevatorStairInfo, buildingAccessibility.elevatorStairInfo)
+                    assertEquals(params.elevatorStairHeightLevel, null)
+                    assertEquals(2, buildingAccessibility.elevatorImageUrls.size)
+                    assertEquals(params.elevatorImageUrls[0], buildingAccessibility.elevatorImageUrls[0])
+                    assertEquals(params.elevatorImageUrls[1], buildingAccessibility.elevatorImageUrls[1])
+                    assertFalse(buildingAccessibility.isUpvoted)
+                    assertEquals(0, buildingAccessibility.totalUpvoteCount)
+
+                    assertEquals(1, result.buildingAccessibilityComments.size)
+                    assertEquals(place.building.id, result.buildingAccessibilityComments[0].buildingId)
+                    assertEquals(user.id, result.buildingAccessibilityComments[0].user!!.id)
+                    assertEquals("건물 코멘트", result.buildingAccessibilityComments[0].comment)
+                }
+        }
     }
 
 
@@ -190,24 +266,39 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
 
     private fun getDefaultRequestParams(
         building: Building,
-        entranceStairInfo: StairInfo = StairInfo.ONE,
-        entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
-        hasSlope: Boolean = true,
-        hasElevator: Boolean = true,
-        elevatorStairInfo: StairInfo = StairInfo.TWO_TO_FIVE,
-        elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.OVER_THUMB,
-        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic)
+    ): RegisterBuildingAccessibilityRequestDto {
+        return getRequestParams(
+            building = building,
+            entranceStairInfo = StairInfo.TWO_TO_FIVE,
+            entranceStairHeightLevel = StairHeightLevel.OVER_THUMB,
+            hasSlope = true,
+            hasElevator = true,
+            elevatorStairInfo = StairInfo.OVER_SIX,
+            elevatorStairHeightLevel = StairHeightLevel.HALF_THUMB,
+            entranceDoorTypes = listOf(EntranceDoorType.Automatic, EntranceDoorType.Sliding),
+        )
+    }
+
+    private fun getRequestParams(
+        building: Building,
+        entranceStairInfo: StairInfo,
+        entranceStairHeightLevel: StairHeightLevel?,
+        hasSlope: Boolean,
+        hasElevator: Boolean,
+        elevatorStairInfo: StairInfo,
+        elevatorStairHeightLevel: StairHeightLevel?,
+        entranceDoorTypes: List<EntranceDoorType>
     ): RegisterBuildingAccessibilityRequestDto {
         return RegisterBuildingAccessibilityRequestDto(
             buildingId = building.id,
             entranceStairInfo = entranceStairInfo.toDTO(),
-            entranceStairHeightLevel = entranceStairHeightLevel.toDTO(),
+            entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
             entranceImageUrls = listOf("buildingAccessibilityEntranceImage"),
             hasSlope = hasSlope,
             hasElevator = hasElevator,
             entranceDoorTypes = entranceDoorTypes.map { it.toDTO() },
             elevatorStairInfo = elevatorStairInfo.toDTO(),
-            elevatorStairHeightLevel = elevatorStairHeightLevel.toDTO(),
+            elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
             elevatorImageUrls = listOf(
                 "buildingAccessibilityElevatorImage1",
                 "buildingAccessibilityElevatorImage2",
@@ -216,12 +307,12 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
         )
     }
 
-    private fun getDefaultRequestParamsBefore2404(
+    private fun getRequestParamsBefore2404(
         building: Building,
-        entranceStairInfo: StairInfo = StairInfo.ONE,
-        hasSlope: Boolean = true,
-        hasElevator: Boolean = true,
-        elevatorStairInfo: StairInfo = StairInfo.TWO_TO_FIVE,
+        entranceStairInfo: StairInfo,
+        hasSlope: Boolean,
+        hasElevator: Boolean,
+        elevatorStairInfo: StairInfo,
     ): RegisterBuildingAccessibilityRequestDto {
         return RegisterBuildingAccessibilityRequestDto(
             buildingId = building.id,

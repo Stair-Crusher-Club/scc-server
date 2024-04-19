@@ -28,11 +28,32 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
         val elevatorImageUrls: List<String>,
         val userId: String?,
     ) {
+        @Suppress("VariableNaming", "ReturnCount")
         fun isValid(): Boolean {
-            // 0401 버전에서 추가된 항목이 모두 있거나 모두 없거나
-            val isInputValid = listOf(entranceStairHeightLevel, entranceDoorTypes, elevatorStairHeightLevel).all { it == null } || listOf(entranceStairHeightLevel, entranceDoorTypes, elevatorStairHeightLevel).all { it != null }
-            val isDoorTypesInvalid = entranceDoorTypes?.isEmpty() == true || entranceDoorTypes?.let { it.contains(EntranceDoorType.None) && it.count() > 1 } ?: false
-            return isInputValid && isDoorTypesInvalid.not()
+            // 0401 이전 버전에서는 entranceDoorTypes, entranceStairHeightLevel, elevatorStairHeightLevel 를 올려줄 수 없다.
+            // entranceDoorTypes 은 필수타입이라 없으면 예전버전이라고 판단
+            if (listOf(entranceDoorTypes, entranceStairHeightLevel, elevatorStairHeightLevel).all { it == null }) {
+                return true
+            }
+
+            val 입구_계단이_있는가 = entranceStairInfo != StairInfo.NONE
+            val 입구_계단_높이를_입력하지_않았다 = entranceStairHeightLevel == null
+            if (입구_계단이_있는가 && 입구_계단_높이를_입력하지_않았다) {
+                return false
+            }
+
+            val 엘리베이터_계단이_있는가 = elevatorStairInfo != StairInfo.NONE
+            val 엘리베이터_계단_높이를_입력하지_않았다 = elevatorStairHeightLevel == null
+            if (엘리베이터_계단이_있는가 && 엘리베이터_계단_높이를_입력하지_않았다) {
+                return false
+            }
+
+            val 문이_없다 = entranceDoorTypes!!.contains(EntranceDoorType.None)
+            val 문유형이_여러가지인가 = entranceDoorTypes.count() > 1
+            if (문이_없다 && 문유형이_여러가지인가) {
+                return false
+            }
+            return true
         }
     }
 }

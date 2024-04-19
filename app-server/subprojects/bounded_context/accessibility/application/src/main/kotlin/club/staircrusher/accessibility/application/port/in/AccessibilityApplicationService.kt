@@ -194,8 +194,8 @@ class AccessibilityApplicationService(
         }
         val buildingAccessibility = createBuildingAccessibilityParams.let {
             if (
-                it.hasElevator && it.elevatorStairInfo == StairInfo.UNDEFINED ||
-                !it.hasElevator && it.elevatorStairInfo != StairInfo.UNDEFINED
+                (it.hasElevator && it.elevatorStairInfo == StairInfo.UNDEFINED) ||
+                (it.hasElevator.not() && it.elevatorStairInfo != StairInfo.UNDEFINED)
             ) {
                 throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
