@@ -114,6 +114,9 @@ class AccessibilityApplicationService(
     }
 
     fun listPlaceAndBuildingAccessibility(places: List<Place>): List<Pair<PlaceAccessibility?, BuildingAccessibility?>> {
+        if (places.isEmpty()) {
+            return emptyList()
+        }
         val placeIds = places.map { it.id }
         // 현재 place 당 pa, ba 는 정책상 1개 이므로 단순 associateBy 해준다.
         val pas = placeAccessibilityRepository.findByPlaceIds(placeIds).associateBy { it.placeId }

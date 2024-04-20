@@ -75,6 +75,9 @@ class PlaceSearchService(
     }
 
     private fun List<Place>.toSearchPlacesResult(currentLocation: Location?): List<SearchPlacesResult> {
+        if (this.isEmpty()) {
+            return emptyList()
+        }
         return accessibilityApplicationService.listPlaceAndBuildingAccessibility(this)
             .zip(this) { (pa, ba), p -> Triple(pa, ba, p) }
             .map { (pa, ba, p) ->
