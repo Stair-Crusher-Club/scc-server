@@ -5,7 +5,7 @@ spring:
     url: jdbc:postgresql://localhost:15432/scc_test
     driver-class-name: org.postgresql.Driver
     hikari:
-      connection-timeout: 10000
+      connection-timeout: 2000
       data-source-properties.cachePrepStmts: true
       data-source-properties.prepStmtCacheSize: 250
       data-source-properties.prepStmtCacheSqlLimit: 2048
