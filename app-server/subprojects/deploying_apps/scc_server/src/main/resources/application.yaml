@@ -14,6 +14,7 @@ spring:
       data-source-properties.prepStmtCacheSqlLimit: 2048
       pool-name: writer
       maximum-pool-size: 32
+      minimum-idle: 10
 
 # actuator settings
 management:

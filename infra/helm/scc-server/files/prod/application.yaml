@@ -19,7 +19,8 @@ spring:
       data-source-properties.prepStmtCacheSize: 250
       data-source-properties.prepStmtCacheSqlLimit: 2048
       pool-name: writer
-      maximum-pool-size: 100
+      maximum-pool-size: 32
+      minimum-idle: 10
 
 # logging:
 #   config: /app/conf/logback.xml
