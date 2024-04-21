@@ -291,7 +291,7 @@ openobserve-collector:
         policies: [
           {
             # Rule 1: low sampling for readiness/liveness probes
-            name: team_a-probe,
+            name: low-probe-policy,
             type: and,
             and:
               {
@@ -322,6 +322,12 @@ openobserve-collector:
             name: trace-status-policy,
             type: status_code,
             status_code: { status_codes: [ ERROR ] },
+          },
+          {
+            # apply probabilistic sampling for the rest
+            name: probabilistic-policy,
+            type: probabilistic,
+            probabilistic: { sampling_percentage: 100 },
           },
         ]
       resourcedetection:
@@ -605,7 +611,7 @@ openobserve-collector:
         policies: [
           {
             # Rule 1: low sampling for readiness/liveness probes
-            name: team_a-probe,
+            name: low-probe-policy,
             type: and,
             and:
               {
@@ -636,6 +642,12 @@ openobserve-collector:
             name: trace-status-policy,
             type: status_code,
             status_code: { status_codes: [ ERROR ] },
+          },
+          {
+            # apply probabilistic sampling for the rest
+            name: probabilistic-policy,
+            type: probabilistic,
+            probabilistic: { sampling_percentage: 100 },
           },
         ]
       resourcedetection:
