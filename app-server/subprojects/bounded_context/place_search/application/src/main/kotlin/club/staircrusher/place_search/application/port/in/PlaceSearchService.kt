@@ -26,7 +26,7 @@ class PlaceSearchService(
         val isAccessibilityRegistrable: Boolean,
     )
 
-    @Suppress("UnusedPrivateMember")
+    @Suppress("UnusedPrivateMember", "MagicNumber")
     suspend fun searchPlaces(
         searchText: String,
         currentLocation: Location?,
