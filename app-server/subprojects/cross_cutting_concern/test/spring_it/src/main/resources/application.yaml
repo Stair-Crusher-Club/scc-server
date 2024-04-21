@@ -11,6 +11,7 @@ spring:
       data-source-properties.prepStmtCacheSqlLimit: 2048
       pool-name: writer
       maximum-pool-size: 16
+      minimum-idle: 10
 
 scc:
   kakao:
