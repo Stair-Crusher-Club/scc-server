@@ -26,7 +26,7 @@ class PlaceSearchService(
         val isAccessibilityRegistrable: Boolean,
     )
 
-    @Suppress("UnusedPrivateMember")
+    @Suppress("UnusedPrivateMember", "MagicNumber")
     suspend fun searchPlaces(
         searchText: String,
         currentLocation: Location?,
@@ -61,6 +61,7 @@ class PlaceSearchService(
                 it
             }
         }
+            .take(10) // FIXME: 장소 개수가 너무 많으면 성능에 이슈가 있어서, 일단 최대 10개만 내려주게끔 수정한다.
         return places.toSearchPlacesResult(currentLocation)
     }
 
