@@ -327,7 +327,7 @@ openobserve-collector:
             # apply probabilistic sampling for the rest
             name: probabilistic-policy,
             type: probabilistic,
-            probabilistic: { sampling_percentage: 100 },
+            probabilistic: { sampling_percentage: 0.2 },
           },
         ]
       resourcedetection:
@@ -647,7 +647,7 @@ openobserve-collector:
             # apply probabilistic sampling for the rest
             name: probabilistic-policy,
             type: probabilistic,
-            probabilistic: { sampling_percentage: 100 },
+            probabilistic: { sampling_percentage: 0.2 },
           },
         ]
       resourcedetection:
