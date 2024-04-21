@@ -578,7 +578,7 @@ openobserve-collector:
                       string_attribute:
                         {
                           key: http.route,
-                          values: [ /livez, /readyz, /** ],
+                          values: [/livez, /readyz, /**],
                           enabled_regex_matching: false,
                         },
                     },
@@ -602,12 +602,35 @@ openobserve-collector:
             name: trace-latency-policy,
             type: latency,
             latency: { threshold_ms: 500 },
-          }
+          },
           {
             # Rule 4: apply probabilistic sampling for the rest
             name: randomized-policy,
-            type: probabilistic,
-            probabilistic: { sampling_percentage: 30 },
+            type: and,
+            and:
+              {
+                and_sub_policy:
+                  [
+                    {
+                      # invert match - apply to all routes except the ones specified
+                      name: route-name-policy,
+                      type: string_attribute,
+                      string_attribute:
+                        {
+                          key: http.route,
+                          values: [/livez, /readyz, /**],
+                          enabled_regex_matching: false,
+                          invert_match: true,
+                        },
+                    },
+                    {
+                      # apply probabilistic sampling
+                      name: probabilistic-policy,
+                      type: probabilistic,
+                      probabilistic: { sampling_percentage: 20 },
+                    },
+                  ],
+              },
           },
         ]
       resourcedetection:
