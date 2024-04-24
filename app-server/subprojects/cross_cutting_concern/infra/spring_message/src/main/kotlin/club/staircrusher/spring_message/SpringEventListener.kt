@@ -36,6 +36,7 @@ open class SpringEventListener(
         }
     }
 
+    @Suppress("UnusedPrivateMember")
     @Recover
     fun recover(err: Throwable, springEvent: JacksonSerializedSpringEvent<*>) {
         logger.error { "Failed to process spring event of type ${springEvent.type} after retry" }
