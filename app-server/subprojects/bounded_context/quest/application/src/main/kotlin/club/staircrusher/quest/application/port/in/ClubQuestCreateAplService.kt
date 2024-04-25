@@ -149,7 +149,7 @@ class ClubQuestCreateAplService(
         questNamePrefix: String,
         dryRunResultItems: List<ClubQuestCreateDryRunResultItem>
     ) = transactionManager.doInTransaction {
-        dryRunResultItems.forEachIndexed { idx, dryRunResultItem ->
+        dryRunResultItems.mapIndexed { idx, dryRunResultItem ->
             clubQuestRepository.save(ClubQuest(
                 name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
                 dryRunResultItem = dryRunResultItem,
