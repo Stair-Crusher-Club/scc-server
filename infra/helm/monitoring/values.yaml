@@ -203,6 +203,28 @@ openobserve-collector:
           - type: move
             from: attributes.uid
             to: resource["k8s.pod.uid"]
+          # scc custom attributes
+          - type: move
+            from: body.level
+            to: resource["status"]
+          - type: move
+            from: body.thread
+            to: resource["scc.thread"]
+          - type: move
+            from: body.mdc.trace_id
+            to: resource["scc.mdc.trace_id"]
+          - type: move
+            from: body.mdc.span_id
+            to: resource["scc.mdc.span_id"]
+          - type: move
+            from: body.logger
+            to: resource["scc.logger"]
+          - type: move
+            from: body.message
+            to: resource["message"]
+          - type: move
+            from: body.exception
+            to: resource["scc.exception"]
       hostmetrics:
         root_path: /hostfs
         collection_interval: 15s
@@ -602,7 +624,7 @@ openobserve-collector:
             name: trace-latency-policy,
             type: latency,
             latency: { threshold_ms: 500 },
-          }
+          },
           {
             # Rule 4: apply probabilistic sampling for the rest
             name: randomized-policy,
