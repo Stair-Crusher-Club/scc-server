@@ -11,7 +11,7 @@ spring:
 
   datasource:
     username: scc
-    url: jdbc:postgresql://ls-69d68cd036e3b1665f22027b3469cdb456fca15c.cmc9lkaaidnz.ap-northeast-2.rds.amazonaws.com:5432/scc_dev
+    url: jdbc:postgresql://ls-2053b3957420935f6eb1e3f396c8dd1407c7e38e.cmc9lkaaidnz.ap-northeast-2.rds.amazonaws.com:5432/scc_dev
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 2000
