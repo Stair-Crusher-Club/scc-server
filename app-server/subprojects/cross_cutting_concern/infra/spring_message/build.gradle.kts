@@ -10,6 +10,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.retry:spring-retry")
+    implementation("org.springframework:spring-aspects")
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
