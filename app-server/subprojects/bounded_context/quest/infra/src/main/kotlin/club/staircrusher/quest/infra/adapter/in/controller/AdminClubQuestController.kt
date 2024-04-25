@@ -57,10 +57,13 @@ class AdminClubQuestController(
 
     @PostMapping("/admin/clubQuests/create")
     fun createClubQuest(@RequestBody request: ClubQuestsCreatePostRequest): ResponseEntity<Unit> {
-        clubQuestCreateAplService.createFromDryRunResult(
+        val quests = clubQuestCreateAplService.createFromDryRunResult(
             questNamePrefix = request.questNamePrefix,
             dryRunResultItems = request.dryRunResults.map { it.toModel() }
         )
+        quests.forEach { quest ->
+            crossValidateClubQuestPlacesUseCase.handle(quest.id)
+        }
         return ResponseEntity
             .noContent()
             .build()

@@ -17,7 +17,7 @@ class CrossValidateClubQuestPlacesUseCase(
     private val placeService: PlaceService,
 ) {
     @Suppress("MagicNumber")
-    private val taskExecutor = Executors.newFixedThreadPool(4) // 4인 이유는... 그냥 author 마음임.
+    private val taskExecutor = Executors.newCachedThreadPool()
 
     fun handle(questId: String) {
         taskExecutor.execute {
