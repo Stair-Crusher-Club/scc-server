@@ -225,6 +225,7 @@ openobserve-collector:
             from: body.message
             to: resource["message"]
           - type: move
+            if: body.exception
             from: body.exception
             to: resource["scc.exception"]
       hostmetrics:
