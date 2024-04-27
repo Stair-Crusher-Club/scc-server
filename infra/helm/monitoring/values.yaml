@@ -204,6 +204,8 @@ openobserve-collector:
             from: attributes.uid
             to: resource["k8s.pod.uid"]
           # scc custom attributes
+          - type: json_parser
+            id: scc-json-log-parser
           - type: move
             from: body.level
             to: resource["status"]
