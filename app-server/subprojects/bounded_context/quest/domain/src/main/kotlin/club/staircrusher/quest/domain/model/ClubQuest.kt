@@ -9,7 +9,7 @@ class ClubQuest(
     val id: String,
     val name: String,
     val questCenterLocation: Location,
-    targetBuildings: List<ClubQuestTargetBuilding>,
+    targetBuildings: List<ClubQuestTargetBuildingVO>,
     val createdAt: Instant,
     updatedAt: Instant,
 ) {
@@ -26,7 +26,7 @@ class ClubQuest(
         updatedAt = createdAt,
     )
 
-    var targetBuildings: List<ClubQuestTargetBuilding> = targetBuildings
+    var targetBuildings: List<ClubQuestTargetBuildingVO> = targetBuildings
         private set
 
     var updatedAt: Instant = updatedAt

@@ -18,7 +18,7 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Scc_user
 import club.staircrusher.infra.persistence.sqldelight.migration.User_auth_info
-import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
+import club.staircrusher.quest.domain.model.ClubQuestTargetBuildingVO
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.Transaction
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
@@ -52,12 +52,12 @@ class DB(dataSource: DataSource) : TransactionManager {
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter
         ),
         club_questAdapter = Club_quest.Adapter(
-            target_buildingsAdapter = object : ListToTextColumnAdapter<ClubQuestTargetBuilding>() {
-                override fun convertElementToTextColumn(element: ClubQuestTargetBuilding): String {
+            target_buildingsAdapter = object : ListToTextColumnAdapter<ClubQuestTargetBuildingVO>() {
+                override fun convertElementToTextColumn(element: ClubQuestTargetBuildingVO): String {
                     return objectMapper.writeValueAsString(element)
                 }
 
-                override fun convertElementFromTextColumn(text: String): ClubQuestTargetBuilding {
+                override fun convertElementFromTextColumn(text: String): ClubQuestTargetBuildingVO {
                     return objectMapper.readValue(text)
                 }
             }
