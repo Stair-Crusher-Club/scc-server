@@ -50,6 +50,7 @@ sentry:
   environment: prod
 
 scc:
+  environment: prod
   s3:
     imageUpload:
       bucketname: scc-prod-accessibility-images

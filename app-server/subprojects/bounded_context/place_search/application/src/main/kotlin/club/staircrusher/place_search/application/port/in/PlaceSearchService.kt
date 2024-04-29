@@ -11,6 +11,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.LocationUtils
+import club.staircrusher.stdlib.util.SccEnv
 
 @Component
 class PlaceSearchService(
@@ -60,8 +61,10 @@ class PlaceSearchService(
             } else {
                 it
             }
+        }.let {
+            if (SccEnv.isDev()) it
+            else it.take(10) // FIXME: 장소 개수가 너무 많으면 성능에 이슈가 있어서, 일단 최대 10개만 내려주게끔 수정한다.
         }
-            .take(10) // FIXME: 장소 개수가 너무 많으면 성능에 이슈가 있어서, 일단 최대 10개만 내려주게끔 수정한다.
         return places.toSearchPlacesResult(currentLocation)
     }
 
