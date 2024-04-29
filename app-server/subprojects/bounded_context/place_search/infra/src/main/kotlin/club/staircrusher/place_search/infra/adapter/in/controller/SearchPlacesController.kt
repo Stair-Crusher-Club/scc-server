@@ -20,6 +20,7 @@ class SearchPlacesController(
     private val placeSearchService: PlaceSearchService,
     private val listSearchKeywordOfPlaceCategoryUseCase: ListSearchKeywordOfPlaceCategoryUseCase
 ) {
+    @Suppress("MagicNumber")
     @PostMapping("/searchPlaces")
     suspend fun searchPlaces(@RequestBody request: SearchPlacesPostRequest): SearchPlacesPost200Response {
         val searchResults = placeSearchService.searchPlaces(
