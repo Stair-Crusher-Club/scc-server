@@ -26,7 +26,7 @@ import org.springframework.web.cors.CorsConfiguration
 @Configuration(proxyBeanMethods = false)
 open class SccSecurityFilterChainConfig {
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Order(Ordered.HIGHEST_PRECEDENCE + 10)
     open fun sccCommonFilterChain(
         http: HttpSecurity,
         sccSecurityConfigs: List<SccSecurityConfig>,
