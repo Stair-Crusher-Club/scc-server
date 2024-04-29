@@ -1,4 +1,4 @@
-package club.staircrusher.stdlib.util
+package club.staircrusher.spring_web.env
 
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.beans.factory.annotation.Value

@@ -1,4 +1,4 @@
-package club.staircrusher.stdlib.util
+package club.staircrusher.spring_web.env
 
 object SccEnvBeanHolder {
     private var value: SccEnv? = null
