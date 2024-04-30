@@ -1,6 +1,6 @@
 package club.staircrusher.spring_web.security
 
-import club.staircrusher.spring_web.logging.SccLoggingFilter.Companion.SCC_LOGGING_FILTER_ORDER
+import club.staircrusher.spring_web.logging.SccLoggingFilterConfig.Companion.SCC_LOGGING_FILTER_ORDER
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -69,6 +69,6 @@ open class SccSecurityFilterChainConfig {
 
     companion object {
         const val accessTokenHeader = "X-SCC-ACCESS-KEY"
-        const val SCC_SECURITY_FILTER_ORDER = SCC_LOGGING_FILTER_ORDER + 1
+        const val SCC_SECURITY_FILTER_ORDER = SCC_LOGGING_FILTER_ORDER + 100
     }
 }
