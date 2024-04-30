@@ -2,6 +2,7 @@ package club.staircrusher.spring_web.logging
 
 import org.springframework.http.HttpStatus
 
+// Client IP 가 필요할지?
 data class HttpLogMessage(
     val method: String,
     val uri: String,

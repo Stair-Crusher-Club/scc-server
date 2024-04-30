@@ -1,5 +1,6 @@
 package club.staircrusher.spring_web.logging
 
+import club.staircrusher.spring_web.logging.SccLoggingFilter.Companion.SCC_LOGGING_FILTER_ORDER
 import club.staircrusher.stdlib.di.annotation.Component
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.servlet.FilterChain
@@ -7,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import org.slf4j.MDC
-import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.web.filter.OncePerRequestFilter
@@ -16,18 +16,17 @@ import org.springframework.web.util.ContentCachingResponseWrapper
 import java.util.UUID
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(SCC_LOGGING_FILTER_ORDER)
 class SccLoggingFilter: OncePerRequestFilter() {
     private val log = KotlinLogging.logger {}
     private val objectMapper = jacksonObjectMapper()
 
-    @Suppress("MagicNumber")
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val requestId = UUID.randomUUID().toString().substring(0, 8)
+        val requestId = UUID.randomUUID().toString().substring(REQUEST_ID_LENGTH)
 
         // TODO: logback 에서 로그 request_id 로 묶기
         MDC.put(REQUEST_ID, requestId)
@@ -62,5 +61,7 @@ class SccLoggingFilter: OncePerRequestFilter() {
 
     companion object {
         const val REQUEST_ID = "request_id"
+        const val SCC_LOGGING_FILTER_ORDER = Int.MIN_VALUE
+        private const val REQUEST_ID_LENGTH = 8
     }
 }
