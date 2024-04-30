@@ -15,7 +15,6 @@ open class SccLoggingFilterConfig {
     ): FilterRegistrationBean<SccLoggingFilter> {
         val registrationBean = FilterRegistrationBean<SccLoggingFilter>()
         registrationBean.filter = sccLoggingFilter
-        registrationBean.addUrlPatterns("/**")
         registrationBean.order = SCC_LOGGING_FILTER_ORDER
 
         return registrationBean

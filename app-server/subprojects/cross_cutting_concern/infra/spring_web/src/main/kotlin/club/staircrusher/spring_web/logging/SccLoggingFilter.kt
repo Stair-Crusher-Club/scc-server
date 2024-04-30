@@ -68,12 +68,12 @@ open class SccLoggingFilter: OncePerRequestFilter() {
 
             if (logMessage.status == HttpStatus.OK) {
                 // 최소 logging level 이 info 이므로 trace 로 설정해서 안보이게 한다
-                log.info(logMessage.toString())
+                log.trace(logMessage.toString())
             } else {
                 log.info(logMessage.toString())
             }
         } catch (e: Throwable) {
-            log.error(e) { "[${this::class::simpleName}] Failed to log." }
+            log.error(e) { "[SccLoggingFilter] failed to log" }
         }
     }
 
