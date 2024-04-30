@@ -38,9 +38,9 @@ class SccLoggingFilter: OncePerRequestFilter() {
 
         try {
             val logMessage = HttpLogMessage(
-                method = request.method,
-                uri = request.requestURI,
-                status = HttpStatus.valueOf(response.status),
+                method = cachingRequestWrapper.method,
+                uri = cachingRequestWrapper.requestURI,
+                status = HttpStatus.valueOf(cachingResponseWrapper.status),
                 requestBody = objectMapper.readTree(cachingRequestWrapper.contentAsByteArray).toString().ifBlank { "Empty" },
                 responseBody = objectMapper.readTree(cachingResponseWrapper.contentAsByteArray).toString().ifBlank { "Empty" },
             )
