@@ -50,20 +50,20 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
                     building to getRequestParams(
                         building, entranceStairInfo = StairInfo.NONE, entranceStairHeightLevel = null,
                         hasSlope = true,
-                        hasElevator = true, elevatorStairInfo = StairInfo.OVER_SIX, elevatorStairHeightLevel = StairHeightLevel.HALF_THUMB,
+                        hasElevator = true, elevatorStairInfo = StairInfo.OVER_SIX, elevatorStairHeightLevel = null,
                         entranceDoorTypes = listOf(EntranceDoorType.Hinged)
                     )
                 },
-                // 입구계단O,경사로O,엘리베이터O,엘리베이터계단O,자동미닫이
+                // 입구계단2-5칸,경사로O,엘리베이터O,엘리베이터계단1칸,자동미닫이
                 testDataGenerator.createBuilding().let { building ->
                     building to getRequestParams(
-                        building, entranceStairInfo = StairInfo.TWO_TO_FIVE, entranceStairHeightLevel = StairHeightLevel.HALF_THUMB,
+                        building, entranceStairInfo = StairInfo.TWO_TO_FIVE, entranceStairHeightLevel = null,
                         hasSlope = true,
-                        hasElevator = true, elevatorStairInfo = StairInfo.OVER_SIX, elevatorStairHeightLevel = StairHeightLevel.OVER_THUMB,
+                        hasElevator = true, elevatorStairInfo = StairInfo.ONE, elevatorStairHeightLevel = StairHeightLevel.OVER_THUMB,
                         entranceDoorTypes = listOf(EntranceDoorType.Automatic, EntranceDoorType.Sliding)
                     )
                 },
-                // 입구계단O,경사로O,엘리베이터X,문없음
+                // 입구계단1칸,경사로O,엘리베이터X,문없음
                 testDataGenerator.createBuilding().let { building ->
                     building to getRequestParams(
                         building, entranceStairInfo = StairInfo.ONE, entranceStairHeightLevel = StairHeightLevel.THUMB,

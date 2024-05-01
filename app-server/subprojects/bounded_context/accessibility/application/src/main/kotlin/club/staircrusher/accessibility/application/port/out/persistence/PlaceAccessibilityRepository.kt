@@ -60,9 +60,9 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
                 return false
             }
 
-            val 계단이_있는가 = stairInfo != StairInfo.NONE
+            val 계단이_한칸인가 = stairInfo == StairInfo.ONE
             val 계단_높이를_입력하지_않았다 = stairHeightLevel == null
-            if (계단이_있는가 && 계단_높이를_입력하지_않았다) {
+            if (계단이_한칸인가 && 계단_높이를_입력하지_않았다) {
                 return false
             }
 

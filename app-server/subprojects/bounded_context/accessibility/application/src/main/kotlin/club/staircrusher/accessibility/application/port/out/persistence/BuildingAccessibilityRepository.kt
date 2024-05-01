@@ -36,15 +36,15 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
                 return true
             }
 
-            val 입구_계단이_있는가 = entranceStairInfo != StairInfo.NONE
+            val 입구_계단이_한칸인가 = entranceStairInfo == StairInfo.ONE
             val 입구_계단_높이를_입력하지_않았다 = entranceStairHeightLevel == null
-            if (입구_계단이_있는가 && 입구_계단_높이를_입력하지_않았다) {
+            if (입구_계단이_한칸인가 && 입구_계단_높이를_입력하지_않았다) {
                 return false
             }
 
-            val 엘리베이터_계단이_있는가 = elevatorStairInfo != StairInfo.NONE
+            val 엘리베이터_계단이_한칸인가 = elevatorStairInfo == StairInfo.ONE
             val 엘리베이터_계단_높이를_입력하지_않았다 = elevatorStairHeightLevel == null
-            if (엘리베이터_계단이_있는가 && 엘리베이터_계단_높이를_입력하지_않았다) {
+            if (엘리베이터_계단이_한칸인가 && 엘리베이터_계단_높이를_입력하지_않았다) {
                 return false
             }
 
