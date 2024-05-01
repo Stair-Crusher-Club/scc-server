@@ -58,7 +58,8 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         repeat(3) { idx ->
             val expectedRegisteredUserOrder = idx + 1
             val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
-            val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
+            val place =
+                transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
 
             val params = getDefaultRegisterPlaceAccessibilityRequestParamsBefore240401(place)
             mvc
@@ -91,7 +92,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     fun `기존 정보에서 추가된 정보(몇층인지, 계단 높이 단위, 출입문 유형)가 정상적으로 등록된다`() {
         val placesAndParams = transactionManager.doInTransaction {
             listOf(
-                testDataGenerator.createBuildingAndPlace(placeName = "1층,계단O,엄지한마디,경사로O,여닫이문").let { place ->
+                testDataGenerator.createBuildingAndPlace(placeName = "1층,계단1칸,엄지한마디,경사로O,여닫이문").let { place ->
                     place to getRegisterPlaceAccessibilityRequestParamsAfter240401(
                         place = place,
                         floors = listOf(1),
@@ -124,13 +125,13 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                         entranceDoorTypes = listOf(EntranceDoorType.sliding, EntranceDoorType.automatic)
                     )
                 },
-                testDataGenerator.createBuildingAndPlace(placeName = "5층,계단O,엄지손가락이상,경사로X,문없음").let { place ->
+                testDataGenerator.createBuildingAndPlace(placeName = "5층,계단6칸이상,경사로X,문없음").let { place ->
                     place to getRegisterPlaceAccessibilityRequestParamsAfter240401(
                         place = place,
                         floors = listOf(5),
                         isStairOnlyOption = null,
                         stairInfo = StairInfo.TWO_TO_FIVE,
-                        stairHeightLevel = StairHeightLevel.oVERTHUMB,
+                        stairHeightLevel = null,
                         hasSlope = false,
                         entranceDoorTypes = listOf(EntranceDoorType.none)
                     )
