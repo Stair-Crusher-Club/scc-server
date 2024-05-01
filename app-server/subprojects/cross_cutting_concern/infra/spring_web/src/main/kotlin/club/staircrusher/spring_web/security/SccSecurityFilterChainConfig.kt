@@ -1,9 +1,9 @@
 package club.staircrusher.spring_web.security
 
-import club.staircrusher.spring_web.logging.SccLoggingFilterConfig.Companion.SCC_LOGGING_FILTER_ORDER
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -26,7 +26,7 @@ import org.springframework.web.cors.CorsConfiguration
 @Configuration(proxyBeanMethods = false)
 open class SccSecurityFilterChainConfig {
     @Bean
-    @Order(SCC_SECURITY_FILTER_ORDER)
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     open fun sccCommonFilterChain(
         http: HttpSecurity,
         sccSecurityConfigs: List<SccSecurityConfig>,
@@ -69,6 +69,5 @@ open class SccSecurityFilterChainConfig {
 
     companion object {
         const val accessTokenHeader = "X-SCC-ACCESS-KEY"
-        const val SCC_SECURITY_FILTER_ORDER = SCC_LOGGING_FILTER_ORDER + 100
     }
 }
