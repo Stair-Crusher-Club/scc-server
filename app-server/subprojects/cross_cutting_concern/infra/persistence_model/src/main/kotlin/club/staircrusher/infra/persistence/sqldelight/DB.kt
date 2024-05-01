@@ -97,6 +97,8 @@ class DB(dataSource: DataSource) : TransactionManager {
     val userQueries = scc.userQueries
     val userAuthInfoQueries = scc.userAuthInfoQueries
     val clubQuestQueries = scc.clubQuestQueries
+    val clubQuestTargetBuildingQueries = scc.clubQuestTargetBuildingQueries
+    val clubQuestTargetPlaceQueries = scc.clubQuestTargetPlaceQueries
     val accessibilityAllowedRegionQueries = scc.accessibilityAllowedRegionQueries
     val challengeQueries = scc.challengeQueries
     val challengeContributionQueries = scc.challengeContributionQueries

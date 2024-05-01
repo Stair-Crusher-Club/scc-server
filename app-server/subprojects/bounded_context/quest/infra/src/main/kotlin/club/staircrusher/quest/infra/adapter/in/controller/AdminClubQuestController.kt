@@ -12,6 +12,7 @@ import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
 import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlacesUseCase
+import club.staircrusher.quest.application.port.`in`.DeleteClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.infra.adapter.`in`.converter.toDTO
@@ -31,6 +32,7 @@ class AdminClubQuestController(
     private val getClubQuestUseCase: GetClubQuestUseCase,
     private val clubQuestSetIsClosedUseCase: ClubQuestSetIsClosedUseCase,
     private val clubQuestSetIsNotAccessibleUseCase: ClubQuestSetIsNotAccessibleUseCase,
+    private val deleteClubQuestUseCase: DeleteClubQuestUseCase,
     private val clubQuestRepository: ClubQuestRepository,
     private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
 ) {
@@ -76,7 +78,7 @@ class AdminClubQuestController(
 
     @DeleteMapping("/admin/clubQuests/{clubQuestId}")
     fun deleteClubQuest(@PathVariable clubQuestId: String): ResponseEntity<Unit> {
-        clubQuestRepository.remove(clubQuestId)
+        deleteClubQuestUseCase.handle(clubQuestId)
         return ResponseEntity
             .noContent()
             .build()
