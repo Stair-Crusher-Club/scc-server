@@ -8,6 +8,7 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessible
 import club.staircrusher.admin_api.spec.dto.ClubQuestsCreateDryRunPostRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsCreatePostRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
+import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
@@ -58,7 +59,7 @@ class AdminClubQuestController(
     }
 
     @PostMapping("/admin/clubQuests/create")
-    fun createClubQuest(@RequestBody request: ClubQuestsCreatePostRequest): ResponseEntity<Unit> {
+    fun createClubQuest(@RequestBody request: ClubQuestsCreatePostRequest): CreateClubQuestResponseDTO {
         val quests = clubQuestCreateAplService.createFromDryRunResult(
             questNamePrefix = request.questNamePrefix,
             dryRunResultItems = request.dryRunResults.map { it.toModel() }
@@ -66,9 +67,9 @@ class AdminClubQuestController(
         quests.forEach { quest ->
             crossValidateClubQuestPlacesUseCase.handle(quest.id)
         }
-        return ResponseEntity
-            .noContent()
-            .build()
+        return CreateClubQuestResponseDTO(
+            clubQuestIds = quests.map { it.id },
+        )
     }
 
     @GetMapping("/admin/clubQuests/{clubQuestId}")

@@ -17,6 +17,9 @@ class AdminLoginControllerTest {
     @Autowired
     private lateinit var mvc: MockMvc
 
+    @Autowired
+    private lateinit var adminAuthenticationProperties: AdminAuthenticationProperties
+
     private val objectMapper = jacksonObjectMapper()
 
     @Test
@@ -36,7 +39,7 @@ class AdminLoginControllerTest {
         mvc
             .post("/admin/login") {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsBytes(LoginPostRequest(AdminAuthenticationService.ADMIN_USERNAME, "wrong password"))
+                content = objectMapper.writeValueAsBytes(LoginPostRequest(adminAuthenticationProperties.username, "wrong password"))
                 accept = MediaType.APPLICATION_JSON_UTF8
             }
             .andExpect {
@@ -48,7 +51,7 @@ class AdminLoginControllerTest {
         mvc
             .post("/admin/login") {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsBytes(LoginPostRequest(AdminAuthenticationService.ADMIN_USERNAME, "adminPassword"))
+                content = objectMapper.writeValueAsBytes(LoginPostRequest(adminAuthenticationProperties.username, "adminPassword"))
                 accept = MediaType.APPLICATION_JSON_UTF8
             }
             .andExpect {

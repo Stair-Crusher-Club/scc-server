@@ -8,6 +8,7 @@ dependencies {
     implementation(projects.boundedContext.place.application)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
     api(projects.apiSpecification.adminApi)
+    integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
 

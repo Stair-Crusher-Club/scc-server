@@ -92,6 +92,7 @@ paths:
   /clubQuests/create:
     post:
       summary: dryRun 생성 결과를 받아서 실제로 퀘스트를 생성한다.
+      operationId: createClubQuest
       requestBody:
         required: true
         content:
@@ -108,7 +109,11 @@ paths:
                 - questNamePrefix
                 - dryRunResults
       responses:
-        '204': {}
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateClubQuestResponseDTO'
 
   /clubQuests/{clubQuestId}:
     get:
@@ -475,6 +480,15 @@ components:
         - isConquered
         - isClosed
         - isNotAccessible
+
+    CreateClubQuestResponseDTO:
+      properties:
+        clubQuestIds:
+          type: array
+          items:
+            type: string
+      required:
+        - clubQuestIds
 
     CreateAccessibilityAllowedRegionRequestDTO:
       properties:
