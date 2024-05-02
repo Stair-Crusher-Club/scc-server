@@ -6,8 +6,8 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsClosedPutRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessiblePutRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsCreateDryRunPostRequest
-import club.staircrusher.admin_api.spec.dto.ClubQuestsCreatePostRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
+import club.staircrusher.admin_api.spec.dto.CreateClubQuestRequest
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
@@ -59,7 +59,7 @@ class AdminClubQuestController(
     }
 
     @PostMapping("/admin/clubQuests/create")
-    fun createClubQuest(@RequestBody request: ClubQuestsCreatePostRequest): CreateClubQuestResponseDTO {
+    fun createClubQuest(@RequestBody request: CreateClubQuestRequest): CreateClubQuestResponseDTO {
         val quests = clubQuestCreateAplService.createFromDryRunResult(
             questNamePrefix = request.questNamePrefix,
             dryRunResultItems = request.dryRunResults.map { it.toModel() }

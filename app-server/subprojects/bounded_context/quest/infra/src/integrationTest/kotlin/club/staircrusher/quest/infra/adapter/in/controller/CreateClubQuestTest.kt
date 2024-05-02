@@ -1,11 +1,6 @@
 package club.staircrusher.quest.infra.adapter.`in`.controller
 
-import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
-import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
-import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
-import club.staircrusher.admin_api.spec.dto.ClubQuestsCreatePostRequest
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
-import club.staircrusher.admin_api.spec.dto.LocationDTO
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
