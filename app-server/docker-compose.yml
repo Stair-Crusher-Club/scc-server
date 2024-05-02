@@ -1,0 +1,14 @@
+version: '3'
+
+name: scc
+
+services:
+  postgres:
+    image: postgres:14.5-alpine
+    restart: always
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: scc_test
