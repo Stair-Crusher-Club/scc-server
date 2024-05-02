@@ -1,6 +1,7 @@
 package club.staircrusher.place_search.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.accessibility.domain.model.AccessibilityScore
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.place.application.port.`in`.BuildingService
@@ -23,6 +24,7 @@ class PlaceSearchService(
         val buildingAccessibility: BuildingAccessibility?,
         val placeAccessibility: PlaceAccessibility?,
         val distance: Length? = null,
+        val accessibilityScore: Double? = null,
         val isAccessibilityRegistrable: Boolean,
     )
 
@@ -90,6 +92,7 @@ class PlaceSearchService(
                     buildingAccessibility = ba,
                     placeAccessibility = pa,
                     distance = currentLocation?.let { LocationUtils.calculateDistance(it, p.location) },
+                    accessibilityScore = pa?.let { AccessibilityScore.get(pa, ba) },
                     isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p.building),
                 )
             }

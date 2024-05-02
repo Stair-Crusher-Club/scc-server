@@ -1332,6 +1332,9 @@ components:
         isAccessibilityRegistrable:
           type: boolean
           description: 접근성 정보를 등록할 수 있는지 여부.
+        accessibilityScore:
+          type: double
+          description: 접근성 점수. 접근성 정보가 없는 경우 null
 
       required:
         - place
