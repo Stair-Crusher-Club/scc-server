@@ -34,7 +34,7 @@ class PlaceSearchService(
         siGunGuId: String?,
         eupMyeonDongId: String?,
         sort: String?,
-        limit: Int? = null,
+        limit: Int?,
     ): List<SearchPlacesResult> {
         val places = placeService.findAllByKeyword(
             searchText,

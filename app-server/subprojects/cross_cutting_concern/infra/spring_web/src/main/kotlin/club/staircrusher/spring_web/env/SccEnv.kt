@@ -19,7 +19,7 @@ open class SccEnv(
         fun isDev(): Boolean {
             val globalSccEnv = SccEnvBeanHolder.get()
             checkNotNull(globalSccEnv) {
-                "Cannot use SccEnv.instant() since SccEnv bean is not initialized yet."
+                "Cannot use SccEnv.isDev() since SccEnv bean is not initialized yet."
             }
             return globalSccEnv.isDev()
         }
