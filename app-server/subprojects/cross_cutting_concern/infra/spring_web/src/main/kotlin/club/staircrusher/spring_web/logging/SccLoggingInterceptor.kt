@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.servlet.HandlerInterceptor
 import org.springframework.web.util.ContentCachingRequestWrapper
 import org.springframework.web.util.ContentCachingResponseWrapper
+import org.springframework.web.util.WebUtils
 import java.lang.Exception
 
 @Component
@@ -23,10 +24,12 @@ class SccLoggingInterceptor: HandlerInterceptor {
         ex: Exception?
     ) {
         try {
-            val cachedRequest = request as ContentCachingRequestWrapper
-            val cachedResponse = response as ContentCachingResponseWrapper
+            val cachedRequest = WebUtils.getNativeRequest(request, ContentCachingRequestWrapper::class.java)
+            val cachedResponse = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper::class.java)
 
-            logRequestResponse(cachedRequest, cachedResponse)
+            if (cachedRequest != null && cachedResponse != null) {
+                logRequestResponse(cachedRequest, cachedResponse)
+            }
         } catch (e: Throwable) {
             logger.info(e) { "[SccLoggingInterceptor] failed to log" }
         }
@@ -36,9 +39,9 @@ class SccLoggingInterceptor: HandlerInterceptor {
         // Request 의 body 는 Application 에서 읽어야 ContentCaching~ 에 캐싱된다
         // suspend 함수는 Dispatch Type 이 REQUEST 로 처음 들어왔다가 ASYNC 로 여러번 처리될 수 있다
         // 결국 로깅은 마지막 ASYNC 가 처리된 이후에 하게 되는데 그때는 doFilter 안에서
-        // request body 를 읽지 않았다면 caching 되어 있는 request body 가 없어서 null 이 찍힌다
+        // request body 를 읽지 않았다면 caching 되어 있는 request body 가 없어서 null 이 찍힐 수 있다
         val requestBody = objectMapper.readTree(request.contentAsByteArray).toString().ifBlank { null }
-        val responseBody = objectMapper.readTree(response.contentAsByteArray).toString().ifBlank { null }
+        val responseBody = response.contentAsByteArray.toString(Charsets.UTF_8).ifBlank { null }
 
         val logMessage = HttpLogMessage(
             method = request.method,
