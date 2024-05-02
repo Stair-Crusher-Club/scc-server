@@ -56,10 +56,6 @@ open class CustomServletWrappingFilter: OncePerRequestFilter() {
         }
     }
 
-    override fun shouldNotFilterAsyncDispatch(): Boolean {
-        return false
-    }
-
     private fun wrapRequest(request: HttpServletRequest): ContentCachingRequestWrapper {
         return if (request is ContentCachingRequestWrapper) {
             return request
