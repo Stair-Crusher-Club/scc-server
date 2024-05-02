@@ -50,6 +50,7 @@ sentry:
   environment: dev
 
 scc:
+  environment: dev
   s3:
     imageUpload:
       bucketname: scc-dev-accessibility-images-2
