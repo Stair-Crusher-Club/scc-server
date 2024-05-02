@@ -33,7 +33,8 @@ class PlaceSearchService(
         distanceMetersLimit: Length,
         siGunGuId: String?,
         eupMyeonDongId: String?,
-        sort: String?
+        sort: String?,
+        limit: Int?,
     ): List<SearchPlacesResult> {
         val places = placeService.findAllByKeyword(
             searchText,
@@ -60,8 +61,10 @@ class PlaceSearchService(
             } else {
                 it
             }
+        }.let {
+            if (limit != null) it.take(limit)
+            else it
         }
-            .take(10) // FIXME: 장소 개수가 너무 많으면 성능에 이슈가 있어서, 일단 최대 10개만 내려주게끔 수정한다.
         return places.toSearchPlacesResult(currentLocation)
     }
 
