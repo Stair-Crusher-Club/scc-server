@@ -1,5 +1,6 @@
 package club.staircrusher.spring_web.security
 
+import club.staircrusher.spring_web.logging.CustomServletWrappingFilter
 import club.staircrusher.stdlib.di.annotation.Component
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+import org.springframework.security.web.context.SecurityContextHolderFilter
 import org.springframework.web.cors.CorsConfiguration
 
 /**
@@ -32,8 +34,13 @@ open class SccSecurityFilterChainConfig {
         sccSecurityConfigs: List<SccSecurityConfig>,
         sccAuthenticationFilter: SccAuthenticationFilter,
         sccAuthenticationEntryPoint: SccAuthenticationEntryPoint,
+        customServletWrappingFilter: CustomServletWrappingFilter,
     ): SecurityFilterChain {
         return http
+            .addFilterBefore(
+                customServletWrappingFilter,
+                SecurityContextHolderFilter::class.java,
+            )
             .addFilterBefore(
                 sccAuthenticationFilter,
                 BasicAuthenticationFilter::class.java,
