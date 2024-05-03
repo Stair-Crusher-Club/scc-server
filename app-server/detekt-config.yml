@@ -10,6 +10,8 @@ style:
     active: false
   UnusedImports:
     active: true
+  MagicNumber:
+    active: false
 naming:
   PackageNaming:
     active: false
