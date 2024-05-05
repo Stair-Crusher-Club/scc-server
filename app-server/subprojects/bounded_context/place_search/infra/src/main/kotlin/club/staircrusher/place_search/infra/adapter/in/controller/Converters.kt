@@ -26,6 +26,7 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     hasPlaceAccessibility = placeAccessibility != null,
     distanceMeters = distance?.meter?.toInt(),
     isAccessibilityRegistrable = isAccessibilityRegistrable,
+    accessibilityScore = accessibilityScore,
 )
 
 @Suppress("ComplexMethod")
