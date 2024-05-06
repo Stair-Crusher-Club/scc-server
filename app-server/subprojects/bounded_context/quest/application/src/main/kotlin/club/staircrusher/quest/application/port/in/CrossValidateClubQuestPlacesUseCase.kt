@@ -43,8 +43,8 @@ class CrossValidateClubQuestPlacesUseCase(
                     closedPlaceIds.forEach { closedPlaceId ->
                         val closedPlace = placeById[closedPlaceId]!!
                         quest.setIsClosed(closedPlace.building.id, closedPlace.id, true)
+                        clubQuestRepository.save(quest)
                     }
-                    clubQuestRepository.save(quest)
                 }
             } catch (t: Throwable) {
                 logger.error(t) { "[$questId] CrossValidateClubQuestPlaces failed" }
