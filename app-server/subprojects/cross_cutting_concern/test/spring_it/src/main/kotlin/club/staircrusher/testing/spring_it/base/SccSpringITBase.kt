@@ -1,5 +1,7 @@
 package club.staircrusher.testing.spring_it.base
 
+import club.staircrusher.spring_web.security.admin.AdminAuthenticationProperties
+import club.staircrusher.spring_web.security.admin.AdminAuthenticationService
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.testing.spring_it.ITDataGenerator
 import club.staircrusher.user.domain.model.User
@@ -10,10 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockHttpServletRequestDsl
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActionsDsl
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import kotlin.reflect.KClass
 
 @SpringBootTest(classes = [SccSpringITApplication::class])
@@ -31,6 +38,12 @@ open class SccSpringITBase {
     @Autowired
     lateinit var userAuthService: UserAuthService
 
+    @Autowired
+    lateinit var adminAuthenticationService: AdminAuthenticationService
+
+    @Autowired
+    lateinit var adminAuthenticationProperties: AdminAuthenticationProperties
+
     private val objectMapper = jacksonObjectMapper()
 
     protected fun MockMvc.sccRequest(url: String, requestBody: Any?, user: User? = null): ResultActionsDsl {
@@ -42,6 +55,28 @@ open class SccSpringITBase {
                 val accessToken = userAuthService.issueAccessToken(user)
                 header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
             }
+        }
+            .asyncDispatchIfNeeded()
+    }
+
+    protected fun MockMvc.sccAdminRequest(url: String, httpMethod: HttpMethod, requestBody: Any?): ResultActionsDsl {
+        val dsl: MockHttpServletRequestDsl.() -> Unit = {
+            contentType = MediaType.APPLICATION_JSON
+            content = requestBody?.let { objectMapper.writeValueAsBytes(it) } ?: "{}".toByteArray()
+            accept = MediaType.APPLICATION_JSON_UTF8
+
+            val accessToken = adminAuthenticationService.login(
+                username = adminAuthenticationProperties.username,
+                password = adminAuthenticationProperties.password,
+            )
+            header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+        }
+        return when (httpMethod) {
+            HttpMethod.GET -> get(url, dsl = dsl)
+            HttpMethod.POST -> post(url, dsl = dsl)
+            HttpMethod.PUT -> put(url, dsl = dsl)
+            HttpMethod.DELETE -> delete(url, dsl = dsl)
+            else -> throw IllegalArgumentException("Not supported httpMethod: $httpMethod")
         }
             .asyncDispatchIfNeeded()
     }
