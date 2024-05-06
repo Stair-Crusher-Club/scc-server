@@ -4,12 +4,15 @@ import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplic
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
+import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetBuildingRepository
+import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
-import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
+import club.staircrusher.quest.domain.model.ClubQuestTargetBuildingVO
+import club.staircrusher.quest.domain.model.ClubQuestTargetPlaceVO
 import club.staircrusher.quest.util.HumanReadablePrefixGenerator
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
@@ -23,6 +26,8 @@ class ClubQuestCreateAplService(
     private val clock: Clock,
     private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
     private val clubQuestRepository: ClubQuestRepository,
+    private val clubQuestTargetBuildingRepository: ClubQuestTargetBuildingRepository,
+    private val clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository,
     private val clubQuestTargetBuildingClusterer: ClubQuestTargetBuildingClusterer,
     private val transactionManager: TransactionManager,
     private val accessibilityApplicationService: AccessibilityApplicationService,
@@ -93,11 +98,11 @@ class ClubQuestCreateAplService(
             .toSet()
     }
 
-    private fun List<Place>.groupToClubQuestTargetBuildings(): List<ClubQuestTargetBuilding> {
+    private fun List<Place>.groupToClubQuestTargetBuildings(): List<ClubQuestTargetBuildingVO> {
         return this
             .groupBy { it.building.id }
             .toList().mapIndexed { buildingIdx, (buildingId, places) ->
-                ClubQuestTargetBuilding(
+                ClubQuestTargetBuildingVO(
                     buildingId = buildingId,
                     // FIXME: 단어 목록이 부족해서 여기서 getBuildingName()을 하면 단어 목록 개수 제한으로 에러가 난다.
                     //        따라서 여기서는 임시값을 넣어주고, applyTargetPlacesCountLimitOfSingleQuest()로
@@ -105,7 +110,7 @@ class ClubQuestCreateAplService(
                     name = "temp",
                     location = places.first().location,
                     places = places.map {
-                        ClubQuestTargetPlace(
+                        ClubQuestTargetPlaceVO(
                             name = it.name,
                             location = it.location,
                             placeId = it.id,
@@ -118,7 +123,7 @@ class ClubQuestCreateAplService(
             }
     }
 
-    private fun List<Pair<Location, List<ClubQuestTargetBuilding>>>.convertToClubQuestCreateDryRunResultItems(): List<ClubQuestCreateDryRunResultItem> {
+    private fun List<Pair<Location, List<ClubQuestTargetBuildingVO>>>.convertToClubQuestCreateDryRunResultItems(): List<ClubQuestCreateDryRunResultItem> {
         return this
             .mapIndexed { idx, (questCenterLocation, targetBuildings) ->
                 ClubQuestCreateDryRunResultItem(
@@ -150,11 +155,22 @@ class ClubQuestCreateAplService(
         dryRunResultItems: List<ClubQuestCreateDryRunResultItem>
     ) = transactionManager.doInTransaction {
         dryRunResultItems.mapIndexed { idx, dryRunResultItem ->
-            clubQuestRepository.save(ClubQuest(
+            // Deprecated VOs should keep being written
+            // until all read access on VOs is replaced to read access on entities.
+            val clubQuest = clubQuestRepository.save(ClubQuest(
                 name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
                 dryRunResultItem = dryRunResultItem,
                 createdAt = clock.instant(),
             ))
+
+            // dual write for read access transition period.
+            val targetBuildingEntities = clubQuest.targetBuildings.map {
+                ClubQuestTargetBuilding.of(valueObject = it, clubQuestId = clubQuest.id)
+            }
+            clubQuestTargetBuildingRepository.saveAll(targetBuildingEntities)
+            clubQuestTargetPlaceRepository.saveAll(targetBuildingEntities.flatMap { it.places })
+
+            clubQuest
         }
     }
 

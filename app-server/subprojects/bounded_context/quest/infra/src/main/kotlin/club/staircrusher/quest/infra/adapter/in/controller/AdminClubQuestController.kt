@@ -6,12 +6,14 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsClosedPutRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessiblePutRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsCreateDryRunPostRequest
-import club.staircrusher.admin_api.spec.dto.ClubQuestsCreatePostRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
+import club.staircrusher.admin_api.spec.dto.CreateClubQuestRequest
+import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
 import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlacesUseCase
+import club.staircrusher.quest.application.port.`in`.DeleteClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.infra.adapter.`in`.converter.toDTO
@@ -31,6 +33,7 @@ class AdminClubQuestController(
     private val getClubQuestUseCase: GetClubQuestUseCase,
     private val clubQuestSetIsClosedUseCase: ClubQuestSetIsClosedUseCase,
     private val clubQuestSetIsNotAccessibleUseCase: ClubQuestSetIsNotAccessibleUseCase,
+    private val deleteClubQuestUseCase: DeleteClubQuestUseCase,
     private val clubQuestRepository: ClubQuestRepository,
     private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
 ) {
@@ -56,7 +59,7 @@ class AdminClubQuestController(
     }
 
     @PostMapping("/admin/clubQuests/create")
-    fun createClubQuest(@RequestBody request: ClubQuestsCreatePostRequest): ResponseEntity<Unit> {
+    fun createClubQuest(@RequestBody request: CreateClubQuestRequest): CreateClubQuestResponseDTO {
         val quests = clubQuestCreateAplService.createFromDryRunResult(
             questNamePrefix = request.questNamePrefix,
             dryRunResultItems = request.dryRunResults.map { it.toModel() }
@@ -64,9 +67,9 @@ class AdminClubQuestController(
         quests.forEach { quest ->
             crossValidateClubQuestPlacesUseCase.handle(quest.id)
         }
-        return ResponseEntity
-            .noContent()
-            .build()
+        return CreateClubQuestResponseDTO(
+            clubQuestIds = quests.map { it.id },
+        )
     }
 
     @GetMapping("/admin/clubQuests/{clubQuestId}")
@@ -76,7 +79,7 @@ class AdminClubQuestController(
 
     @DeleteMapping("/admin/clubQuests/{clubQuestId}")
     fun deleteClubQuest(@PathVariable clubQuestId: String): ResponseEntity<Unit> {
-        clubQuestRepository.remove(clubQuestId)
+        deleteClubQuestUseCase.handle(clubQuestId)
         return ResponseEntity
             .noContent()
             .build()

@@ -8,8 +8,8 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
-import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
-import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
+import club.staircrusher.quest.domain.model.ClubQuestTargetBuildingVO
+import club.staircrusher.quest.domain.model.ClubQuestTargetPlaceVO
 
 
 fun ClubQuestCreateDryRunResultItemDTO.toModel() = ClubQuestCreateDryRunResultItem(
@@ -31,30 +31,30 @@ fun ClubQuestWithDtoInfo.toDTO() = ClubQuestDTO(
     buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds) }
 )
 
-fun ClubQuestTargetBuildingDTO.toModel() = ClubQuestTargetBuilding(
+fun ClubQuestTargetBuildingDTO.toModel() = ClubQuestTargetBuildingVO(
     buildingId = buildingId,
     name = name,
     location = location.toModel(),
     places = places.map { it.toModel() },
 )
 
-fun ClubQuestTargetBuilding.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
+fun ClubQuestTargetBuildingVO.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
     buildingId = buildingId,
     name = name,
     location = location.toDTO(),
     places = places.map { it.toDTO(isConquered = it.placeId in conqueredPlaceIds) },
 )
 
-fun ClubQuestTargetPlaceDTO.toModel() = ClubQuestTargetPlace(
+fun ClubQuestTargetPlaceDTO.toModel() = ClubQuestTargetPlaceVO(
     name = name,
-    location = location.toModel(),
-    placeId = placeId,
     buildingId = buildingId,
+    placeId = placeId,
+    location = location.toModel(),
     isClosed = isClosed,
     isNotAccessible = isNotAccessible,
 )
 
-fun ClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
+fun ClubQuestTargetPlaceVO.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
     return ClubQuestTargetPlaceDTO(
         name = name,
         location = location.toDTO(),
