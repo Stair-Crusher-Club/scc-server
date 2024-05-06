@@ -418,7 +418,7 @@ class KakaoMapsService(
         val siDo = addressNameTokens[0]
         val siGunGu = addressNameTokens[1]
         val eupMyeonDong = addressNameTokens[2]
-        val li = addressNameTokens[3].takeIf { it.endsWith("리") } ?: ""
+        val li = addressNameTokens.getOrNull(3)?.takeIf { it.endsWith("리") } ?: ""
 
         val (roadName, buildingNumber) = roadAddressName.split(" ").takeLast(2)
         val buildingNumberTokens = buildingNumber.split("-")
