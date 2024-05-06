@@ -64,9 +64,12 @@ class ClubQuest(
     private fun <T> List<T>.replaced(predicateBlock: (T) -> Boolean, convertBlock: (T) -> T): List<T> {
         val mutableList = this.toMutableList()
         val matchingItemIdx = indexOfFirst(predicateBlock)
-        val newItem = convertBlock(this[matchingItemIdx])
-        mutableList.removeAt(matchingItemIdx)
-        mutableList.add(matchingItemIdx, newItem)
+        if (matchingItemIdx != -1) {
+            val newItem = convertBlock(this[matchingItemIdx])
+            mutableList.removeAt(matchingItemIdx)
+            mutableList.add(matchingItemIdx, newItem)
+        }
+
         return mutableList.toList()
     }
 }
