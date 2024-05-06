@@ -183,12 +183,15 @@ class NaverMapsService(
                 val (roadName, buildingNumber) = this.roadAddress
                     .split(" ")
                     .dropLastWhile { !건물번호_정규식.matches(it) }
-                    .takeLast(2)
+                    .let {
+                        if (it.isNotEmpty()) it.takeLast(2)
+                        else listOf("", "")
+                    }
                 val buildingNumberTokens = buildingNumber.split("-")
-                val (mainBuildingNumber, subBuildingNumber) = if (buildingNumberTokens.size == 1) {
-                    Pair(buildingNumberTokens[0], "")
-                } else {
-                    Pair(buildingNumberTokens[0], buildingNumberTokens[1])
+                val (mainBuildingNumber, subBuildingNumber) = when (buildingNumberTokens.size) {
+                    0 -> Pair("", "")
+                    1 -> Pair(buildingNumberTokens[0], "")
+                    else -> Pair(buildingNumberTokens[0], buildingNumberTokens[1])
                 }
                 return BuildingAddress(
                     siDo = siDo,
