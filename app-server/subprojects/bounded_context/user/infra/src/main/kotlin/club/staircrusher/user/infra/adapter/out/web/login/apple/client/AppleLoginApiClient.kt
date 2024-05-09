@@ -9,7 +9,8 @@ internal interface AppleLoginApiClient {
     @Suppress("FunctionParameterNaming")
     @PostExchange(
         url = "/auth/token",
-        accept = ["application/json"]
+        contentType = "application/x-www-form-urlencoded",
+        accept = ["application/json"],
     )
     fun getAppleLoginTokens(
         @RequestParam client_id: String,
