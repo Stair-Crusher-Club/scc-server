@@ -2,9 +2,9 @@ package club.staircrusher.quest.infra.adapter.out.persistence
 
 import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
-import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetBuildingRepository
+import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
@@ -12,10 +12,12 @@ class SqlDelightClubQuestRepository(
     db: DB,
     private val clubQuestTargetBuildingRepository: ClubQuestTargetBuildingRepository,
 ) : ClubQuestRepository {
-    private val queries = db.clubQuestQueries
+    private val clubQuestQueries = db.clubQuestQueries
+    private val targetBuildingQueries = db.clubQuestTargetBuildingQueries
+    private val targetPlaceQueries = db.clubQuestTargetPlaceQueries
 
     override fun save(entity: ClubQuest): ClubQuest {
-        queries.save(entity.toPersistenceModel())
+        clubQuestQueries.save(entity.toPersistenceModel())
         clubQuestTargetBuildingRepository.saveAll(entity.targetBuildings)
         return entity
     }
@@ -25,7 +27,7 @@ class SqlDelightClubQuestRepository(
     }
 
     override fun removeAll() {
-        queries.removeAll()
+        clubQuestQueries.removeAll()
     }
 
     override fun findById(id: String): ClubQuest {
@@ -33,23 +35,43 @@ class SqlDelightClubQuestRepository(
     }
 
     override fun findByIdOrNull(id: String): ClubQuest? {
-        return queries.findById(id = id)
+        return clubQuestQueries.findById(id = id)
             .executeAsOneOrNull()
             ?.toDomainModel()
     }
 
     override fun findAllOrderByCreatedAtDesc(): List<ClubQuest> {
-        return queries.findAllOrderByCreatedAtDesc()
+        return clubQuestQueries.findAllOrderByCreatedAtDesc()
             .executeAsList()
             .map { it.toDomainModel() }
     }
 
     override fun remove(clubQuestId: String) {
-        return queries.remove(clubQuestId)
+        return clubQuestQueries.remove(clubQuestId)
     }
 
     private fun Club_quest.toDomainModel(): ClubQuest {
-        val targetBuildings = clubQuestTargetBuildingRepository.findByClubQuestId(this.id)
-        return this.toDomainModel(targetBuildings)
+        return listOf(this)
+            .toDomainModels()
+            .first()
+    }
+
+    private fun List<Club_quest>.toDomainModels(): List<ClubQuest> {
+        val clubQuestIds = this.map { it.id }
+        val rawTargetBuildingsByClubQuestId = targetBuildingQueries.findByClubQuestIds(clubQuestIds)
+            .executeAsList()
+            .groupBy { it.club_quest_id }
+        val rawTargetPlacesByTargetBuildingId = targetPlaceQueries.findByClubQuestIds(clubQuestIds)
+            .executeAsList()
+            .groupBy { it.target_building_id }
+        return this.map { rawClubQuest ->
+            val rawTargetBuildings = rawTargetBuildingsByClubQuestId[rawClubQuest.id] ?: emptyList()
+            val targetBuildings = rawTargetBuildings.map { rawTargetBuilding ->
+                val rawTargetPlaces = rawTargetPlacesByTargetBuildingId[rawTargetBuilding.id] ?: emptyList()
+                val targetPlaces = rawTargetPlaces.map { it.toDomainModel() }
+                rawTargetBuilding.toDomainModel(targetPlaces)
+            }
+            rawClubQuest.toDomainModel(targetBuildings)
+        }
     }
 }

@@ -24,12 +24,6 @@ class SqlDelightClubQuestTargetBuildingRepository(
             ?.toDomainModel()
     }
 
-    override fun findByClubQuestId(clubQuestId: String): List<ClubQuestTargetBuilding> {
-        return queries.findByClubQuestId(clubQuestId = clubQuestId)
-            .executeAsList()
-            .map { it.toDomainModel() }
-    }
-
     override fun save(entity: ClubQuestTargetBuilding): ClubQuestTargetBuilding {
         queries.save(entity.toPersistenceModel())
         clubQuestTargetPlaceRepository.saveAll(entity.places)
