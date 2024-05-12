@@ -19,21 +19,9 @@ class ClubQuestSetIsNotAccessibleUseCase(
         placeId: String,
         isNotAccessible: Boolean,
     ): ClubQuestWithDtoInfo = transactionManager.doInTransaction {
-        // Deprecated VOs should keep being written
-        // until all read access on VOs is replaced to read access on entities.
         val clubQuest = clubQuestRepository.findById(clubQuestId)
-        clubQuest.setIsNotAccessible(buildingId, placeId, isNotAccessible)
-        clubQuestRepository.save(clubQuest)
-
-        // dual write for read access transition period.
-        val clubQuestTargetPlace = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceId(
-            clubQuestId = clubQuestId,
-            placeId = placeId,
-        )
-        if (clubQuestTargetPlace != null) {
-            clubQuestTargetPlace.setIsNotAccessible(isNotAccessible)
-            clubQuestTargetPlaceRepository.save(clubQuestTargetPlace)
-        }
+        val targetPlace = clubQuest.setIsNotAccessible(buildingId, placeId, isNotAccessible)
+        targetPlace?.let { clubQuestTargetPlaceRepository.save(it) }
 
         ClubQuestWithDtoInfo(
             quest = clubQuest,

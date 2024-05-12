@@ -19,21 +19,9 @@ class ClubQuestSetIsClosedUseCase(
         placeId: String,
         isClosed: Boolean,
     ): ClubQuestWithDtoInfo = transactionManager.doInTransaction {
-        // Deprecated VOs should keep being written
-        // until all read access on VOs is replaced to read access on entities.
         val clubQuest = clubQuestRepository.findById(clubQuestId)
-        clubQuest.setIsClosed(buildingId, placeId, isClosed)
-        clubQuestRepository.save(clubQuest)
-
-        // dual write for read access transition period.
-        val clubQuestTargetPlace = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceId(
-            clubQuestId = clubQuestId,
-            placeId = placeId,
-        )
-        if (clubQuestTargetPlace != null) {
-            clubQuestTargetPlace.setIsClosed(isClosed)
-            clubQuestTargetPlaceRepository.save(clubQuestTargetPlace)
-        }
+        val targetPlace = clubQuest.setIsClosed(buildingId, placeId, isClosed)
+        targetPlace?.let { clubQuestTargetPlaceRepository.save(it) }
 
         ClubQuestWithDtoInfo(
             quest = clubQuest,

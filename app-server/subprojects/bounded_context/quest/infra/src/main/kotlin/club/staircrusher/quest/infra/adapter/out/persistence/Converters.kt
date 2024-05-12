@@ -14,16 +14,16 @@ fun ClubQuest.toPersistenceModel() = Club_quest(
     name = name,
     quest_center_location_x = questCenterLocation.lng,
     quest_center_location_y = questCenterLocation.lat,
-    target_buildings = targetBuildings,
+    target_buildings = emptyList(),
     created_at = createdAt.toOffsetDateTime(),
     updated_at = updatedAt.toOffsetDateTime(),
 )
 
-fun Club_quest.toDomainModel() = ClubQuest(
+fun Club_quest.toDomainModel(targetBuildings: List<ClubQuestTargetBuilding>) = ClubQuest(
     id = id,
     name = name,
     questCenterLocation = Location(lng = quest_center_location_x, lat = quest_center_location_y),
-    targetBuildings = target_buildings,
+    targetBuildings = targetBuildings,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant(),
 )

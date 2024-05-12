@@ -8,7 +8,9 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuildingVO
+import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlaceVO
 
 
@@ -25,6 +27,25 @@ fun ClubQuestCreateDryRunResultItem.toDTO(conqueredPlaceIds: Set<String>) =
         targetBuildings = targetBuildings.map { it.toDTO(conqueredPlaceIds) }
     )
 
+fun ClubQuestTargetBuildingVO.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
+    buildingId = buildingId,
+    name = name,
+    location = location.toDTO(),
+    places = places.map { it.toDTO(isConquered = it.placeId in conqueredPlaceIds) },
+)
+
+fun ClubQuestTargetPlaceVO.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
+    return ClubQuestTargetPlaceDTO(
+        name = name,
+        location = location.toDTO(),
+        placeId = placeId,
+        buildingId = buildingId,
+        isConquered = isConquered,
+        isClosed = isClosed,
+        isNotAccessible = isNotAccessible,
+    )
+}
+
 fun ClubQuestWithDtoInfo.toDTO() = ClubQuestDTO(
     id = quest.id,
     name = quest.name,
@@ -38,7 +59,7 @@ fun ClubQuestTargetBuildingDTO.toModel() = ClubQuestTargetBuildingVO(
     places = places.map { it.toModel() },
 )
 
-fun ClubQuestTargetBuildingVO.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
+fun ClubQuestTargetBuilding.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
     buildingId = buildingId,
     name = name,
     location = location.toDTO(),
@@ -54,7 +75,7 @@ fun ClubQuestTargetPlaceDTO.toModel() = ClubQuestTargetPlaceVO(
     isNotAccessible = isNotAccessible,
 )
 
-fun ClubQuestTargetPlaceVO.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
+fun ClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
     return ClubQuestTargetPlaceDTO(
         name = name,
         location = location.toDTO(),

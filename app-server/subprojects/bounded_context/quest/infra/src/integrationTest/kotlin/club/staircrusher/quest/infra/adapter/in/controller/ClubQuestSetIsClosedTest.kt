@@ -18,7 +18,7 @@ class ClubQuestSetIsClosedTest : ClubQuestITBase() {
     }
 
     @Test
-    fun `dual write test`() {
+    fun `정상적인 경우`() {
         val createClubQuestRequestBody = getCreateClubQuestRequestBody()
         val clubQuest = mvc
             .sccAdminRequest("/admin/clubQuests/create", HttpMethod.POST, createClubQuestRequestBody)

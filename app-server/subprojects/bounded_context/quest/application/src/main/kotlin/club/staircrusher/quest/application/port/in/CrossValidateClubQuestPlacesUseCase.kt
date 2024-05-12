@@ -2,6 +2,7 @@ package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.place.application.port.`in`.PlaceService
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
+import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -13,6 +14,7 @@ import java.util.concurrent.Executors
 class CrossValidateClubQuestPlacesUseCase(
     private val transactionManager: TransactionManager,
     private val clubQuestRepository: ClubQuestRepository,
+    private val clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository,
     private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
     private val placeService: PlaceService,
 ) {
@@ -42,8 +44,8 @@ class CrossValidateClubQuestPlacesUseCase(
                     val placeById = places.associateBy { it.id }
                     closedPlaceIds.forEach { closedPlaceId ->
                         val closedPlace = placeById[closedPlaceId]!!
-                        quest.setIsClosed(closedPlace.building.id, closedPlace.id, true)
-                        clubQuestRepository.save(quest)
+                        val targetPlace = quest.setIsClosed(closedPlace.building.id, closedPlace.id, true)
+                        targetPlace?.let { clubQuestTargetPlaceRepository.save(it) }
                     }
                 }
             } catch (t: Throwable) {
