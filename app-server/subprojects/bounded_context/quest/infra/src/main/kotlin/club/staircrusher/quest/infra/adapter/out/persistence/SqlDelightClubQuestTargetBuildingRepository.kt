@@ -26,6 +26,7 @@ class SqlDelightClubQuestTargetBuildingRepository(
 
     override fun save(entity: ClubQuestTargetBuilding): ClubQuestTargetBuilding {
         queries.save(entity.toPersistenceModel())
+        clubQuestTargetPlaceRepository.saveAll(entity.places)
         return entity
     }
 

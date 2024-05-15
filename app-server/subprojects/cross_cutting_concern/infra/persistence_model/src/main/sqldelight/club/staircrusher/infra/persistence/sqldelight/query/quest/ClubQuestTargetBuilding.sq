@@ -33,3 +33,9 @@ FROM club_quest_target_building
 WHERE
     club_quest_id = :clubQuestId
     AND building_id = :buildingId;
+
+findByClubQuestIds:
+SELECT *
+FROM club_quest_target_building
+WHERE
+    club_quest_id IN :clubQuestIds;
