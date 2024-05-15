@@ -4,6 +4,7 @@ import club.staircrusher.quest.application.port.out.persistence.ClubQuestReposit
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetBuildingRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
+import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 
@@ -22,27 +23,34 @@ class ClubQuestMigrateEntitiesUseCase(
             transactionManager.doInTransaction {
                 val clubQuest = clubQuestRepository.findById(clubQuestId)
                 val targetBuildings = clubQuest.targetBuildings
-                    .map { ClubQuestTargetBuilding.of(valueObject = it, clubQuestId = clubQuest.id) }
-                    .map { newTargetBuilding ->
+                    .map { targetBuildingVO ->
                         val existingTargetBuilding = clubQuestTargetBuildingRepository.findByClubQuestIdAndBuildingId(
                             clubQuestId = clubQuest.id,
-                            buildingId = newTargetBuilding.buildingId,
+                            buildingId = targetBuildingVO.buildingId,
                         )
-                        existingTargetBuilding ?: newTargetBuilding
+                        existingTargetBuilding ?: ClubQuestTargetBuilding.of(
+                            valueObject = targetBuildingVO,
+                            clubQuestId = clubQuest.id,
+                        )
                     }
-                val targetPlaces = targetBuildings
+                val targetBuildingByBuildingId = targetBuildings.associateBy { it.buildingId }
+                val targetPlaces = clubQuest.targetBuildings
                     .flatMap { it.places }
-                    .map { newTargetPlace ->
+                    .map { targetPlaceVO ->
                         val existingTargetPlace = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceId(
                             clubQuestId = clubQuest.id,
-                            placeId = newTargetPlace.placeId,
+                            placeId = targetPlaceVO.placeId,
                         )
                         if (existingTargetPlace != null) {
-                            existingTargetPlace.setIsClosed(newTargetPlace.isClosed)
-                            existingTargetPlace.setIsNotAccessible(newTargetPlace.isNotAccessible)
+                            existingTargetPlace.setIsClosed(targetPlaceVO.isClosed)
+                            existingTargetPlace.setIsNotAccessible(targetPlaceVO.isNotAccessible)
                             existingTargetPlace
                         } else {
-                            newTargetPlace
+                            ClubQuestTargetPlace.of(
+                                valueObject = targetPlaceVO,
+                                clubQuestId = clubQuest.id,
+                                targetBuildingId = targetBuildingByBuildingId[targetPlaceVO.buildingId]!!.id
+                            )
                         }
                     }
                 clubQuestTargetBuildingRepository.saveAll(targetBuildings)
