@@ -60,6 +60,8 @@ fun Place.toDomainModel(
         siGunGuId = si_gun_gu_id,
         eupMyeonDongId = eup_myeon_dong_id,
         category = category,
+        isClosed = is_closed,
+        isNotAccessible = is_not_accessible,
     )
 }
 
@@ -90,6 +92,8 @@ fun FindById.toDomainModel(): club.staircrusher.place.domain.model.Place {
         siGunGuId = si_gun_gu_id,
         eupMyeonDongId = eup_myeon_dong_id,
         category = category,
+        isClosed = is_closed,
+        isNotAccessible = is_not_accessible,
     )
 }
 
@@ -105,5 +109,7 @@ fun club.staircrusher.place.domain.model.Place.toPersistenceModel(): Place {
         category = category,
         created_at = Instant.now().toOffsetDateTime(),
         updated_at = Instant.now().toOffsetDateTime(),
+        is_closed = isClosed,
+        is_not_accessible = isNotAccessible,
     )
 }

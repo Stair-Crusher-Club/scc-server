@@ -113,6 +113,8 @@ class ITDataGenerator {
                 building = building,
                 siGunGuId = building.siGunGuId,
                 eupMyeonDongId = building.eupMyeonDongId,
+                isClosed = false,
+                isNotAccessible = false,
             )
         )
     }

@@ -4,7 +4,7 @@ import club.staircrusher.accessibility.application.port.out.persistence.Building
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
-import club.staircrusher.place.application.port.`in`.PlaceService
+import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
@@ -17,7 +17,7 @@ import java.time.ZoneId
 
 @Component
 class AdminSearchAccessibilitiesUseCase(
-    private val placeService: PlaceService,
+    private val placeApplicationService: PlaceApplicationService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val userAplService: UserApplicationService,
@@ -53,7 +53,7 @@ class AdminSearchAccessibilitiesUseCase(
             cursorId = cursor.id,
             limit = normalizedLimit + 1, // 다음 페이지가 존재하는지 확인하기 위해 한 개를 더 조회한다.
         )
-        val placeById = placeService.findAllByIds(placeAccessibilities.map { it.placeId })
+        val placeById = placeApplicationService.findAllByIds(placeAccessibilities.map { it.placeId })
             .associateBy { it.id }
         val buildingAccessibilityByBuildingId = buildingAccessibilityRepository
             .findByBuildingIds(placeById.values.map { it.building.id })

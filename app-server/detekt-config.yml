@@ -23,3 +23,5 @@ performance:
 exceptions:
   TooGenericExceptionCaught:
     active: false
+  SwallowedException:
+    active: false

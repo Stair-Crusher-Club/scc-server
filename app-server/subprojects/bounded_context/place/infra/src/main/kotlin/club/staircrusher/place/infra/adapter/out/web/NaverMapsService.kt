@@ -225,6 +225,8 @@ class NaverMapsService(
                         siGunGuId = null,
                         eupMyeonDongId = null,
                         category = null,
+                        isClosed = false,
+                        isNotAccessible = false,
                     )
                 } catch (t: Throwable) {
                     logger.warn(t) { "Cannot convert document to model: $it" }

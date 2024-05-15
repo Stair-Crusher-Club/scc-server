@@ -254,6 +254,8 @@ class KakaoMapsService(
                         siGunGuId = null,
                         eupMyeonDongId = null,
                         category = it.categoryGroupCode?.toPlaceCategory(),
+                        isClosed = false,
+                        isNotAccessible = false,
                     )
                 } catch (t: Throwable) {
                     logger.warn(t) { "Cannot convert document to model: $it" }

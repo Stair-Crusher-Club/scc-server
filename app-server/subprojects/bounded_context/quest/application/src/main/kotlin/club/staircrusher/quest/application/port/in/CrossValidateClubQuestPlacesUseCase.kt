@@ -1,6 +1,6 @@
 package club.staircrusher.quest.application.port.`in`
 
-import club.staircrusher.place.application.port.`in`.PlaceService
+import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
@@ -16,7 +16,7 @@ class CrossValidateClubQuestPlacesUseCase(
     private val clubQuestRepository: ClubQuestRepository,
     private val clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository,
     private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
-    private val placeService: PlaceService,
+    private val placeApplicationService: PlaceApplicationService,
 ) {
     @Suppress("MagicNumber")
     private val taskExecutor = Executors.newCachedThreadPool()
@@ -28,7 +28,7 @@ class CrossValidateClubQuestPlacesUseCase(
                 val places = transactionManager.doInTransaction {
                     val placeIdsInQuest = clubQuestRepository.findById(questId).targetBuildings.flatMap { it.places }.map { it.placeId }
                     logger.info("[$questId] placeIdsInQuest: $placeIdsInQuest")
-                    placeService.findAllByIds(placeIdsInQuest)
+                    placeApplicationService.findAllByIds(placeIdsInQuest)
                 }
 
                 val closedPlaceIds = runBlocking {
@@ -45,7 +45,16 @@ class CrossValidateClubQuestPlacesUseCase(
                     closedPlaceIds.forEach { closedPlaceId ->
                         val closedPlace = placeById[closedPlaceId]!!
                         val targetPlace = quest.setIsClosed(closedPlace.building.id, closedPlace.id, true)
-                        targetPlace?.let { clubQuestTargetPlaceRepository.save(it) }
+                        if (targetPlace != null) {
+                            clubQuestTargetPlaceRepository.save(targetPlace)
+
+                            // dual write
+                            try {
+                                placeApplicationService.setIsClosed(targetPlace.placeId, isClosed = true)
+                            } catch (e: IllegalArgumentException) {
+                                // ignore
+                            }
+                        }
                     }
                 }
             } catch (t: Throwable) {
