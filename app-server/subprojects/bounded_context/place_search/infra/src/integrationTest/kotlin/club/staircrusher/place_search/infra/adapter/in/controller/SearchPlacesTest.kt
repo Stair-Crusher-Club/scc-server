@@ -3,6 +3,7 @@ package club.staircrusher.place_search.infra.adapter.`in`.controller
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
+import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place_search.infra.adapter.`in`.controller.base.PlaceSearchITBase
@@ -14,9 +15,13 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.SpyBean
 
 class SearchPlacesTest : PlaceSearchITBase() {
+    @Autowired
+    private lateinit var placeRepository: PlaceRepository
+
     @SpyBean
     private lateinit var mapsService: MapsService
 
@@ -112,6 +117,72 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 assertEquals(place.id, searchResult.place.id)
                 assertNotNull(searchResult.distanceMeters)
                 assertFalse(searchResult.isAccessibilityRegistrable)
+            }
+
+        Unit
+    }
+
+    @Test
+    fun `폐점된 장소는 필터링된다`() = runBlocking {
+        // given
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32))
+        }
+        val searchText = place.name.substring(2, 5)
+        val radiusMeters = 500
+
+        Mockito.`when`(mapsService.findAllByKeyword(
+            searchText,
+            MapsService.SearchByKeywordOption(
+                MapsService.SearchByKeywordOption.CircleRegion(
+                    centerLocation = place.location,
+                    radiusMeters = radiusMeters,
+                ),
+            ),
+        )).thenReturn(listOf(place))
+
+        val params = SearchPlacesPostRequest(
+            searchText = searchText,
+            distanceMetersLimit = radiusMeters,
+            currentLocation = place.location.toDTO(),
+        )
+        mvc.sccRequest("/searchPlaces", params, user = user)
+            .apply {
+                val result = getResult(SearchPlacesPost200Response::class)
+                assertEquals(1, result.items!!.size)
+            }
+
+        // when - isClosed
+        transactionManager.doInTransaction {
+            placeRepository.findById(place.id)
+                .apply { setIsClosed(true) }
+                .apply { setIsNotAccessible(false) }
+                .apply { placeRepository.save(this) }
+        }
+
+        // then - 검색에 걸리지 않는다.
+        mvc.sccRequest("/searchPlaces", params, user = user)
+            .apply {
+                val result = getResult(SearchPlacesPost200Response::class)
+                assertEquals(0, result.items!!.size)
+            }
+
+        // when - isNotAccessible
+        transactionManager.doInTransaction {
+            placeRepository.findById(place.id)
+                .apply { setIsClosed(false) }
+                .apply { setIsNotAccessible(true) }
+                .apply { placeRepository.save(this) }
+        }
+
+        // then - 검색에 걸리지 않는다.
+        mvc.sccRequest("/searchPlaces", params, user = user)
+            .apply {
+                val result = getResult(SearchPlacesPost200Response::class)
+                assertEquals(0, result.items!!.size)
             }
 
         Unit

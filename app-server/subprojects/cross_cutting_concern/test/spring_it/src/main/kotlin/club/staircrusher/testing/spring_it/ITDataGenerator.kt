@@ -104,6 +104,8 @@ class ITDataGenerator {
     fun createPlace(
         placeName: String = "장소장소",
         building: Building,
+        isClosed: Boolean = false,
+        isNotAccessible: Boolean = false,
     ): Place {
         return placeRepository.save(
             Place(
@@ -113,8 +115,8 @@ class ITDataGenerator {
                 building = building,
                 siGunGuId = building.siGunGuId,
                 eupMyeonDongId = building.eupMyeonDongId,
-                isClosed = false,
-                isNotAccessible = false,
+                isClosed = isClosed,
+                isNotAccessible = isNotAccessible,
             )
         )
     }
@@ -158,7 +160,9 @@ class ITDataGenerator {
             roadName = "왕십리로",
             mainBuildingNumber = "83",
             subBuildingNumber = "21",
-        )
+        ),
+        placeIsClosed: Boolean = false,
+        placeIsNotAccessible: Boolean = false,
     ): Place {
         val buildingToUse = building ?: buildingRepository.save(
             Building(
@@ -170,7 +174,12 @@ class ITDataGenerator {
                 eupMyeonDongId = eupMyeonDongId,
             )
         )
-        return createPlace(placeName, buildingToUse)
+        return createPlace(
+            placeName = placeName,
+            building = buildingToUse,
+            isClosed = placeIsClosed,
+            isNotAccessible = placeIsNotAccessible,
+        )
     }
 
     fun createChallenge(
