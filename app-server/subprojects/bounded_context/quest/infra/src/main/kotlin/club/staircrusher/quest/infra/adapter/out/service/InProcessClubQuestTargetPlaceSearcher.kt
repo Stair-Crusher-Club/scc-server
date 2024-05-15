@@ -1,6 +1,6 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
-import club.staircrusher.place.application.port.`in`.PlaceService
+import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
@@ -17,7 +17,7 @@ import kotlin.math.ceil
 
 @Component
 class InProcessClubQuestTargetPlaceSearcher(
-    private val placeService: PlaceService,
+    private val placeApplicationService: PlaceApplicationService,
 ) : ClubQuestTargetPlacesSearcher {
     private val targetPlaceCategories = listOf(
         PlaceCategory.RESTAURANT,
@@ -46,7 +46,7 @@ class InProcessClubQuestTargetPlaceSearcher(
 
     override suspend fun crossValidatePlaces(places: List<Place>): List<Boolean> = coroutineScope {
         places
-            .map { async { placeService.crossValidate(it, MapsService.SearchByKeywordOption()) } }
+            .map { async { placeApplicationService.crossValidate(it, MapsService.SearchByKeywordOption()) } }
             .awaitAll()
     }
 
@@ -85,7 +85,7 @@ class InProcessClubQuestTargetPlaceSearcher(
             targetPlaceCategories
                 .map {
                     async {
-                        placeService.findAllByCategory(
+                        placeApplicationService.findAllByCategory(
                             category = it,
                             option = MapsService.SearchByCategoryOption(
                                 region = MapsService.SearchByCategoryOption.RectangleRegion(
@@ -107,7 +107,7 @@ class InProcessClubQuestTargetPlaceSearcher(
             buildings
                 .map { building ->
                     async {
-                        placeService.findAllByKeyword(
+                        placeApplicationService.findAllByKeyword(
                             keyword = building.address.toString(),
                             option = MapsService.SearchByKeywordOption(),
                         )

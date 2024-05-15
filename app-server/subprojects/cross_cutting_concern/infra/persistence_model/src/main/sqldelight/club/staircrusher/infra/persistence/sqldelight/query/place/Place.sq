@@ -7,7 +7,9 @@ ON CONFLICT(id) DO UPDATE SET
     location_y = EXCLUDED.location_y,
     si_gun_gu_id = EXCLUDED.si_gun_gu_id,
     eup_myeon_dong_id = EXCLUDED.eup_myeon_dong_id,
-    category = EXCLUDED.category;
+    category = EXCLUDED.category,
+    is_closed = EXCLUDED.is_closed,
+    is_not_accessible = EXCLUDED.is_not_accessible;
 
 removeAll:
 DELETE FROM place;

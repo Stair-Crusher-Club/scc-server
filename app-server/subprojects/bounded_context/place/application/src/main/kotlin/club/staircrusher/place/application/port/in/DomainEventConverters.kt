@@ -40,5 +40,7 @@ fun PlaceDTO.toPlace(): Place {
         siGunGuId = this.siGunGuId,
         eupMyeonDongId = this.eupMyeonDongId,
         category = this.category,
+        isClosed = this.isClosed,
+        isNotAccessible = this.isNotAccessible,
     )
 }

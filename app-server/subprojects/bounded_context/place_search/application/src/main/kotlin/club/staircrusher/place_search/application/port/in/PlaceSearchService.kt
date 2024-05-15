@@ -5,7 +5,7 @@ import club.staircrusher.accessibility.domain.model.AccessibilityScore
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.place.application.port.`in`.BuildingService
-import club.staircrusher.place.application.port.`in`.PlaceService
+import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
@@ -15,7 +15,7 @@ import club.staircrusher.stdlib.geography.LocationUtils
 
 @Component
 class PlaceSearchService(
-    private val placeService: PlaceService,
+    private val placeApplicationService: PlaceApplicationService,
     private val buildingService: BuildingService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
@@ -38,7 +38,7 @@ class PlaceSearchService(
         sort: String?,
         limit: Int?,
     ): List<SearchPlacesResult> {
-        val places = placeService.findAllByKeyword(
+        val places = placeApplicationService.findAllByKeyword(
             searchText,
             option = MapsService.SearchByKeywordOption(
                 region = currentLocation?.let {
@@ -56,7 +56,7 @@ class PlaceSearchService(
                 // Kakao 지도 API의 경우, 최대 검색 반경이 25km밖에 되지 않는다.
                 // 그래서 서울에서 제주 스타벅스를 검색하는 경우 검색 결과가 안뜨는 등의 이슈가 있다.
                 // 이러한 문제를 우회하기 위해, 검색 결과가 없는 경우에는 currentLocation을 빼고 검색을 다시 시도해본다.
-                placeService.findAllByKeyword(
+                placeApplicationService.findAllByKeyword(
                     keyword = searchText,
                     option = MapsService.SearchByKeywordOption(),
                 )
@@ -73,8 +73,8 @@ class PlaceSearchService(
     suspend fun listPlacesInBuilding(buildingId: String): List<SearchPlacesResult> {
         val buildingAddress = buildingService.getById(buildingId)?.address?.toString()
             ?: throw IllegalArgumentException("Building of id $buildingId does not exist.")
-        val placesBySearch = placeService.findAllByKeyword(buildingAddress, MapsService.SearchByKeywordOption())
-        val placesInPersistence = placeService.findByBuildingId(buildingId)
+        val placesBySearch = placeApplicationService.findAllByKeyword(buildingAddress, MapsService.SearchByKeywordOption())
+        val placesInPersistence = placeApplicationService.findByBuildingId(buildingId)
         return (placesBySearch + placesInPersistence)
             .removeDuplicates()
             .toSearchPlacesResult(currentLocation = null)

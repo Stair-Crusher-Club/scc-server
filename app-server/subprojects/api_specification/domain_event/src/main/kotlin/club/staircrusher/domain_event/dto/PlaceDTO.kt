@@ -11,6 +11,8 @@ data class PlaceDTO(
     val siGunGuId: String?,
     val eupMyeonDongId: String?,
     val category: PlaceCategory? = null,
+    val isClosed: Boolean,
+    val isNotAccessible: Boolean,
 ) {
     val address: BuildingAddressDTO
         get() = building.address

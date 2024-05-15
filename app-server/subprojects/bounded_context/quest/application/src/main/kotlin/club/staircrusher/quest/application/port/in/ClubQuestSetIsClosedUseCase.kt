@@ -1,5 +1,6 @@
 package club.staircrusher.quest.application.port.`in`
 
+import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
 import club.staircrusher.quest.application.port.out.web.ConqueredPlaceService
@@ -11,6 +12,7 @@ class ClubQuestSetIsClosedUseCase(
     private val transactionManager: TransactionManager,
     private val clubQuestRepository: ClubQuestRepository,
     private val conqueredPlaceService: ConqueredPlaceService,
+    private val placeApplicationService: PlaceApplicationService,
     private val clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository,
 ) {
     fun handle(
@@ -21,7 +23,17 @@ class ClubQuestSetIsClosedUseCase(
     ): ClubQuestWithDtoInfo = transactionManager.doInTransaction {
         val clubQuest = clubQuestRepository.findById(clubQuestId)
         val targetPlace = clubQuest.setIsClosed(buildingId, placeId, isClosed)
-        targetPlace?.let { clubQuestTargetPlaceRepository.save(it) }
+
+        if (targetPlace != null) {
+            clubQuestTargetPlaceRepository.save(targetPlace)
+
+            // dual write
+            try {
+                placeApplicationService.setIsClosed(targetPlace.placeId, isClosed)
+            } catch (e: IllegalArgumentException) {
+                // ignore
+            }
+        }
 
         ClubQuestWithDtoInfo(
             quest = clubQuest,

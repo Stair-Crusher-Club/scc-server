@@ -17,7 +17,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.place.application.port.`in`.BuildingService
-import club.staircrusher.place.application.port.`in`.PlaceService
+import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
@@ -32,7 +32,7 @@ import java.time.Clock
 @Component
 class AccessibilityApplicationService(
     private val transactionManager: TransactionManager,
-    private val placeService: PlaceService,
+    private val placeApplicationService: PlaceApplicationService,
     private val buildingService: BuildingService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val placeAccessibilityCommentRepository: PlaceAccessibilityCommentRepository,
@@ -56,7 +56,7 @@ class AccessibilityApplicationService(
         }
 
     internal fun doGetAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
-        val place = placeService.findPlace(placeId) ?: error("Cannot find place with $placeId")
+        val place = placeApplicationService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
         val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
@@ -127,7 +127,7 @@ class AccessibilityApplicationService(
     }
 
     fun getBuildingAccessibility(placeId: String): BuildingAccessibility? = transactionManager.doInTransaction {
-        val place = placeService.findPlace(placeId) ?: return@doInTransaction null
+        val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction null
         buildingAccessibilityRepository.findByBuildingId(place.building.id)
     }
 
@@ -241,7 +241,7 @@ class AccessibilityApplicationService(
         if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
             throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
         }
-        val place = placeService.findPlace(createPlaceAccessibilityParams.placeId)!!
+        val place = placeApplicationService.findPlace(createPlaceAccessibilityParams.placeId)!!
         val building = place.building
         if (!isAccessibilityRegistrable(building)) {
             throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")

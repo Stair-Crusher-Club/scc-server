@@ -65,7 +65,7 @@ class PlaceRepository(
     }
 
     override fun findById(id: String): Place {
-        return placeQueries.findById(id).executeAsOne().toDomainModel()
+        return findByIdOrNull(id) ?: throw IllegalArgumentException("Place of id $id does not exist.")
     }
 
     override fun findByIdOrNull(id: String): Place? {

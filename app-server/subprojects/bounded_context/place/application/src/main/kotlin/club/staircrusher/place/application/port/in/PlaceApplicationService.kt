@@ -13,7 +13,7 @@ import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
 
 @Component
-class PlaceService(
+class PlaceApplicationService(
     private val placeRepository: PlaceRepository,
     private val eventPublisher: DomainEventPublisher,
     private val mapsServices: List<MapsService>,
@@ -87,5 +87,17 @@ class PlaceService(
         return place.address.siGunGu == result.address.siGunGu
             && place.address.eupMyeonDong == result.address.eupMyeonDong
             && place.address.mainBuildingNumber == result.address.mainBuildingNumber
+    }
+
+    fun setIsClosed(placeId: String, isClosed: Boolean) {
+        val place = placeRepository.findById(placeId)
+        place.setIsClosed(isClosed)
+        placeRepository.save(place)
+    }
+
+    fun setIsNotAccessible(placeId: String, isNotAccessible: Boolean) {
+        val place = placeRepository.findById(placeId)
+        place.setIsNotAccessible(isNotAccessible)
+        placeRepository.save(place)
     }
 }
