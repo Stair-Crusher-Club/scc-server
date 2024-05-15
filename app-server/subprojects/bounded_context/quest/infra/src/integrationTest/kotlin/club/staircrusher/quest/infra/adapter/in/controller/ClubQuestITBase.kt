@@ -21,7 +21,9 @@ open class ClubQuestITBase : SccSpringITBase() {
     @Autowired
     lateinit var clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository
 
-    fun getCreateClubQuestRequestBody() = CreateClubQuestRequest(
+    fun getCreateClubQuestRequestBody(
+        placeId: String = "placeId"
+    ) = CreateClubQuestRequest(
         questNamePrefix = "test",
         dryRunResults = listOf(
             ClubQuestCreateDryRunResultItemDTO(
@@ -34,7 +36,7 @@ open class ClubQuestITBase : SccSpringITBase() {
                         location = LocationDTO(lng = 127.0, lat = 37.0),
                         places = listOf(
                             ClubQuestTargetPlaceDTO(
-                                placeId = "placeId",
+                                placeId = placeId,
                                 buildingId = "buildingId",
                                 name = "placeName",
                                 location = LocationDTO(lng = 127.0, lat = 37.0),
