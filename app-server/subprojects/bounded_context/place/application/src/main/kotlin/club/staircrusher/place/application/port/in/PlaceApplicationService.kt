@@ -34,11 +34,17 @@ class PlaceApplicationService(
             return@coroutineScope emptyList()
         }
 
-        var places = mapsService.findAllByKeyword(keyword, option)
-        if (option.runCrossValidation) {
-            val existingPlaces = places.map { async { crossValidate(it, option) } }.awaitAll()
-            places = places.filterIndexed { index, _ -> existingPlaces[index] }
-        }
+        val places = mapsService.findAllByKeyword(keyword, option)
+            .filterClosedOrNotAccessible()
+            .let {
+                if (option.runCrossValidation) {
+                    val existingPlaces = it.map { async { crossValidate(it, option) } }.awaitAll()
+                    it.filterIndexed { index, _ -> existingPlaces[index] }
+                } else {
+                    it
+                }
+            }
+
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         places
     }
@@ -50,6 +56,13 @@ class PlaceApplicationService(
         val places = mapsService.findAllByCategory(category, option)
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
+    }
+
+    private fun List<Place>.filterClosedOrNotAccessible(): List<Place> {
+        val closedOrNotAccessiblePlaceIds = placeRepository.findByIdIn(this.map { it.id })
+            .filter { it.isClosed || it.isNotAccessible }
+            .map { it.id }
+        return this.filter { it.id !in closedOrNotAccessiblePlaceIds }
     }
 
     fun findAllByIds(placeIds: Collection<String>): List<Place> {
