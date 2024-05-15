@@ -6,7 +6,6 @@ ON CONFLICT(id) DO UPDATE SET
     name = EXCLUDED.name,
     quest_center_location_x = EXCLUDED.quest_center_location_x,
     quest_center_location_y = EXCLUDED.quest_center_location_y,
-    target_buildings = EXCLUDED.target_buildings,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
 

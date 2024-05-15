@@ -14,7 +14,6 @@ fun ClubQuest.toPersistenceModel() = Club_quest(
     name = name,
     quest_center_location_x = questCenterLocation.lng,
     quest_center_location_y = questCenterLocation.lat,
-    target_buildings = emptyList(),
     created_at = createdAt.toOffsetDateTime(),
     updated_at = updatedAt.toOffsetDateTime(),
 )
