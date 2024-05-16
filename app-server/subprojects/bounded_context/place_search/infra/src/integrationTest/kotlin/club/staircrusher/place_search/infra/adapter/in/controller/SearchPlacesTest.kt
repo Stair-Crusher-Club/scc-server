@@ -123,7 +123,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
     }
 
     @Test
-    fun `폐점된 장소는 필터링된다`() = runBlocking {
+    fun `폐업된 장소는 필터링된다`() = runBlocking {
         // given
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
@@ -163,7 +163,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 .apply { placeRepository.save(this) }
         }
 
-        // then - 검색에 걸리지 않는다.
+        // then - 폐업되면 검색에 걸리지 않는다.
         mvc.sccRequest("/searchPlaces", params, user = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
@@ -178,11 +178,11 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 .apply { placeRepository.save(this) }
         }
 
-        // then - 검색에 걸리지 않는다.
+        // then - 접근 불가여도 검색에 걸린다.
         mvc.sccRequest("/searchPlaces", params, user = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
-                assertEquals(0, result.items!!.size)
+                assertEquals(1, result.items!!.size)
             }
 
         Unit
