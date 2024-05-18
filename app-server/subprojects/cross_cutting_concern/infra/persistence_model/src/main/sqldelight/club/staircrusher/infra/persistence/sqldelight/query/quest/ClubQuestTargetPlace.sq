@@ -9,8 +9,6 @@ ON CONFLICT(id) DO UPDATE SET
     name = EXCLUDED.name,
     location_x = EXCLUDED.location_x,
     location_y = EXCLUDED.location_y,
-    is_closed = EXCLUDED.is_closed,
-    is_not_accessible = EXCLUDED.is_not_accessible,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
 
