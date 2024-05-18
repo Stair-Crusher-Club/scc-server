@@ -2,7 +2,6 @@ package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
-import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -14,7 +13,6 @@ import java.util.concurrent.Executors
 class CrossValidateClubQuestPlacesUseCase(
     private val transactionManager: TransactionManager,
     private val clubQuestRepository: ClubQuestRepository,
-    private val clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository,
     private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
     private val placeApplicationService: PlaceApplicationService,
 ) {
@@ -40,20 +38,11 @@ class CrossValidateClubQuestPlacesUseCase(
                 logger.info("[$questId] closedPlaceIds: $closedPlaceIds")
 
                 transactionManager.doInTransaction {
-                    val quest = clubQuestRepository.findById(questId)
-                    val placeById = places.associateBy { it.id }
                     closedPlaceIds.forEach { closedPlaceId ->
-                        val closedPlace = placeById[closedPlaceId]!!
-                        val targetPlace = quest.setIsClosed(closedPlace.building.id, closedPlace.id, true)
-                        if (targetPlace != null) {
-                            clubQuestTargetPlaceRepository.save(targetPlace)
-
-                            // dual write
-                            try {
-                                placeApplicationService.setIsClosed(targetPlace.placeId, isClosed = true)
-                            } catch (e: IllegalArgumentException) {
-                                // ignore
-                            }
+                        try {
+                            placeApplicationService.setIsClosed(closedPlaceId, isClosed = true)
+                        } catch (e: IllegalArgumentException) {
+                            // ignore
                         }
                     }
                 }

@@ -45,8 +45,6 @@ class CreateClubQuestTest : ClubQuestITBase() {
                 assertEquals(targetPlaceVO.placeId, targetPlace.placeId)
                 assertEquals(targetPlaceVO.name, targetPlace.name)
                 assertEquals(targetPlaceVO.location, targetPlace.location)
-                assertEquals(targetPlaceVO.isClosed, targetPlace.isClosed)
-                assertEquals(targetPlaceVO.isNotAccessible, targetPlace.isNotAccessible)
             }
     }
 }

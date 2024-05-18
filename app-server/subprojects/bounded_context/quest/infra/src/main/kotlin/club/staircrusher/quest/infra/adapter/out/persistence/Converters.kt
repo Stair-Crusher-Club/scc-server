@@ -59,8 +59,8 @@ fun ClubQuestTargetPlace.toPersistenceModel() = Club_quest_target_place(
     name = name,
     location_x = location.lng,
     location_y = location.lat,
-    is_closed = isClosed,
-    is_not_accessible = isNotAccessible,
+    is_closed = false,
+    is_not_accessible = false,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = updatedAt.toOffsetDateTime(),
 )
@@ -73,8 +73,6 @@ fun Club_quest_target_place.toDomainModel() = ClubQuestTargetPlace(
     placeId = place_id,
     name = name,
     location = Location(lng = location_x, lat = location_y),
-    isClosed = is_closed,
-    isNotAccessible = is_not_accessible,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant(),
 )

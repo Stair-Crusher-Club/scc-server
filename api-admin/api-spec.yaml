@@ -168,11 +168,8 @@ paths:
                 - placeId
                 - isClosed
       responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClubQuestDTO'
+        '204':
+          description: success to update
 
   /clubQuests/{clubQuestId}/isNotAccessible:
     put:
@@ -201,11 +198,8 @@ paths:
                 - placeId
                 - isNotAccessible
       responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClubQuestDTO'
+        '204':
+          description: success to update
 
   /accessibilityAllowedRegions:
     post:

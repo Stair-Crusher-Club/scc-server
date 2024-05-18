@@ -18,19 +18,6 @@ class ClubQuest(
     var updatedAt: Instant = updatedAt
         private set
 
-    fun setIsClosed(buildingId: String, placeId: String, value: Boolean): ClubQuestTargetPlace? {
-        val targetPlace = targetBuildings.flatMap { it.places }.find { it.buildingId == buildingId && it.placeId == placeId }
-            ?: return null
-        targetPlace.setIsClosed(value)
-        return targetPlace
-    }
-    fun setIsNotAccessible(buildingId: String, placeId: String, value: Boolean): ClubQuestTargetPlace? {
-        val targetPlace = targetBuildings.flatMap { it.places }.find { it.buildingId == buildingId && it.placeId == placeId }
-            ?: return null
-        targetPlace.setIsNotAccessible(value)
-        return targetPlace
-    }
-
     override fun equals(other: Any?): Boolean {
         return other is ClubQuest && other.id == id
     }

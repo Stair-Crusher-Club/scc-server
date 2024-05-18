@@ -7,9 +7,9 @@ import club.staircrusher.stdlib.geography.Location
     "성능 이슈로 인해 별도의 entity로 분리한다.",
     replaceWith = ReplaceWith("ClubQuestTargetBuilding"),
 )
-data class ClubQuestTargetBuildingVO(
+data class DryRunnedClubQuestTargetBuilding(
     val buildingId: String,
     val name: String,
     val location: Location,
-    val places: List<ClubQuestTargetPlaceVO>,
+    val places: List<DryRunnedClubQuestTargetPlace>,
 )
