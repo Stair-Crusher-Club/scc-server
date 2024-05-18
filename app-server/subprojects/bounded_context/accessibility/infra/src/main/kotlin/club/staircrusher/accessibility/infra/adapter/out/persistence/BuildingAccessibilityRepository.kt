@@ -18,7 +18,7 @@ class BuildingAccessibilityRepository(
     private val queries = db.buildingAccessibilityQueries
 
     override fun save(entity: BuildingAccessibility): BuildingAccessibility {
-        queries.save(entity.toPersistenceModel())
+        queries.save(entity.toPersistenceModel().copy(updated_at = SccClock.instant().toOffsetDateTime()))
         return entity
     }
 

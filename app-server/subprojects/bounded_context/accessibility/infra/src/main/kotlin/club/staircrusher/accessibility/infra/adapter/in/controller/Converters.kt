@@ -17,18 +17,20 @@ import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.AccessibilityRegistererDto
+import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.stdlib.auth.AuthUser
 
-fun BuildingAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = club.staircrusher.api.spec.dto.BuildingAccessibilityComment(
-    id = id,
-    buildingId = buildingId,
-    comment = comment,
-    createdAt = createdAt.toDTO(),
-    user = accessibilityRegisterer?.toDTO(),
-)
+fun BuildingAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) =
+    club.staircrusher.api.spec.dto.BuildingAccessibilityComment(
+        id = id,
+        buildingId = buildingId,
+        comment = comment,
+        createdAt = createdAt.toDTO(),
+        user = accessibilityRegisterer?.toDTO(),
+    )
 
 fun BuildingAccessibility.toDTO(
     isUpvoted: Boolean,
@@ -49,6 +51,7 @@ fun BuildingAccessibility.toDTO(
     isUpvoted = isUpvoted,
     totalUpvoteCount = totalUpvoteCount,
     registeredUserName = registeredUserName,
+    createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
 )
 
 fun GetAccessibilityResult.toDTO(authUser: AuthUser?) = AccessibilityInfoDto(
@@ -90,13 +93,14 @@ fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
         userId = userId,
     )
 
-fun PlaceAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = club.staircrusher.api.spec.dto.PlaceAccessibilityComment(
-    id = id,
-    placeId = placeId,
-    comment = comment,
-    createdAt = createdAt.toDTO(),
-    user = accessibilityRegisterer?.toDTO(),
-)
+fun PlaceAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) =
+    club.staircrusher.api.spec.dto.PlaceAccessibilityComment(
+        id = id,
+        placeId = placeId,
+        comment = comment,
+        createdAt = createdAt.toDTO(),
+        user = accessibilityRegisterer?.toDTO(),
+    )
 
 fun PlaceAccessibility.toDTO(
     registeredAccessibilityRegisterer: AccessibilityRegisterer?,
@@ -120,7 +124,8 @@ fun PlaceAccessibility.toDTO(
         )
     } else {
         null
-    }
+    },
+    createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
 )
 
 fun club.staircrusher.api.spec.dto.StairInfo.toModel() = when (this) {
@@ -189,8 +194,9 @@ fun AccessibilityRegisterer.toDTO() = AccessibilityRegistererDto(
     instagramId = instagramId,
 )
 
-fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) = club.staircrusher.api.spec.dto.AccessibilityRankDto(
-    user = accessibilityRegisterer.toDTO(),
-    rank = rank,
-    conqueredCount = conqueredCount,
-)
+fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) =
+    club.staircrusher.api.spec.dto.AccessibilityRankDto(
+        user = accessibilityRegisterer.toDTO(),
+        rank = rank,
+        conqueredCount = conqueredCount,
+    )
