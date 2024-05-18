@@ -8,8 +8,8 @@ import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingC
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
-import club.staircrusher.quest.domain.model.ClubQuestTargetBuildingVO
-import club.staircrusher.quest.domain.model.ClubQuestTargetPlaceVO
+import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
+import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 import club.staircrusher.quest.util.HumanReadablePrefixGenerator
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
@@ -39,12 +39,9 @@ class ClubQuestCreateAplService(
                 places.map { it.id }
             ).toSet()
         }
-        val invalidPlaceIds = transactionManager.doInTransaction {
-            getInvalidPlaceIds()
-        }
 
         val buildingToPlaces = places
-            .filter { it.id !in accessibilityExistingPlaceIds && it.id !in invalidPlaceIds }
+            .filter { it.id !in accessibilityExistingPlaceIds && !it.isClosed && !it.isNotAccessible }
             .groupBy { it.building }
             .mapValues { (_, places) -> places.distinctBy { it.id } }
         val buildings = buildingToPlaces.keys.toList()
@@ -84,20 +81,11 @@ class ClubQuestCreateAplService(
             .convertToClubQuestCreateDryRunResultItems()
     }
 
-    private fun getInvalidPlaceIds(): Set<String> {
-        return clubQuestRepository.findAllOrderByCreatedAtDesc()
-            .flatMap { it.targetBuildings }
-            .flatMap { it.places }
-            .filter { it.isClosed || it.isNotAccessible }
-            .map { it.placeId }
-            .toSet()
-    }
-
-    private fun List<Place>.groupToClubQuestTargetBuildings(): List<ClubQuestTargetBuildingVO> {
+    private fun List<Place>.groupToClubQuestTargetBuildings(): List<DryRunnedClubQuestTargetBuilding> {
         return this
             .groupBy { it.building.id }
             .toList().mapIndexed { buildingIdx, (buildingId, places) ->
-                ClubQuestTargetBuildingVO(
+                DryRunnedClubQuestTargetBuilding(
                     buildingId = buildingId,
                     // FIXME: 단어 목록이 부족해서 여기서 getBuildingName()을 하면 단어 목록 개수 제한으로 에러가 난다.
                     //        따라서 여기서는 임시값을 넣어주고, applyTargetPlacesCountLimitOfSingleQuest()로
@@ -105,20 +93,18 @@ class ClubQuestCreateAplService(
                     name = "temp",
                     location = places.first().location,
                     places = places.map {
-                        ClubQuestTargetPlaceVO(
+                        DryRunnedClubQuestTargetPlace(
                             name = it.name,
                             location = it.location,
                             placeId = it.id,
                             buildingId = it.building.id,
-                            isClosed = false,
-                            isNotAccessible = false,
                         )
                     }.distinctBy { it.placeId },
                 )
             }
     }
 
-    private fun List<Pair<Location, List<ClubQuestTargetBuildingVO>>>.convertToClubQuestCreateDryRunResultItems(): List<ClubQuestCreateDryRunResultItem> {
+    private fun List<Pair<Location, List<DryRunnedClubQuestTargetBuilding>>>.convertToClubQuestCreateDryRunResultItems(): List<ClubQuestCreateDryRunResultItem> {
         return this
             .mapIndexed { idx, (questCenterLocation, targetBuildings) ->
                 ClubQuestCreateDryRunResultItem(

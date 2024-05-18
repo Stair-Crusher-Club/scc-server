@@ -6,12 +6,13 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
+import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
-import club.staircrusher.quest.domain.model.ClubQuestTargetBuildingVO
+import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
-import club.staircrusher.quest.domain.model.ClubQuestTargetPlaceVO
+import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 
 
 fun ClubQuestCreateDryRunResultItemDTO.toModel() = ClubQuestCreateDryRunResultItem(
@@ -27,55 +28,70 @@ fun ClubQuestCreateDryRunResultItem.toDTO(conqueredPlaceIds: Set<String>) =
         targetBuildings = targetBuildings.map { it.toDTO(conqueredPlaceIds) }
     )
 
-fun ClubQuestTargetBuildingVO.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
+fun DryRunnedClubQuestTargetBuilding.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
     buildingId = buildingId,
     name = name,
     location = location.toDTO(),
-    places = places.map { it.toDTO(isConquered = it.placeId in conqueredPlaceIds) },
+    places = places.map {
+        it.toDTO(
+            isConquered = it.placeId in conqueredPlaceIds,
+        )
+    },
 )
 
-fun ClubQuestTargetPlaceVO.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
+fun DryRunnedClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
     return ClubQuestTargetPlaceDTO(
         name = name,
         location = location.toDTO(),
         placeId = placeId,
         buildingId = buildingId,
         isConquered = isConquered,
-        isClosed = isClosed,
-        isNotAccessible = isNotAccessible,
+        isClosed = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
+        isNotAccessible = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
     )
 }
 
 fun ClubQuestWithDtoInfo.toDTO() = ClubQuestDTO(
     id = quest.id,
     name = quest.name,
-    buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds) }
+    buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds, placeById) }
 )
 
-fun ClubQuestTargetBuildingDTO.toModel() = ClubQuestTargetBuildingVO(
+fun ClubQuestTargetBuildingDTO.toModel() = DryRunnedClubQuestTargetBuilding(
     buildingId = buildingId,
     name = name,
     location = location.toModel(),
     places = places.map { it.toModel() },
 )
 
-fun ClubQuestTargetBuilding.toDTO(conqueredPlaceIds: Set<String>) = ClubQuestTargetBuildingDTO(
+fun ClubQuestTargetBuilding.toDTO(
+    conqueredPlaceIds: Set<String>,
+    placeById: Map<String, Place>,
+) = ClubQuestTargetBuildingDTO(
     buildingId = buildingId,
     name = name,
     location = location.toDTO(),
-    places = places.map { it.toDTO(isConquered = it.placeId in conqueredPlaceIds) },
+    places = places.map {
+        it.toDTO(
+            isConquered = it.placeId in conqueredPlaceIds,
+            isClosed = placeById[it.placeId]!!.isClosed,
+            isNotAccessible = placeById[it.placeId]!!.isNotAccessible,
+        )
+    },
 )
 
-fun ClubQuestTargetPlaceDTO.toModel() = ClubQuestTargetPlaceVO(
+fun ClubQuestTargetPlaceDTO.toModel() = DryRunnedClubQuestTargetPlace(
     name = name,
     buildingId = buildingId,
     placeId = placeId,
     location = location.toModel(),
-    isClosed = isClosed,
-    isNotAccessible = isNotAccessible,
 )
 
-fun ClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPlaceDTO {
+fun ClubQuestTargetPlace.toDTO(
+    isConquered: Boolean,
+    isClosed: Boolean,
+    isNotAccessible: Boolean,
+): ClubQuestTargetPlaceDTO {
     return ClubQuestTargetPlaceDTO(
         name = name,
         location = location.toDTO(),

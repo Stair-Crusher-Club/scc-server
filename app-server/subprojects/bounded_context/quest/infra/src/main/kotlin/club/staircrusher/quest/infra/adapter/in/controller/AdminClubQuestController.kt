@@ -10,7 +10,6 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestRequest
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
-import club.staircrusher.quest.application.port.`in`.ClubQuestMigrateToPlaceUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
 import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlacesUseCase
@@ -37,7 +36,6 @@ class AdminClubQuestController(
     private val deleteClubQuestUseCase: DeleteClubQuestUseCase,
     private val clubQuestRepository: ClubQuestRepository,
     private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
-    private val clubQuestMigrateToPlaceUseCase: ClubQuestMigrateToPlaceUseCase,
 ) {
     @GetMapping("/admin/clubQuests")
     fun listClubQuests(): List<ClubQuestsGet200ResponseInner> {
@@ -88,32 +86,33 @@ class AdminClubQuestController(
     }
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/isClosed")
-    fun setIsClosed(@PathVariable clubQuestId: String, @RequestBody request: ClubQuestsClubQuestIdIsClosedPutRequest): ClubQuestDTO {
-        return clubQuestSetIsClosedUseCase.handle(
-            clubQuestId,
-            request.buildingId,
+    fun setIsClosed(
+        @Suppress("UnusedPrivateMember") @PathVariable clubQuestId: String,
+        @RequestBody request: ClubQuestsClubQuestIdIsClosedPutRequest
+    ): ResponseEntity<Unit> {
+        clubQuestSetIsClosedUseCase.handle(
             request.placeId,
             request.isClosed,
-        ).toDTO()
+        )
+
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/isNotAccessible")
-    fun setIsNotAccessible(@PathVariable clubQuestId: String, @RequestBody request: ClubQuestsClubQuestIdIsNotAccessiblePutRequest): ClubQuestDTO {
-        return clubQuestSetIsNotAccessibleUseCase.handle(
-            clubQuestId,
-            request.buildingId,
+    fun setIsNotAccessible(
+        @Suppress("UnusedPrivateMember") @PathVariable clubQuestId: String,
+        @RequestBody request: ClubQuestsClubQuestIdIsNotAccessiblePutRequest
+    ): ResponseEntity<Unit> {
+        clubQuestSetIsNotAccessibleUseCase.handle(
             request.placeId,
             request.isNotAccessible,
-        ).toDTO()
+        )
+
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/crossValidate")
     fun crossValidate(@PathVariable clubQuestId: String) {
         return crossValidateClubQuestPlacesUseCase.handle(clubQuestId)
-    }
-
-    @PutMapping("/admin/clubQuests/migrateToPlace")
-    fun migrateToPlace() {
-        clubQuestMigrateToPlaceUseCase.handle()
     }
 }

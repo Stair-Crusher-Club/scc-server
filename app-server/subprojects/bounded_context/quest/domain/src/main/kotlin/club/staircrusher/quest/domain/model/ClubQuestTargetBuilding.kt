@@ -39,7 +39,7 @@ class ClubQuestTargetBuilding(
     }
 
     companion object {
-        fun of(valueObject: ClubQuestTargetBuildingVO, clubQuestId: String): ClubQuestTargetBuilding {
+        fun of(valueObject: DryRunnedClubQuestTargetBuilding, clubQuestId: String): ClubQuestTargetBuilding {
             val id = EntityIdGenerator.generateRandom()
             return ClubQuestTargetBuilding(
                 id = id,
