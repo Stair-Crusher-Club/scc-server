@@ -4,7 +4,6 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessible
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -49,20 +48,7 @@ class ClubQuestSetIsNotAccessibleTest : ClubQuestITBase() {
             .sccAdminRequest("/admin/clubQuests/${clubQuest.id}/isNotAccessible", HttpMethod.PUT, requestBody)
             .apply {
                 transactionManager.doInTransaction {
-                    val reloadedClubQuest = clubQuestRepository.findById(clubQuest.id)
-                    val reloadedTargetPlaceVO = reloadedClubQuest.targetBuildings[0].places[0]
-                    assertTrue(reloadedTargetPlaceVO.isNotAccessible)
-                    assertFalse(reloadedTargetPlaceVO.isClosed)
-
-                    val targetPlace = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceId(
-                        clubQuestId = clubQuest.id,
-                        placeId = reloadedTargetPlaceVO.placeId,
-                    )
-                    assertNotNull(targetPlace)
-                    assertTrue(targetPlace!!.isNotAccessible)
-                    assertFalse(targetPlace.isClosed)
-
-                    val place = placeRepository.findById(targetPlace.placeId)
+                    val place = placeRepository.findById(placeId)
                     assertTrue(place.isNotAccessible)
                     assertFalse(place.isClosed)
                 }

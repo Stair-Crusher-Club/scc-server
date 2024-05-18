@@ -1,12 +1,12 @@
 import kotlin.collections.List;
-import club.staircrusher.quest.domain.model.ClubQuestTargetBuildingVO;
+import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding;
 
 CREATE TABLE IF NOT EXISTS club_quest (
     id VARCHAR(36) NOT NULL,
     name VARCHAR(64) NOT NULL,
     quest_center_location_x FLOAT8 NOT NULL,
     quest_center_location_y FLOAT8 NOT NULL,
-    target_buildings TEXT AS List<ClubQuestTargetBuildingVO> NOT NULL,
+    target_buildings TEXT AS List<DryRunnedClubQuestTargetBuilding> NOT NULL,
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)

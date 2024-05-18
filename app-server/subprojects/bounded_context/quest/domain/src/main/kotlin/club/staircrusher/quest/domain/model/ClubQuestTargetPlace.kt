@@ -13,31 +13,13 @@ class ClubQuestTargetPlace(
     val placeId: String,
     val name: String,
     val location: Location,
-    isClosed: Boolean,
-    isNotAccessible: Boolean,
     createdAt: Instant = SccClock.instant(),
     updatedAt: Instant = SccClock.instant(),
 ) {
-    var isClosed: Boolean = isClosed
-        protected set
-
-    var isNotAccessible: Boolean = isNotAccessible
-        protected set
-
     val createdAt: Instant = createdAt
 
     var updatedAt: Instant = updatedAt
         protected set
-
-    fun setIsClosed(value: Boolean) {
-        isClosed = value
-        updatedAt = SccClock.instant()
-    }
-
-    fun setIsNotAccessible(value: Boolean) {
-        isNotAccessible = value
-        updatedAt = SccClock.instant()
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -54,13 +36,12 @@ class ClubQuestTargetPlace(
 
     override fun toString(): String {
         return "ClubQuestTargetPlace(id='$id', clubQuestId='$clubQuestId', buildingId='$buildingId', " +
-            "placeId='$placeId', name='$name', location=$location, isClosed=$isClosed, " +
-            "isNotAccessible=$isNotAccessible, createdAt=$createdAt, updatedAt=$updatedAt)"
+            "placeId='$placeId', name='$name', location=$location, createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 
     companion object {
         fun of(
-            valueObject: ClubQuestTargetPlaceVO,
+            valueObject: DryRunnedClubQuestTargetPlace,
             clubQuestId: String,
             targetBuildingId: String,
         ): ClubQuestTargetPlace {
@@ -72,8 +53,6 @@ class ClubQuestTargetPlace(
                 placeId = valueObject.placeId,
                 name = valueObject.name,
                 location = valueObject.location,
-                isClosed = valueObject.isClosed,
-                isNotAccessible = valueObject.isNotAccessible,
             )
         }
     }
