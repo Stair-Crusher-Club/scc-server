@@ -23,7 +23,7 @@ fun Club_quest.toDomainModel(targetBuildings: List<ClubQuestTargetBuilding>) = C
     id = id,
     name = name,
     questCenterLocation = Location(lng = quest_center_location_x, lat = quest_center_location_y),
-    targetBuildings = targetBuildings,
+    targetBuildings = targetBuildings.sortedBy { it.name },
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant(),
 )
