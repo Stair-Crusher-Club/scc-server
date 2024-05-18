@@ -832,6 +832,8 @@ components:
         totalUpvoteCount:
           type: integer
           description: 이 접근성 정보가 '도움이 돼요'를 받은 총 횟수. 이 숫자에 따라 버튼 텍스트에 '도움이 돼요'나 '정확한 정보에요'를 사용한다.
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
         - id
         - entranceStairInfo
@@ -843,6 +845,7 @@ components:
         - buildingId
         - isUpvoted
         - totalUpvoteCount
+        - createdAt
 
     BuildingAccessibilityComment:
       description: 건물에 대한 의견.
@@ -1265,6 +1268,8 @@ components:
               description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
           required:
             - isLastInBuilding
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
         - id
         - placeId
@@ -1272,6 +1277,7 @@ components:
         - stairInfo
         - hasSlope
         - isFirstFloor
+        - createdAt
 
     PlaceAccessibilityComment:
       description: 점포에 대한 의견.
