@@ -45,7 +45,7 @@ class SearchPlacesController(
     }
 
     @PostMapping("/getPlaceWithBuilding")
-    suspend fun getPlace(@RequestBody request: Get): PlaceListItem {
+    suspend fun getPlace(@RequestBody request: GetAccessibilityPostRequest): PlaceListItem {
         return placeSearchService.getPlace(request.placeId).toDTO()
     }
 
