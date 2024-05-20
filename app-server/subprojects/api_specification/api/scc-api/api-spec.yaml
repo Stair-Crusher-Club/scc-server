@@ -79,6 +79,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccessibilityInfoDto'
 
+  /getPlaceWithBuilding:
+    post:
+      summary: 건물 & 점포 정보를 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placeId:
+                  type: string
+              required:
+                - placeId
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceListItem'
+
   /getAccessibilityLeaderboard:
     post:
       summary: 현재 탑 랭커들을 조회한다.
