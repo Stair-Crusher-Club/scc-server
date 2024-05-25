@@ -65,7 +65,7 @@ class AdminClubQuestController(
             dryRunResultItems = request.dryRunResults.map { it.toModel() }
         )
         quests.forEach { quest ->
-            crossValidateClubQuestPlacesUseCase.handle(quest.id)
+            crossValidateClubQuestPlacesUseCase.handleAsync(quest.id)
         }
         return CreateClubQuestResponseDTO(
             clubQuestIds = quests.map { it.id },
@@ -113,6 +113,6 @@ class AdminClubQuestController(
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/crossValidate")
     fun crossValidate(@PathVariable clubQuestId: String) {
-        return crossValidateClubQuestPlacesUseCase.handle(clubQuestId)
+        return crossValidateClubQuestPlacesUseCase.handleAsync(clubQuestId)
     }
 }
