@@ -47,6 +47,7 @@ fun DryRunnedClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPl
         buildingId = buildingId,
         isConquered = isConquered,
         isClosed = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
+        isClosedExpected = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
         isNotAccessible = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
     )
 }
@@ -98,6 +99,7 @@ fun ClubQuestTargetPlace.toDTO(
         placeId = placeId,
         buildingId = buildingId,
         isConquered = isConquered,
+        isClosedExpected = isClosedExpected,
         isClosed = isClosed,
         isNotAccessible = isNotAccessible,
     )

@@ -17,6 +17,15 @@ class SqlDelightClubQuestTargetPlaceRepository(
             ?.toDomainModel()
     }
 
+    override fun findByClubQuestIdAndPlaceIds(
+        clubQuestId: String,
+        placeIds: List<String>
+    ): List<ClubQuestTargetPlace> {
+        return queries.findByClubQuestIdAndPlaceIds(clubQuestId = clubQuestId, placeIds = placeIds)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun findByTargetBuildingId(targetBuildingId: String): List<ClubQuestTargetPlace> {
         return queries.findByTargetBuildingId(targetBuildingId = targetBuildingId)
             .executeAsList()

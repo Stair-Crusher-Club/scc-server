@@ -460,9 +460,12 @@ components:
         isConquered:
           type: boolean
           description: 장소가 정복됐는지 여부.
+        isClosedExpected:
+          type: boolean
+          description: 장소가 폐업으로 추정되는지 여부.
         isClosed:
           type: boolean
-          description: 장소가 폐업됐는지 여부.
+          description: 장소가 실제로 폐업됐는지 여부.
         isNotAccessible:
           type: boolean
           description: 장소에 접근 가능한지 여부.
@@ -472,6 +475,7 @@ components:
         - placeId
         - buildingId
         - isConquered
+        - isClosedExpected
         - isClosed
         - isNotAccessible
 
