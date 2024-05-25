@@ -80,6 +80,13 @@ class PlaceSearchService(
             .toSearchPlacesResult(currentLocation = null)
     }
 
+    suspend fun getPlace(placeId: String): SearchPlacesResult {
+        val place = placeApplicationService.findPlace(placeId) ?: throw IllegalArgumentException("Place with id $placeId does not exist.")
+        return listOf(place)
+            .toSearchPlacesResult(currentLocation = null)
+            .first()
+    }
+
     private fun List<Place>.toSearchPlacesResult(currentLocation: Location?): List<SearchPlacesResult> {
         if (this.isEmpty()) {
             return emptyList()
