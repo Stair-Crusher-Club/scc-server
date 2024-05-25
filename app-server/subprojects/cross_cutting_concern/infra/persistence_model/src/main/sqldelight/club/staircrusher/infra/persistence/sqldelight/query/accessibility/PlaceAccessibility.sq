@@ -84,7 +84,7 @@ WHERE
         OR (pa.created_at < :cursorCreatedAt)
     )
     AND pa.deleted_at IS NULL
-ORDER BY pa.created_at DESC
+ORDER BY pa.created_at DESC, pa.id DESC
 LIMIT :limit;
 
 countAll:

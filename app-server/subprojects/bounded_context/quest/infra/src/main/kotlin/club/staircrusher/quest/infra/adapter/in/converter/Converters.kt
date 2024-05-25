@@ -4,11 +4,13 @@ import club.staircrusher.admin_api.converter.toDTO
 import club.staircrusher.admin_api.converter.toModel
 import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestSummaryDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestSummary
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
@@ -104,3 +106,8 @@ fun ClubQuestTargetPlace.toDTO(
         isNotAccessible = isNotAccessible,
     )
 }
+
+fun ClubQuestSummary.toDTO() = ClubQuestSummaryDTO(
+    id = id,
+    name = name,
+)
