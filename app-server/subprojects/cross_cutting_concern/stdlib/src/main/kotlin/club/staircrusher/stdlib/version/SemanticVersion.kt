@@ -1,5 +1,6 @@
 package club.staircrusher.stdlib.version
 
+import club.staircrusher.stdlib.util.string.emptyToNull
 import kotlin.math.min
 
 /**
@@ -111,7 +112,13 @@ data class SemanticVersion(
             val matchResult = versionRegex.matchEntire(versionString)
             return matchResult?.let {
                 val (major, minor, patch, preRelease, preReleaseComponent, buildMetadata) = matchResult.destructured
-                return SemanticVersion(0, 0, 0, preRelease, buildMetadata)
+                return SemanticVersion(
+                    major.toInt(),
+                    minor.toInt(),
+                    patch.toInt(),
+                    preRelease.emptyToNull(),
+                    buildMetadata.emptyToNull()
+                )
             }
         }
     }

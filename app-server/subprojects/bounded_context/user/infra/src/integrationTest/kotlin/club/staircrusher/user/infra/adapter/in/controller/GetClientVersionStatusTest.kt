@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.springframework.boot.test.mock.mockito.SpyBean
+import org.springframework.boot.test.mock.mockito.MockBean
 
 class GetClientVersionStatusTest : SccSpringITBase() {
 
-    @SpyBean
-    private lateinit var clientVersionService: ClientVersionService
+    @MockBean
+    lateinit var clientVersionService: ClientVersionService
 
     @BeforeEach
     fun setUp() {
@@ -28,6 +28,13 @@ class GetClientVersionStatusTest : SccSpringITBase() {
 
     @Test
     fun `클라이언트 버전이 너무 낮으면 강제 업데이트를 안내한다`() {
+        Mockito.`when`(
+            clientVersionService.getUpgradedNeededVersion()
+        ).thenReturn(SemanticVersion(0, 1, 0))
+        Mockito.`when`(
+            clientVersionService.getUpgradedRecommendedVersion()
+        ).thenReturn(SemanticVersion(0, 2, 0))
+
         val status = mvc.sccRequest(
             "/getClientVersionStatus",
             GetClientVersionStatusRequestDto(version = "0.0.9")
@@ -39,6 +46,13 @@ class GetClientVersionStatusTest : SccSpringITBase() {
 
     @Test
     fun `클라이언트 버전이 낮으면 업데이트 추천을 안내한다`() {
+        Mockito.`when`(
+            clientVersionService.getUpgradedNeededVersion()
+        ).thenReturn(SemanticVersion(0, 1, 0))
+        Mockito.`when`(
+            clientVersionService.getUpgradedRecommendedVersion()
+        ).thenReturn(SemanticVersion(0, 2, 0))
+
         val status = mvc.sccRequest(
             "/getClientVersionStatus",
             GetClientVersionStatusRequestDto(version = "0.1.5")

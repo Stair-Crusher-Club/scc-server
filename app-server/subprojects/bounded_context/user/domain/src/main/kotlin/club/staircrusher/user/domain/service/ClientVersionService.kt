@@ -3,13 +3,18 @@ package club.staircrusher.user.domain.service
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.version.SemanticVersion
 
+interface ClientVersionService {
+    fun getUpgradedNeededVersion(): SemanticVersion
+    fun getUpgradedRecommendedVersion(): SemanticVersion
+}
+
 @Component
-class ClientVersionService {
-    fun getUpgradedNeededVersion(): SemanticVersion {
+class ClientVersionServiceImpl : ClientVersionService {
+    override fun getUpgradedNeededVersion(): SemanticVersion {
         return SemanticVersion(0, 2, 0)
     }
 
-    fun getUpgradedRecommendedVersion(): SemanticVersion {
+    override fun getUpgradedRecommendedVersion(): SemanticVersion {
         return SemanticVersion(0, 2, 0)
     }
 }

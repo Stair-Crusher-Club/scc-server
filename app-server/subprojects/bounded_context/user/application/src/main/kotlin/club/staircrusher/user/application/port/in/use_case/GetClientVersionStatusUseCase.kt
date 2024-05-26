@@ -24,7 +24,7 @@ class GetClientVersionStatusUseCase(
 
         clientVersionService.getUpgradedRecommendedVersion().let { minVersion ->
             if (version < minVersion) return ClientVersionStatus(
-                status = ClientVersionStatus.Status.UPGRADE_NEEDED,
+                status = ClientVersionStatus.Status.UPGRADE_RECOMMENDED,
                 message = "다양한 기능 사용을 위해 최신 버전으로 업데이트 해주세요."
             )
         }
