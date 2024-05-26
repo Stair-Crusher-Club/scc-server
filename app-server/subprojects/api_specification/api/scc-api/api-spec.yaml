@@ -236,6 +236,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetChallengeResponseDto'
 
+  /getClientVersionStatus:
+    post:
+      summary: 앱 버전에 따라 업데이트 상태를 알려준다
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetClientVersionStatusRequestDto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetClientVersionStatusResponseDto'
+
   /getUserInfo:
     get:
       summary: 유저 정보를 조회한다.
@@ -1046,6 +1062,30 @@ components:
           description: 공개되어있지 않은, 초대코드로만 볼 수 있는 챌린지
       required:
         - invitationCode
+
+    GetClientVersionStatusRequestDto:
+      type: object
+      properties:
+        version:
+          type: string
+          description: 현재 클라이언트 버전 ex) 3.37.0
+      required:
+        - version
+
+    GetClientVersionStatusResponseDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - STABLE
+            - UPGRADE_NEEDED
+            - UPGRADE_RECOMMENDED
+        message:
+          type: string
+          description: 강제 업데이트 혹은 업데이트 권장 사유
+      required:
+        - status
 
     GetUserInfoRequestDto:
       type: object
