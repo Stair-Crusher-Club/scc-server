@@ -9,6 +9,7 @@ import club.staircrusher.user.domain.service.ClientVersionService
 class GetClientVersionStatusUseCase(
     private val clientVersionService: ClientVersionService
 ) {
+    @Suppress("ReturnCount")
     fun handle(clientVersion: String): ClientVersionStatus {
         val version = SemanticVersion.parse(clientVersion) ?: return ClientVersionStatus(
             status = ClientVersionStatus.Status.UPGRADE_NEEDED,

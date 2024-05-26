@@ -39,6 +39,7 @@ data class SemanticVersion(
         return this.copy(patch = patch + 1)
     }
 
+    @Suppress("ComplexMethod", "ReturnCount")
     override fun compareTo(other: SemanticVersion): Int {
         if (major > other.major) return 1
         if (major < other.major) return -1
@@ -108,6 +109,7 @@ data class SemanticVersion(
         private val versionRegex =
             Regex("""^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$""")
 
+        @Suppress("DestructuringDeclarationWithTooManyEntries")
         fun parse(versionString: String): SemanticVersion? {
             val matchResult = versionRegex.matchEntire(versionString)
             return matchResult?.let {
