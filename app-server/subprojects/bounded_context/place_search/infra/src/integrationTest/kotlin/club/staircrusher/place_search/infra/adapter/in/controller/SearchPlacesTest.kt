@@ -182,7 +182,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
         mvc.sccRequest("/searchPlaces", params, user = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
-                assertEquals(1, result.items!!.size)
+                assertequals(1, result.items!!.size)
             }
 
         Unit
