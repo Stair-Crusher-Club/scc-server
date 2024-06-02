@@ -62,7 +62,7 @@ class AdminClubQuestController(
         ).run {
             GetCursoredClubQuestSummariesResultDTO(
                 list = list.map { it.toDTO() },
-                cursor = cursor,
+                cursor = nextCursor,
             )
         }
     }
