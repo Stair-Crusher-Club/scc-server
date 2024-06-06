@@ -10,7 +10,6 @@ import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place_search.application.port.`in`.ListSearchKeywordOfPlaceCategoryUseCase
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
-import club.staircrusher.spring_web.env.SccEnv
 import club.staircrusher.stdlib.geography.Length
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -31,7 +30,7 @@ class SearchPlacesController(
             siGunGuId = request.siGunGuId,
             eupMyeonDongId = request.eupMyeonDongId,
             sort = request.sort?.value,
-            limit = if (SccEnv.isDev()) null else 50 // FIXME: 장소 개수가 너무 많으면 성능에 이슈가 있어서, 일단 최대 10개만 내려주게끔 수정한다.
+            limit = null,
         )
         return SearchPlacesPost200Response(
             items = searchResults.map { it.toDTO() }
