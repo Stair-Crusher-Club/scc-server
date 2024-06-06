@@ -40,7 +40,7 @@ class AccessibilityThumbnailService(
             registerBuildingAccessibilityThumbnails(placeId, entranceOriginalImageUrls, elevatorOriginalImageUrls)
         }
 
-        runBlocking { domainEventPublisher.publishEvent(AccessibilityThumbnailGeneratedEvent(THUMBNAIL_PATH.resolve(placeId))) }
+        runBlocking { domainEventPublisher.publishEvent(AccessibilityThumbnailGeneratedEvent(thumbnailPath.resolve(placeId))) }
     }
 
     private fun getOriginalImageUrls(placeId: String) = transactionManager.doInTransaction {
@@ -101,7 +101,7 @@ class AccessibilityThumbnailService(
 
     private fun generateThumbnail(originalImageUrl: String, placeId: String): Path? {
         try {
-            val destinationPath = THUMBNAIL_PATH.resolve(placeId)
+            val destinationPath = thumbnailPath.resolve(placeId)
             val imageFile = fileManagementService.downloadFile(originalImageUrl, destinationPath)
             val thumbnailFileName = "thumbnail_${imageFile.nameWithoutExtension}.$THUMBNAIL_FORMAT"
             val thumbnailFilePath = destinationPath.resolve(thumbnailFileName)
@@ -133,7 +133,7 @@ class AccessibilityThumbnailService(
     }
 
     companion object {
-        private val THUMBNAIL_PATH = Path.of("tmp", "thumbnails")
-        private const val THUMBNAIL_FORMAT = "png"
+        private val thumbnailPath = Path.of("tmp", "thumbnails")
+        private const val THUMBNAIL_FORMAT = "webp"
     }
 }
