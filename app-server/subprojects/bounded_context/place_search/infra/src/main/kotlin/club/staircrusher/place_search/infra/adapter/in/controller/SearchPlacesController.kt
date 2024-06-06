@@ -10,7 +10,6 @@ import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place_search.application.port.`in`.ListSearchKeywordOfPlaceCategoryUseCase
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
-import club.staircrusher.spring_web.env.SccEnv
 import club.staircrusher.stdlib.geography.Length
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
