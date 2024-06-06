@@ -25,7 +25,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         cursorId: String,
         limit: Int,
     ): List<PlaceAccessibility>
-
+    fun updateThumbnailUrls(id: String, thumbnailUrls: List<String>)
     fun countAll(): Int
     fun remove(id: String)
 

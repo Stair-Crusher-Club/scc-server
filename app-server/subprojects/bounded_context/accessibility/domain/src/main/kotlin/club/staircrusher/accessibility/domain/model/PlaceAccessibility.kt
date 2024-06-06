@@ -15,6 +15,7 @@ data class PlaceAccessibility(
     val hasSlope: Boolean,
     val entranceDoorTypes: List<EntranceDoorType>?,
     val imageUrls: List<String>,
+    val thumbnailUrls: List<String>? = null,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,

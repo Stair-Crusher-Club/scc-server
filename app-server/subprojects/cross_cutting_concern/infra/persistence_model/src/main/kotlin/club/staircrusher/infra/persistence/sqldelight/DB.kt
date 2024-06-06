@@ -40,13 +40,16 @@ class DB(dataSource: DataSource) : TransactionManager {
         ),
         place_accessibilityAdapter = Place_accessibility.Adapter(
             image_urlsAdapter = StringListToTextColumnAdapter,
+            thumbnail_urlsAdapter = StringListToTextColumnAdapter,
             floorsAdapter = IntListToTextColumnAdapter,
             stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
         ),
         building_accessibilityAdapter = Building_accessibility.Adapter(
             entrance_image_urlsAdapter = StringListToTextColumnAdapter,
+            entrance_thumbnail_urlsAdapter = StringListToTextColumnAdapter,
             elevator_image_urlsAdapter = StringListToTextColumnAdapter,
+            elevator_thumbnail_urlsAdapter = StringListToTextColumnAdapter,
             entrance_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter

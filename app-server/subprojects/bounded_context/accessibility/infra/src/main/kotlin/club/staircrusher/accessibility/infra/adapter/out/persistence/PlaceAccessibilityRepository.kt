@@ -98,6 +98,10 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun updateThumbnailUrls(id: String, thumbnailUrls: List<String>) {
+        return queries.updateThumbnailUrls(thumbnailUrls, id)
+    }
+
     override fun countAll(): Int {
         return queries.countAll()
             .executeAsOne()

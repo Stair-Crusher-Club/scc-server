@@ -4,4 +4,6 @@ dependencies {
     implementation(projects.boundedContext.challenge.application)
 
     implementation(projects.apiSpecification.domainEvent)
+
+    implementation("net.coobird:thumbnailator:0.4.20")
 }

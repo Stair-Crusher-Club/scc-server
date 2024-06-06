@@ -12,6 +12,7 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
     fun findByBuildingId(buildingId: String): BuildingAccessibility?
     fun findByPlaceIds(placeIds: Collection<String>): List<BuildingAccessibility>
     fun findByEupMyeonDong(eupMyeonDong: EupMyeonDong): List<BuildingAccessibility>
+    fun updateThumbnailUrls(id: String, entranceThumbnailUrls: List<String>, elevatorThumbnailUrls: List<String>)
     fun countByUserId(userId: String): Int
     fun remove(id: String)
 

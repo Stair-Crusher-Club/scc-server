@@ -87,6 +87,11 @@ WHERE
 ORDER BY pa.created_at DESC
 LIMIT :limit;
 
+updateThumbnailUrls:
+UPDATE place_accessibility
+SET thumbnail_urls = :thumbnailUrls
+WHERE id = :id;
+
 countAll:
 SELECT COUNT(*)
 FROM place_accessibility pa

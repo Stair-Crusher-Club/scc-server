@@ -53,4 +53,5 @@ scc:
   environment: prod
   s3:
     imageUpload:
-      bucketname: scc-prod-accessibility-images
+      bucketName: scc-prod-accessibility-images
+      thumbnailBucketName: scc-prod-accessibility-thumbnails

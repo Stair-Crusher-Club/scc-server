@@ -20,13 +20,13 @@ import club.staircrusher.place.application.port.`in`.BuildingService
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import java.time.Clock
 
 @Suppress("TooManyFunctions")
 @Component
@@ -42,7 +42,7 @@ class AccessibilityApplicationService(
     // FIXME: do not use other BC's application service directly
     private val userApplicationService: UserApplicationService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
-    private val clock: Clock,
+    private val accessibilityThumbnailService: AccessibilityThumbnailService,
 ) {
     fun isAccessibilityRegistrable(building: Building): Boolean {
         val addressStr = building.address.toString()
@@ -50,10 +50,13 @@ class AccessibilityApplicationService(
             accessibilityAllowedRegionService.isAccessibilityAllowed(building.location)
     }
 
-    fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult =
-        transactionManager.doInTransaction {
+    fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
+        // get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
+        accessibilityThumbnailService.generateThumbnailIfNotExists(placeId)
+        return transactionManager.doInTransaction {
             doGetAccessibility(placeId, userId)
         }
+    }
 
     internal fun doGetAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         val place = placeApplicationService.findPlace(placeId) ?: error("Cannot find place with $placeId")
@@ -216,7 +219,7 @@ class AccessibilityApplicationService(
                     elevatorStairHeightLevel = it.elevatorStairHeightLevel,
                     elevatorImageUrls = it.elevatorImageUrls,
                     userId = it.userId,
-                    createdAt = clock.instant(),
+                    createdAt = SccClock.instant(),
                 )
             )
         }
@@ -260,7 +263,7 @@ class AccessibilityApplicationService(
                 entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
                 userId = createPlaceAccessibilityParams.userId,
-                createdAt = clock.instant(),
+                createdAt = SccClock.instant(),
             )
         )
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
@@ -305,7 +308,7 @@ class AccessibilityApplicationService(
                 buildingId = params.buildingId,
                 userId = params.userId,
                 comment = normalizedComment,
-                createdAt = clock.instant(),
+                createdAt = SccClock.instant(),
             )
         )
     }
@@ -334,7 +337,7 @@ class AccessibilityApplicationService(
                 placeId = params.placeId,
                 userId = params.userId,
                 comment = normalizedComment,
-                createdAt = clock.instant(),
+                createdAt = SccClock.instant(),
             )
         )
     }

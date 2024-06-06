@@ -65,6 +65,14 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun updateThumbnailUrls(id: String, entranceThumbnailUrls: List<String>, elevatorThumbnailUrls: List<String>) {
+        return queries.updateThumbnailUrls(
+            entranceThumbnailUrls = entranceThumbnailUrls,
+            elevatorThumbnailUrls = elevatorThumbnailUrls,
+            id = id,
+        )
+    }
+
     override fun countByUserId(userId: String): Int {
         return queries.countByUserId(userId = userId).executeAsOne().toInt()
     }

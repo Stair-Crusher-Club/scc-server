@@ -805,6 +805,11 @@ components:
           type: array
           items:
             type: string
+        entranceThumbnailUrls:
+          type: array
+          description: '아직 썸네일이 생성되지 않았다면 null'
+          items:
+            type: string
         entranceDoorTypes:
           type: array
           items:
@@ -819,6 +824,11 @@ components:
           $ref: '#/components/schemas/StairHeightLevel'
         elevatorImageUrls:
           type: array
+          items:
+            type: string
+        elevatorThumbnailUrls:
+          type: array
+          description: '아직 썸네일이 생성되지 않았다면 null'
           items:
             type: string
         buildingId:
@@ -1244,6 +1254,11 @@ components:
           description: '다른 층으로 가는 방법이 계단만 있는지 여부'
         imageUrls:
           type: array
+          items:
+            type: string
+        thumbnailUrls:
+          type: array
+          description: '아직 썸네일이 생성되지 않았다면 null'
           items:
             type: string
         stairInfo:
