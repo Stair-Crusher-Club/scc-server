@@ -72,10 +72,12 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
                     val placeAccessibility = accessibilityInfo.placeAccessibility!!
                     assertEquals(place.id, placeAccessibility.placeId)
+                    assertNull(placeAccessibility.floors)
                     assertEquals(params.isFirstFloor, placeAccessibility.isFirstFloor)
                     assertEquals(StairInfo.ONE, placeAccessibility.stairInfo.toModel())
                     assertTrue(placeAccessibility.hasSlope)
                     assertTrue(placeAccessibility.imageUrls.isEmpty())
+                    assertNull(placeAccessibility.entranceDoorTypes)
 
                     val placeAccessibilityComments = accessibilityInfo.placeAccessibilityComments
                     assertEquals(1, placeAccessibilityComments.size)
