@@ -35,6 +35,7 @@ class PlaceApplicationService(
         }
 
         val places = mapsService.findAllByKeyword(keyword, option)
+            .mergeLocalDatabases()
             .filterClosed()
             .let {
                 if (option.runCrossValidation) {
@@ -54,6 +55,7 @@ class PlaceApplicationService(
         option: MapsService.SearchByCategoryOption,
     ): List<Place> {
         val places = mapsService.findAllByCategory(category, option)
+            .mergeLocalDatabases()
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
@@ -112,5 +114,13 @@ class PlaceApplicationService(
         val place = placeRepository.findById(placeId)
         place.setIsNotAccessible(isNotAccessible)
         placeRepository.save(place)
+    }
+
+    private fun List<Place>.mergeLocalDatabases(): List<Place> {
+        val existingPlaceById = placeRepository.findByIdIn(this.map { it.id })
+            .associateBy { it.id }
+        return this.map {
+            existingPlaceById[it.id] ?: it
+        }
     }
 }

@@ -13,6 +13,7 @@ class ClubQuestTargetPlace(
     val placeId: String,
     val name: String,
     val location: Location,
+    isClosedExpected: Boolean,
     createdAt: Instant = SccClock.instant(),
     updatedAt: Instant = SccClock.instant(),
 ) {
@@ -20,6 +21,14 @@ class ClubQuestTargetPlace(
 
     var updatedAt: Instant = updatedAt
         protected set
+
+    var isClosedExpected: Boolean = isClosedExpected
+        protected set
+
+    fun expectToBeClosed() {
+        isClosedExpected = true
+        updatedAt = SccClock.instant()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -53,6 +62,7 @@ class ClubQuestTargetPlace(
                 placeId = valueObject.placeId,
                 name = valueObject.name,
                 location = valueObject.location,
+                isClosedExpected = false,
             )
         }
     }

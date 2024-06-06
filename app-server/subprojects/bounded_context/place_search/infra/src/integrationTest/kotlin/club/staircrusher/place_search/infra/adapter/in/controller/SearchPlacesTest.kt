@@ -36,15 +36,17 @@ class SearchPlacesTest : PlaceSearchITBase() {
         val searchText = place.name.substring(2, 5)
         val radiusMeters = 500
 
-        Mockito.`when`(mapsService.findAllByKeyword(
-            searchText,
-            MapsService.SearchByKeywordOption(
-                MapsService.SearchByKeywordOption.CircleRegion(
-                    centerLocation = place.location,
-                    radiusMeters = radiusMeters,
+        Mockito.`when`(
+            mapsService.findAllByKeyword(
+                searchText,
+                MapsService.SearchByKeywordOption(
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = place.location,
+                        radiusMeters = radiusMeters,
+                    ),
                 ),
-            ),
-        )).thenReturn(listOf(place))
+            )
+        ).thenReturn(listOf(place))
 
         val params = SearchPlacesPostRequest(
             searchText = searchText,
@@ -93,15 +95,17 @@ class SearchPlacesTest : PlaceSearchITBase() {
         val searchText = place.name.substring(2, 5)
         val radiusMeters = 500
 
-        Mockito.`when`(mapsService.findAllByKeyword(
-            searchText,
-            MapsService.SearchByKeywordOption(
-                MapsService.SearchByKeywordOption.CircleRegion(
-                    centerLocation = place.location,
-                    radiusMeters = radiusMeters,
+        Mockito.`when`(
+            mapsService.findAllByKeyword(
+                searchText,
+                MapsService.SearchByKeywordOption(
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = place.location,
+                        radiusMeters = radiusMeters,
+                    ),
                 ),
-            ),
-        )).thenReturn(listOf(place))
+            )
+        ).thenReturn(listOf(place))
 
         val params = SearchPlacesPostRequest(
             searchText = searchText,
@@ -134,15 +138,17 @@ class SearchPlacesTest : PlaceSearchITBase() {
         val searchText = place.name.substring(2, 5)
         val radiusMeters = 500
 
-        Mockito.`when`(mapsService.findAllByKeyword(
-            searchText,
-            MapsService.SearchByKeywordOption(
-                MapsService.SearchByKeywordOption.CircleRegion(
-                    centerLocation = place.location,
-                    radiusMeters = radiusMeters,
+        Mockito.`when`(
+            mapsService.findAllByKeyword(
+                searchText,
+                MapsService.SearchByKeywordOption(
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = place.location,
+                        radiusMeters = radiusMeters,
+                    ),
                 ),
-            ),
-        )).thenReturn(listOf(place))
+            )
+        ).thenReturn(listOf(place))
 
         val params = SearchPlacesPostRequest(
             searchText = searchText,

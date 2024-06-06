@@ -4,11 +4,13 @@ import club.staircrusher.admin_api.converter.toDTO
 import club.staircrusher.admin_api.converter.toModel
 import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestSummaryDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestSummary
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
@@ -47,6 +49,7 @@ fun DryRunnedClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPl
         buildingId = buildingId,
         isConquered = isConquered,
         isClosed = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
+        isClosedExpected = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
         isNotAccessible = false, // DryRunnedClubQuestTargetPlace에는 필요 없는 필드이지만, 프론트엔드 하위호환을 위해 남겨둔다.
     )
 }
@@ -98,7 +101,13 @@ fun ClubQuestTargetPlace.toDTO(
         placeId = placeId,
         buildingId = buildingId,
         isConquered = isConquered,
+        isClosedExpected = isClosedExpected,
         isClosed = isClosed,
         isNotAccessible = isNotAccessible,
     )
 }
+
+fun ClubQuestSummary.toDTO() = ClubQuestSummaryDTO(
+    id = id,
+    name = name,
+)

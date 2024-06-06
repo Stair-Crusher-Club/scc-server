@@ -9,12 +9,14 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestsCreateDryRunPostRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestRequest
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
+import club.staircrusher.admin_api.spec.dto.GetCursoredClubQuestSummariesResultDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
 import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlacesUseCase
 import club.staircrusher.quest.application.port.`in`.DeleteClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
+import club.staircrusher.quest.application.port.`in`.GetCursoredClubQuestSummariesUseCase
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.quest.infra.adapter.`in`.converter.toModel
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -36,6 +39,7 @@ class AdminClubQuestController(
     private val deleteClubQuestUseCase: DeleteClubQuestUseCase,
     private val clubQuestRepository: ClubQuestRepository,
     private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
+    private val getCursoredClubQuestSummariesUseCase: GetCursoredClubQuestSummariesUseCase,
 ) {
     @GetMapping("/admin/clubQuests")
     fun listClubQuests(): List<ClubQuestsGet200ResponseInner> {
@@ -43,6 +47,22 @@ class AdminClubQuestController(
             ClubQuestsGet200ResponseInner(
                 id = it.id,
                 name = it.name,
+            )
+        }
+    }
+
+    @GetMapping("/admin/clubQuestSummaries/cursored")
+    fun getCursoredClubQuestSummaries(
+        @RequestParam(required = false) limit: Int?,
+        @RequestParam(required = false) cursor: String?,
+    ): GetCursoredClubQuestSummariesResultDTO {
+        return getCursoredClubQuestSummariesUseCase.handle(
+            limit = limit,
+            cursorValue = cursor
+        ).run {
+            GetCursoredClubQuestSummariesResultDTO(
+                list = list.map { it.toDTO() },
+                cursor = nextCursor,
             )
         }
     }
@@ -65,7 +85,7 @@ class AdminClubQuestController(
             dryRunResultItems = request.dryRunResults.map { it.toModel() }
         )
         quests.forEach { quest ->
-            crossValidateClubQuestPlacesUseCase.handle(quest.id)
+            crossValidateClubQuestPlacesUseCase.handleAsync(quest.id)
         }
         return CreateClubQuestResponseDTO(
             clubQuestIds = quests.map { it.id },
@@ -113,6 +133,6 @@ class AdminClubQuestController(
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/crossValidate")
     fun crossValidate(@PathVariable clubQuestId: String) {
-        return crossValidateClubQuestPlacesUseCase.handle(clubQuestId)
+        return crossValidateClubQuestPlacesUseCase.handleAsync(clubQuestId)
     }
 }
