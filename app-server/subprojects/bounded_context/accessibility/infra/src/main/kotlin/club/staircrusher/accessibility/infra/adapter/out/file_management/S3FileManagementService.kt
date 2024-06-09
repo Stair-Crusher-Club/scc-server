@@ -8,6 +8,7 @@ import kotlinx.coroutines.future.await
 import mu.KotlinLogging
 import org.springframework.core.io.ResourceLoader
 import software.amazon.awssdk.core.async.AsyncRequestBody
+import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL
@@ -36,7 +37,6 @@ internal class S3FileManagementService(
             region(Region.AP_NORTHEAST_2)
         }
         .build()
-
     private val s3Client = S3AsyncClient.builder()
         .apply {
             properties.getAwsCredentials()?.let { credentialsProvider { it } }
@@ -46,19 +46,22 @@ internal class S3FileManagementService(
 
     // TODO: 유저별 rate limit 걸기. 위치는 여기가 아니라 application service여야 할 수도 있을 듯.
     override fun getFileUploadUrl(filenameExtension: String): UploadUrl {
+        return getFileUploadUrl(generateObjectKey(), filenameExtension)
+    }
+
+    override fun getFileUploadUrl(filename: String, filenameExtension: String): UploadUrl {
         val normalizedFilenameExtension = getNormalizedFileExtension(filenameExtension)
         val objectRequest = PutObjectRequest.builder()
             .bucket(properties.bucketName)
             .key(generateObjectKey(normalizedFilenameExtension))
+            .key("$filename.$normalizedFilenameExtension")
             .contentType(Files.probeContentType(Path.of("dummy.${normalizedFilenameExtension}")))
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
-
         val s3PresignRequest: PutObjectPresignRequest = PutObjectPresignRequest.builder()
             .signatureDuration(presignedUrlExpiryDuration)
             .putObjectRequest(objectRequest)
             .build()
-
         val presignedRequest = s3Presigner.presignPutObject(s3PresignRequest)
         return UploadUrl(
             url = presignedRequest.url().toString(),
@@ -73,6 +76,17 @@ internal class S3FileManagementService(
         resource.inputStream.use { it.copyTo(file.outputStream()) }
 
         return file
+    }
+
+    override fun upload(filename: String, filenameExtension: String, fileBytes: ByteArray): String {
+        val normalizedFilenameExtension = filenameExtension.replace(Regex("^\\."), "")
+        val key = "$filename.$normalizedFilenameExtension"
+        val request = PutObjectRequest.builder()
+            .bucket(properties.bucketName)
+            .key(key)
+            .build()
+        s3Client.putObject(request, RequestBody.fromBytes(fileBytes))
+        return s3Client.utilities().getUrl { it.bucket(properties.bucketName).key(key) }.toString()
     }
 
     override suspend fun uploadThumbnailImage(fileName: String, outputStream: ByteArrayOutputStream): String? {
@@ -98,12 +112,11 @@ internal class S3FileManagementService(
     }
 
     private val objectKeyTimestampPrefixFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
-    private fun generateObjectKey(extension: String?): String {
+    private fun generateObjectKey(): String {
         return buildString {
             append(objectKeyTimestampPrefixFormat.format(SccClock.instant().atOffset(ZoneOffset.UTC)))
             append("_")
             append(generateUUID())
-            extension?.let { append(".$extension") }
         }
     }
 
