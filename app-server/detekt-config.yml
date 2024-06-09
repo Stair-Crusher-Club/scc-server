@@ -3,6 +3,9 @@ complexity:
     active: false
   LongParameterList:
     active: false
+  TooManyFunctions:
+    thresholdInFiles: 20
+    thresholdInClasses: 20
 style:
   ForbiddenComment:
     active: false

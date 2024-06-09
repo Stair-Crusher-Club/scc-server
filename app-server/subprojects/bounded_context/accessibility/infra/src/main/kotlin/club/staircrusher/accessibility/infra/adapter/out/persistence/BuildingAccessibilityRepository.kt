@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 import club.staircrusher.stdlib.time.toOffsetDateTime
+import java.time.Instant
 
 @Suppress("TooManyFunctions")
 @Component
@@ -65,6 +66,15 @@ class BuildingAccessibilityRepository(
             .executeAsList()
             .map { it.toDomainModel() }
     }
+
+    override fun findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant?): List<BuildingAccessibility> {
+        return queries.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+            createdAt = (createdAt ?: SccClock.instant()).toOffsetDateTime(), limit = 1
+        )
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
 
     override fun updateImages(id: String, images: List<AccessibilityImage>) {
         return queries.updateImages(

@@ -49,6 +49,15 @@ FROM building_accessibility
 WHERE building.eup_myeon_dong_id = :eupMyeonDongId
     AND building_accessibility.deleted_at IS NULL;
 
+findByCreatedAtGreaterThanAndOrderByCreatedAtAsc:
+SELECT *
+FROM building_accessibility ba
+WHERE
+    ba.created_at >: createdAt
+    AND ba.deleted_at IS NULL
+ORDER BY ba.created_at ASC, ba.id DESC
+LIMIT :limit;
+
 updateImages:
 UPDATE building_accessibility
 SET images = :images

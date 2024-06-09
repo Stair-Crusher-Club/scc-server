@@ -1,0 +1,14 @@
+package club.staircrusher.accessibility.application.port.out
+
+import club.staircrusher.stdlib.Rect
+import club.staircrusher.stdlib.Size
+
+interface DetectFacesService {
+    suspend fun detect(imageUrl: String): DetectFacesResponse
+    suspend fun detect(imageBytes: ByteArray): DetectFacesResponse
+}
+
+data class DetectFacesResponse(
+    val imageSize: Size,
+    val positions: List<Rect>,
+)
