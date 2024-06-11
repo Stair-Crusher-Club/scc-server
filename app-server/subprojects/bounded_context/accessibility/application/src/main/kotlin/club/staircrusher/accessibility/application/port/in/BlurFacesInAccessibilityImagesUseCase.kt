@@ -13,11 +13,9 @@ import org.bytedeco.opencv.global.opencv_imgproc.GaussianBlur
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.Rect
 import org.bytedeco.opencv.opencv_core.Size
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import java.net.URL
 import java.util.concurrent.Executors
+
 
 @Component
 class BlurFacesInAccessibilityImagesUseCase(
@@ -36,59 +34,38 @@ class BlurFacesInAccessibilityImagesUseCase(
 
     fun handle(placeAccessibilityId: String) {
         // Get image urls from PlaceAccessibilityRepository
-//        val imageUrls = transactionManager.doInTransaction {
-//            placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)?.imageUrls
-//        }
-//        if (imageUrls.isNullOrEmpty()) return
-        val imageUrls = listOf(
-            "https://scc-dev-accessibility-images-2.s3.ap-northeast-2.amazonaws.com/20230816033619_995EB2AA6ECA40E5.jpeg",
-            "https://scc-dev-accessibility-images-2.s3.ap-northeast-2.amazonaws.com/20230819085338_DCB16DBB939D4DEB.jpeg",
-            "https://scc-dev-accessibility-images-2.s3.ap-northeast-2.amazonaws.com/20230827070328_CE07F758350F4775.jpeg"
-        )
+        val imageUrls = transactionManager.doInTransaction {
+            placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)?.imageUrls
+        }
+        if (imageUrls.isNullOrEmpty()) return
         imageUrls.forEach { imageUrl ->
-            val imageBytes = java.net.URL(imageUrl).readBytes()
+            val imageBytes = URL(imageUrl).openStream().readBytes()
+            val imageBytesPointer = BytePointer(*imageBytes)
+
             val detected = detectFacesService.detect(imageBytes)
-            if (detected.positions.isEmpty()) return
-            val mat = imdecode(Mat(BytePointer(*imageBytes)), IMREAD_COLOR)
+            if (detected.positions.isEmpty()) return@forEach
+
+            val originalImageMat = imdecode(Mat(imageBytesPointer), IMREAD_COLOR)
             // Blur images
+            val blurredMat = originalImageMat.clone()
             for (position in detected.positions) {
-                val faceROI = Mat(mat, Rect(position.x, position.y, position.width, position.height))
+                val faceRegion = blurredMat.apply(Rect(position.x, position.y, position.width, position.height))
                 GaussianBlur(
-                    faceROI,
-                    faceROI,
-                    Size(0, 0), // sigmaX, sigmaY 에 의해서 결정
+                    faceRegion,
+                    faceRegion,
+                    Size(0, 0), // sigmaX, sigmaY 에 의해서 결정 10.0
                     10.0
                 )
             }
             // Convert the result back to byte array
-            val outputStream = ByteArrayOutputStream()
-            imencode(".jpg", mat, outputStream)
-            saveByteArrayToFile(outputStream.toByteArray(), "./test.jpg")
-//            imageUrl.split("/").last().let { fileName ->
-//                val (name, extension) = fileName.split(".")
-//                fileManagementService.upload(name, extension, outputStream)
-//            }
+            val outputPointer = BytePointer()
+            imencode(".jpg", blurredMat, outputPointer)
+            val outputByteArray = ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
+            imageUrl.split("/").last().let { fileName ->
+                val (name, extension) = fileName.split(".")
+                fileManagementService.upload("${name}_b", extension, outputByteArray)
+            }
             // TODO: Update place accessibility
         }
-    }
-
-    fun saveByteArrayToFile(byteArray: ByteArray, filePath: String): File {
-        val file = File(filePath)
-        try {
-            // Create a new file if it doesn't exist
-            if (!file.exists()) {
-                file.createNewFile()
-            }
-
-            // Write the byte array to the file
-            val fos = FileOutputStream(file)
-            fos.write(byteArray)
-            fos.flush()
-            fos.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return file
     }
 }
