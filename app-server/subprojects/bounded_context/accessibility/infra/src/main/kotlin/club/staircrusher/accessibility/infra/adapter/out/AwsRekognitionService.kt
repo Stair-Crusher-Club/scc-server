@@ -6,7 +6,6 @@ import club.staircrusher.accessibility.application.port.out.ImageSize
 import club.staircrusher.accessibility.application.port.out.Response
 import club.staircrusher.accessibility.infra.adapter.out.file_management.S3ImageUploadProperties
 import club.staircrusher.stdlib.di.annotation.Component
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.rekognition.RekognitionClient
@@ -26,9 +25,7 @@ internal class AwsRekognitionService(
     private val rekognitionClient = RekognitionClient.builder()
         .region(Region.AP_NORTHEAST_2)
         .apply {
-            credentialsProvider {
-                AwsBasicCredentials.create("", "")
-            }
+            properties.getAwsCredentials()?.let { credentialsProvider { it } }
         }
         .build()
 
