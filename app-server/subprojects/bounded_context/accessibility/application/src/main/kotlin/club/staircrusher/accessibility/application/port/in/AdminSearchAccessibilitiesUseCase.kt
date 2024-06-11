@@ -42,7 +42,7 @@ class AdminSearchAccessibilitiesUseCase(
         cursorValue: String?,
         limit: Int?,
     ): Result {
-        val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.INITIAL()
+        val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.initial()
         val normalizedLimit = limit ?: DEFAULT_LIMIT
 
         val placeAccessibilities = placeAccessibilityRepository.searchForAdmin(
@@ -108,7 +108,7 @@ class AdminSearchAccessibilitiesUseCase(
                 }
             }
 
-            fun INITIAL() = Cursor(id = "", createdAt = SccClock.instant())
+            fun initial() = Cursor(id = "", createdAt = SccClock.instant())
         }
     }
 

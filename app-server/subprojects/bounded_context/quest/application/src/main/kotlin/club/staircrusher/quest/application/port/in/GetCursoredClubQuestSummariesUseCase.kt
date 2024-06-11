@@ -22,7 +22,7 @@ class GetCursoredClubQuestSummariesUseCase(
         limit: Int?,
         cursorValue: String?,
     ): Result = transactionManager.doInTransaction {
-        val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.INITIAL()
+        val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.initial()
         val normalizedLimit = limit ?: DEFAULT_LIMIT
 
         val summaries = clubQuestRepository.findCursoredSummariesOrderByCreatedAtDesc(
@@ -66,7 +66,7 @@ class GetCursoredClubQuestSummariesUseCase(
                 }
             }
 
-            fun INITIAL() = Cursor(id = "", createdAt = SccClock.instant())
+            fun initial() = Cursor(id = "", createdAt = SccClock.instant())
         }
     }
 
