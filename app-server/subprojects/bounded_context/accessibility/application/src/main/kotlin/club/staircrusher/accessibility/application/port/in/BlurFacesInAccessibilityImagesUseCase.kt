@@ -34,16 +34,17 @@ class BlurFacesInAccessibilityImagesUseCase(
 
     fun handle(placeAccessibilityId: String) {
         // Get image urls from PlaceAccessibilityRepository
-        val imageUrls = transactionManager.doInTransaction {
-            placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)?.imageUrls
+        val placeAccessibility = transactionManager.doInTransaction {
+            placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)
         }
+        val imageUrls = placeAccessibility?.imageUrls
         if (imageUrls.isNullOrEmpty()) return
-        imageUrls.forEach { imageUrl ->
+        val blurredImageUrls = imageUrls.map { imageUrl ->
             val imageBytes = URL(imageUrl).openStream().readBytes()
             val imageBytesPointer = BytePointer(*imageBytes)
 
             val detected = detectFacesService.detect(imageBytes)
-            if (detected.positions.isEmpty()) return@forEach
+            if (detected.positions.isEmpty()) return@map imageUrl
 
             val originalImageMat = imdecode(Mat(imageBytesPointer), IMREAD_COLOR)
             // Blur images
@@ -61,11 +62,14 @@ class BlurFacesInAccessibilityImagesUseCase(
             val outputPointer = BytePointer()
             imencode(".jpg", blurredMat, outputPointer)
             val outputByteArray = ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
-            imageUrl.split("/").last().let { fileName ->
+            val blurredImageUrl = imageUrl.split("/").last().let { fileName ->
                 val (name, extension) = fileName.split(".")
                 fileManagementService.upload("${name}_b", extension, outputByteArray)
             }
-            // TODO: Update place accessibility
+            blurredImageUrl
+        }
+        transactionManager.doInTransaction {
+            placeAccessibilityRepository.save(placeAccessibility.copy(imageUrls = blurredImageUrls))
         }
     }
 }
