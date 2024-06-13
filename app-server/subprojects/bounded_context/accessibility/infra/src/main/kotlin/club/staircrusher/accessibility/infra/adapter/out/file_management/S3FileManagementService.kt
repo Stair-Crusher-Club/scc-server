@@ -73,9 +73,8 @@ internal class S3FileManagementService(
         return file
     }
 
-    override suspend fun uploadThumbnailImage(filePath: Path, extension: String, contentType: String): String? {
-        val normalizedExtension = getNormalizedFileExtension(extension)
-        val objectKey = generateThumbnailObjectKey(normalizedExtension)
+    override suspend fun uploadThumbnailImage(filePath: Path, contentType: String): String? {
+        val objectKey = filePath.fileName.toString()
         val objectRequest = PutObjectRequest.builder()
             .bucket(properties.thumbnailBucketName)
             .key(objectKey)
@@ -101,17 +100,6 @@ internal class S3FileManagementService(
     private val objectKeyTimestampPrefixFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
     private fun generateObjectKey(extension: String?): String {
         return buildString {
-            append(objectKeyTimestampPrefixFormat.format(SccClock.instant().atOffset(ZoneOffset.UTC)))
-            append("_")
-            append(generateUUID())
-            extension?.let { append(".$extension") }
-        }
-    }
-
-    // 기존 파일명을 써야 하나?
-    private fun generateThumbnailObjectKey(extension: String?): String {
-        return buildString {
-            append("thumbnail_")
             append(objectKeyTimestampPrefixFormat.format(SccClock.instant().atOffset(ZoneOffset.UTC)))
             append("_")
             append(generateUUID())

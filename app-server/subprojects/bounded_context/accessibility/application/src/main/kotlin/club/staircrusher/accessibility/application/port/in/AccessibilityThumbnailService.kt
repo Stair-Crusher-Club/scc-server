@@ -123,10 +123,8 @@ class AccessibilityThumbnailService(
     private fun uploadThumbnailImages(imagePaths: List<Path>) = runBlocking {
         return@runBlocking imagePaths
             .map {
-                val extension = THUMBNAIL_FORMAT
                 val contentType = Files.probeContentType(it)
-                // S3 에 dangling object 가 남을 수도 있을 것 같은데 괜찮은가?
-                async { fileManagementService.uploadThumbnailImage(it, extension, contentType) }
+                async { fileManagementService.uploadThumbnailImage(it, contentType) }
             }
             .awaitAll()
             .filterNotNull()
