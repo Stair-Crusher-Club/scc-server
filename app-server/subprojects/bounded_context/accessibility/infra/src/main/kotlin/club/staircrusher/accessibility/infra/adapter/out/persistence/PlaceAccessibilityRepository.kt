@@ -64,6 +64,10 @@ class PlaceAccessibilityRepository(
             .toInt()
     }
 
+    override fun findOldest(): PlaceAccessibility? {
+        return queries.findOldestOne().executeAsOneOrNull()?.toDomainModel()
+    }
+
     override fun countByUserId(userId: String): Int {
         return queries.countByUserId(userId = userId).executeAsOne().toInt()
     }

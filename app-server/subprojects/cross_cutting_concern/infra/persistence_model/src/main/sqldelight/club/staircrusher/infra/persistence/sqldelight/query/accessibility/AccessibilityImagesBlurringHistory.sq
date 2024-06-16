@@ -1,0 +1,38 @@
+save:
+INSERT INTO accessibility_images_blurring_history
+VALUES :accessibility_images_blurring_history
+ON CONFLICT(id) DO UPDATE SET
+    place_accessibility_id = EXCLUDED.place_accessibility_id,
+    building_accessibility_id = EXCLUDED.building_accessibility_id,
+    before_image_url = EXCLUDED.after_image_url,
+    detected_people_count = EXCLUDED.detected_people_count,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at;
+
+removeAll:
+DELETE FROM accessibility_images_blurring_history;
+
+findAll:
+SELECT *
+FROM accessibility_images_blurring_history;
+
+findById:
+SELECT *
+FROM accessibility_images_blurring_history
+WHERE accessibility_images_blurring_history.id = :id;
+
+findByPlaceAccessibility:
+SELECT *
+FROM accessibility_images_blurring_history
+WHERE accessibility_images_blurring_history.place_accessibility_id = :place_accessibility_id;
+
+findByBuildingAccessilbility:
+SELECT *
+FROM accessibility_images_blurring_history
+WHERE accessibility_images_blurring_history.building_accessibility_id = :building_accessibility_id;
+
+findLatestHistory:
+SELECT *
+FROM accessibility_images_blurring_history
+ORDER BY accessibility_images_blurring_history.created_at DESC
+LIMIT 1;

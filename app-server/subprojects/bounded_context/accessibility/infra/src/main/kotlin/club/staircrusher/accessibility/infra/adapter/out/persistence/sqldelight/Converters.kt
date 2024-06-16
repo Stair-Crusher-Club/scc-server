@@ -3,6 +3,7 @@
 package club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight
 
 import club.staircrusher.accessibility.domain.model.AccessibilityAllowedRegion
+import club.staircrusher.accessibility.domain.model.AccessibilityImagesBlurringHistory
 import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
@@ -11,6 +12,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
+import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_images_blurring_history
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_rank
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility_comment
@@ -222,6 +224,28 @@ fun Accessibility_allowed_region.toDomainModel() = AccessibilityAllowedRegion(
     id = id,
     name = name,
     boundaryVertices = boundary_vertices,
+    createdAt = created_at.toInstant(),
+    updatedAt = updated_at.toInstant(),
+)
+
+fun AccessibilityImagesBlurringHistory.toPersistenceModel() = Accessibility_images_blurring_history(
+    id = id,
+    place_accessibility_id = placeAccessibilityId,
+    building_accessibility_id = buildingAccessibilityId,
+    before_image_url = beforeImageUrl,
+    after_image_url = afterImageUrl,
+    detected_people_count = detectedPeopleCount,
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = updatedAt.toOffsetDateTime(),
+)
+
+fun Accessibility_images_blurring_history.toDomainModel() = AccessibilityImagesBlurringHistory(
+    id = id,
+    placeAccessibilityId = place_accessibility_id,
+    buildingAccessibilityId = building_accessibility_id,
+    beforeImageUrl = before_image_url,
+    afterImageUrl = after_image_url,
+    detectedPeopleCount = detected_people_count,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant(),
 )
