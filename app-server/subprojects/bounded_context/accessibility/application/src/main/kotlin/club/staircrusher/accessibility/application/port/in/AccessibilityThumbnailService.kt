@@ -15,7 +15,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import net.coobird.thumbnailator.Thumbnails
-import java.nio.file.Files
+import java.io.ByteArrayOutputStream
 import java.nio.file.Path
 
 @Component
@@ -62,10 +62,11 @@ class AccessibilityThumbnailService(
 
     private fun registerPlaceAccessibilityThumbnail(placeId: String, originalImageUrls: List<String>) {
         // 현재로서는 각 이미지에 대한 식별자가 없기 때문에 하나라도 실패하면 전체 실패로 처리
-        val thumbnailImagePaths = originalImageUrls.mapNotNull { generateThumbnail(it, placeId) }
-        if (thumbnailImagePaths.size != originalImageUrls.size) return
+        val thumbnails = originalImageUrls.mapNotNull { generateThumbnail(it, placeId) }
 
-        val thumbnailUrls = uploadThumbnailImages(thumbnailImagePaths)
+        if (thumbnails.size != originalImageUrls.size) return
+
+        val thumbnailUrls = uploadThumbnailImages(thumbnails)
         if (thumbnailUrls.size != originalImageUrls.size) return
 
         transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.SERIALIZABLE) {
@@ -99,36 +100,39 @@ class AccessibilityThumbnailService(
         }
     }
 
-    private fun generateThumbnail(originalImageUrl: String, placeId: String): Path? {
+    private fun generateThumbnail(originalImageUrl: String, placeId: String): Thumbnail? {
         try {
             val destinationPath = thumbnailPath.resolve(placeId)
             val imageFile = fileManagementService.downloadFile(originalImageUrl, destinationPath)
             val thumbnailFileName = "thumbnail_${imageFile.nameWithoutExtension}.$THUMBNAIL_FORMAT"
-            val thumbnailFilePath = destinationPath.resolve(thumbnailFileName)
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            byteArrayOutputStream.use {
+                Thumbnails.of(imageFile)
+                    .scale(0.33)
+                    .outputFormat(THUMBNAIL_FORMAT)
+                    .toOutputStream(it)
+            }
 
-            val thumbnailOutputStream = Files.newOutputStream(thumbnailFilePath)
-            Thumbnails.of(imageFile)
-                .scale(0.33)
-                .outputFormat(THUMBNAIL_FORMAT)
-                .toOutputStream(thumbnailOutputStream)
-            thumbnailOutputStream.close()
-
-            return thumbnailFilePath
+            return Thumbnail(thumbnailFileName, byteArrayOutputStream)
         } catch (t: Throwable) {
             logger.error(t) { "Failed to generate thumbnail for place: $placeId, image: $originalImageUrl" }
             return null
         }
     }
 
-    private fun uploadThumbnailImages(imagePaths: List<Path>) = runBlocking {
-        return@runBlocking imagePaths
-            .map {
-                val contentType = Files.probeContentType(it)
-                async { fileManagementService.uploadThumbnailImage(it, contentType) }
+    private fun uploadThumbnailImages(thumbnails: List<Thumbnail>) = runBlocking {
+        return@runBlocking thumbnails
+            .map { (fileName, outputStream) ->
+                async { fileManagementService.uploadThumbnailImage(fileName, outputStream) }
             }
             .awaitAll()
             .filterNotNull()
     }
+
+    private data class Thumbnail(
+        val fileName: String,
+        val outputStream: ByteArrayOutputStream,
+    )
 
     companion object {
         private val thumbnailPath = Path.of("tmp", "thumbnails")

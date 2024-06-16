@@ -7,12 +7,14 @@ import club.staircrusher.stdlib.di.annotation.Component
 import kotlinx.coroutines.future.await
 import mu.KotlinLogging
 import org.springframework.core.io.ResourceLoader
+import software.amazon.awssdk.core.async.AsyncRequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -73,22 +75,20 @@ internal class S3FileManagementService(
         return file
     }
 
-    override suspend fun uploadThumbnailImage(filePath: Path, contentType: String): String? {
-        val objectKey = filePath.fileName.toString()
+    override suspend fun uploadThumbnailImage(fileName: String, outputStream: ByteArrayOutputStream): String? {
         val objectRequest = PutObjectRequest.builder()
             .bucket(properties.thumbnailBucketName)
-            .key(objectKey)
-            .contentType(contentType)
+            .key(fileName)
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
 
         try {
-            s3Client.putObject(objectRequest, filePath).await()
+            s3Client.putObject(objectRequest, AsyncRequestBody.fromBytes(outputStream.toByteArray())).await()
             return s3Client
                 .utilities()
                 .getUrl {
                     it.bucket(properties.thumbnailBucketName)
-                    it.key(objectKey)
+                    it.key(fileName)
                 }
                 .toString()
         } catch (t: Throwable) {
