@@ -1,10 +1,10 @@
 package club.staircrusher.accessibility.infra.adapter.out
 
+import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
-import club.staircrusher.accessibility.application.port.out.FacePosition
-import club.staircrusher.accessibility.application.port.out.ImageSize
-import club.staircrusher.accessibility.application.port.out.Response
 import club.staircrusher.accessibility.infra.adapter.out.file_management.S3ImageUploadProperties
+import club.staircrusher.stdlib.Rect
+import club.staircrusher.stdlib.Size
 import club.staircrusher.stdlib.di.annotation.Component
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.regions.Region
@@ -12,7 +12,6 @@ import software.amazon.awssdk.services.rekognition.RekognitionClient
 import software.amazon.awssdk.services.rekognition.model.Attribute
 import software.amazon.awssdk.services.rekognition.model.BoundingBox
 import software.amazon.awssdk.services.rekognition.model.DetectFacesRequest
-import software.amazon.awssdk.services.rekognition.model.DetectFacesResponse
 import software.amazon.awssdk.services.rekognition.model.Image
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
@@ -29,15 +28,15 @@ internal class AwsRekognitionService(
         }
         .build()
 
-    override fun detect(imageUrl: String): Response {
+    override fun detect(imageUrl: String): DetectFacesResponse {
         val imageBytes = downloadImage(imageUrl)
         return detect(imageBytes)
     }
 
-    override fun detect(imageBytes: ByteArray): Response {
+    override fun detect(imageBytes: ByteArray): DetectFacesResponse {
         val imageSize = getImageSize(imageBytes)
         val detected = detectFacesFromBytes(imageBytes)
-        return Response(
+        return DetectFacesResponse(
             imageSize = imageSize,
             positions = detected.faceDetails().map {
                 calculateFacePosition(getImageSize(imageBytes), it.boundingBox())
@@ -45,7 +44,7 @@ internal class AwsRekognitionService(
         )
     }
 
-    private fun detectFacesFromBytes(imageBytes: ByteArray): DetectFacesResponse {
+    private fun detectFacesFromBytes(imageBytes: ByteArray): software.amazon.awssdk.services.rekognition.model.DetectFacesResponse {
         val image = Image.builder().bytes(SdkBytes.fromByteArray(imageBytes)).build()
 
         val request = DetectFacesRequest.builder()
@@ -56,12 +55,12 @@ internal class AwsRekognitionService(
         return rekognitionClient.detectFaces(request)
     }
 
-    private fun calculateFacePosition(imageSize: ImageSize, boundingBox: BoundingBox): FacePosition {
+    private fun calculateFacePosition(imageSize: Size, boundingBox: BoundingBox): Rect {
         val startX = (boundingBox.left() * imageSize.width).toInt()
         val startY = (boundingBox.top() * imageSize.height).toInt()
         val endX = (startX + boundingBox.width() * imageSize.width).toInt()
         val endY = (startY + boundingBox.height() * imageSize.height).toInt()
-        return FacePosition(
+        return Rect(
             x = startX,
             y = startY,
             width = endX - startX,
@@ -69,10 +68,10 @@ internal class AwsRekognitionService(
         )
     }
 
-    private fun getImageSize(imageBytes: ByteArray): ImageSize {
+    private fun getImageSize(imageBytes: ByteArray): Size {
         ByteArrayInputStream(imageBytes).use {
             val image: BufferedImage = ImageIO.read(it)
-            return ImageSize(width = image.width, height = image.height)
+            return Size(width = image.width, height = image.height)
         }
     }
 

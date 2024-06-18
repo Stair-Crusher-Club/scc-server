@@ -1,11 +1,11 @@
 package club.staircrusher.accessibility.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
-import club.staircrusher.accessibility.application.port.out.FacePosition
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.accessibility.application.port.out.persistence.AccessibilityImagesBlurringHistoryRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.AccessibilityImagesBlurringHistory
+import club.staircrusher.stdlib.Rect
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
@@ -16,7 +16,6 @@ import org.bytedeco.opencv.global.opencv_imgcodecs.imdecode
 import org.bytedeco.opencv.global.opencv_imgcodecs.imencode
 import org.bytedeco.opencv.global.opencv_imgproc.GaussianBlur
 import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.Rect
 import org.bytedeco.opencv.opencv_core.Size
 import java.net.URL
 import java.util.concurrent.Executors
@@ -94,12 +93,12 @@ class BlurFacesInAccessibilityImagesUseCase(
         } ?: emptyList()
     }
 
-    private fun blur(originalImageBytePointer: BytePointer, positions: List<FacePosition>): ByteArray {
+    private fun blur(originalImageBytePointer: BytePointer, positions: List<Rect>): ByteArray {
         val originalImageMat = imdecode(Mat(originalImageBytePointer), IMREAD_COLOR)
         // Blur images
         val blurredMat = originalImageMat.clone()
         for (position in positions) {
-            val faceRegion = blurredMat.apply(Rect(position.x, position.y, position.width, position.height))
+            val faceRegion = blurredMat.apply(position.toMatRect())
             GaussianBlur(
                 faceRegion,
                 faceRegion,
@@ -120,4 +119,9 @@ class BlurFacesInAccessibilityImagesUseCase(
     ) {
         fun isBlurred() = originalImageUrl != blurredImageUrl
     }
+
+    private fun Rect.toMatRect(): org.bytedeco.opencv.opencv_core.Rect {
+        return org.bytedeco.opencv.opencv_core.Rect(this.x, this.y, this.width, this.height)
+    }
 }
+
