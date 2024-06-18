@@ -46,24 +46,25 @@ class BlurFacesInAccessibilityImagesUseCase(
         if (imageUrls.isNullOrEmpty()) return emptyList()
         val result = imageUrls.map { imageUrl ->
             try {
-                val imageBytes = URL(imageUrl).openStream().readBytes()
-                val imageBytesPointer = BytePointer(*imageBytes)
-
-                val detected = detectFacesService.detect(imageBytes)
-                if (detected.positions.isEmpty()) return@map BlurResult(
-                    originalImageUrl = imageUrl,
-                    blurredImageUrl = imageUrl,
-                    detectedPeopleCount = 0
-                )
-                val outputByteArray = blur(imageBytesPointer, detected.positions)
-                val blurredImageUrl = imageUrl.split("/").last().let { fileName ->
-                    val (name, extension) = fileName.split(".")
-                    fileManagementService.upload("${name}_b", extension, outputByteArray)
+                val (blurredImageUrl, detectedPositions) = URL(imageUrl).openStream().use {
+                    val imageBytes = URL(imageUrl).openStream().readBytes()
+                    val imageBytesPointer = BytePointer(*imageBytes)
+                    val detected = detectFacesService.detect(imageBytes)
+                    if (detected.positions.isEmpty()) return@map BlurResult(
+                        originalImageUrl = imageUrl,
+                        blurredImageUrl = imageUrl,
+                        detectedPeopleCount = 0
+                    )
+                    val outputByteArray = blur(imageBytesPointer, detected.positions)
+                    imageUrl.split("/").last().let { fileName ->
+                        val (name, extension) = fileName.split(".")
+                        fileManagementService.upload("${name}_b", extension, outputByteArray)
+                    } to detected.positions
                 }
                 return@map BlurResult(
                     originalImageUrl = imageUrl,
                     blurredImageUrl = blurredImageUrl,
-                    detectedPeopleCount = detected.positions.size
+                    detectedPeopleCount = detectedPositions.size
                 )
             } catch (e: Exception) {
                 return@map BlurResult(
