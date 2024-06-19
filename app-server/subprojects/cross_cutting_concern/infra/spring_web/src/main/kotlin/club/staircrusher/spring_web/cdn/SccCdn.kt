@@ -26,7 +26,7 @@ open class SccCdn(
     }
 
     companion object {
-        private const val S3_DOMAIN = "s3.amazonaws.com/"
+        private const val S3_DOMAIN = "amazonaws.com/"
 
         fun replaceIfPossible(url: String): String {
             val globalSccCdn = SccCdnBeanHolder.get()
