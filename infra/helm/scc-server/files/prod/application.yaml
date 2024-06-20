@@ -55,4 +55,4 @@ scc:
     imageUpload:
       bucketname: scc-prod-accessibility-images
   cloudfront:
-    domain: dg62mheekfy50.cloudfront.net
+    domain: d1whorck6z6h62.cloudfront.net
