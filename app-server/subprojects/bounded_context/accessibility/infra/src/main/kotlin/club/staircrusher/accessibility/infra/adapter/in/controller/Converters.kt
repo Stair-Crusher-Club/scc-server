@@ -108,7 +108,12 @@ fun PlaceAccessibility.toDTO(
     authUser: AuthUser?,
     isLastInBuilding: Boolean,
 ): club.staircrusher.api.spec.dto.PlaceAccessibility {
-    val floors = this.floors ?: if (this.isFirstFloor) listOf(1) else null
+    val floors = if (this.floors.isNullOrEmpty()) {
+        if (this.isFirstFloor) listOf(1)
+        else null
+    } else {
+        this.floors
+    }
     return club.staircrusher.api.spec.dto.PlaceAccessibility(
         id = id,
         placeId = placeId,
