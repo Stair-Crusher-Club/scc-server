@@ -107,27 +107,30 @@ fun PlaceAccessibility.toDTO(
     registeredAccessibilityRegisterer: AccessibilityRegisterer?,
     authUser: AuthUser?,
     isLastInBuilding: Boolean,
-) = club.staircrusher.api.spec.dto.PlaceAccessibility(
-    id = id,
-    placeId = placeId,
-    floors = floors,
-    isFirstFloor = isFirstFloor,
-    isStairOnlyOption = isStairOnlyOption,
-    imageUrls = imageUrls.map { SccCdn.replaceIfPossible(it) },
-    stairInfo = stairInfo.toDTO(),
-    stairHeightLevel = stairHeightLevel?.toDTO(),
-    hasSlope = hasSlope,
-    entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
-    registeredUserName = registeredAccessibilityRegisterer?.nickname,
-    deletionInfo = if (isDeletable(authUser?.id)) {
-        PlaceAccessibilityDeletionInfo(
-            isLastInBuilding = isLastInBuilding,
-        )
-    } else {
-        null
-    },
-    createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
-)
+): club.staircrusher.api.spec.dto.PlaceAccessibility {
+    val floors = this.floors ?: if (this.isFirstFloor) listOf(1) else null
+    return club.staircrusher.api.spec.dto.PlaceAccessibility(
+        id = id,
+        placeId = placeId,
+        floors = floors,
+        isFirstFloor = isFirstFloor,
+        isStairOnlyOption = isStairOnlyOption,
+        imageUrls = imageUrls.map { SccCdn.replaceIfPossible(it) },
+        stairInfo = stairInfo.toDTO(),
+        stairHeightLevel = stairHeightLevel?.toDTO(),
+        hasSlope = hasSlope,
+        entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
+        registeredUserName = registeredAccessibilityRegisterer?.nickname,
+        deletionInfo = if (isDeletable(authUser?.id)) {
+            PlaceAccessibilityDeletionInfo(
+                isLastInBuilding = isLastInBuilding,
+            )
+        } else {
+            null
+        },
+        createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
+    )
+}
 
 fun club.staircrusher.api.spec.dto.StairInfo.toModel() = when (this) {
     club.staircrusher.api.spec.dto.StairInfo.uNDEFINED -> StairInfo.UNDEFINED
