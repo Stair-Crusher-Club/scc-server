@@ -1,6 +1,0 @@
-import kotlin.String;
-import kotlin.collections.List;
-
-ALTER TABLE building_accessibility ADD COLUMN entrance_thumbnail_urls TEXT AS List<String> NOT NULL DEFAULT '[]';
-ALTER TABLE building_accessibility ADD COLUMN elevator_thumbnail_urls TEXT AS List<String> NOT NULL DEFAULT '[]';
-ALTER TABLE place_accessibility ADD COLUMN thumbnail_urls TEXT AS List<String> NOT NULL DEFAULT '[]';

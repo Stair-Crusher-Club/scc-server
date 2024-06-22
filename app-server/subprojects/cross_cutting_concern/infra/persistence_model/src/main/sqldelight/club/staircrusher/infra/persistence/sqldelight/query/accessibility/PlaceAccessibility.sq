@@ -87,9 +87,9 @@ WHERE
 ORDER BY pa.created_at DESC
 LIMIT :limit;
 
-updateThumbnailUrls:
+updateImages:
 UPDATE place_accessibility
-SET thumbnail_urls = :thumbnailUrls
+SET images = :images
 WHERE id = :id;
 
 countAll:

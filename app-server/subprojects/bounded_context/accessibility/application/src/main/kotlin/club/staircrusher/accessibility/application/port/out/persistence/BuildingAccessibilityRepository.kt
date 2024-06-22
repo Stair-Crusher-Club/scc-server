@@ -1,5 +1,6 @@
 package club.staircrusher.accessibility.application.port.out.persistence
 
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.StairHeightLevel
@@ -12,7 +13,7 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
     fun findByBuildingId(buildingId: String): BuildingAccessibility?
     fun findByPlaceIds(placeIds: Collection<String>): List<BuildingAccessibility>
     fun findByEupMyeonDong(eupMyeonDong: EupMyeonDong): List<BuildingAccessibility>
-    fun updateThumbnailUrls(id: String, entranceThumbnailUrls: List<String>, elevatorThumbnailUrls: List<String>)
+    fun updateImages(id: String, images: List<AccessibilityImage>)
     fun countByUserId(userId: String): Int
     fun remove(id: String)
 

@@ -49,9 +49,9 @@ FROM building_accessibility
 WHERE building.eup_myeon_dong_id = :eupMyeonDongId
     AND building_accessibility.deleted_at IS NULL;
 
-updateThumbnailUrls:
+updateImages:
 UPDATE building_accessibility
-SET entrance_thumbnail_urls = :entranceThumbnailUrls, elevator_thumbnail_urls = :elevatorThumbnailUrls
+SET images = :images
 WHERE id = :id;
 
 countByUserId:

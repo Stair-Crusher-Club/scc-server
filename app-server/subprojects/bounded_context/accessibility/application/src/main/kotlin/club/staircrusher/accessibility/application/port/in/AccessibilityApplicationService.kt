@@ -11,6 +11,7 @@ import club.staircrusher.accessibility.application.port.out.persistence.Building
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.application.toDomainModel
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
@@ -205,6 +206,9 @@ class AccessibilityApplicationService(
             ) {
                 throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
+            val images = it.entranceImageUrls.map { url -> AccessibilityImage(AccessibilityImage.Type.BUILDING_ENTRANCE, url, null) } +
+                it.elevatorImageUrls.map { url -> AccessibilityImage(AccessibilityImage.Type.BUILDING_ELEVATOR, url, null) }
+
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
                     id = EntityIdGenerator.generateRandom(),
@@ -218,6 +222,7 @@ class AccessibilityApplicationService(
                     elevatorStairInfo = it.elevatorStairInfo,
                     elevatorStairHeightLevel = it.elevatorStairHeightLevel,
                     elevatorImageUrls = it.elevatorImageUrls,
+                    images = images,
                     userId = it.userId,
                     createdAt = SccClock.instant(),
                 )
@@ -262,6 +267,7 @@ class AccessibilityApplicationService(
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
                 entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
+                images = createPlaceAccessibilityParams.imageUrls.map { AccessibilityImage(AccessibilityImage.Type.PLACE, it, null) },
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = SccClock.instant(),
             )

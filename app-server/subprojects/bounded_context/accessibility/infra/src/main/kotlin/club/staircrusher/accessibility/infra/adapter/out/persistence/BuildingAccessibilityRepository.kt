@@ -1,6 +1,7 @@
 package club.staircrusher.accessibility.infra.adapter.out.persistence
 
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toDomainModel
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
@@ -65,10 +66,9 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun updateThumbnailUrls(id: String, entranceThumbnailUrls: List<String>, elevatorThumbnailUrls: List<String>) {
-        return queries.updateThumbnailUrls(
-            entranceThumbnailUrls = entranceThumbnailUrls,
-            elevatorThumbnailUrls = elevatorThumbnailUrls,
+    override fun updateImages(id: String, images: List<AccessibilityImage>) {
+        return queries.updateImages(
+            images = images,
             id = id,
         )
     }

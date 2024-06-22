@@ -6,6 +6,7 @@ import club.staircrusher.accessibility.application.AccessibilityRegisterer
 import club.staircrusher.accessibility.application.port.`in`.result.GetAccessibilityResult
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
@@ -41,14 +42,14 @@ fun BuildingAccessibility.toDTO(
     entranceStairInfo = entranceStairInfo.toDTO(),
     entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
     entranceImageUrls = entranceImageUrls,
-    entranceThumbnailUrls = entranceThumbnailUrls,
+    entranceImages = images.filter { it.type == AccessibilityImage.Type.BUILDING_ENTRANCE }.map { it.toDTO() },
     hasSlope = hasSlope,
     hasElevator = hasElevator,
     entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
     elevatorStairInfo = elevatorStairInfo.toDTO(),
     elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
     elevatorImageUrls = elevatorImageUrls,
-    elevatorThumbnailUrls = elevatorThumbnailUrls,
+    elevatorImages = images.filter { it.type == AccessibilityImage.Type.BUILDING_ELEVATOR }.map { it.toDTO() },
     buildingId = buildingId,
     isUpvoted = isUpvoted,
     totalUpvoteCount = totalUpvoteCount,
@@ -115,7 +116,7 @@ fun PlaceAccessibility.toDTO(
     isFirstFloor = isFirstFloor,
     isStairOnlyOption = isStairOnlyOption,
     imageUrls = imageUrls,
-    thumbnailUrls = thumbnailUrls,
+    images = images.map { it.toDTO() },
     stairInfo = stairInfo.toDTO(),
     stairHeightLevel = stairHeightLevel?.toDTO(),
     hasSlope = hasSlope,
@@ -203,3 +204,8 @@ fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) =
         rank = rank,
         conqueredCount = conqueredCount,
     )
+
+fun AccessibilityImage.toDTO() = club.staircrusher.api.spec.dto.ImageDto(
+    imageUrl = imageUrl,
+    thumbnailUrl = thumbnailUrl,
+)

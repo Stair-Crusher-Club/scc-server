@@ -1,5 +1,6 @@
 package club.staircrusher.accessibility.application.port.out.persistence
 
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.StairHeightLevel
@@ -25,7 +26,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         cursorId: String,
         limit: Int,
     ): List<PlaceAccessibility>
-    fun updateThumbnailUrls(id: String, thumbnailUrls: List<String>)
+    fun updateImages(id: String, images: List<AccessibilityImage>)
     fun countAll(): Int
     fun remove(id: String)
 
