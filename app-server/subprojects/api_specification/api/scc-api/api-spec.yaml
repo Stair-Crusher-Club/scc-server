@@ -1574,8 +1574,10 @@ components:
         - ELECTRIC_WHEELCHAIR # 전동휠체어
         - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
         - STROLLER # 유아차 이용자
+        - PROSTHETIC_FOOT # 의족
         - WALKING_ASSISTANCE_DEVICE # 보행보조기구
-        # TODO: TBD
+        - CLUCH # 클러치(목발, 지팡이)
+        - NONE # 해당사항없음
 
   responses:
     ApiFailure:
