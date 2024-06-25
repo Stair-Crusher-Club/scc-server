@@ -33,9 +33,10 @@ class PlaceSearchService(
         searchText: String,
         currentLocation: Location?,
         distanceMetersLimit: Length,
-        siGunGuId: String?,
-        eupMyeonDongId: String?,
         sort: String?,
+        maxAccessibilityScore: Double?,
+        hasSlope: Boolean?,
+        isAccessibilityRegistered: Boolean?,
         limit: Int?,
     ): List<SearchPlacesResult> {
         val places = placeApplicationService.findAllByKeyword(
@@ -63,11 +64,9 @@ class PlaceSearchService(
             } else {
                 it
             }
-        }.let {
-            if (limit != null) it.take(limit)
-            else it
         }
         return places.toSearchPlacesResult(currentLocation)
+            .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
     }
 
     suspend fun listPlacesInBuilding(buildingId: String): List<SearchPlacesResult> {
@@ -103,6 +102,21 @@ class PlaceSearchService(
                     isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p.building),
                 )
             }
+    }
+
+    private fun List<SearchPlacesResult>.filterWith(
+        maxAccessibilityScore: Double?,
+        hasSlope: Boolean?,
+        isAccessibilityRegistered: Boolean?,
+        limit: Int?,
+    ): List<SearchPlacesResult> {
+        return this.filter { result ->
+            (maxAccessibilityScore == null || result.accessibilityScore ?: 0.0 <= maxAccessibilityScore) &&
+                (hasSlope == null || result.placeAccessibility?.hasSlope == hasSlope) &&
+                (isAccessibilityRegistered == null || result.isAccessibilityRegistrable == isAccessibilityRegistered)
+        }.let {
+            if (limit != null) it.take(limit) else it
+        }
     }
 
     private fun List<Place>.removeDuplicates(): List<Place> {

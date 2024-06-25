@@ -27,9 +27,10 @@ class SearchPlacesController(
             searchText = request.searchText,
             currentLocation = request.currentLocation?.toModel(),
             distanceMetersLimit = Length.ofMeters(request.distanceMetersLimit.toDouble()),
-            siGunGuId = request.siGunGuId,
-            eupMyeonDongId = request.eupMyeonDongId,
             sort = request.sort?.value,
+            maxAccessibilityScore = request.filters?.maxAccessibilityScore,
+            hasSlope = request.filters?.hasSlope,
+            isAccessibilityRegistered = request.filters?.isRegistered,
             limit = null,
         )
         return SearchPlacesPost200Response(

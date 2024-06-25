@@ -633,6 +633,8 @@ paths:
                   type: string
                 sort:
                   $ref: '#/components/schemas/SearchPlaceSortDto'
+                filters:
+                  $ref: '#/components/schemas/SearchPlaceFilterDto'
               required:
                 - searchText
                 - distanceMetersLimit
@@ -1538,6 +1540,19 @@ components:
       enum:
         - ACCURACY
         - DISTANCE
+
+    SearchPlaceFilterDto:
+      type: object
+      properties:
+        maxAccessibilityScore:
+          type: double
+          description: 접근성 점수의 최대값. 이 값 이하의 점수를 가진 장소만 반환한다. null이면 필터링하지 않는다필
+        hasSlope:
+          type: boolean
+          description: 경사로가 있는/없는 장소만 반환한다. null이면 필터링하지 않는다.
+        isRegistered:
+          type: boolean
+          description: 접근성 정보가 등록된/등록되지 않은 장소만 반환한다. null이면 필터링하지 않는다.
 
     SiGunGu:
       description: 시군구를 표현하기 위한 모델.
