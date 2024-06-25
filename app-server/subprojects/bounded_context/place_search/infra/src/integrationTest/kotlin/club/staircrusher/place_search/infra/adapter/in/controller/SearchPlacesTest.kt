@@ -3,11 +3,14 @@ package club.staircrusher.place_search.infra.adapter.`in`.controller
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
+import club.staircrusher.api.spec.dto.SearchPlaceFilterDto
+import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place_search.infra.adapter.`in`.controller.base.PlaceSearchITBase
 import club.staircrusher.stdlib.testing.SccRandom
+import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -21,6 +24,9 @@ import org.springframework.boot.test.mock.mockito.SpyBean
 class SearchPlacesTest : PlaceSearchITBase() {
     @Autowired
     private lateinit var placeRepository: PlaceRepository
+
+    @Autowired
+    private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
     @SpyBean
     private lateinit var mapsService: MapsService
@@ -127,7 +133,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
     }
 
     @Test
-    fun `폐업된 장소는 필터링된다`() = runBlocking {
+    fun `폐업된 장소는 보여주지 않는다`() = runBlocking {
         // given
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
@@ -191,6 +197,79 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 assertEquals(1, result.items!!.size)
             }
 
+        Unit
+    }
+
+    @Test
+    fun `필터 인자에 따라 장소가 노출된다`() = runBlocking {
+        // given
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        val placePrefix = SccRandom.string(4)
+        val placeWithSlope = transactionManager.doInTransaction {
+            val place = testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))
+            testDataGenerator.registerPlaceAccessibility(place, user = user, hasSlope = true)
+            place 
+        }
+        val placeWithoutSlope = transactionManager.doInTransaction {
+            val place = testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))
+            testDataGenerator.registerPlaceAccessibility(place, user = user, hasSlope = false)
+            place 
+        }
+        val placeNotRegistered = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))
+        }
+        val radiusMeters = 500
+
+        Mockito.`when`(
+            mapsService.findAllByKeyword(
+                placePrefix,
+                MapsService.SearchByKeywordOption(
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = placeWithSlope.location,
+                        radiusMeters = radiusMeters,
+                    ),
+                ),
+            )
+        ).thenReturn(listOf(placeWithSlope, placeWithoutSlope, placeNotRegistered))
+
+        fun requestWithFilter(filter: SearchPlaceFilterDto): List<PlaceListItem> {
+            val params = SearchPlacesPostRequest(
+                searchText = placePrefix,
+                distanceMetersLimit = radiusMeters,
+                currentLocation = placeWithSlope.location.toDTO(),
+                filters = filter,
+            )
+            return mvc.sccRequest("/searchPlaces", params, user = user)
+                .getResult(SearchPlacesPost200Response::class).items!!
+        }
+
+        requestWithFilter(filter = SearchPlaceFilterDto())
+            .apply {
+                assertEquals(3, size)
+            }
+        requestWithFilter(filter = SearchPlaceFilterDto(hasSlope = true))
+            .apply {
+                assertEquals(1, size)
+                assertTrue(any { it.place.id == placeWithSlope.id })
+            }
+        requestWithFilter(filter = SearchPlaceFilterDto(hasSlope = false))
+            .apply {
+                assertEquals(1, size)
+                assertTrue(any { it.place.id == placeWithoutSlope.id })
+            }
+        requestWithFilter(filter = SearchPlaceFilterDto(isRegistered = true))
+            .apply {
+                assertEquals(2, size)
+                assertTrue(any { it.place.id == placeWithSlope.id })
+                assertTrue(any { it.place.id == placeWithoutSlope.id })
+            }
+        requestWithFilter(filter = SearchPlaceFilterDto(isRegistered = false))
+            .apply {
+                assertEquals(1, size)
+                assertTrue(any { it.place.id == placeNotRegistered.id })
+            }
         Unit
     }
 }
