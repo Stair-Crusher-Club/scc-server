@@ -46,8 +46,8 @@ class BlurFacesInAccessibilityImagesUseCase(
         if (imageUrls.isNullOrEmpty()) return emptyList()
         val result = imageUrls.map { imageUrl ->
             try {
-                val (blurredImageUrl, detectedPositions) = URL(imageUrl).openStream().use {
-                    val imageBytes = URL(imageUrl).openStream().readBytes()
+                val (blurredImageUrl, detectedPositions) = URL(imageUrl).openStream().use { inputStream ->
+                    val imageBytes = inputStream.readBytes()
                     val imageBytesPointer = BytePointer(*imageBytes)
                     val detected = detectFacesService.detect(imageBytes)
                     if (detected.positions.isEmpty()) return@map BlurResult(
