@@ -1546,7 +1546,7 @@ components:
       properties:
         maxAccessibilityScore:
           type: double
-          description: 접근성 점수의 최대값. 이 값 이하의 점수를 가진 장소만 반환한다. null이면 필터링하지 않는다필
+          description: 접근성 점수의 최대값. 이 값 이하의 점수를 가진 장소만 반환한다. null이면 필터링하지 않는다.
         hasSlope:
           type: boolean
           description: 경사로가 있는/없는 장소만 반환한다. null이면 필터링하지 않는다.

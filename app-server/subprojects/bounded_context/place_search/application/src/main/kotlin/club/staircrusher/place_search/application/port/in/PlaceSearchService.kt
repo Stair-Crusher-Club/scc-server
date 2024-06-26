@@ -111,7 +111,7 @@ class PlaceSearchService(
         limit: Int?,
     ): List<SearchPlacesResult> {
         return this.filter { result ->
-            (maxAccessibilityScore == null || result.accessibilityScore ?: 0.0 <= maxAccessibilityScore) &&
+            (maxAccessibilityScore == null || result.accessibilityScore ?: Double.MAX_VALUE <= maxAccessibilityScore) &&
                 (hasSlope == null || result.placeAccessibility?.hasSlope == hasSlope) &&
                 (isAccessibilityRegistered == null || (result.placeAccessibility !== null) == isAccessibilityRegistered)
         }.let {
