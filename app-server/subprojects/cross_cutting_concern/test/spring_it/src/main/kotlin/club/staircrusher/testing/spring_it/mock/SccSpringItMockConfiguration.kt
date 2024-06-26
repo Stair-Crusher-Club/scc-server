@@ -1,5 +1,6 @@
 package club.staircrusher.testing.spring_it.mock
 
+import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
@@ -28,5 +29,11 @@ open class SccSpringItMockConfiguration {
     @Primary
     open fun mockSccClock(): SccClock {
         return MockSccClock.getInstance()
+    }
+
+    @Bean
+    @Primary
+    open fun mockFileManagementService(): FileManagementService {
+        return MockFileManagementService()
     }
 }

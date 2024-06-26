@@ -100,6 +100,7 @@ class AccessibilityScoreTest {
         hasSlope = false,
         entranceDoorTypes = emptyList(),
         imageUrls = emptyList(),
+        images = emptyList(),
         userId = null,
         createdAt = Instant.now(),
         deletedAt = null
@@ -115,6 +116,7 @@ class AccessibilityScoreTest {
         hasElevator = false,
         entranceDoorTypes = emptyList(),
         elevatorImageUrls = emptyList(),
+        images = emptyList(),
         elevatorStairInfo = StairInfo.ONE,
         elevatorStairHeightLevel = StairHeightLevel.THUMB,
         userId = null,

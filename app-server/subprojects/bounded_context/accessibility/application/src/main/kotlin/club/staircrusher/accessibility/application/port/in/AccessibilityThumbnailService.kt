@@ -4,10 +4,8 @@ import club.staircrusher.accessibility.application.port.out.file_management.File
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
-import club.staircrusher.domain_event.AccessibilityThumbnailGeneratedEvent
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.domain.event.DomainEventPublisher
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.async
@@ -16,12 +14,13 @@ import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import net.coobird.thumbnailator.Thumbnails
 import java.io.ByteArrayOutputStream
-import java.nio.file.Path
+import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.createDirectory
 
 @Component
-class AccessibilityThumbnailService(
+open class AccessibilityThumbnailService(
     private val transactionManager: TransactionManager,
-    private val domainEventPublisher: DomainEventPublisher,
     private val fileManagementService: FileManagementService,
     private val placeApplicationService: PlaceApplicationService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
@@ -31,12 +30,12 @@ class AccessibilityThumbnailService(
 
     fun generateThumbnailIfNotExists(placeId: String) {
         val accessibilityImages = getAccessibilityImages(placeId)
-        val shouldGenerateThumbnail = accessibilityImages.any { it.thumbnailUrl == null }
-        if (shouldGenerateThumbnail.not()) return
 
-        registerAccessibilityThumbnails(placeId, accessibilityImages)
+        val thumbnailGenerationRequiredImages = accessibilityImages.filter { it.thumbnailUrl == null }
+        val thumbnails = thumbnailGenerationRequiredImages.mapNotNull { generateThumbnail(it.imageUrl, placeId) }
+        val thumbnailUrls = uploadThumbnailImages(thumbnails)
 
-        runBlocking { domainEventPublisher.publishEvent(AccessibilityThumbnailGeneratedEvent(thumbnailPath.resolve(placeId))) }
+        migrateAccessibilityImages(placeId, accessibilityImages, thumbnailUrls)
     }
 
     private fun getAccessibilityImages(placeId: String) = transactionManager.doInTransaction {
@@ -61,11 +60,7 @@ class AccessibilityThumbnailService(
         return@doInTransaction placeAccessibilityImages + buildingAccessibilityImages
     }
 
-    private fun registerAccessibilityThumbnails(placeId: String, originalAccessibilityImages: List<AccessibilityImage>) {
-        val thumbnailGenerationRequiredImages = originalAccessibilityImages.filter { it.thumbnailUrl == null }
-        val thumbnails = thumbnailGenerationRequiredImages.mapNotNull { generateThumbnail(it.imageUrl, placeId) }
-        val thumbnailUrls = uploadThumbnailImages(thumbnails)
-
+    private fun migrateAccessibilityImages(placeId: String, originalAccessibilityImages: List<AccessibilityImage>, thumbnailUrls: List<String>) {
         val updatedImages = originalAccessibilityImages.map {
             val originalImageFileName = it.imageUrl.split("/").last()
             val generatedThumbnailUrl = thumbnailUrls.firstOrNull { url -> url.contains(originalImageFileName) }
@@ -90,22 +85,28 @@ class AccessibilityThumbnailService(
 
     private fun generateThumbnail(originalImageUrl: String, placeId: String): Thumbnail? {
         try {
-            val destinationPath = thumbnailPath.resolve(placeId)
+            val destinationPath = thumbnailPath.resolve(placeId).createDirectory()
             val imageFile = fileManagementService.downloadFile(originalImageUrl, destinationPath)
             val thumbnailFileName = "thumbnail_${imageFile.nameWithoutExtension}.$THUMBNAIL_FORMAT"
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            byteArrayOutputStream.use {
-                Thumbnails.of(imageFile)
-                    .scale(0.33)
-                    .outputFormat(THUMBNAIL_FORMAT)
-                    .toOutputStream(it)
-            }
+            val byteArrayOutputStream = doGenerateThumbnail(imageFile)
 
             return Thumbnail(originalImageUrl, thumbnailFileName, byteArrayOutputStream)
         } catch (t: Throwable) {
             logger.error(t) { "Failed to generate thumbnail for place: $placeId, image: $originalImageUrl" }
             return null
         }
+    }
+
+    private fun doGenerateThumbnail(imageFile: File): ByteArrayOutputStream {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        byteArrayOutputStream.use {
+            Thumbnails.of(imageFile)
+                .scale(0.33)
+                .outputFormat(THUMBNAIL_FORMAT)
+                .toOutputStream(it)
+        }
+
+        return byteArrayOutputStream
     }
 
     private fun uploadThumbnailImages(thumbnails: List<Thumbnail>) = runBlocking {
@@ -124,7 +125,7 @@ class AccessibilityThumbnailService(
     )
 
     companion object {
-        private val thumbnailPath = Path.of("tmp", "thumbnails")
+        private val thumbnailPath = Files.createTempDirectory("thumbnails")
         private const val THUMBNAIL_FORMAT = "webp"
     }
 }
