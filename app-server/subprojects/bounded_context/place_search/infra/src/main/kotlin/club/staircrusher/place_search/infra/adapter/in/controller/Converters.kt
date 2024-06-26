@@ -26,7 +26,12 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
     hasPlaceAccessibility = placeAccessibility != null,
     distanceMeters = distance?.meter?.toInt(),
     isAccessibilityRegistrable = isAccessibilityRegistrable,
-    accessibilityScore = accessibilityScore,
+    accessibilityInfo = club.staircrusher.api.spec.dto.CompactAccessibilityInfoDto(
+        accessibilityScore = accessibilityScore,
+        floors = placeAccessibility?.floors ?: emptyList(),
+        hasSlope = placeAccessibility?.hasSlope ?: false,
+        imageUrls = placeAccessibility?.imageUrls ?: emptyList(),
+    ),
 )
 
 @Suppress("ComplexMethod")
