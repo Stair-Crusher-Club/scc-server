@@ -52,8 +52,13 @@ class AccessibilityApplicationService(
     }
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
-        // get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
-        accessibilityImageService.generateThumbnailAndMigrateImagesIfNeeded(placeId)
+        // TODO: get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
+        try {
+            accessibilityImageService.generateThumbnailAndMigrateImagesIfNeeded(placeId)
+        } catch (e: Throwable) {
+            // do nothing
+        }
+
         return transactionManager.doInTransaction {
             doGetAccessibility(placeId, userId)
         }
