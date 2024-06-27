@@ -1,5 +1,6 @@
 package club.staircrusher.testing.spring_it.mock
 
+import club.staircrusher.accessibility.application.port.`in`.`interface`.ThumbnailGenerator
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.stdlib.clock.SccClock
@@ -35,5 +36,11 @@ open class SccSpringItMockConfiguration {
     @Primary
     open fun mockFileManagementService(): FileManagementService {
         return MockFileManagementService()
+    }
+
+    @Bean
+    @Primary
+    open fun mockThumbnailGenerator(): ThumbnailGenerator {
+        return MockThumbnailGenerator()
     }
 }

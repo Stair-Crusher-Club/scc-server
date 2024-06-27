@@ -1,5 +1,7 @@
 package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityImageService
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
@@ -18,7 +20,9 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.mock.mockito.MockBean
 import java.time.Duration
 
 class GetAccessibilityTest : AccessibilityITBase() {
@@ -178,6 +182,84 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Test
+    fun `imageUrls 만 존재한다면 images 로 마이그레이션이 이뤄진다`() {
+        val imageUrl = "https://example.com/image.jpg"
+        val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
+        val params = GetAccessibilityPostRequest(
+            placeId = place.id
+        )
+        mvc
+            .sccRequest("/getAccessibility", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(AccessibilityInfoDto::class)
+                assertTrue(result.placeAccessibility!!.imageUrls.contains(imageUrl))
+                assertFalse(result.placeAccessibility!!.images.isNullOrEmpty())
+                assertEquals(imageUrl, result.placeAccessibility!!.images!!.first().imageUrl)
+            }
+    }
+
+    @Test
+    fun `썸네일이 존재하면 함께 내려준다`() {
+        val imageUrl = "https://example.com/image.jpg"
+        val thumbnailUrl = "https://example.com/thumbnail.jpg"
+        // 하위 호환성
+        val imageUrls = listOf(imageUrl)
+        val images = listOf(AccessibilityImage(AccessibilityImage.Type.PLACE, imageUrl, thumbnailUrl))
+
+        val (user, place) = registerAccessibilityWithImages(imageUrls = imageUrls, images = images)
+        val params = GetAccessibilityPostRequest(
+            placeId = place.id
+        )
+
+        mvc
+            .sccRequest("/getAccessibility", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(AccessibilityInfoDto::class)
+                assertTrue(result.placeAccessibility!!.imageUrls.contains(imageUrl))
+                assertFalse(result.placeAccessibility!!.images.isNullOrEmpty())
+                assertEquals(imageUrl, result.placeAccessibility!!.images!!.first().imageUrl)
+                assertEquals(thumbnailUrl, result.placeAccessibility!!.images!!.first().thumbnailUrl)
+            }
+    }
+
+    @Test
+    fun `썸네일이 없으면 생성해서 내려준다`() {
+        val imageUrl = "resources/example.jpg"
+        // MockFileManagementService 에서 filename 을 그대로 return 하도록 했기 때문
+        val expectedThumbnailUrl = "thumbnail_example.webp"
+        val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
+        val params = GetAccessibilityPostRequest(
+            placeId = place.id
+        )
+
+        mvc
+            .sccRequest("/getAccessibility", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(AccessibilityInfoDto::class)
+                assertTrue(result.placeAccessibility!!.imageUrls.contains(imageUrl))
+                assertFalse(result.placeAccessibility!!.images.isNullOrEmpty())
+                assertEquals(imageUrl, result.placeAccessibility!!.images!!.first().imageUrl)
+                assertNotNull(result.placeAccessibility!!.images!!.first().thumbnailUrl)
+                assertEquals(expectedThumbnailUrl, result.placeAccessibility!!.images!!.first().thumbnailUrl)
+            }
+    }
+
     private fun registerAccessibility(overridingBuilding: Building? = null): RegisterAccessibilityResult {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
@@ -190,6 +272,21 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility)
             }
             testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user)
+
+            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
+            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
+
+            RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment)
+        }
+    }
+
+    private fun registerAccessibilityWithImages(imageUrls: List<String>? = null, images: List<AccessibilityImage>? = null) : RegisterAccessibilityResult {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        return transactionManager.doInTransaction {
+            val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
+            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user, imageUrls ?: emptyList(), images ?: emptyList())
 
             val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
             val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
