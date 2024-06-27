@@ -8,7 +8,10 @@ fun UserMobilityToolDto.toModel() = when (this) {
     UserMobilityToolDto.eLECTRICWHEELCHAIR -> UserMobilityTool.ELECTRIC_WHEELCHAIR
     UserMobilityToolDto.mANUALANDELECTRICWHEELCHAIR -> UserMobilityTool.MANUAL_AND_ELECTRIC_WHEELCHAIR
     UserMobilityToolDto.sTROLLER -> UserMobilityTool.STROLLER
+    UserMobilityToolDto.pROSTHETICFOOT -> UserMobilityTool.PROSTHETIC_FOOT
     UserMobilityToolDto.wALKINGASSISTANCEDEVICE -> UserMobilityTool.WALKING_ASSISTANCE_DEVICE
+    UserMobilityToolDto.cLUCH -> UserMobilityTool.CLUCH
+    UserMobilityToolDto.nONE -> UserMobilityTool.NONE
 }
 
 fun UserMobilityTool.toDTO() = when (this) {
@@ -16,5 +19,8 @@ fun UserMobilityTool.toDTO() = when (this) {
     UserMobilityTool.ELECTRIC_WHEELCHAIR -> UserMobilityToolDto.eLECTRICWHEELCHAIR
     UserMobilityTool.MANUAL_AND_ELECTRIC_WHEELCHAIR -> UserMobilityToolDto.mANUALANDELECTRICWHEELCHAIR
     UserMobilityTool.STROLLER -> UserMobilityToolDto.sTROLLER
+    UserMobilityTool.PROSTHETIC_FOOT -> UserMobilityToolDto.pROSTHETICFOOT
     UserMobilityTool.WALKING_ASSISTANCE_DEVICE -> UserMobilityToolDto.wALKINGASSISTANCEDEVICE
+    UserMobilityTool.CLUCH -> UserMobilityToolDto.cLUCH
+    UserMobilityTool.NONE -> UserMobilityToolDto.nONE
 }

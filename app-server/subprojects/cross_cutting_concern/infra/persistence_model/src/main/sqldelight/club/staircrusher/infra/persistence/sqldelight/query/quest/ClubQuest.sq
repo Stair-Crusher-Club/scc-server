@@ -6,7 +6,6 @@ ON CONFLICT(id) DO UPDATE SET
     name = EXCLUDED.name,
     quest_center_location_x = EXCLUDED.quest_center_location_x,
     quest_center_location_y = EXCLUDED.quest_center_location_y,
-    target_buildings = EXCLUDED.target_buildings,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
 
@@ -26,3 +25,15 @@ findAllOrderByCreatedAtDesc:
 SELECT *
 FROM club_quest
 ORDER BY created_at DESC;
+
+findCursoredSummariesOrderByCreatedAtDesc:
+SELECT id, name, created_at
+FROM club_quest
+WHERE
+    1 = 1
+    AND (
+        (created_at = :cursorCreatedAt AND id < :cursorId)
+        OR (created_at < :cursorCreatedAt)
+    )
+ORDER BY created_at DESC, id DESC
+LIMIT :limit;

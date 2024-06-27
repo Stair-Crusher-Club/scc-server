@@ -41,6 +41,7 @@ open class ClubQuestITBase : SccSpringITBase() {
                                 name = "placeName",
                                 location = LocationDTO(lng = 127.0, lat = 37.0),
                                 isConquered = false,
+                                isClosedExpected = false,
                                 isClosed = false,
                                 isNotAccessible = false,
                             ),

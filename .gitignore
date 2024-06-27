@@ -6,4 +6,6 @@ build/
 
 **/charts/
 
+.vscode/
+
 *.tsv

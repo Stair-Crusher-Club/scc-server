@@ -79,6 +79,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccessibilityInfoDto'
 
+  /getPlaceWithBuilding:
+    post:
+      summary: 건물 & 점포 정보를 조회한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placeId:
+                  type: string
+              required:
+                - placeId
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceListItem'
+
   /getAccessibilityLeaderboard:
     post:
       summary: 현재 탑 랭커들을 조회한다.
@@ -214,6 +235,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetChallengeResponseDto'
+
+  /getClientVersionStatus:
+    post:
+      summary: 앱 버전에 따라 업데이트 상태를 알려준다
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetClientVersionStatusRequestDto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetClientVersionStatusResponseDto'
 
   /getUserInfo:
     get:
@@ -596,6 +633,8 @@ paths:
                   type: string
                 sort:
                   $ref: '#/components/schemas/SearchPlaceSortDto'
+                filters:
+                  $ref: '#/components/schemas/SearchPlaceFilterDto'
               required:
                 - searchText
                 - distanceMetersLimit
@@ -1036,6 +1075,30 @@ components:
       required:
         - invitationCode
 
+    GetClientVersionStatusRequestDto:
+      type: object
+      properties:
+        version:
+          type: string
+          description: 현재 클라이언트 버전 ex) 3.37.0
+      required:
+        - version
+
+    GetClientVersionStatusResponseDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - STABLE
+            - UPGRADE_NEEDED
+            - UPGRADE_RECOMMENDED
+        message:
+          type: string
+          description: 강제 업데이트 혹은 업데이트 권장 사유
+      required:
+        - status
+
     GetUserInfoRequestDto:
       type: object
       properties: { }
@@ -1353,9 +1416,8 @@ components:
         isAccessibilityRegistrable:
           type: boolean
           description: 접근성 정보를 등록할 수 있는지 여부.
-        accessibilityScore:
-          type: double
-          description: 접근성 점수. 접근성 정보가 없는 경우 null
+        accessibilityInfo:
+          $ref: '#/components/schemas/CompactAccessibilityInfoDto'
 
       required:
         - place
@@ -1363,6 +1425,27 @@ components:
         - hasBuildingAccessibility
         - hasPlaceAccessibility
         - isAccessibilityRegistrable
+
+    CompactAccessibilityInfoDto:
+      type: object
+      properties:
+        accessibilityScore:
+          type: double
+          description: 접근성 점수. 접근성 정보가 없는 경우 null
+        imageUrls:
+          type: array
+          items:
+            type: string
+        hasSlope:
+          type: boolean
+        floors:
+          type: array
+          items:
+            type: integer
+      required:
+        - imageUrls
+        - hasSlope
+        - floors
 
     RegisterBuildingAccessibilityRequestDto:
       type: object
@@ -1473,6 +1556,19 @@ components:
         - ACCURACY
         - DISTANCE
 
+    SearchPlaceFilterDto:
+      type: object
+      properties:
+        maxAccessibilityScore:
+          type: double
+          description: 접근성 점수의 최대값. 이 값 이하의 점수를 가진 장소만 반환한다. null이면 필터링하지 않는다.
+        hasSlope:
+          type: boolean
+          description: 경사로가 있는/없는 장소만 반환한다. null이면 필터링하지 않는다.
+        isRegistered:
+          type: boolean
+          description: 접근성 정보가 등록된/등록되지 않은 장소만 반환한다. null이면 필터링하지 않는다.
+
     SiGunGu:
       description: 시군구를 표현하기 위한 모델.
       type: object
@@ -1528,8 +1624,10 @@ components:
         - ELECTRIC_WHEELCHAIR # 전동휠체어
         - MANUAL_AND_ELECTRIC_WHEELCHAIR # 수전동휠체어
         - STROLLER # 유아차 이용자
+        - PROSTHETIC_FOOT # 의족
         - WALKING_ASSISTANCE_DEVICE # 보행보조기구
-        # TODO: TBD
+        - CLUCH # 클러치(목발, 지팡이)
+        - NONE # 해당사항없음
 
     ImageDto:
       type: object

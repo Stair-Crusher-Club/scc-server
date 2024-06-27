@@ -14,12 +14,10 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserMobilit
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
-import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Scc_user
 import club.staircrusher.infra.persistence.sqldelight.migration.User_auth_info
-import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.Transaction
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
@@ -53,17 +51,6 @@ class DB(dataSource: DataSource) : TransactionManager {
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             imagesAdapter = AccessibilityImageListStringColumnAdapter,
-        ),
-        club_questAdapter = Club_quest.Adapter(
-            target_buildingsAdapter = object : ListToTextColumnAdapter<DryRunnedClubQuestTargetBuilding>() {
-                override fun convertElementToTextColumn(element: DryRunnedClubQuestTargetBuilding): String {
-                    return objectMapper.writeValueAsString(element)
-                }
-
-                override fun convertElementFromTextColumn(text: String): DryRunnedClubQuestTargetBuilding {
-                    return objectMapper.readValue(text)
-                }
-            }
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
             boundary_verticesAdapter = LocationListToTextColumnAdapter,

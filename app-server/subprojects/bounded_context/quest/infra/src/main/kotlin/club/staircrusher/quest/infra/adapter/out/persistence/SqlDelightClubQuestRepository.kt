@@ -5,7 +5,10 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetBuildingRepository
 import club.staircrusher.quest.domain.model.ClubQuest
+import club.staircrusher.quest.domain.model.ClubQuestSummary
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.time.toOffsetDateTime
+import java.time.Instant
 
 @Component
 class SqlDelightClubQuestRepository(
@@ -44,6 +47,22 @@ class SqlDelightClubQuestRepository(
         return clubQuestQueries.findAllOrderByCreatedAtDesc()
             .executeAsList()
             .map { it.toDomainModel() }
+    }
+
+    override fun findCursoredSummariesOrderByCreatedAtDesc(
+        cursorCreatedAt: Instant,
+        cursorId: String,
+        limit: Int
+    ): List<ClubQuestSummary> {
+        return clubQuestQueries.findCursoredSummariesOrderByCreatedAtDesc(
+            cursorCreatedAt = cursorCreatedAt.toOffsetDateTime(),
+            cursorId = cursorId,
+            limit = limit.toLong(),
+        )
+            .executeAsList()
+            .map {
+                ClubQuestSummary(id = it.id, name = it.name, createdAt = it.created_at.toInstant())
+            }
     }
 
     override fun remove(clubQuestId: String) {

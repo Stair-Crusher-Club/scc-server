@@ -22,6 +22,7 @@ import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
+import club.staircrusher.spring_web.cdn.SccCdn
 import club.staircrusher.stdlib.auth.AuthUser
 
 fun BuildingAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) =
@@ -41,14 +42,14 @@ fun BuildingAccessibility.toDTO(
     id = id,
     entranceStairInfo = entranceStairInfo.toDTO(),
     entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
-    entranceImageUrls = entranceImageUrls,
+    entranceImageUrls = entranceImageUrls.map { SccCdn.replaceIfPossible(it) },
     entranceImages = images.filter { it.type == AccessibilityImage.Type.BUILDING_ENTRANCE }.map { it.toDTO() },
     hasSlope = hasSlope,
     hasElevator = hasElevator,
     entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
     elevatorStairInfo = elevatorStairInfo.toDTO(),
     elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
-    elevatorImageUrls = elevatorImageUrls,
+    elevatorImageUrls = elevatorImageUrls.map { SccCdn.replaceIfPossible(it) },
     elevatorImages = images.filter { it.type == AccessibilityImage.Type.BUILDING_ELEVATOR }.map { it.toDTO() },
     buildingId = buildingId,
     isUpvoted = isUpvoted,
@@ -109,28 +110,36 @@ fun PlaceAccessibility.toDTO(
     registeredAccessibilityRegisterer: AccessibilityRegisterer?,
     authUser: AuthUser?,
     isLastInBuilding: Boolean,
-) = club.staircrusher.api.spec.dto.PlaceAccessibility(
-    id = id,
-    placeId = placeId,
-    floors = floors,
-    isFirstFloor = isFirstFloor,
-    isStairOnlyOption = isStairOnlyOption,
-    imageUrls = imageUrls,
-    images = images.map { it.toDTO() },
-    stairInfo = stairInfo.toDTO(),
-    stairHeightLevel = stairHeightLevel?.toDTO(),
-    hasSlope = hasSlope,
-    entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
-    registeredUserName = registeredAccessibilityRegisterer?.nickname,
-    deletionInfo = if (isDeletable(authUser?.id)) {
-        PlaceAccessibilityDeletionInfo(
-            isLastInBuilding = isLastInBuilding,
-        )
+): club.staircrusher.api.spec.dto.PlaceAccessibility {
+    val floors = if (this.floors.isNullOrEmpty()) {
+        if (this.isFirstFloor) listOf(1)
+        else null
     } else {
-        null
-    },
-    createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
-)
+        this.floors
+    }
+    return club.staircrusher.api.spec.dto.PlaceAccessibility(
+        id = id,
+        placeId = placeId,
+        floors = floors,
+        isFirstFloor = isFirstFloor,
+        isStairOnlyOption = isStairOnlyOption,
+        imageUrls = imageUrls.map { SccCdn.replaceIfPossible(it) },
+        images = images.map { it.toDTO() },
+        stairInfo = stairInfo.toDTO(),
+        stairHeightLevel = stairHeightLevel?.toDTO(),
+        hasSlope = hasSlope,
+        entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
+        registeredUserName = registeredAccessibilityRegisterer?.nickname,
+        deletionInfo = if (isDeletable(authUser?.id)) {
+            PlaceAccessibilityDeletionInfo(
+                isLastInBuilding = isLastInBuilding,
+            )
+        } else {
+            null
+        },
+        createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
+    )
+}
 
 fun club.staircrusher.api.spec.dto.StairInfo.toModel() = when (this) {
     club.staircrusher.api.spec.dto.StairInfo.uNDEFINED -> StairInfo.UNDEFINED

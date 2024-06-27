@@ -33,9 +33,10 @@ class PlaceSearchService(
         searchText: String,
         currentLocation: Location?,
         distanceMetersLimit: Length,
-        siGunGuId: String?,
-        eupMyeonDongId: String?,
         sort: String?,
+        maxAccessibilityScore: Double?,
+        hasSlope: Boolean?,
+        isAccessibilityRegistered: Boolean?,
         limit: Int?,
     ): List<SearchPlacesResult> {
         val places = placeApplicationService.findAllByKeyword(
@@ -63,11 +64,9 @@ class PlaceSearchService(
             } else {
                 it
             }
-        }.let {
-            if (limit != null) it.take(limit)
-            else it
         }
         return places.toSearchPlacesResult(currentLocation)
+            .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
     }
 
     suspend fun listPlacesInBuilding(buildingId: String): List<SearchPlacesResult> {
@@ -78,6 +77,13 @@ class PlaceSearchService(
         return (placesBySearch + placesInPersistence)
             .removeDuplicates()
             .toSearchPlacesResult(currentLocation = null)
+    }
+
+    suspend fun getPlace(placeId: String): SearchPlacesResult {
+        val place = placeApplicationService.findPlace(placeId) ?: throw IllegalArgumentException("Place with id $placeId does not exist.")
+        return listOf(place)
+            .toSearchPlacesResult(currentLocation = null)
+            .first()
     }
 
     private fun List<Place>.toSearchPlacesResult(currentLocation: Location?): List<SearchPlacesResult> {
@@ -96,6 +102,22 @@ class PlaceSearchService(
                     isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p.building),
                 )
             }
+    }
+
+    private fun List<SearchPlacesResult>.filterWith(
+        maxAccessibilityScore: Double?,
+        hasSlope: Boolean?,
+        isAccessibilityRegistered: Boolean?,
+        limit: Int?,
+    ): List<SearchPlacesResult> {
+        return this.filter { result ->
+            val scoreChecked = maxAccessibilityScore?.let { result.accessibilityScore ?: Double.MAX_VALUE <= it } ?: true
+            val slopeChecked = hasSlope?.let { result.placeAccessibility?.hasSlope == it } ?: true
+            val accessibilityRegisteredChecked = isAccessibilityRegistered?.let { (result.placeAccessibility !== null) == it } ?: true
+            scoreChecked && slopeChecked && accessibilityRegisteredChecked
+        }.let {
+            if (limit != null) it.take(limit) else it
+        }
     }
 
     private fun List<Place>.removeDuplicates(): List<Place> {

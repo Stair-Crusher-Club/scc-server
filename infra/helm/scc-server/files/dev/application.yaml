@@ -55,3 +55,6 @@ scc:
     imageUpload:
       bucketName: scc-dev-accessibility-images-2
       thumbnailBucketName: scc-dev-accessibility-thumbnails
+      bucketname: scc-dev-accessibility-images-2
+  cloudfront:
+    domain: d3vmj65l82owxs.cloudfront.net

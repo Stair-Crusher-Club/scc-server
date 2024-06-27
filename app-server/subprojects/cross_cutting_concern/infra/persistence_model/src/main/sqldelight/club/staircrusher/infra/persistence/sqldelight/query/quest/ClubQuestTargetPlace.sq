@@ -9,8 +9,7 @@ ON CONFLICT(id) DO UPDATE SET
     name = EXCLUDED.name,
     location_x = EXCLUDED.location_x,
     location_y = EXCLUDED.location_y,
-    is_closed = EXCLUDED.is_closed,
-    is_not_accessible = EXCLUDED.is_not_accessible,
+    is_closed_expected = EXCLUDED.is_closed_expected,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
 
@@ -32,6 +31,13 @@ FROM club_quest_target_place
 WHERE
     club_quest_id = :clubQuestId
     AND place_id = :placeId;
+
+findByClubQuestIdAndPlaceIds:
+SELECT *
+FROM club_quest_target_place
+WHERE
+    club_quest_id = :clubQuestId
+    AND place_id IN :placeIds;
 
 findByClubQuestIds:
 SELECT *
