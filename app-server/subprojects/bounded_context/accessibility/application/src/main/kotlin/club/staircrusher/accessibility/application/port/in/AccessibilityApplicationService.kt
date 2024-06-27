@@ -43,7 +43,7 @@ class AccessibilityApplicationService(
     // FIXME: do not use other BC's application service directly
     private val userApplicationService: UserApplicationService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
-    private val accessibilityThumbnailService: AccessibilityThumbnailService,
+    private val accessibilityImageService: AccessibilityImageService,
 ) {
     fun isAccessibilityRegistrable(building: Building): Boolean {
         val addressStr = building.address.toString()
@@ -53,7 +53,7 @@ class AccessibilityApplicationService(
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         // get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
-        accessibilityThumbnailService.generateThumbnailIfNotExists(placeId)
+        accessibilityImageService.generateThumbnailAndMigrateImagesIfNeeded(placeId)
         return transactionManager.doInTransaction {
             doGetAccessibility(placeId, userId)
         }

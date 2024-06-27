@@ -19,7 +19,7 @@ import java.nio.file.Files
 import kotlin.io.path.createDirectory
 
 @Component
-open class AccessibilityThumbnailService(
+open class AccessibilityImageService(
     private val transactionManager: TransactionManager,
     private val fileManagementService: FileManagementService,
     private val placeApplicationService: PlaceApplicationService,
@@ -28,14 +28,14 @@ open class AccessibilityThumbnailService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun generateThumbnailIfNotExists(placeId: String) {
+    fun generateThumbnailAndMigrateImagesIfNeeded(placeId: String) {
         val accessibilityImages = getAccessibilityImages(placeId)
 
         val thumbnailGenerationRequiredImages = accessibilityImages.filter { it.thumbnailUrl == null }
         val thumbnails = thumbnailGenerationRequiredImages.mapNotNull { generateThumbnail(it.imageUrl, placeId) }
         val thumbnailUrls = uploadThumbnailImages(thumbnails)
 
-        migrateAccessibilityImages(placeId, accessibilityImages, thumbnailUrls)
+        migrateAccessibilityImagesIfNeeded(placeId, accessibilityImages, thumbnailUrls)
     }
 
     private fun getAccessibilityImages(placeId: String) = transactionManager.doInTransaction {
@@ -49,6 +49,7 @@ open class AccessibilityThumbnailService(
         } else {
             placeAccessibility?.imageUrls?.map { AccessibilityImage(AccessibilityImage.Type.PLACE, it, null) } ?: emptyList()
         }
+
         val buildingAccessibilityImages = if (buildingAccessibility?.images?.isNotEmpty() == true) {
             buildingAccessibility.images
         } else {
@@ -60,7 +61,7 @@ open class AccessibilityThumbnailService(
         return@doInTransaction placeAccessibilityImages + buildingAccessibilityImages
     }
 
-    private fun migrateAccessibilityImages(placeId: String, originalAccessibilityImages: List<AccessibilityImage>, thumbnailUrls: List<String>) {
+    private fun migrateAccessibilityImagesIfNeeded(placeId: String, originalAccessibilityImages: List<AccessibilityImage>, thumbnailUrls: List<String>) {
         val updatedImages = originalAccessibilityImages.map {
             val originalImageFileName = it.imageUrl.split("/").last()
             val generatedThumbnailUrl = thumbnailUrls.firstOrNull { url -> url.contains(originalImageFileName) }
@@ -78,8 +79,13 @@ open class AccessibilityThumbnailService(
             val place = placeApplicationService.findPlace(placeId)!!
             val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)!!
             val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)!!
-            placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
-            buildingAccessibilityRepository.updateImages(buildingAccessibility.id, buildingAccessibilityImages)
+
+            if (placeAccessibility.images.equalsByContent(placeAccessibilityImages).not()) {
+                placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
+            }
+            if (buildingAccessibility.images.equalsByContent(buildingAccessibilityImages).not()) {
+                buildingAccessibilityRepository.updateImages(buildingAccessibility.id, buildingAccessibilityImages)
+            }
         }
     }
 
@@ -116,6 +122,18 @@ open class AccessibilityThumbnailService(
             }
             .awaitAll()
             .filterNotNull()
+    }
+
+    private fun List<AccessibilityImage>.equalsByContent(other: List<AccessibilityImage>): Boolean {
+        if (this === other) return true
+        if (this.size != other.size) return false
+
+        return this.all { image ->
+            val otherImage = other.firstOrNull { it.imageUrl == image.imageUrl }
+            if (otherImage == null) return@all false
+
+            image.thumbnailUrl == otherImage.thumbnailUrl
+        }
     }
 
     private data class Thumbnail(
