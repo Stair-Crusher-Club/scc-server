@@ -51,7 +51,7 @@ resource "aws_iam_policy" "scc_dev_accessibility_images_full_access" {
 }
 
 resource "aws_iam_policy" "scc_dev_accessibility_thumbnails_full_access" {
-  name   = "scc-dev-accessibility-thumbnails-pull-access"
+  name   = "scc-dev-accessibility-thumbnails-full-access"
   policy = data.aws_iam_policy_document.scc_dev_accessibility_thumbnails_full_access.json
 }
 
