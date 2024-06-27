@@ -79,13 +79,13 @@ class AccessibilityImageService(
 
         transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.REPEATABLE_READ) {
             val place = placeApplicationService.findPlace(placeId)!!
-            val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)!!
-            val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)!!
+            val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
+            val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
 
-            if (placeAccessibility.images.equalsByContent(placeAccessibilityImages).not()) {
+            if (placeAccessibility != null && placeAccessibility.images.equalsByContent(placeAccessibilityImages).not()) {
                 placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
             }
-            if (buildingAccessibility.images.equalsByContent(buildingAccessibilityImages).not()) {
+            if (buildingAccessibility != null && buildingAccessibility.images.equalsByContent(buildingAccessibilityImages).not()) {
                 buildingAccessibilityRepository.updateImages(buildingAccessibility.id, buildingAccessibilityImages)
             }
         }
