@@ -215,6 +215,6 @@ fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) =
     )
 
 fun AccessibilityImage.toDTO() = club.staircrusher.api.spec.dto.ImageDto(
-    imageUrl = imageUrl,
+    imageUrl = SccCdn.replaceIfPossible(imageUrl),
     thumbnailUrl = thumbnailUrl,
 )
