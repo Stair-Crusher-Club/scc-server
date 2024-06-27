@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.application.port.`in`
 
-import club.staircrusher.accessibility.application.port.`in`.`interface`.ThumbnailGenerator
+import club.staircrusher.accessibility.application.port.`in`.image.ThumbnailGenerator
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository

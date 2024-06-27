@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.application.port.`in`.`interface`
+package club.staircrusher.accessibility.application.port.`in`.image
 
 import java.io.ByteArrayOutputStream
 import java.io.File

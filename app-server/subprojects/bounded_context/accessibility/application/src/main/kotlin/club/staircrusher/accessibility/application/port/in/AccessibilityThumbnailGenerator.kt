@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.application.port.`in`
 
-import club.staircrusher.accessibility.application.port.`in`.`interface`.ThumbnailGenerator
+import club.staircrusher.accessibility.application.port.`in`.image.ThumbnailGenerator
 import club.staircrusher.stdlib.di.annotation.Component
 import net.coobird.thumbnailator.Thumbnails
 import java.io.ByteArrayOutputStream
