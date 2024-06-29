@@ -58,14 +58,18 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant?): List<PlaceAccessibility> {
+        return queries.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+            createdAt = (createdAt ?: SccClock.instant()).toOffsetDateTime(), limit = 1
+        )
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int {
         return queries.countByEupMyeonDong(eupMyeonDongId = eupMyeonDong.id)
             .executeAsOne()
             .toInt()
-    }
-
-    override fun findOldest(): PlaceAccessibility? {
-        return queries.findOldestOne().executeAsOneOrNull()?.toDomainModel()
     }
 
     override fun countByUserId(userId: String): Int {

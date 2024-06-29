@@ -42,12 +42,14 @@ FROM place_accessibility
 WHERE user_id = :userId
     AND deleted_at IS NULL;
 
-findOldestOne:
-SELECT *
+findByCreatedAtGreaterThanAndOrderByCreatedAtAsc:
+SELECT pa.*
 FROM place_accessibility pa
-WHERE pa.deleted_at IS NULL
-ORDER BY pa.created_at DESC
-LIMIT 1;
+WHERE
+    pa.created_at >: createdAt
+    AND pa.deleted_at IS NULL
+ORDER BY pa.created_at ASC, pa.id DESC
+LIMIT :limit;
 
 countByEupMyeonDong:
 SELECT COUNT(1)

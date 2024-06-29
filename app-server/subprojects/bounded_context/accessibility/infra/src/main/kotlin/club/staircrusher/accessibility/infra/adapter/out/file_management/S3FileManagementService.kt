@@ -8,7 +8,6 @@ import kotlinx.coroutines.future.await
 import mu.KotlinLogging
 import org.springframework.core.io.ResourceLoader
 import software.amazon.awssdk.core.async.AsyncRequestBody
-import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL
@@ -44,16 +43,15 @@ internal class S3FileManagementService(
         .build()
 
     // TODO: 유저별 rate limit 걸기. 위치는 여기가 아니라 application service여야 할 수도 있을 듯.
-    override fun getFileUploadUrl(filenameExtension: String): UploadUrl {
-        return getFileUploadUrl(generateObjectKey(), filenameExtension)
+    override fun getFileUploadUrl(fileExtension: String): UploadUrl {
+        return getFileUploadUrl(generateObjectKey(), fileExtension)
     }
 
-    override fun getFileUploadUrl(filename: String, filenameExtension: String): UploadUrl {
-        val normalizedFilenameExtension = getNormalizedFileExtension(filenameExtension)
+    override fun getFileUploadUrl(fileName: String, fileExtension: String): UploadUrl {
+        val normalizedFilenameExtension = getNormalizedFileExtension(fileExtension)
         val objectRequest = PutObjectRequest.builder()
             .bucket(properties.bucketName)
-            .key(generateObjectKey(normalizedFilenameExtension))
-            .key("$filename.$normalizedFilenameExtension")
+            .key("$fileName.$normalizedFilenameExtension")
             .contentType(Files.probeContentType(Path.of("dummy.${normalizedFilenameExtension}")))
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
@@ -77,37 +75,38 @@ internal class S3FileManagementService(
         return file
     }
 
-    override fun upload(filename: String, filenameExtension: String, fileBytes: ByteArray): String {
-        val normalizedFilenameExtension = filenameExtension.replace(Regex("^\\."), "")
-        val key = "$filename.$normalizedFilenameExtension"
-        val request = PutObjectRequest.builder()
-            .bucket(properties.bucketName)
-            .key(key)
-            .build()
-        s3Client.putObject(request, RequestBody.fromBytes(fileBytes))
-        return s3Client.utilities().getUrl { it.bucket(properties.bucketName).key(key) }.toString()
+    override suspend fun uploadImage(fileName: String, fileBytes: ByteArray): String? {
+        try {
+            return upload(properties.thumbnailBucketName, fileName, fileBytes)
+        } catch (t: Throwable) {
+            logger.error(t) { "Failed to upload image: $fileName" }
+            return null
+        }
     }
 
     override suspend fun uploadThumbnailImage(fileName: String, outputStream: ByteArrayOutputStream): String? {
+        try {
+            return upload(properties.thumbnailBucketName, fileName, outputStream.toByteArray())
+        } catch (t: Throwable) {
+            logger.error(t) { "Failed to upload thumbnail image: $fileName" }
+            return null
+        }
+    }
+
+    private suspend fun upload(bucketName: String, fileName: String, fileBytes: ByteArray): String {
         val objectRequest = PutObjectRequest.builder()
-            .bucket(properties.thumbnailBucketName)
+            .bucket(bucketName)
             .key(fileName)
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
-
-        try {
-            s3Client.putObject(objectRequest, AsyncRequestBody.fromBytes(outputStream.toByteArray())).await()
-            return s3Client
-                .utilities()
-                .getUrl {
-                    it.bucket(properties.thumbnailBucketName)
-                    it.key(fileName)
-                }
-                .toString()
-        } catch (t: Throwable) {
-            logger.error(t) { "Failed to upload thumbnail image" }
-            return null
-        }
+        s3Client.putObject(objectRequest, AsyncRequestBody.fromBytes(fileBytes)).await()
+        return s3Client
+            .utilities()
+            .getUrl {
+                it.bucket(properties.thumbnailBucketName)
+                it.key(fileName)
+            }
+            .toString()
     }
 
     private val objectKeyTimestampPrefixFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")

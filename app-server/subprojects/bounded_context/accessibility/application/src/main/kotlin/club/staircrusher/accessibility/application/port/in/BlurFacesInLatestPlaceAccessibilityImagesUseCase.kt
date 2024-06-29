@@ -6,7 +6,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import java.util.concurrent.Executors
 
 @Component
-class BlurFacesInLatestAccessibilityImagesUseCase(
+class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
     private val blurFacesInAccessibilityImagesUseCase: BlurFacesInAccessibilityImagesUseCase,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val accessibilityImagesBlurringHistoryRepository: AccessibilityImagesBlurringHistoryRepository,
@@ -20,19 +20,13 @@ class BlurFacesInLatestAccessibilityImagesUseCase(
     }
 
     fun handle() {
-        val latestHistory = accessibilityImagesBlurringHistoryRepository.findLatestHistoryOrNull()
-        val targetAccessibility = latestHistory?.let { history ->
-            val placeAccessibility =
-                history.placeAccessibilityId?.let { placeAccessibilityRepository.findByPlaceId(it) } ?: return@let null
-            placeAccessibilityRepository.searchForAdmin(
-                placeName = null,
-                createdAtFrom = null,
-                createdAtToExclusive = null,
-                cursorCreatedAt = placeAccessibility.createdAt,
-                cursorId = placeAccessibility.id,
-                limit = 1,
-            ).firstOrNull()
-        } ?: placeAccessibilityRepository.findOldest() ?: return
+        val latestHistory = accessibilityImagesBlurringHistoryRepository.findLatestPlaceHistoryOrNull()
+        val lastBlurredPlaceAccessibility = latestHistory?.let { history ->
+            history.placeAccessibilityId?.let { placeAccessibilityRepository.findByIdOrNull(it) }
+        }
+        val targetAccessibility =
+            placeAccessibilityRepository.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt = lastBlurredPlaceAccessibility?.createdAt)
+                .firstOrNull() ?: return
         blurFacesInAccessibilityImagesUseCase.handle(targetAccessibility.id)
     }
 }

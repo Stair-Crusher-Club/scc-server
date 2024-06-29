@@ -15,8 +15,15 @@ class AccessibilityImagesBlurringHistoryRepository(
     db: DB,
 ) : AccessibilityImagesBlurringHistoryRepository {
     private val queries = db.accessibilityImagesBlurringHistoryQueries
-    override fun findLatestHistoryOrNull(): AccessibilityImagesBlurringHistory? {
-        return queries.findLatestHistory().executeAsOneOrNull()?.toDomainModel()
+
+    override fun findLatestPlaceHistoryOrNull(): AccessibilityImagesBlurringHistory? {
+        return null
+//        return queries.findLatestPlaceHistory().executeAsOneOrNull()?.toDomainModel()
+    }
+
+    override fun findLatestBuildingHistoryOrNull(): AccessibilityImagesBlurringHistory? {
+        return null
+//        return queries.findLatestBuildingHistory().executeAsOneOrNull()?.toDomainModel()
     }
 
     override fun findByPlaceAccessibilityId(placeAccessibilityId: String): List<AccessibilityImagesBlurringHistory> {

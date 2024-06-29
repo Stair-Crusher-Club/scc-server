@@ -17,22 +17,30 @@ SELECT *
 FROM accessibility_images_blurring_history;
 
 findById:
-SELECT *
-FROM accessibility_images_blurring_history
-WHERE accessibility_images_blurring_history.id = :id;
+SELECT h.*
+FROM accessibility_images_blurring_history h
+WHERE h.id = :id;
 
 findByPlaceAccessibility:
-SELECT *
-FROM accessibility_images_blurring_history
-WHERE accessibility_images_blurring_history.place_accessibility_id = :place_accessibility_id;
+SELECT h.*
+FROM accessibility_images_blurring_history h
+WHERE h.place_accessibility_id = :place_accessibility_id;
 
 findByBuildingAccessilbility:
-SELECT *
-FROM accessibility_images_blurring_history
-WHERE accessibility_images_blurring_history.building_accessibility_id = :building_accessibility_id;
+SELECT h.*
+FROM accessibility_images_blurring_history h
+WHERE h.building_accessibility_id = :building_accessibility_id;
 
-findLatestHistory:
+findLatestPlaceHistory:
+SELECT h.*
+FROM accessibility_images_blurring_history h
+WHERE h.place_accessibility_id IS NOT NULL
+ORDER BY h.created_at DESC
+LIMIT 1;
+
+findLatestBuildingHistory:
 SELECT *
-FROM accessibility_images_blurring_history
-ORDER BY accessibility_images_blurring_history.created_at DESC
+FROM accessibility_images_blurring_history h
+WHERE h.building_accessibility_id IS NOT NULL
+ORDER BY h.created_at DESC
 LIMIT 1;
