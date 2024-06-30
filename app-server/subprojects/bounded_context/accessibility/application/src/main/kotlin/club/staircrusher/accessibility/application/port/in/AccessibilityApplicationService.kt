@@ -28,6 +28,7 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import mu.KotlinLogging
 
 @Suppress("TooManyFunctions")
 @Component
@@ -45,6 +46,8 @@ class AccessibilityApplicationService(
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
     private val accessibilityImageService: AccessibilityImageService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun isAccessibilityRegistrable(building: Building): Boolean {
         val addressStr = building.address.toString()
         return (addressStr.startsWith("서울") || addressStr.startsWith("경기 성남시")) ||
@@ -56,7 +59,7 @@ class AccessibilityApplicationService(
         try {
             accessibilityImageService.generateThumbnailAndMigrateImagesIfNeeded(placeId)
         } catch (e: Throwable) {
-            // do nothing
+            logger.error(e) { "Failed to generate thumbnail and migrate images for place $placeId" }
         }
 
         return transactionManager.doInTransaction {
