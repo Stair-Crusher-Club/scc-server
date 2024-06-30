@@ -6,6 +6,10 @@ import java.io.File
 
 class MockThumbnailGenerator : ThumbnailGenerator {
     override fun generate(originalImageFile: File, outputFormat: String): ByteArrayOutputStream {
-        return ByteArrayOutputStream()
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        originalImageFile.inputStream().use {
+            it.copyTo(byteArrayOutputStream)
+        }
+        return byteArrayOutputStream
     }
 }
