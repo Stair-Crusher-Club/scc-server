@@ -6,18 +6,21 @@ import org.springframework.beans.factory.annotation.Value
 @Component
 open class SccCdn(
     @Value("\${scc.cloudfront.domain:#{null}}") val domain: String?,
+    @Value("\${scc.s3.imageUpload.bucketName:scc-dev-accessibility-images-2}") val accessibilityImageBucketName: String,
 ) {
     init {
         SccCdnBeanHolder.setIfNull(this)
     }
 
+    private val accessibilityImageS3Domain = "https://${accessibilityImageBucketName}.s3.ap-northeast-2.amazonaws.com/"
+
     @Suppress("ReturnCount")
-    fun replaceIfPossible(url: String): String {
+    fun forAccessibilityImage(url: String): String {
         if (domain == null) {
             return url
         }
 
-        val objectKey = url.substringAfterLast(S3_DOMAIN)
+        val objectKey = url.substringAfterLast(accessibilityImageS3Domain)
         if (objectKey == url) {
             return url
         }
@@ -26,14 +29,12 @@ open class SccCdn(
     }
 
     companion object {
-        private const val S3_DOMAIN = "amazonaws.com/"
-
-        fun replaceIfPossible(url: String): String {
+        fun forAccessibilityImage(url: String): String {
             val globalSccCdn = SccCdnBeanHolder.get()
             checkNotNull(globalSccCdn) {
                 "Cannot use SccCdn.replaceIfPossible since SccCdn bean is not initialized yet."
             }
-            return globalSccCdn.replaceIfPossible(url)
+            return globalSccCdn.forAccessibilityImage(url)
         }
     }
 }

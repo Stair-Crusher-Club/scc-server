@@ -14,6 +14,7 @@ import club.staircrusher.testing.spring_it.mock.MockSccClock
 import club.staircrusher.user.domain.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -178,6 +179,32 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Test
+    fun `현재 사용중인 s3 bucket 에 대해서만 CDN 으로 라우팅된 이미지 url 이 내려간다`() {
+        val imageUrlFromActiveBucket = "https://test.s3.ap-northeast-2.amazonaws.com/1.jpg"
+        val imageUrlFromOldBucket = "https://some-other-bucket.s3.ap-northeast-2.amazonaws.com/2.jpg"
+        val cdnDomain = "https://cloudfronttest"
+
+        val (user, place1) = registerAccessibilityWithImages(listOf(imageUrlFromActiveBucket, imageUrlFromOldBucket))
+        val params = GetAccessibilityPostRequest(
+            placeId = place1.id
+        )
+        mvc
+            .sccRequest("/getAccessibility", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(AccessibilityInfoDto::class)
+                assertEquals(2, result.placeAccessibility!!.imageUrls.size)
+                assertNotEquals(imageUrlFromActiveBucket, result.placeAccessibility!!.imageUrls[0])
+                assertTrue(result.placeAccessibility!!.imageUrls[0].startsWith(cdnDomain))
+                assertEquals(imageUrlFromOldBucket, result.placeAccessibility!!.imageUrls[1])
+            }
+    }
+
     private fun registerAccessibility(overridingBuilding: Building? = null): RegisterAccessibilityResult {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
@@ -190,6 +217,21 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility)
             }
             testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user)
+
+            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
+            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
+
+            RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment)
+        }
+    }
+
+    private fun registerAccessibilityWithImages(imageUrls: List<String>): RegisterAccessibilityResult {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        return transactionManager.doInTransaction {
+            val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
+            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user, imageUrls)
 
             val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
             val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
