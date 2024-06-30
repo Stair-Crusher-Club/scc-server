@@ -28,6 +28,9 @@ scc:
       accessKey: test
       secretKey: test
 
+  cloudfront:
+    domain: cloudfronttest
+
   admin:
     password: adminPassword
 

@@ -270,7 +270,8 @@ class ITDataGenerator {
         stairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
         hasSlope: Boolean = true,
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
-        user: User? = null
+        user: User? = null,
+        imageUrls: List<String> = emptyList(),
     ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
             PlaceAccessibility(
@@ -283,7 +284,7 @@ class ITDataGenerator {
                 stairHeightLevel = stairHeightLevel,
                 hasSlope = hasSlope,
                 entranceDoorTypes = entranceDoorTypes,
-                imageUrls = emptyList(),
+                imageUrls = imageUrls,
                 userId = user?.id,
                 createdAt = clock.instant(),
             ),
@@ -321,10 +322,11 @@ class ITDataGenerator {
 
     fun registerBuildingAndPlaceAccessibility(
         place: Place,
-        user: User? = null
+        user: User? = null,
+        imageUrls: List<String> = emptyList(),
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
-            registerPlaceAccessibility(place = place, user = user),
+            registerPlaceAccessibility(place = place, user = user, imageUrls = imageUrls),
             registerBuildingAccessibilityIfNotExists(place.building, user = user),
         )
     }
