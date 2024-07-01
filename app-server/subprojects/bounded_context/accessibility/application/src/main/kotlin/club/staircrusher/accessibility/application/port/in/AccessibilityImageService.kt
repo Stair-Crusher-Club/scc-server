@@ -118,12 +118,7 @@ class AccessibilityImageService(
         if (this === other) return true
         if (this.size != other.size) return false
 
-        return this.all { image ->
-            val otherImage = other.firstOrNull { it.imageUrl == image.imageUrl }
-            if (otherImage == null) return@all false
-
-            image.thumbnailUrl == otherImage.thumbnailUrl
-        }
+        return this.toSet() == other.toSet()
     }
 
     private data class Thumbnail(
