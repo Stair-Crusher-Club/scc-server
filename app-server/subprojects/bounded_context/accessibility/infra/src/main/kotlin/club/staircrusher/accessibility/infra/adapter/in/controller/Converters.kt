@@ -137,49 +137,49 @@ fun PlaceAccessibility.toDTO(
 }
 
 fun club.staircrusher.api.spec.dto.StairInfo.toModel() = when (this) {
-    club.staircrusher.api.spec.dto.StairInfo.uNDEFINED -> StairInfo.UNDEFINED
-    club.staircrusher.api.spec.dto.StairInfo.nONE -> StairInfo.NONE
-    club.staircrusher.api.spec.dto.StairInfo.oNE -> StairInfo.ONE
-    club.staircrusher.api.spec.dto.StairInfo.tWOTOFIVE -> StairInfo.TWO_TO_FIVE
-    club.staircrusher.api.spec.dto.StairInfo.oVERSIX -> StairInfo.OVER_SIX
+    club.staircrusher.api.spec.dto.StairInfo.UNDEFINED -> StairInfo.UNDEFINED
+    club.staircrusher.api.spec.dto.StairInfo.NONE -> StairInfo.NONE
+    club.staircrusher.api.spec.dto.StairInfo.ONE -> StairInfo.ONE
+    club.staircrusher.api.spec.dto.StairInfo.TWO_TO_FIVE -> StairInfo.TWO_TO_FIVE
+    club.staircrusher.api.spec.dto.StairInfo.OVER_SIX -> StairInfo.OVER_SIX
 }
 
 fun StairInfo.toDTO() = when (this) {
-    StairInfo.UNDEFINED -> club.staircrusher.api.spec.dto.StairInfo.uNDEFINED
-    StairInfo.NONE -> club.staircrusher.api.spec.dto.StairInfo.nONE
-    StairInfo.ONE -> club.staircrusher.api.spec.dto.StairInfo.oNE
-    StairInfo.TWO_TO_FIVE -> club.staircrusher.api.spec.dto.StairInfo.tWOTOFIVE
-    StairInfo.OVER_SIX -> club.staircrusher.api.spec.dto.StairInfo.oVERSIX
+    StairInfo.UNDEFINED -> club.staircrusher.api.spec.dto.StairInfo.UNDEFINED
+    StairInfo.NONE -> club.staircrusher.api.spec.dto.StairInfo.NONE
+    StairInfo.ONE -> club.staircrusher.api.spec.dto.StairInfo.ONE
+    StairInfo.TWO_TO_FIVE -> club.staircrusher.api.spec.dto.StairInfo.TWO_TO_FIVE
+    StairInfo.OVER_SIX -> club.staircrusher.api.spec.dto.StairInfo.OVER_SIX
 }
 
 fun club.staircrusher.api.spec.dto.StairHeightLevel.toModel() = when (this) {
-    club.staircrusher.api.spec.dto.StairHeightLevel.hALFTHUMB -> StairHeightLevel.HALF_THUMB
-    club.staircrusher.api.spec.dto.StairHeightLevel.tHUMB -> StairHeightLevel.THUMB
-    club.staircrusher.api.spec.dto.StairHeightLevel.oVERTHUMB -> StairHeightLevel.OVER_THUMB
+    club.staircrusher.api.spec.dto.StairHeightLevel.HALF_THUMB -> StairHeightLevel.HALF_THUMB
+    club.staircrusher.api.spec.dto.StairHeightLevel.THUMB -> StairHeightLevel.THUMB
+    club.staircrusher.api.spec.dto.StairHeightLevel.OVER_THUMB -> StairHeightLevel.OVER_THUMB
 }
 
 fun StairHeightLevel.toDTO() = when (this) {
-    StairHeightLevel.HALF_THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.hALFTHUMB
-    StairHeightLevel.THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.tHUMB
-    StairHeightLevel.OVER_THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.oVERTHUMB
+    StairHeightLevel.HALF_THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.HALF_THUMB
+    StairHeightLevel.THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.THUMB
+    StairHeightLevel.OVER_THUMB -> club.staircrusher.api.spec.dto.StairHeightLevel.OVER_THUMB
 }
 
 fun club.staircrusher.api.spec.dto.EntranceDoorType.toModel() = when (this) {
-    club.staircrusher.api.spec.dto.EntranceDoorType.none -> EntranceDoorType.None
-    club.staircrusher.api.spec.dto.EntranceDoorType.hinged -> EntranceDoorType.Hinged
-    club.staircrusher.api.spec.dto.EntranceDoorType.sliding -> EntranceDoorType.Sliding
-    club.staircrusher.api.spec.dto.EntranceDoorType.revolving -> EntranceDoorType.Revolving
-    club.staircrusher.api.spec.dto.EntranceDoorType.automatic -> EntranceDoorType.Automatic
-    club.staircrusher.api.spec.dto.EntranceDoorType.eTC -> EntranceDoorType.ETC
+    club.staircrusher.api.spec.dto.EntranceDoorType.NONE -> EntranceDoorType.None
+    club.staircrusher.api.spec.dto.EntranceDoorType.HINGED -> EntranceDoorType.Hinged
+    club.staircrusher.api.spec.dto.EntranceDoorType.SLIDING -> EntranceDoorType.Sliding
+    club.staircrusher.api.spec.dto.EntranceDoorType.REVOLVING -> EntranceDoorType.Revolving
+    club.staircrusher.api.spec.dto.EntranceDoorType.AUTOMATIC -> EntranceDoorType.Automatic
+    club.staircrusher.api.spec.dto.EntranceDoorType.ETC -> EntranceDoorType.ETC
 }
 
 fun EntranceDoorType.toDTO() = when (this) {
-    EntranceDoorType.None -> club.staircrusher.api.spec.dto.EntranceDoorType.none
-    EntranceDoorType.Hinged -> club.staircrusher.api.spec.dto.EntranceDoorType.hinged
-    EntranceDoorType.Sliding -> club.staircrusher.api.spec.dto.EntranceDoorType.sliding
-    EntranceDoorType.Revolving -> club.staircrusher.api.spec.dto.EntranceDoorType.revolving
-    EntranceDoorType.Automatic -> club.staircrusher.api.spec.dto.EntranceDoorType.automatic
-    EntranceDoorType.ETC -> club.staircrusher.api.spec.dto.EntranceDoorType.eTC
+    EntranceDoorType.None -> club.staircrusher.api.spec.dto.EntranceDoorType.NONE
+    EntranceDoorType.Hinged -> club.staircrusher.api.spec.dto.EntranceDoorType.HINGED
+    EntranceDoorType.Sliding -> club.staircrusher.api.spec.dto.EntranceDoorType.SLIDING
+    EntranceDoorType.Revolving -> club.staircrusher.api.spec.dto.EntranceDoorType.REVOLVING
+    EntranceDoorType.Automatic -> club.staircrusher.api.spec.dto.EntranceDoorType.AUTOMATIC
+    EntranceDoorType.ETC -> club.staircrusher.api.spec.dto.EntranceDoorType.ETC
 }
 
 fun RegisterPlaceAccessibilityRequestDto.toModel(userId: String?) =

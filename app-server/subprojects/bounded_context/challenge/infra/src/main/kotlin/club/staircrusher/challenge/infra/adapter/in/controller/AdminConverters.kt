@@ -61,7 +61,8 @@ fun ChallengeAddressCondition.toAdminDTO() = AdminChallengeAddressConditionDTO(
 )
 
 fun AdminChallengeActionConditionDTO.toModel() = ChallengeActionCondition(
-    types = types?.takeIf { it.isNotEmpty() }?.map { it.toModel() } ?: ChallengeActionCondition.Type.values().toList(), // default는 전체다.
+    types = types?.takeIf { it.isNotEmpty() }?.map { it.toModel() } ?: ChallengeActionCondition.Type.values()
+        .toList(), // default는 전체다.
 )
 
 fun ChallengeActionCondition.toAdminDTO() = AdminChallengeActionConditionDTO(
@@ -69,15 +70,15 @@ fun ChallengeActionCondition.toAdminDTO() = AdminChallengeActionConditionDTO(
 )
 
 fun AdminChallengeActionConditionTypeEnumDTO.toModel() = when (this) {
-    AdminChallengeActionConditionTypeEnumDTO.bUILDINGACCESSIBILITY -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
-    AdminChallengeActionConditionTypeEnumDTO.bUILDINGACCESSIBILITYCOMMENT -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
-    AdminChallengeActionConditionTypeEnumDTO.pLACEACCESSIBILITY -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
-    AdminChallengeActionConditionTypeEnumDTO.pLACEACCESSIBILITYCOMMENT -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
+    AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
+    AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
+    AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
+    AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
 }
 
 fun ChallengeActionCondition.Type.toModel() = when (this) {
-    ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY -> AdminChallengeActionConditionTypeEnumDTO.bUILDINGACCESSIBILITY
-    ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.bUILDINGACCESSIBILITYCOMMENT
-    ChallengeActionCondition.Type.PLACE_ACCESSIBILITY -> AdminChallengeActionConditionTypeEnumDTO.pLACEACCESSIBILITY
-    ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.pLACEACCESSIBILITYCOMMENT
+    ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY -> AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY
+    ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY_COMMENT
+    ChallengeActionCondition.Type.PLACE_ACCESSIBILITY -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY
+    ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT
 }

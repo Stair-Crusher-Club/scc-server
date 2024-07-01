@@ -74,9 +74,9 @@ fun club.staircrusher.challenge.domain.model.Challenge.toDto(
 )
 
 fun ChallengeStatus.toDto(): ChallengeStatusDto = when (this) {
-    ChallengeStatus.UPCOMING -> ChallengeStatusDto.upcoming
-    ChallengeStatus.IN_PROGRESS -> ChallengeStatusDto.inProgress
-    ChallengeStatus.CLOSED -> ChallengeStatusDto.closed
+    ChallengeStatus.UPCOMING -> ChallengeStatusDto.UPCOMING
+    ChallengeStatus.IN_PROGRESS -> ChallengeStatusDto.IN_PROGRESS
+    ChallengeStatus.CLOSED -> ChallengeStatusDto.CLOSED
 }
 
 fun Challenge_contribution.toDomainModel() = ChallengeContribution(
