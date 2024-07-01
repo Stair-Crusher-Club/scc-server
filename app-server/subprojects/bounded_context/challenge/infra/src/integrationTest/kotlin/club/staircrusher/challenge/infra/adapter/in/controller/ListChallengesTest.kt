@@ -46,9 +46,9 @@ class ListChallengesTest : ChallengeITBase() {
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(
-                        ChallengeStatusDto.inProgress,
-                        ChallengeStatusDto.upcoming,
-                        ChallengeStatusDto.closed
+                        ChallengeStatusDto.IN_PROGRESS,
+                        ChallengeStatusDto.UPCOMING,
+                        ChallengeStatusDto.CLOSED
                     ),
                     nextToken = null,
                     limit = null
@@ -62,9 +62,9 @@ class ListChallengesTest : ChallengeITBase() {
 
         val sortedChallenges = challenges.sortedWith { c1, c2 ->
             val priority = listOf(
-                ChallengeStatusDto.inProgress,
-                ChallengeStatusDto.upcoming,
-                ChallengeStatusDto.closed,
+                ChallengeStatusDto.IN_PROGRESS,
+                ChallengeStatusDto.UPCOMING,
+                ChallengeStatusDto.CLOSED,
             )
             return@sortedWith when {
                 priority.indexOf(c1.status) > priority.indexOf(c2.status) -> 1
@@ -88,7 +88,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    statuses = listOf(ChallengeStatusDto.inProgress),
+                    statuses = listOf(ChallengeStatusDto.IN_PROGRESS),
                     nextToken = null,
                     limit = null
                 )
@@ -98,7 +98,7 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(
             inProgressChallenges
                 .map { it.status }
-                .all { it == ChallengeStatusDto.inProgress }
+                .all { it == ChallengeStatusDto.IN_PROGRESS }
         )
         assertEquals(registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size, inProgressChallenges.size)
         assertTrue(inProgressChallenges.isDistinct())
@@ -107,7 +107,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    statuses = listOf(ChallengeStatusDto.upcoming),
+                    statuses = listOf(ChallengeStatusDto.UPCOMING),
                     nextToken = null,
                     limit = null
                 )
@@ -117,7 +117,7 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(
             upcomingChallenges
                 .map { it.status }
-                .all { it == ChallengeStatusDto.upcoming }
+                .all { it == ChallengeStatusDto.UPCOMING }
         )
         assertEquals(registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size, upcomingChallenges.size)
         assertTrue(upcomingChallenges.isDistinct())
@@ -126,7 +126,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    statuses = listOf(ChallengeStatusDto.closed),
+                    statuses = listOf(ChallengeStatusDto.CLOSED),
                     nextToken = null,
                     limit = null
                 )
@@ -136,7 +136,7 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(
             closedChallenges
                 .map { it.status }
-                .all { it == ChallengeStatusDto.closed }
+                .all { it == ChallengeStatusDto.CLOSED }
         )
         assertEquals(registeredChallengesByStatus[ChallengeStatus.CLOSED]?.size, closedChallenges.size)
         assertTrue(closedChallenges.isDistinct())
@@ -150,7 +150,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    statuses = listOf(ChallengeStatusDto.inProgress, ChallengeStatusDto.upcoming),
+                    statuses = listOf(ChallengeStatusDto.IN_PROGRESS, ChallengeStatusDto.UPCOMING),
                     nextToken = null,
                     limit = null
                 )
@@ -160,10 +160,11 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(
             inProgressOrUpcomingChallenges
                 .map { it.status }
-                .all { it == ChallengeStatusDto.inProgress || it == ChallengeStatusDto.upcoming }
+                .all { it == ChallengeStatusDto.IN_PROGRESS || it == ChallengeStatusDto.UPCOMING }
         )
         assertEquals(
-            (registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size ?: 0),
+            (registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size
+                ?: 0) + (registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size ?: 0),
             inProgressOrUpcomingChallenges.size
         )
         assertTrue(inProgressOrUpcomingChallenges.isDistinct())
@@ -172,7 +173,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    statuses = listOf(ChallengeStatusDto.upcoming, ChallengeStatusDto.closed),
+                    statuses = listOf(ChallengeStatusDto.UPCOMING, ChallengeStatusDto.CLOSED),
                     nextToken = null,
                     limit = null
                 )
@@ -182,10 +183,11 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(
             upcomingOrCloseChallenges
                 .map { it.status }
-                .all { it == ChallengeStatusDto.upcoming || it == ChallengeStatusDto.closed }
+                .all { it == ChallengeStatusDto.UPCOMING || it == ChallengeStatusDto.CLOSED }
         )
         assertEquals(
-            (registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size ?: 0) + (registeredChallengesByStatus[ChallengeStatus.CLOSED]?.size ?: 0),
+            (registeredChallengesByStatus[ChallengeStatus.UPCOMING]?.size
+                ?: 0) + (registeredChallengesByStatus[ChallengeStatus.CLOSED]?.size ?: 0),
             upcomingOrCloseChallenges.size,
         )
         assertTrue(upcomingOrCloseChallenges.isDistinct())
@@ -199,7 +201,7 @@ class ListChallengesTest : ChallengeITBase() {
             .sccRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
-                    statuses = listOf(ChallengeStatusDto.inProgress),
+                    statuses = listOf(ChallengeStatusDto.IN_PROGRESS),
                     nextToken = null,
                     limit = null
                 )
@@ -207,14 +209,17 @@ class ListChallengesTest : ChallengeITBase() {
             .getResult(ListChallengesResponseDto::class)
             .items
 
-        assertEquals(registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size, inProgressChallengesBeforeParticipation.size)
+        assertEquals(
+            registeredChallengesByStatus[ChallengeStatus.IN_PROGRESS]?.size,
+            inProgressChallengesBeforeParticipation.size
+        )
         assertTrue(inProgressChallengesBeforeParticipation.isDistinct())
 
         val firstChallengeBeforeParticipation = inProgressChallengesBeforeParticipation.first()
-        assertTrue(firstChallengeBeforeParticipation.status == ChallengeStatusDto.inProgress)
+        assertTrue(firstChallengeBeforeParticipation.status == ChallengeStatusDto.IN_PROGRESS)
         assertTrue(firstChallengeBeforeParticipation.hasJoined.not())
         val lastChallengeBeforeParticipation = inProgressChallengesBeforeParticipation.last()
-        assertTrue(lastChallengeBeforeParticipation.status == ChallengeStatusDto.inProgress)
+        assertTrue(lastChallengeBeforeParticipation.status == ChallengeStatusDto.IN_PROGRESS)
         assertTrue(lastChallengeBeforeParticipation.hasJoined.not())
 
         val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
@@ -232,9 +237,9 @@ class ListChallengesTest : ChallengeITBase() {
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(
-                        ChallengeStatusDto.inProgress,
-                        ChallengeStatusDto.upcoming,
-                        ChallengeStatusDto.closed
+                        ChallengeStatusDto.IN_PROGRESS,
+                        ChallengeStatusDto.UPCOMING,
+                        ChallengeStatusDto.CLOSED
                     ),
                     nextToken = null,
                     limit = null
@@ -250,16 +255,16 @@ class ListChallengesTest : ChallengeITBase() {
         val firstChallenge = challengesAfterParticipation.getOrNull(0)
         assertTrue(firstChallenge != null)
         assertEquals(firstChallengeBeforeParticipation.id, firstChallenge?.id)
-        assertEquals(ChallengeStatusDto.inProgress, firstChallenge?.status)
+        assertEquals(ChallengeStatusDto.IN_PROGRESS, firstChallenge?.status)
         assertEquals(true, firstChallenge?.hasJoined)
         val secondChallenge = challengesAfterParticipation.getOrNull(1)
         assertTrue(secondChallenge != null)
         assertEquals(lastChallengeBeforeParticipation.id, secondChallenge?.id)
-        assertEquals(ChallengeStatusDto.inProgress, secondChallenge?.status)
+        assertEquals(ChallengeStatusDto.IN_PROGRESS, secondChallenge?.status)
         assertEquals(true, secondChallenge?.hasJoined)
         val thirdChallenge = challengesAfterParticipation.getOrNull(2)
         assertTrue(thirdChallenge != null)
-        assertEquals(ChallengeStatusDto.inProgress, thirdChallenge?.status)
+        assertEquals(ChallengeStatusDto.IN_PROGRESS, thirdChallenge?.status)
         assertEquals(false, thirdChallenge?.hasJoined)
     }
 

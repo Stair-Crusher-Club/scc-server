@@ -4,23 +4,23 @@ import club.staircrusher.api.spec.dto.UserMobilityToolDto
 import club.staircrusher.user.domain.model.UserMobilityTool
 
 fun UserMobilityToolDto.toModel() = when (this) {
-    UserMobilityToolDto.mANUALWHEELCHAIR -> UserMobilityTool.MANUAL_WHEELCHAIR
-    UserMobilityToolDto.eLECTRICWHEELCHAIR -> UserMobilityTool.ELECTRIC_WHEELCHAIR
-    UserMobilityToolDto.mANUALANDELECTRICWHEELCHAIR -> UserMobilityTool.MANUAL_AND_ELECTRIC_WHEELCHAIR
-    UserMobilityToolDto.sTROLLER -> UserMobilityTool.STROLLER
-    UserMobilityToolDto.pROSTHETICFOOT -> UserMobilityTool.PROSTHETIC_FOOT
-    UserMobilityToolDto.wALKINGASSISTANCEDEVICE -> UserMobilityTool.WALKING_ASSISTANCE_DEVICE
-    UserMobilityToolDto.cLUCH -> UserMobilityTool.CLUCH
-    UserMobilityToolDto.nONE -> UserMobilityTool.NONE
+    UserMobilityToolDto.MANUAL_WHEELCHAIR -> UserMobilityTool.MANUAL_WHEELCHAIR
+    UserMobilityToolDto.ELECTRIC_WHEELCHAIR -> UserMobilityTool.ELECTRIC_WHEELCHAIR
+    UserMobilityToolDto.MANUAL_AND_ELECTRIC_WHEELCHAIR -> UserMobilityTool.MANUAL_AND_ELECTRIC_WHEELCHAIR
+    UserMobilityToolDto.STROLLER -> UserMobilityTool.STROLLER
+    UserMobilityToolDto.PROSTHETIC_FOOT -> UserMobilityTool.PROSTHETIC_FOOT
+    UserMobilityToolDto.WALKING_ASSISTANCE_DEVICE -> UserMobilityTool.WALKING_ASSISTANCE_DEVICE
+    UserMobilityToolDto.CLUCH -> UserMobilityTool.CLUCH
+    UserMobilityToolDto.NONE -> UserMobilityTool.NONE
 }
 
 fun UserMobilityTool.toDTO() = when (this) {
-    UserMobilityTool.MANUAL_WHEELCHAIR -> UserMobilityToolDto.mANUALWHEELCHAIR
-    UserMobilityTool.ELECTRIC_WHEELCHAIR -> UserMobilityToolDto.eLECTRICWHEELCHAIR
-    UserMobilityTool.MANUAL_AND_ELECTRIC_WHEELCHAIR -> UserMobilityToolDto.mANUALANDELECTRICWHEELCHAIR
-    UserMobilityTool.STROLLER -> UserMobilityToolDto.sTROLLER
-    UserMobilityTool.PROSTHETIC_FOOT -> UserMobilityToolDto.pROSTHETICFOOT
-    UserMobilityTool.WALKING_ASSISTANCE_DEVICE -> UserMobilityToolDto.wALKINGASSISTANCEDEVICE
-    UserMobilityTool.CLUCH -> UserMobilityToolDto.cLUCH
-    UserMobilityTool.NONE -> UserMobilityToolDto.nONE
+    UserMobilityTool.MANUAL_WHEELCHAIR -> UserMobilityToolDto.MANUAL_WHEELCHAIR
+    UserMobilityTool.ELECTRIC_WHEELCHAIR -> UserMobilityToolDto.ELECTRIC_WHEELCHAIR
+    UserMobilityTool.MANUAL_AND_ELECTRIC_WHEELCHAIR -> UserMobilityToolDto.MANUAL_AND_ELECTRIC_WHEELCHAIR
+    UserMobilityTool.STROLLER -> UserMobilityToolDto.STROLLER
+    UserMobilityTool.PROSTHETIC_FOOT -> UserMobilityToolDto.PROSTHETIC_FOOT
+    UserMobilityTool.WALKING_ASSISTANCE_DEVICE -> UserMobilityToolDto.WALKING_ASSISTANCE_DEVICE
+    UserMobilityTool.CLUCH -> UserMobilityToolDto.CLUCH
+    UserMobilityTool.NONE -> UserMobilityToolDto.NONE
 }

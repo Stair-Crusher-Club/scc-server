@@ -28,6 +28,7 @@ openApiGenerate {
     generatorName.set("kotlin")
     configOptions.put("sourceFolder", "src/main/kotlin")
     configOptions.put("serializationLibrary", "jackson")
+    configOptions.put("enumPropertyNaming", "UPPERCASE")
     skipValidateSpec.set(true)
 }
 val openApiGenerateTask = tasks.getByName("openApiGenerate") {
