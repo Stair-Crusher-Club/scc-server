@@ -1,6 +1,7 @@
 package club.staircrusher.infra.persistence.sqldelight
 
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.AccessibilityImageListStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoorTypeListStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
@@ -38,6 +39,7 @@ class DB(dataSource: DataSource) : TransactionManager {
         ),
         place_accessibilityAdapter = Place_accessibility.Adapter(
             image_urlsAdapter = StringListToTextColumnAdapter,
+            imagesAdapter = AccessibilityImageListStringColumnAdapter,
             floorsAdapter = IntListToTextColumnAdapter,
             stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
@@ -47,7 +49,9 @@ class DB(dataSource: DataSource) : TransactionManager {
             elevator_image_urlsAdapter = StringListToTextColumnAdapter,
             entrance_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
-            elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter
+            elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
+            entrance_imagesAdapter = AccessibilityImageListStringColumnAdapter,
+            elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
             boundary_verticesAdapter = LocationListToTextColumnAdapter,

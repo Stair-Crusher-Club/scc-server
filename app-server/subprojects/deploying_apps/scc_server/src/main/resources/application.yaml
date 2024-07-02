@@ -56,6 +56,10 @@ scc:
   s3:
     imageUpload:
       bucketName: test
+      thumbnailBucketName: test
+
+  cloudfront:
+    domain: test
 
   admin:
     password: test

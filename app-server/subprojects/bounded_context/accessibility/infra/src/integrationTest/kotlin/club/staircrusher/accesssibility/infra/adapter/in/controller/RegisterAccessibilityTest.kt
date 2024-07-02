@@ -13,19 +13,15 @@ import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
-import club.staircrusher.challenge.domain.model.Challenge
-import club.staircrusher.challenge.domain.model.ChallengeActionCondition
-import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
-import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Clock
 
 class RegisterAccessibilityTest : AccessibilityITBase() {
     @Autowired
@@ -45,9 +41,6 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
 
     @Autowired
     private lateinit var challengeContributionRepository: ChallengeContributionRepository
-
-    @Autowired
-    private lateinit var clock: Clock
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
@@ -194,6 +187,33 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
                 status {
                     isBadRequest()
                 }
+            }
+    }
+
+    @Test
+    fun `images 필드가 추가된 이후에는 imageUrls 필드와 images 필드가 모두 채워진다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
+        }
+
+        val params = getDefaultRequestParams(place)
+        mvc
+            .sccRequest("/registerAccessibility", params, user = user)
+            .apply {
+                val result = getResult(RegisterAccessibilityPost200Response::class)
+
+                val buildingAccessibility = result.buildingAccessibility!!
+
+                assertEquals(1, buildingAccessibility.entranceImageUrls.size)
+                assertNotNull(buildingAccessibility.entranceImages)
+                assertEquals(1, buildingAccessibility.entranceImages!!.size)
+
+                assertEquals(2, buildingAccessibility.elevatorImageUrls.size)
+                assertNotNull(buildingAccessibility.elevatorImages)
+                assertEquals(2, buildingAccessibility.elevatorImages!!.size)
             }
     }
 

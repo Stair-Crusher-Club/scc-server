@@ -14,7 +14,9 @@ data class PlaceAccessibility(
     val stairHeightLevel: StairHeightLevel?,
     val hasSlope: Boolean,
     val entranceDoorTypes: List<EntranceDoorType>?,
+    @Deprecated("use images instead")
     val imageUrls: List<String>,
+    val images: List<AccessibilityImage>,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,

@@ -87,6 +87,11 @@ WHERE
 ORDER BY pa.created_at DESC, pa.id DESC
 LIMIT :limit;
 
+updateImages:
+UPDATE place_accessibility
+SET images = :images
+WHERE id = :id;
+
 countAll:
 SELECT COUNT(*)
 FROM place_accessibility pa

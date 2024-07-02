@@ -53,6 +53,7 @@ scc:
   environment: dev
   s3:
     imageUpload:
-      bucketname: scc-dev-accessibility-images-2
+      bucketName: scc-dev-accessibility-images-2
+      thumbnailBucketName: scc-dev-accessibility-thumbnails
   cloudfront:
     domain: d3vmj65l82owxs.cloudfront.net
