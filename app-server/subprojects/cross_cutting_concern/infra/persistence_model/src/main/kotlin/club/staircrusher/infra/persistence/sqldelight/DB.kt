@@ -50,7 +50,8 @@ class DB(dataSource: DataSource) : TransactionManager {
             entrance_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
-            imagesAdapter = AccessibilityImageListStringColumnAdapter,
+            entrance_imagesAdapter = AccessibilityImageListStringColumnAdapter,
+            elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
             boundary_verticesAdapter = LocationListToTextColumnAdapter,

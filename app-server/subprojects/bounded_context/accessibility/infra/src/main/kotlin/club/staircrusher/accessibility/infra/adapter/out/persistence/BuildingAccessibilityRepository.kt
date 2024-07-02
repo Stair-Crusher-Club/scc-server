@@ -66,9 +66,16 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun updateImages(id: String, images: List<AccessibilityImage>) {
-        return queries.updateImages(
-            images = images,
+    override fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>) {
+        return queries.updateEntranceImages(
+            entranceImages = entranceImages,
+            id = id,
+        )
+    }
+
+    override fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>) {
+        return queries.updateElevatorImages(
+            elevatorImages = elevatorImages,
             id = id,
         )
     }

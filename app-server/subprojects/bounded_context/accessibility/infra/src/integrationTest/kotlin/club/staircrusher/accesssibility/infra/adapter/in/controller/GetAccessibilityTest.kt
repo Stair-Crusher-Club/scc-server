@@ -1,6 +1,5 @@
 package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.port.`in`.AccessibilityImageService
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
@@ -20,9 +19,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.MockBean
 import java.time.Duration
 
 class GetAccessibilityTest : AccessibilityITBase() {
@@ -210,7 +207,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
         val thumbnailUrl = "https://example.com/thumbnail.jpg"
         // 하위 호환성
         val imageUrls = listOf(imageUrl)
-        val images = listOf(AccessibilityImage(AccessibilityImage.Type.PLACE, imageUrl, thumbnailUrl))
+        val images = listOf(AccessibilityImage(imageUrl, thumbnailUrl))
 
         val (user, place) = registerAccessibilityWithImages(imageUrls = imageUrls, images = images)
         val params = GetAccessibilityPostRequest(

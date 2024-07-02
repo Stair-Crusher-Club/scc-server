@@ -57,7 +57,8 @@ class AccessibilityApplicationService(
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         // TODO: get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
         try {
-            accessibilityImageService.generateThumbnailAndMigrateImagesIfNeeded(placeId)
+            accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
+            accessibilityImageService.generateThumbnailsIfNeeded(placeId)
         } catch (e: Throwable) {
             logger.error(e) { "Failed to generate thumbnail and migrate images for place $placeId" }
         }
@@ -214,8 +215,8 @@ class AccessibilityApplicationService(
             ) {
                 throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
-            val images = it.entranceImageUrls.map { url -> AccessibilityImage(AccessibilityImage.Type.BUILDING_ENTRANCE, url, null) } +
-                it.elevatorImageUrls.map { url -> AccessibilityImage(AccessibilityImage.Type.BUILDING_ELEVATOR, url, null) }
+            val entranceImages = it.entranceImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
+            val elevatorImages = it.elevatorImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
 
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
@@ -224,13 +225,14 @@ class AccessibilityApplicationService(
                     entranceStairInfo = it.entranceStairInfo,
                     entranceStairHeightLevel = it.entranceStairHeightLevel,
                     entranceImageUrls = it.entranceImageUrls,
+                    entranceImages = entranceImages,
                     hasSlope = it.hasSlope,
                     hasElevator = it.hasElevator,
                     entranceDoorTypes = it.entranceDoorTypes,
                     elevatorStairInfo = it.elevatorStairInfo,
                     elevatorStairHeightLevel = it.elevatorStairHeightLevel,
                     elevatorImageUrls = it.elevatorImageUrls,
-                    images = images,
+                    elevatorImages = elevatorImages,
                     userId = it.userId,
                     createdAt = SccClock.instant(),
                 )
@@ -275,7 +277,7 @@ class AccessibilityApplicationService(
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
                 entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
-                images = createPlaceAccessibilityParams.imageUrls.map { AccessibilityImage(AccessibilityImage.Type.PLACE, it, null) },
+                images = createPlaceAccessibilityParams.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = SccClock.instant(),
             )

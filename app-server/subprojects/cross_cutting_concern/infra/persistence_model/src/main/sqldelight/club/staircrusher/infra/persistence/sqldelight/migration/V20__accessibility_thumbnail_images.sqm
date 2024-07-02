@@ -2,4 +2,5 @@ import club.staircrusher.accessibility.domain.model.AccessibilityImage;
 import kotlin.collections.List;
 
 ALTER TABLE place_accessibility ADD COLUMN images TEXT AS List<AccessibilityImage> NOT NULL DEFAULT '';
-ALTER TABLE building_accessibility ADD COLUMN images TEXT AS List<AccessibilityImage>  NOT NULL DEFAULT '';
+ALTER TABLE building_accessibility ADD COLUMN entrance_images TEXT AS List<AccessibilityImage>  NOT NULL DEFAULT '';
+ALTER TABLE building_accessibility ADD COLUMN elevator_images TEXT AS List<AccessibilityImage>  NOT NULL DEFAULT '';

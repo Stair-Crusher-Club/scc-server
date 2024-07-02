@@ -9,6 +9,7 @@ data class BuildingAccessibility(
     val entranceStairHeightLevel: StairHeightLevel?,
     @Deprecated("use images with type instead")
     val entranceImageUrls: List<String>,
+    val entranceImages: List<AccessibilityImage>,
     val hasSlope: Boolean,
     val hasElevator: Boolean,
     val entranceDoorTypes: List<EntranceDoorType>?,
@@ -16,7 +17,7 @@ data class BuildingAccessibility(
     val elevatorStairHeightLevel: StairHeightLevel?,
     @Deprecated("use images with type instead")
     val elevatorImageUrls: List<String>,
-    val images: List<AccessibilityImage>,
+    val elevatorImages: List<AccessibilityImage>,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,

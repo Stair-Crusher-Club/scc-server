@@ -28,65 +28,77 @@ class AccessibilityImageService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun generateThumbnailAndMigrateImagesIfNeeded(placeId: String) {
-        val accessibilityImages = getAccessibilityImages(placeId)
+    fun migrateImageUrlsToImagesIfNeeded(placeId: String) = transactionManager.doInTransaction {
+        val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction
+        val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
+        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
 
-        val thumbnailGenerationRequiredImages = accessibilityImages.filter { it.thumbnailUrl == null }
+        if (placeAccessibility?.images?.isEmpty() == true && placeAccessibility.imageUrls.isNotEmpty()) {
+            val placeAccessibilityImages = placeAccessibility.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
+        }
+
+        if (buildingAccessibility?.entranceImages?.isEmpty() == true && buildingAccessibility.entranceImageUrls.isNotEmpty()) {
+            val buildingEntranceImages = buildingAccessibility.entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            buildingAccessibilityRepository.updateEntranceImages(buildingAccessibility.id, buildingEntranceImages)
+        }
+
+        if (buildingAccessibility?.elevatorImages?.isEmpty() == true && buildingAccessibility.elevatorImageUrls.isNotEmpty()) {
+            val buildingElevatorImages = buildingAccessibility.elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, buildingElevatorImages)
+        }
+    }
+
+    fun generateThumbnailsIfNeeded(placeId: String) {
+        val thumbnailGenerationRequiredImages = getThumbnailGenerationRequiredImages(placeId)
         val thumbnailUrls = thumbnailGenerationRequiredImages
             .map { it.imageUrl }
             .mapNotNull { generateThumbnail(it, placeId) }
             .let { uploadThumbnailImages(it) }
 
-        migrateAccessibilityImagesIfNeeded(placeId, accessibilityImages, thumbnailUrls)
+        if (thumbnailUrls.isNotEmpty()) {
+            saveThumbnailUrls(placeId, thumbnailUrls)
+        }
     }
 
-    private fun getAccessibilityImages(placeId: String) = transactionManager.doInTransaction {
+    private fun getThumbnailGenerationRequiredImages(placeId: String) = transactionManager.doInTransaction {
         val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction emptyList()
 
         val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
 
-        val placeAccessibilityImages = if (placeAccessibility?.images?.isNotEmpty() == true) {
-            placeAccessibility.images
-        } else {
-            placeAccessibility?.imageUrls?.map { AccessibilityImage(AccessibilityImage.Type.PLACE, it, null) } ?: emptyList()
-        }
+        val accessibilityImages = listOfNotNull(placeAccessibility?.images, buildingAccessibility?.entranceImages, buildingAccessibility?.elevatorImages).flatten()
 
-        val buildingAccessibilityImages = if (buildingAccessibility?.images?.isNotEmpty() == true) {
-            buildingAccessibility.images
-        } else {
-            val entranceImages = buildingAccessibility?.entranceImageUrls?.map { AccessibilityImage(AccessibilityImage.Type.BUILDING_ENTRANCE, it, null) } ?: emptyList()
-            val elevatorImages = buildingAccessibility?.elevatorImageUrls?.map { AccessibilityImage(AccessibilityImage.Type.BUILDING_ELEVATOR, it, null) } ?: emptyList()
-            entranceImages + elevatorImages
-        }
-
-        return@doInTransaction placeAccessibilityImages + buildingAccessibilityImages
+        return@doInTransaction accessibilityImages.filter { it.thumbnailUrl == null }
     }
 
-    private fun migrateAccessibilityImagesIfNeeded(placeId: String, originalAccessibilityImages: List<AccessibilityImage>, thumbnailUrls: List<String>) {
-        val updatedImages = originalAccessibilityImages.map {
-            val originalFileNameWithoutExtension = it.imageUrl.split("/").last().split(".").first()
-            val generatedThumbnailUrl = thumbnailUrls.firstOrNull { url -> url.contains(originalFileNameWithoutExtension) }
-            if (generatedThumbnailUrl != null) {
-                it.thumbnailUrl = generatedThumbnailUrl
-            }
-
-            it
-        }
-
-        val placeAccessibilityImages = updatedImages.filter { it.type == AccessibilityImage.Type.PLACE }
-        val buildingAccessibilityImages = updatedImages.filter { it.type == AccessibilityImage.Type.BUILDING_ENTRANCE || it.type == AccessibilityImage.Type.BUILDING_ELEVATOR }
-
+    private fun saveThumbnailUrls(placeId: String, thumbnailUrls: List<String>) {
         transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.REPEATABLE_READ) {
             val place = placeApplicationService.findPlace(placeId)!!
             val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
             val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
 
-            if (placeAccessibility != null && placeAccessibility.images.equalsByContent(placeAccessibilityImages).not()) {
-                placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
+            if (placeAccessibility != null) {
+                val updatedImages = placeAccessibility.images.map { image ->
+                    findGeneratedThumbnailUrl(image.imageUrl, thumbnailUrls)?.let { image.thumbnailUrl = it }
+                    image
+                }
+
+                placeAccessibilityRepository.updateImages(placeAccessibility.id, updatedImages)
             }
-            if (buildingAccessibility != null && buildingAccessibility.images.equalsByContent(buildingAccessibilityImages).not()) {
-                buildingAccessibilityRepository.updateImages(buildingAccessibility.id, buildingAccessibilityImages)
+
+            if (buildingAccessibility != null) {
+                val updatedEntranceImages = buildingAccessibility.entranceImages.map { image ->
+                    findGeneratedThumbnailUrl(image.imageUrl, thumbnailUrls)?.let { image.thumbnailUrl = it }
+                    image
+                }
+                buildingAccessibilityRepository.updateEntranceImages(buildingAccessibility.id, updatedEntranceImages)
+
+                val updatedElevatorImages = buildingAccessibility.elevatorImages.map { image ->
+                    findGeneratedThumbnailUrl(image.imageUrl, thumbnailUrls)?.let { image.thumbnailUrl = it }
+                    image
+                }
+                buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, updatedElevatorImages)
             }
         }
     }
@@ -114,11 +126,9 @@ class AccessibilityImageService(
             .filterNotNull()
     }
 
-    private fun List<AccessibilityImage>.equalsByContent(other: List<AccessibilityImage>): Boolean {
-        if (this === other) return true
-        if (this.size != other.size) return false
-
-        return this.toSet() == other.toSet()
+    private fun findGeneratedThumbnailUrl(originalImageUrl: String, thumbnailUrls: List<String>): String? {
+        val originalFileNameWithoutExtension = originalImageUrl.split("/").last().split(".").first()
+        return thumbnailUrls.firstOrNull { it.contains(originalFileNameWithoutExtension) }
     }
 
     private data class Thumbnail(
