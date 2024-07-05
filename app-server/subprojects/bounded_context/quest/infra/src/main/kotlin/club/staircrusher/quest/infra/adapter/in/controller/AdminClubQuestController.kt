@@ -70,8 +70,10 @@ class AdminClubQuestController(
     @PostMapping("/admin/clubQuests/create/dryRun")
     suspend fun createClubQuestDryRun(@RequestBody request: ClubQuestsCreateDryRunPostRequest): List<ClubQuestCreateDryRunResultItemDTO> {
         val result = clubQuestCreateAplService.createDryRun(
-            centerLocation = request.centerLocation.toModel(),
+            regionType = request.regionType.toModel(),
+            centerLocation = request.centerLocation?.toModel(),
             radiusMeters = request.radiusMeters,
+            points = request.points?.map { it.toModel() },
             clusterCount = request.clusterCount,
             maxPlaceCountPerQuest = request.maxPlaceCountPerQuest,
         )

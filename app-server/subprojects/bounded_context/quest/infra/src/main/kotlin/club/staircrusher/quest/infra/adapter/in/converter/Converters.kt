@@ -3,19 +3,25 @@ package club.staircrusher.quest.infra.adapter.`in`.converter
 import club.staircrusher.admin_api.converter.toDTO
 import club.staircrusher.admin_api.converter.toModel
 import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestCreateRegionTypeDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestSummaryDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.quest.application.port.`in`.ClubQuestCreateRegionType
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestSummary
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
-import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
+import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 
+fun ClubQuestCreateRegionTypeDTO.toModel() = when (this) {
+    ClubQuestCreateRegionTypeDTO.CIRCLE -> ClubQuestCreateRegionType.CIRCLE
+    ClubQuestCreateRegionTypeDTO.POLYGON -> ClubQuestCreateRegionType.POLYGON
+}
 
 fun ClubQuestCreateDryRunResultItemDTO.toModel() = ClubQuestCreateDryRunResultItem(
     questNamePostfix = questNamePostfix,

@@ -28,12 +28,25 @@ class ClubQuestCreateAplService(
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
     suspend fun createDryRun(
-        centerLocation: Location,
-        radiusMeters: Int,
+        regionType: ClubQuestCreateRegionType,
+        centerLocation: Location?,
+        radiusMeters: Int?,
+        points: List<Location>?,
         clusterCount: Int,
         maxPlaceCountPerQuest: Int,
     ): List<ClubQuestCreateDryRunResultItem> = withContext(Dispatchers.IO) {
-        val places = clubQuestTargetPlacesSearcher.searchPlaces(centerLocation, radiusMeters)
+        val places = when (regionType) {
+            ClubQuestCreateRegionType.CIRCLE -> {
+                check(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
+                check(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
+                clubQuestTargetPlacesSearcher.searchPlacesInCircle(centerLocation, radiusMeters)
+            }
+            ClubQuestCreateRegionType.POLYGON -> {
+                check(points != null) { "`points` should not be null if regionType is `POLYGON`." }
+                check(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
+                clubQuestTargetPlacesSearcher.searchPlacesInPolygon(points)
+            }
+        }
         val accessibilityExistingPlaceIds = transactionManager.doInTransaction {
             accessibilityApplicationService.filterAccessibilityExistingPlaceIds(
                 places.map { it.id }
