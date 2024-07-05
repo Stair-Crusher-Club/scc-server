@@ -95,6 +95,7 @@ class DB(dataSource: DataSource) : TransactionManager {
     val challengeContributionQueries = scc.challengeContributionQueries
     val challengeParticipationQueries = scc.challengeParticipationQueries
     val challengeRankQueries = scc.challengeRankQueries
+    val externalAccessibilityQueries = scc.externalAccessibilityQueries
 
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {
