@@ -4,4 +4,6 @@ import club.staircrusher.external_accessibility.domain.model.ExternalAccessibili
 import club.staircrusher.stdlib.domain.repository.EntityRepository
 
 @Suppress("TooManyFunctions")
-interface ExternalAccessibilityRepository : EntityRepository<ExternalAccessibility, String> {}
+interface ExternalAccessibilityRepository : EntityRepository<ExternalAccessibility, String> {
+    fun findAll(): List<ExternalAccessibility>
+}

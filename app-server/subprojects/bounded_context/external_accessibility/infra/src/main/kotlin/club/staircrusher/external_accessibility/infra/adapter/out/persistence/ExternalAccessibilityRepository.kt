@@ -36,4 +36,10 @@ class ExternalAccessibilityRepository(
         queries.save(entity.toPersistenceModel())
         return entity
     }
+
+    override fun findAll(): List<ExternalAccessibility> {
+        return queries.findAll()
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
 }
