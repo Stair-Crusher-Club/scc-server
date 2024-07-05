@@ -20,4 +20,5 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
 }
