@@ -5,7 +5,7 @@ import club.staircrusher.user.domain.model.ClientVersionStatus
 
 fun ClientVersionStatus.Status.toDTO() =
     when (this) {
-        ClientVersionStatus.Status.STABLE -> GetClientVersionStatusResponseDto.Status.sTABLE
-        ClientVersionStatus.Status.UPGRADE_RECOMMENDED -> GetClientVersionStatusResponseDto.Status.uPGRADERECOMMENDED
-        ClientVersionStatus.Status.UPGRADE_NEEDED -> GetClientVersionStatusResponseDto.Status.uPGRADENEEDED
+        ClientVersionStatus.Status.STABLE -> GetClientVersionStatusResponseDto.Status.STABLE
+        ClientVersionStatus.Status.UPGRADE_RECOMMENDED -> GetClientVersionStatusResponseDto.Status.UPGRADE_RECOMMENDED
+        ClientVersionStatus.Status.UPGRADE_NEEDED -> GetClientVersionStatusResponseDto.Status.UPGRADE_NEEDED
     }
