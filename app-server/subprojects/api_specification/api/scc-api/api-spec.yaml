@@ -30,6 +30,18 @@ paths:
         '204': { }
       summary: '''이 정보가 도움이 돼요''를 취소한다.'
 
+  /cancelPlaceAccessibilityUpvote:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelBuildingAccessibilityUpvoteRequestDto'
+        required: true
+      responses:
+        '204': { }
+      summary: '''이 정보가 도움이 돼요''를 취소한다.'
+
   /deleteAccessibility:
     post:
       summary: |
@@ -271,6 +283,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GiveBuildingAccessibilityUpvoteRequestDto'
+      responses:
+        '204': { }
+
+  /givePlaceAccessibilityUpvote:
+    post:
+      summary: "'이 정보가 도움이 돼요'를 준다."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GivePlaceAccessibilityUpvoteRequestDto'
       responses:
         '204': { }
 
@@ -924,6 +948,14 @@ components:
         - buildingAccessibilityId
       type: object
 
+    CancelPlaceAccessibilityUpvoteRequestDto:
+      properties:
+        placeAccessibilityId:
+          type: string
+      required:
+        - placeAccessibilityId
+      type: object
+
     ChallengeDto:
       type: object
       properties:
@@ -1119,6 +1151,14 @@ components:
           type: string
       required:
         - buildingAccessibilityId
+
+    GivePlaceAccessibilityUpvoteRequestDto:
+      type: object
+      properties:
+        placeAccessibilityId:
+          type: string
+      required:
+        - placeAccessibilityId
 
     JoinChallengeRequestDto:
       type: object
@@ -1346,6 +1386,9 @@ components:
               description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
           required:
             - isLastInBuilding
+        isUpvoted:
+          type: boolean
+          description: 유저가 이 접근성 정보에 '도움이 돼요'를 표시했는지 여부.
         createdAt:
           $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
@@ -1530,10 +1573,10 @@ components:
       type: object
       properties:
         accessibilityInfo:
-            $ref: '#/components/schemas/AccessibilityInfoDto'
+          $ref: '#/components/schemas/AccessibilityInfoDto'
         registeredUserOrder:
-            type: integer
-            description: "'n번째 정복자'를 표시해주기 위한 값."
+          type: integer
+          description: "'n번째 정복자'를 표시해주기 위한 값."
         required:
           - accessibilityInfo
           - registeredUserOrder

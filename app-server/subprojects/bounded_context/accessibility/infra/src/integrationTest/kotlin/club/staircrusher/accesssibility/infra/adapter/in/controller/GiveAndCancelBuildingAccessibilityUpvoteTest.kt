@@ -17,7 +17,8 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
         val (user, buildingAccessibility) = transactionManager.doInTransaction {
             val user = testDataGenerator.createUser()
             val place = testDataGenerator.createBuildingAndPlace()
-            val buildingAccessibility = testDataGenerator.registerBuildingAndPlaceAccessibility(user = user, place = place).second
+            val buildingAccessibility =
+                testDataGenerator.registerBuildingAndPlaceAccessibility(user = user, place = place).second
             Pair(user, buildingAccessibility)
         }
 
@@ -28,7 +29,12 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
             .sccRequest("/giveBuildingAccessibilityUpvote", giveUpvoteParams, user = user)
             .andExpect {
                 transactionManager.doInTransaction {
-                    assertNotNull(buildingAccessibilityUpvoteRepository.findExistingUpvote(user.id, buildingAccessibility))
+                    assertNotNull(
+                        buildingAccessibilityUpvoteRepository.findExistingUpvote(
+                            user.id,
+                            buildingAccessibility.id
+                        )
+                    )
                 }
             }
 
@@ -39,7 +45,12 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
             .sccRequest("/cancelBuildingAccessibilityUpvote", cancelUpvoteParams, user = user)
             .andExpect {
                 transactionManager.doInTransaction {
-                    assertNull(buildingAccessibilityUpvoteRepository.findExistingUpvote(user.id, buildingAccessibility))
+                    assertNull(
+                        buildingAccessibilityUpvoteRepository.findExistingUpvote(
+                            user.id,
+                            buildingAccessibility.id
+                        )
+                    )
                 }
             }
     }

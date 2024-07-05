@@ -1,0 +1,37 @@
+save:
+INSERT INTO place_accessibility_upvote
+VALUES :place_accessibility_upvote
+ON CONFLICT(id) DO UPDATE SET
+    user_id = EXCLUDED.user_id,
+    place_accessibility_id = EXCLUDED.place_accessibility_id,
+    created_at = EXCLUDED.created_at,
+    deleted_at = EXCLUDED.deleted_at;
+
+removeAll:
+DELETE FROM place_accessibility_upvote;
+
+findPlaceAccessibilityById:
+SELECT *
+FROM place_accessibility_upvote
+    JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
+WHERE place_accessibility_upvote.id = :id;
+
+findUpvoteByPlaceId:
+SELECT *
+FROM place_accessibility_upvote
+    JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
+WHERE place_id = :placeId;
+
+findByUserIdAndPlaceAccessilbityIdAndNotDeleted:
+SELECT *
+FROM place_accessibility_upvote
+    JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
+WHERE
+    place_accessibility_upvote.user_id = :userId
+    AND place_accessibility_upvote.place_accessibility_id = :placeAccessibilityId
+    AND place_accessibility_upvote.deleted_at IS NULL;
+
+countUpvotes:
+SELECT COUNT(1)
+FROM place_accessibility_upvote
+WHERE place_accessibility_id = :placeAccessibilityId;

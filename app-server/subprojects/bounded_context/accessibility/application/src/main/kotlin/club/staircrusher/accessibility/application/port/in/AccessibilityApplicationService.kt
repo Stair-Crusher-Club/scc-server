@@ -85,7 +85,7 @@ class AccessibilityApplicationService(
                 isUpvoted = userId?.let {
                     buildingAccessibilityUpvoteRepository.findExistingUpvote(
                         userId,
-                        buildingAccessibility,
+                        buildingAccessibility.id,
                     )
                 } != null,
                 totalUpvoteCount = buildingAccessibilityUpvoteRepository.countUpvotes(buildingAccessibility.id),

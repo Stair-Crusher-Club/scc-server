@@ -21,32 +21,30 @@ class BuildingAccessibilityUpvoteApplicationService(
         user: AuthUser,
         buildingAccessibilityId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId)
         val existingUpvote = buildingAccessibilityUpvoteRepository.findExistingUpvote(
             user.id,
-            buildingAccessibility,
+            buildingAccessibilityId,
         )
-
-        existingUpvote ?: buildingAccessibilityUpvoteRepository.save(
-            BuildingAccessibilityUpvote(
-                id = EntityIdGenerator.generateRandom(),
-                userId = user.id,
-                buildingAccessibility = buildingAccessibility,
-                createdAt = clock.instant(),
+        existingUpvote ?: buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId)?.let {
+            buildingAccessibilityUpvoteRepository.save(
+                BuildingAccessibilityUpvote(
+                    id = EntityIdGenerator.generateRandom(),
+                    userId = user.id,
+                    buildingAccessibility = it,
+                    createdAt = clock.instant(),
+                )
             )
-        )
+        }
     }
 
     fun cancelUpvote(
         user: AuthUser,
         buildingAccessibilityId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId)
         val upvote = buildingAccessibilityUpvoteRepository.findExistingUpvote(
             user.id,
-            buildingAccessibility,
+            buildingAccessibilityId,
         ) ?: return@doInTransaction
-
         upvote.cancel(clock.instant())
         buildingAccessibilityUpvoteRepository.save(upvote)
     }
