@@ -40,3 +40,7 @@ scc:
   apple-login:
     service-id: test
     client-secret: test
+
+  stibee:
+    apiKey: test
+    listId: test

@@ -63,3 +63,7 @@ scc:
 
   admin:
     password: test
+
+  stibee:
+    apiKey: test
+    listId: test
