@@ -100,11 +100,15 @@ class AdminClubQuestController(
 
     @PostMapping("/admin/clubQuests/createAndNotifyDailyClubQuest")
     fun createAndNotifyDailyClubQuest(@RequestBody request: CreateAndNotifyDailyClubQuestRequestDTO): CreateAndNotifyDailyClubQuestResponseDTO {
+        val maxPlaceCountPerQuest = request.maxPlaceCountPerQuest
+            .replace(Regex("개.*"), "")
+            .toIntOrNull()
+            ?: throw IllegalArgumentException("maxPlaceCountPerQuest(${request.maxPlaceCountPerQuest})를 숫자로 변환할 수 없습니다.")
         val quest = createAndNotifyDailyClubQuestUseCase.handle(
             requesterName = request.requesterName,
             requesterPhoneNumber = request.requesterPhoneNumber,
             centerLocationPlaceName = request.centerLocationPlaceName,
-            maxPlaceCountPerQuest = request.maxPlaceCountPerQuest.toInt(),
+            maxPlaceCountPerQuest = maxPlaceCountPerQuest,
         )
 
         crossValidateClubQuestPlacesUseCase.handleAsync(quest.id)
