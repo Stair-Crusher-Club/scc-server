@@ -51,13 +51,13 @@ class AccessibilityImageService(
 
     fun generateThumbnailsIfNeeded(placeId: String) {
         val thumbnailGenerationRequiredImages = getThumbnailGenerationRequiredImages(placeId)
-        val thumbnailUrls = thumbnailGenerationRequiredImages
+        val generatedThumbnailUrls = thumbnailGenerationRequiredImages
             .map { it.imageUrl }
             .mapNotNull { generateThumbnail(it, placeId) }
             .let { uploadThumbnailImages(it) }
 
-        if (thumbnailUrls.isNotEmpty()) {
-            saveThumbnailUrls(placeId, thumbnailUrls)
+        if (generatedThumbnailUrls.isNotEmpty()) {
+            saveThumbnailUrls(placeId, generatedThumbnailUrls)
         }
     }
 
