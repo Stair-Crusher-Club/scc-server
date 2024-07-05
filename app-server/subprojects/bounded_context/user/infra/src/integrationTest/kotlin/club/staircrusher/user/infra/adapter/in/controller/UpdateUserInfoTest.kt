@@ -218,7 +218,7 @@ class UpdateUserInfoTest : UserITBase() {
             instagramId = changedInstagramId,
             email = changedEmail,
             mobilityTools = changedMobilityTools.map { it.toDTO() },
-            isNewsLetterSubscriptionAgreed = true,
+            isNewsLetterSubscriptionAgreed = false,
         )
 
         mvc
