@@ -28,7 +28,7 @@ class AccessibilityImageService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun migrateImageUrlsToImagesIfNeeded(placeId: String) = transactionManager.doInTransaction {
+    fun migrateImageUrlsToImagesIfNeeded(placeId: String) = transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.REPEATABLE_READ) {
         val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction
         val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
