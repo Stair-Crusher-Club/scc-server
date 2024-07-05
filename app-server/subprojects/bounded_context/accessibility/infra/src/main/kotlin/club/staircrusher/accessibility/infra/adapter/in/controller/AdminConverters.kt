@@ -47,9 +47,9 @@ fun BuildingAccessibility.toAdminDTO(
 )
 
 fun StairInfo.toAdminDTO() = when (this) {
-    StairInfo.UNDEFINED -> AdminStairInfoDTO.uNDEFINED
-    StairInfo.NONE -> AdminStairInfoDTO.nONE
-    StairInfo.ONE -> AdminStairInfoDTO.oNE
-    StairInfo.TWO_TO_FIVE -> AdminStairInfoDTO.tWOTOFIVE
-    StairInfo.OVER_SIX -> AdminStairInfoDTO.oVERSIX
+    StairInfo.UNDEFINED -> AdminStairInfoDTO.UNDEFINED
+    StairInfo.NONE -> AdminStairInfoDTO.NONE
+    StairInfo.ONE -> AdminStairInfoDTO.ONE
+    StairInfo.TWO_TO_FIVE -> AdminStairInfoDTO.TWO_TO_FIVE
+    StairInfo.OVER_SIX -> AdminStairInfoDTO.OVER_SIX
 }

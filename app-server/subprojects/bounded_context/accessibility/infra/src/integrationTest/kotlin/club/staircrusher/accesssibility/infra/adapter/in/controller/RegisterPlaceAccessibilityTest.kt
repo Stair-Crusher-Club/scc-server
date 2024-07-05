@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
 
-class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
+class registerPlaceAccessibilityTest : AccessibilityITBase() {
     @Autowired
     private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
@@ -99,9 +99,9 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                         floors = listOf(1),
                         isStairOnlyOption = null,
                         stairInfo = StairInfo.ONE,
-                        stairHeightLevel = StairHeightLevel.hALFTHUMB,
+                        stairHeightLevel = StairHeightLevel.HALF_THUMB,
                         hasSlope = true,
-                        entranceDoorTypes = listOf(EntranceDoorType.hinged)
+                        entranceDoorTypes = listOf(EntranceDoorType.HINGED)
                     )
                 },
                 testDataGenerator.createBuildingAndPlace(placeName = "1층,계단X,경사로X,회전자동문").let { place ->
@@ -112,7 +112,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                         stairInfo = StairInfo.NONE,
                         stairHeightLevel = null,
                         hasSlope = false,
-                        entranceDoorTypes = listOf(EntranceDoorType.revolving, EntranceDoorType.automatic)
+                        entranceDoorTypes = listOf(EntranceDoorType.REVOLVING, EntranceDoorType.AUTOMATIC)
                     )
                 },
                 testDataGenerator.createBuildingAndPlace(placeName = "1-2층,계단X,경사로O,자동미닫이문").let { place ->
@@ -123,7 +123,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                         stairInfo = StairInfo.NONE,
                         stairHeightLevel = null,
                         hasSlope = true,
-                        entranceDoorTypes = listOf(EntranceDoorType.sliding, EntranceDoorType.automatic)
+                        entranceDoorTypes = listOf(EntranceDoorType.SLIDING, EntranceDoorType.AUTOMATIC)
                     )
                 },
                 testDataGenerator.createBuildingAndPlace(placeName = "5층,계단6칸이상,경사로X,문없음").let { place ->
@@ -134,7 +134,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                         stairInfo = StairInfo.TWO_TO_FIVE,
                         stairHeightLevel = null,
                         hasSlope = false,
-                        entranceDoorTypes = listOf(EntranceDoorType.none)
+                        entranceDoorTypes = listOf(EntranceDoorType.NONE)
                     )
                 }
             )
@@ -206,8 +206,8 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "문이 없지만 여닫이 문인 장소") }
         val params = getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place).copy(
             entranceDoorTypes = listOf(
-                EntranceDoorType.none,
-                EntranceDoorType.hinged
+                EntranceDoorType.NONE,
+                EntranceDoorType.HINGED
             )
         )
         mvc
@@ -451,9 +451,9 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             floors = listOf(1),
             isStairOnlyOption = null,
             stairInfo = StairInfo.TWO_TO_FIVE,
-            stairHeightLevel = StairHeightLevel.tHUMB,
+            stairHeightLevel = StairHeightLevel.THUMB,
             hasSlope = true,
-            entranceDoorTypes = listOf(EntranceDoorType.hinged, EntranceDoorType.automatic),
+            entranceDoorTypes = listOf(EntranceDoorType.HINGED, EntranceDoorType.AUTOMATIC),
         )
     }
 
