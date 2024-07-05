@@ -16,13 +16,11 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
-import org.springframework.beans.factory.annotation.Autowired
-import java.util.UUID
+import org.springframework.boot.test.mock.mockito.MockBean
 
 class UpdateUserInfoTest : UserITBase() {
-    @Autowired
+    @MockBean
     lateinit var stibeeSubscriptionService: StibeeSubscriptionService
 
     @Test

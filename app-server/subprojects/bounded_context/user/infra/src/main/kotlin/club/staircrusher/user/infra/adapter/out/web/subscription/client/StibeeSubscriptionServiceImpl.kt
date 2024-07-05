@@ -10,6 +10,7 @@ internal class StibeeSubscriptionServiceImpl(
     private val stibeeProperties: StibeeProperties,
     private val stibeeApiClient: StibeeApiClient,
 ) : StibeeSubscriptionService {
+
     override suspend fun registerSubscriber(email: String, name: String, isMarketingPushAgreed: Boolean): Boolean {
         val responseDto = stibeeApiClient.registerSubscriber(
             listId = stibeeProperties.listId,
