@@ -11,6 +11,7 @@ import club.staircrusher.accessibility.application.port.out.persistence.Building
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.application.toDomainModel
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
@@ -20,13 +21,14 @@ import club.staircrusher.place.application.port.`in`.BuildingService
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import java.time.Clock
+import mu.KotlinLogging
 
 @Suppress("TooManyFunctions")
 @Component
@@ -42,18 +44,29 @@ class AccessibilityApplicationService(
     // FIXME: do not use other BC's application service directly
     private val userApplicationService: UserApplicationService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
-    private val clock: Clock,
+    private val accessibilityImageService: AccessibilityImageService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun isAccessibilityRegistrable(building: Building): Boolean {
         val addressStr = building.address.toString()
         return (addressStr.startsWith("서울") || addressStr.startsWith("경기 성남시")) ||
             accessibilityAllowedRegionService.isAccessibilityAllowed(building.location)
     }
 
-    fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult =
-        transactionManager.doInTransaction {
+    fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
+        // TODO: get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
+        try {
+            accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
+            accessibilityImageService.generateThumbnailsIfNeeded(placeId)
+        } catch (e: Throwable) {
+            logger.error(e) { "Failed to generate thumbnail and migrate images for place $placeId" }
+        }
+
+        return transactionManager.doInTransaction {
             doGetAccessibility(placeId, userId)
         }
+    }
 
     internal fun doGetAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         val place = placeApplicationService.findPlace(placeId) ?: error("Cannot find place with $placeId")
@@ -202,6 +215,9 @@ class AccessibilityApplicationService(
             ) {
                 throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
+            val entranceImages = it.entranceImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
+            val elevatorImages = it.elevatorImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
+
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
                     id = EntityIdGenerator.generateRandom(),
@@ -209,14 +225,16 @@ class AccessibilityApplicationService(
                     entranceStairInfo = it.entranceStairInfo,
                     entranceStairHeightLevel = it.entranceStairHeightLevel,
                     entranceImageUrls = it.entranceImageUrls,
+                    entranceImages = entranceImages,
                     hasSlope = it.hasSlope,
                     hasElevator = it.hasElevator,
                     entranceDoorTypes = it.entranceDoorTypes,
                     elevatorStairInfo = it.elevatorStairInfo,
                     elevatorStairHeightLevel = it.elevatorStairHeightLevel,
                     elevatorImageUrls = it.elevatorImageUrls,
+                    elevatorImages = elevatorImages,
                     userId = it.userId,
-                    createdAt = clock.instant(),
+                    createdAt = SccClock.instant(),
                 )
             )
         }
@@ -259,8 +277,9 @@ class AccessibilityApplicationService(
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
                 entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
+                images = createPlaceAccessibilityParams.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
                 userId = createPlaceAccessibilityParams.userId,
-                createdAt = clock.instant(),
+                createdAt = SccClock.instant(),
             )
         )
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
@@ -305,7 +324,7 @@ class AccessibilityApplicationService(
                 buildingId = params.buildingId,
                 userId = params.userId,
                 comment = normalizedComment,
-                createdAt = clock.instant(),
+                createdAt = SccClock.instant(),
             )
         )
     }
@@ -334,7 +353,7 @@ class AccessibilityApplicationService(
                 placeId = params.placeId,
                 userId = params.userId,
                 comment = normalizedComment,
-                createdAt = clock.instant(),
+                createdAt = SccClock.instant(),
             )
         )
     }

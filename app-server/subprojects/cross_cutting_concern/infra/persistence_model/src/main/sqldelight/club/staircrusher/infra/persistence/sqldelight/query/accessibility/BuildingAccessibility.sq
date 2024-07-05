@@ -49,6 +49,16 @@ FROM building_accessibility
 WHERE building.eup_myeon_dong_id = :eupMyeonDongId
     AND building_accessibility.deleted_at IS NULL;
 
+updateEntranceImages:
+UPDATE building_accessibility
+SET entrance_images = :entranceImages
+WHERE id = :id;
+
+updateElevatorImages:
+UPDATE building_accessibility
+SET elevator_images = :elevatorImages
+WHERE id = :id;
+
 countByUserId:
 SELECT COUNT(1)
 FROM building_accessibility

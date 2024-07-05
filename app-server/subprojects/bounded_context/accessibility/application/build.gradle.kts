@@ -4,4 +4,7 @@ dependencies {
     implementation(projects.boundedContext.challenge.application)
 
     implementation(projects.apiSpecification.domainEvent)
+
+    implementation("net.coobird:thumbnailator:0.4.20")
+    implementation("org.sejda.webp-imageio:webp-imageio-sejda:0.1.0")
 }

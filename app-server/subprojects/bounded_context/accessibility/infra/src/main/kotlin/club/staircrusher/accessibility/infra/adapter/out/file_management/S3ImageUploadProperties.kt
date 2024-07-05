@@ -8,6 +8,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentials
 @ConfigurationProperties("scc.s3.image-upload")
 internal data class S3ImageUploadProperties @ConstructorBinding constructor(
     val bucketName: String,
+    val thumbnailBucketName: String,
     val accessKey: String?,
     val secretKey: String?,
 ) {
