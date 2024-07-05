@@ -28,7 +28,7 @@ class ClubQuestCreateAplService(
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
     suspend fun createDryRun(
-        regionType: ClubQuestCreateRegionType,
+        regionType: ClubQuestCreateRegionType?,
         centerLocation: Location?,
         radiusMeters: Int?,
         points: List<Location>?,
@@ -36,7 +36,7 @@ class ClubQuestCreateAplService(
         maxPlaceCountPerQuest: Int,
     ): List<ClubQuestCreateDryRunResultItem> = withContext(Dispatchers.IO) {
         val places = when (regionType) {
-            ClubQuestCreateRegionType.CIRCLE -> {
+            null, ClubQuestCreateRegionType.CIRCLE -> {
                 check(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
                 check(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
                 clubQuestTargetPlacesSearcher.searchPlacesInCircle(centerLocation, radiusMeters)

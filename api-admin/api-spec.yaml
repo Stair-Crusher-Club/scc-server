@@ -107,7 +107,6 @@ paths:
                 maxPlaceCountPerQuest:
                   type: integer
               required:
-                - regionType
                 - clusterCount
                 - maxPlaceCountPerQuest
       responses:
