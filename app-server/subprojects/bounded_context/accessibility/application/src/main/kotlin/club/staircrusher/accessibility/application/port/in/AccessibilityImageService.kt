@@ -117,6 +117,7 @@ class AccessibilityImageService(
         }
     }
 
+    // FIXME: ThumbnailUploadResult 같은 data class를 만들어서 반환하면 findGeneratedThumbnailUrl에서 온몸비틀기를 안 해도 될지도?
     private fun uploadThumbnailImages(thumbnails: List<Thumbnail>) = runBlocking {
         return@runBlocking thumbnails
             .map { (_, fileName, outputStream) ->
