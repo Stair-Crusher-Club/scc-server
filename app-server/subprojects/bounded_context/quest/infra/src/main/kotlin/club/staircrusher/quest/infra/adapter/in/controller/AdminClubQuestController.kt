@@ -7,12 +7,15 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsClosedPutRequ
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessiblePutRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsCreateDryRunPostRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
+import club.staircrusher.admin_api.spec.dto.CreateAndNotifyDailyClubQuestRequestDTO
+import club.staircrusher.admin_api.spec.dto.CreateAndNotifyDailyClubQuestResponseDTO
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestRequest
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.admin_api.spec.dto.GetCursoredClubQuestSummariesResultDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
+import club.staircrusher.quest.application.port.`in`.CreateAndNotifyDailyClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlacesUseCase
 import club.staircrusher.quest.application.port.`in`.DeleteClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
@@ -40,6 +43,7 @@ class AdminClubQuestController(
     private val clubQuestRepository: ClubQuestRepository,
     private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
     private val getCursoredClubQuestSummariesUseCase: GetCursoredClubQuestSummariesUseCase,
+    private val createAndNotifyDailyClubQuestUseCase: CreateAndNotifyDailyClubQuestUseCase,
 ) {
     @GetMapping("/admin/clubQuests")
     fun listClubQuests(): List<ClubQuestsGet200ResponseInner> {
@@ -91,6 +95,21 @@ class AdminClubQuestController(
         }
         return CreateClubQuestResponseDTO(
             clubQuestIds = quests.map { it.id },
+        )
+    }
+
+    @PostMapping("/admin/clubQuests/createAndNotifyDailyClubQuest")
+    fun createAndNotifyDailyClubQuest(@RequestBody request: CreateAndNotifyDailyClubQuestRequestDTO): CreateAndNotifyDailyClubQuestResponseDTO {
+        val quest = createAndNotifyDailyClubQuestUseCase.handle(
+            requesterName = request.requesterName,
+            requesterPhoneNumber = request.requesterPhoneNumber,
+            centerLocationPlaceName = request.centerLocationPlaceName,
+            maxPlaceCountPerQuest = request.maxPlaceCountPerQuest.toInt(),
+        )
+
+        crossValidateClubQuestPlacesUseCase.handleAsync(quest.id)
+        return CreateAndNotifyDailyClubQuestResponseDTO(
+            clubQuestId = quest.id,
         )
     }
 
