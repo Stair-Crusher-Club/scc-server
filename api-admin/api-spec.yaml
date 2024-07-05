@@ -92,17 +92,21 @@ paths:
             schema:
               type: object
               properties:
+                regionType:
+                  $ref: '#/components/schemas/ClubQuestCreateRegionTypeDTO'
                 centerLocation:
                   $ref: '#/components/schemas/LocationDTO'
                 radiusMeters:
                   type: integer
+                points:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LocationDTO'
                 clusterCount:
                   type: integer
                 maxPlaceCountPerQuest:
                   type: integer
               required:
-                - centerLocation
-                - radiusMeters
                 - clusterCount
                 - maxPlaceCountPerQuest
       responses:
@@ -416,6 +420,12 @@ components:
       required:
         - lng
         - lat
+
+    ClubQuestCreateRegionTypeDTO:
+      type: string
+      enum:
+        - CIRCLE
+        - POLYGON
 
     ClubQuestCreateDryRunResultItemDTO:
       description: 퀘스트 생성 시뮬레이션 결과. 각 퀘스트마다 1개의 아이템이 반환된다.

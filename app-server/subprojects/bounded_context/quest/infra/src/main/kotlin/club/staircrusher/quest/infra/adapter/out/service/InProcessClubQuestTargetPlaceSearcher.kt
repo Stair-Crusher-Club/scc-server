@@ -35,11 +35,25 @@ class InProcessClubQuestTargetPlaceSearcher(
      * 2. 1에서 획득한 장소들의 건물 주소로 키워드 검색 -> 장소 목록을 2차 획득
      * 3. 1과 2에서 획득한 장소들을 merge & remove duplicate
      */
-    override suspend fun searchPlaces(centerLocation: Location, radiusMeters: Int): List<Place> {
+    override suspend fun searchPlacesInCircle(centerLocation: Location, radiusMeters: Int): List<Place> {
         val radius = Length.ofMeters(radiusMeters)
-        val placesByCategorySearch = searchPlacesInRegionByCategorySearch(centerLocation, radius)
+        val placesByCategorySearch = searchPlacesInCircleByCategorySearch(centerLocation, radius)
+
         val buildingsInRegion = placesByCategorySearch.map { it.building }.removeDuplicates { it.id }
-        val placesByBuildingAddressSearch = searchPlacesByBuildingAddressKeywordSearch(buildingsInRegion, centerLocation, radius)
+        val placesByBuildingAddressSearch = searchPlacesByBuildingAddressKeywordSearch(buildingsInRegion)
+            .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
+
+        return (placesByCategorySearch + placesByBuildingAddressSearch)
+            .removeDuplicates { it.id }
+    }
+
+    override suspend fun searchPlacesInPolygon(points: List<Location>): List<Place> {
+        val placesByCategorySearch = searchPlacesInPolygonByCategorySearch(points)
+
+        val buildingsInRegion = placesByCategorySearch.map { it.building }.removeDuplicates { it.id }
+        val placesByBuildingAddressSearch = searchPlacesByBuildingAddressKeywordSearch(buildingsInRegion)
+            .filter { LocationUtils.isInPolygon(points, it.location) }
+
         return (placesByCategorySearch + placesByBuildingAddressSearch)
             .removeDuplicates { it.id }
     }
@@ -50,11 +64,28 @@ class InProcessClubQuestTargetPlaceSearcher(
             .awaitAll()
     }
 
-    private suspend fun searchPlacesInRegionByCategorySearch(centerLocation: Location, radius: Length): List<Place> {
+    private suspend fun searchPlacesInCircleByCategorySearch(centerLocation: Location, radius: Length): List<Place> {
         val leftBottomLocation = centerLocation.minusLng(radius).minusLat(radius)
         val rightTopLocation = centerLocation.plusLng(radius).plusLat(radius)
+        return searchPlacesInRectangleByCategorySearch(leftBottomLocation, rightTopLocation)
+            .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
+    }
 
-        val chunkCount = determineChunkCount(radius)
+    private suspend fun searchPlacesInPolygonByCategorySearch(points: List<Location>): List<Place> {
+        val leftBottomLocation = Location(
+            lng = points.minOf { it.lng },
+            lat = points.minOf { it.lat },
+        )
+        val rightTopLocation = Location(
+            lng = points.maxOf { it.lng },
+            lat = points.maxOf { it.lat },
+        )
+        return searchPlacesInRectangleByCategorySearch(leftBottomLocation, rightTopLocation)
+            .filter { LocationUtils.isInPolygon(points, it.location) }
+    }
+
+    private suspend fun searchPlacesInRectangleByCategorySearch(leftBottomLocation: Location, rightTopLocation: Location): List<Place> {
+        val chunkCount = determineChunkCount(leftBottomLocation, rightTopLocation)
         val chunkedRectangles = (1..chunkCount).flatMap { lngIdx ->
             (1..chunkCount).map { latIdx ->
                 val chunkLeftBottomLocation = getAvgLocation(
@@ -74,35 +105,29 @@ class InProcessClubQuestTargetPlaceSearcher(
         }
         return chunkedRectangles
             .flatMap { (leftBottomLocation, rightTopLocation) ->
-                getPlacesInRectangleByCategorySearch(leftBottomLocation, rightTopLocation)
+                coroutineScope {
+                    targetPlaceCategories
+                        .map {
+                            async {
+                                placeApplicationService.findAllByCategory(
+                                    category = it,
+                                    option = MapsService.SearchByCategoryOption(
+                                        region = MapsService.SearchByCategoryOption.RectangleRegion(
+                                            leftBottomLocation = leftBottomLocation,
+                                            rightTopLocation = rightTopLocation,
+                                        ),
+                                    )
+                                )
+                            }
+                        }
+                        .let { awaitAll(*it.toTypedArray()) }
+                        .flatten()
+                }
             }
             .removeDuplicates { it.id }
-            .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
     }
 
-    private suspend fun getPlacesInRectangleByCategorySearch(leftBottomLocation: Location, rightTopLocation: Location): List<Place> {
-        return coroutineScope {
-            targetPlaceCategories
-                .map {
-                    async {
-                        placeApplicationService.findAllByCategory(
-                            category = it,
-                            option = MapsService.SearchByCategoryOption(
-                                region = MapsService.SearchByCategoryOption.RectangleRegion(
-                                    leftBottomLocation = leftBottomLocation,
-                                    rightTopLocation = rightTopLocation,
-                                ),
-                            )
-                        )
-                    }
-                }
-                .let { awaitAll(*it.toTypedArray()) }
-                .flatten()
-                .removeDuplicates { it.id }
-        }
-    }
-
-    private suspend fun searchPlacesByBuildingAddressKeywordSearch(buildings: List<Building>, centerLocation: Location, radius: Length): List<Place> {
+    private suspend fun searchPlacesByBuildingAddressKeywordSearch(buildings: List<Building>): List<Place> {
         return coroutineScope {
             buildings
                 .map { building ->
@@ -117,12 +142,13 @@ class InProcessClubQuestTargetPlaceSearcher(
                 .flatten()
         }
             .filter { it.category in targetPlaceCategories }
-            .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
     }
 
     @Suppress("MagicNumber") private val chunkTargetLength = Length.ofMeters(150)
-    private fun determineChunkCount(radius: Length): Int {
-        return ceil(radius.meter * 2 / chunkTargetLength.meter).toInt()
+    private fun determineChunkCount(leftBottomLocation: Location, rightTopLocation: Location): Int {
+        val diagonalLength = LocationUtils.calculateDistance(leftBottomLocation, rightTopLocation)
+        val estimatedSideLength = diagonalLength.meter / 1.414
+        return ceil(estimatedSideLength / chunkTargetLength.meter).toInt()
     }
 
     private fun getAvgLocation(l1: Location, l2: Location, l2LngRatio: Double, l2LatRatio: Double): Location {
