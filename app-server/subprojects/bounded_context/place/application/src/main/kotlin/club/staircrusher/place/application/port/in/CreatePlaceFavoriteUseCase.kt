@@ -17,7 +17,11 @@ class CreatePlaceFavoriteUseCase(
             ?: throw IllegalArgumentException("Place of id ${request.placeId} does not exist.")
         val oldPlaceFavorite =
             placeFavoriteRepository.findByUserIdAndPlaceId(userId = request.userId, placeId = request.placeId)
-        if (oldPlaceFavorite?.deletedAt != null) return Response(placeFavorite = oldPlaceFavorite)
+        val totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId = request.placeId)
+        if (oldPlaceFavorite?.deletedAt != null) return Response(
+            totalPlaceFavoriteCount = totalPlaceFavoriteCount,
+            placeFavorite = oldPlaceFavorite
+        )
         val newPlaceFavorite = oldPlaceFavorite?.also {
             oldPlaceFavorite.updatedAt = SccClock.instant()
             oldPlaceFavorite.deletedAt = null
@@ -29,7 +33,11 @@ class CreatePlaceFavoriteUseCase(
             updatedAt = SccClock.instant(),
             deletedAt = null
         )
-        return Response(placeFavorite = placeFavoriteRepository.save(newPlaceFavorite))
+
+        return Response(
+            totalPlaceFavoriteCount = totalPlaceFavoriteCount,
+            placeFavorite = placeFavoriteRepository.save(newPlaceFavorite)
+        )
     }
 
     data class Request(
@@ -37,5 +45,8 @@ class CreatePlaceFavoriteUseCase(
         val placeId: String
     )
 
-    data class Response(val placeFavorite: PlaceFavorite)
+    data class Response(
+        val totalPlaceFavoriteCount: Long,
+        val placeFavorite: PlaceFavorite
+    )
 }

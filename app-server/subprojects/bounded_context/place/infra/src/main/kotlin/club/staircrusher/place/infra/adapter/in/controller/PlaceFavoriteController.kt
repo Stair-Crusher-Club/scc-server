@@ -3,15 +3,14 @@ package club.staircrusher.place.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.CreatePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.CreatePlaceFavoriteResponseDto
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteRequestDto
+import club.staircrusher.api.spec.dto.DeletePlaceFavoriteResponseDto
 import club.staircrusher.api.spec.dto.ListPlaceFavoritesRequestDto
 import club.staircrusher.api.spec.dto.ListPlaceFavoritesResponseDto
-import club.staircrusher.api.spec.dto.PlaceFavorite
 import club.staircrusher.place.application.port.`in`.CreatePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.DeletePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.ListPlaceFavoritesByUserUseCase
 import club.staircrusher.place.infra.adapter.out.persistence.toDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -28,17 +27,15 @@ class PlaceFavoriteController(
         authentication: SccAppAuthentication?,
     ): CreatePlaceFavoriteResponseDto {
         val userId = authentication?.details?.id ?: throw IllegalArgumentException("Unauthorized")
-        createPlaceFavoriteUseCase.handle(
+        val response = createPlaceFavoriteUseCase.handle(
             CreatePlaceFavoriteUseCase.Request(
                 userId = userId,
                 placeId = request.placeId
             )
         )
         return CreatePlaceFavoriteResponseDto(
-            placeFavorite = PlaceFavorite(
-                placeId = request.placeId,
-                userId = userId,
-            )
+            totalPlaceFavoriteCount = response.totalPlaceFavoriteCount,
+            placeFavorite = response.placeFavorite.toDto()
         )
     }
 
@@ -46,17 +43,15 @@ class PlaceFavoriteController(
     fun deletePlaceFavorites(
         @RequestBody request: DeletePlaceFavoriteRequestDto,
         authentication: SccAppAuthentication?,
-    ): ResponseEntity<Unit> {
+    ): DeletePlaceFavoriteResponseDto {
         val userId = authentication?.details?.id ?: throw IllegalArgumentException("Unauthorized")
-        deletePlaceFavoriteUseCase.handle(
+        val response = deletePlaceFavoriteUseCase.handle(
             DeletePlaceFavoriteUseCase.Request(
                 userId = userId,
                 placeId = request.placeId
             )
         )
-        return ResponseEntity
-            .noContent()
-            .build()
+        return DeletePlaceFavoriteResponseDto(totalPlaceFavoriteCount = response.totalPlaceFavoriteCount)
     }
 
     @PostMapping("/listPlaceFavoritesByUser")
