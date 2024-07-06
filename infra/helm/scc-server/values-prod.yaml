@@ -11,7 +11,7 @@ image:
   repository: public.ecr.aws/i6n1n6v2/scc-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.10.2
+  tag: 0.10.2-hotfix1
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -67,7 +67,6 @@ resources:
   limits:
     cpu: 500m
     memory: 1Gi
-
 autoscaling:
   enabled: true
   minReplicas: 2
