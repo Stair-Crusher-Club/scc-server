@@ -66,6 +66,7 @@ spec:
               path: /readyz
               port: http
           startupProbe:
+            initialDelaySeconds: 30
             httpGet:
               path: /readyz
               port: http
