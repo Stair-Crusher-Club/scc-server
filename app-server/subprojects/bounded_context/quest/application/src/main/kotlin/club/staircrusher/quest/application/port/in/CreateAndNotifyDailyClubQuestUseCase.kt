@@ -12,12 +12,17 @@ class CreateAndNotifyDailyClubQuestUseCase(
     private val clubQuestCreateAplService: ClubQuestCreateAplService,
     private val mapsService: MapsService,
 ) {
+    data class Result(
+        val clubQuest: ClubQuest,
+        val url: String,
+    )
+
     fun handle(
         requesterName: String,
         @Suppress("UnusedPrivateMember") requesterPhoneNumber: String,
         centerLocationPlaceName: String,
         maxPlaceCountPerQuest: Int,
-    ): ClubQuest {
+    ): Result {
         val dryRunResultItems = runBlocking {
             val centerLocation = mapsService.findAllByKeyword(
                 keyword = centerLocationPlaceName,
@@ -41,8 +46,12 @@ class CreateAndNotifyDailyClubQuestUseCase(
                 "${requesterName}님을 위한 일상 퀘스트",
                 dryRunResultItems = dryRunResultItems,
             )[0]
+        }.let {
+            Result(
+                clubQuest = it,
+                url = it.shortenedAdminUrl ?: it.originalAdminUrl
+            )
         }
-        // TODO: 문자 보내기
     }
 
     companion object {

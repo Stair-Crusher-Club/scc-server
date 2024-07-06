@@ -30,7 +30,7 @@ enum class SccEnv {
         }
 
         fun getEnv(): SccEnv {
-            return value ?: throw IllegalStateException("SccEnv has not been set.")
+            return checkNotNull(value) { "SccEnv has not been set." }
         }
     }
 }
