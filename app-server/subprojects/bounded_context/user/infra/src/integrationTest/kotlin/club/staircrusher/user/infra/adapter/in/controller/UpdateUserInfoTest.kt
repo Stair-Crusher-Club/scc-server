@@ -232,4 +232,39 @@ class UpdateUserInfoTest : UserITBase() {
                 verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
             }
     }
+
+    @Test
+    fun `명시적인 동의 없이는 stibee 에 연동하지 않는다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val changedNickname = SccRandom.string(32)
+        val changedInstagramId = SccRandom.string(32)
+        val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
+        val changedMobilityTools = listOf(
+            UserMobilityTool.ELECTRIC_WHEELCHAIR,
+            UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
+        )
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = changedNickname,
+            instagramId = changedInstagramId,
+            email = changedEmail,
+            mobilityTools = changedMobilityTools.map { it.toDTO() },
+            // 하위 호환성
+            isNewsLetterSubscriptionAgreed = null,
+        )
+
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
+            }
+    }
 }
