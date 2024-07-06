@@ -16,3 +16,7 @@ findById:
 SELECT *
 FROM external_accessibility
 WHERE external_accessibility.id = :id;
+
+findAll:
+SELECT *
+FROM external_accessibility;

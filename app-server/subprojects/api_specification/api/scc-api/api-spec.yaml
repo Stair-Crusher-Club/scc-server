@@ -611,6 +611,36 @@ paths:
                 required:
                   - placeAccessibilityComment
 
+  /searchExternalAccessibilities:
+    post:
+      summary: 외부 접근성 정보가 등록된 장소를 검색한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searchText:
+                  type: string
+                currentLocation:
+                  $ref: '#/components/schemas/Location'
+                distanceMetersLimit:
+                  type: integer
+              required:
+                - distanceMetersLimit
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  items:
+                    items:
+                      $ref: '#/components/schemas/ExternalAccessibilityListItem'
+                    type: array
+                type: object
+
   /searchPlaces:
     post:
       summary: 점포를 검색한다. sort 가 null 인 경우에는 정확도순을 기본으로 한다.
@@ -1398,6 +1428,21 @@ components:
         - ATTRACTION
         - HOSPITAL
         - PHARMACY
+    
+    ExternalAccessibilityListItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 장소의 human-readable한 이름.
+        address:
+          type: string
+          description: 장소의 human-readable한 주소.
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 장소의 위경도.
 
     PlaceListItem:
       type: object
