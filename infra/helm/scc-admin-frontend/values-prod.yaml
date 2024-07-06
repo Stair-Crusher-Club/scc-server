@@ -57,10 +57,10 @@ resources:
   #   memory: 128Mi
   requests:
     cpu: 50m
-    memory: 64Mi
+    memory: 1Gi
   limits:
     cpu: 50m
-    memory: 64Mi
+    memory: 1Gi
 autoscaling:
   enabled: false
   minReplicas: 1
