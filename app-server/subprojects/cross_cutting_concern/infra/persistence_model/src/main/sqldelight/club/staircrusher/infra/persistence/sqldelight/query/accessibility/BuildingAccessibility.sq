@@ -42,6 +42,14 @@ FROM building_accessibility
 WHERE place.id IN :placeIds
     AND building_accessibility.deleted_at IS NULL;
 
+findByUserIdAndBetween:
+SELECT ba.*
+FROM building_accessibility ba
+WHERE
+    ba.user_id = :userId
+    AND ba.created_at BETWEEN :from AND :to
+    AND ba.deleted_at IS NULL;
+
 findByEupMyeonDong:
 SELECT building_accessibility.*
 FROM building_accessibility
@@ -64,6 +72,14 @@ SELECT COUNT(1)
 FROM building_accessibility
 WHERE user_id = :userId
     AND deleted_at IS NULL;
+
+countByUserIdAndBetween:
+SELECT COUNT(1)
+FROM building_accessibility ba
+WHERE
+    ba.user_id = :userId
+    AND ba.created_at BETWEEN :from AND :to
+    AND ba.deleted_at IS NULL;
 
 remove:
 UPDATE building_accessibility

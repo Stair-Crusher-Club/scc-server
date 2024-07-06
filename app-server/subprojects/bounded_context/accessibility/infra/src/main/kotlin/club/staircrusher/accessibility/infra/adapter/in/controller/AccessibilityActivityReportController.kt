@@ -24,13 +24,13 @@ class AccessibilityActivityReportController(
             thisWeekConqueredWeekdays = response.thisWeekConqueredWeekdays
                 .map {
                     when (it) {
-                        club.staircrusher.stdlib.time.DayOfWeek.SUNDAY -> DayOfWeek.SUNDAY
-                        club.staircrusher.stdlib.time.DayOfWeek.MONDAY -> DayOfWeek.MONDAY
-                        club.staircrusher.stdlib.time.DayOfWeek.TUESDAY -> DayOfWeek.TUESDAY
-                        club.staircrusher.stdlib.time.DayOfWeek.WEDNESDAY -> DayOfWeek.WEDNESDAY
-                        club.staircrusher.stdlib.time.DayOfWeek.THURSDAY -> DayOfWeek.THURSDAY
-                        club.staircrusher.stdlib.time.DayOfWeek.FRIDAY -> DayOfWeek.FRIDAY
-                        club.staircrusher.stdlib.time.DayOfWeek.SATURDAY -> DayOfWeek.SATURDAY
+                        java.time.DayOfWeek.SUNDAY -> DayOfWeek.SUNDAY
+                        java.time.DayOfWeek.MONDAY -> DayOfWeek.MONDAY
+                        java.time.DayOfWeek.TUESDAY -> DayOfWeek.TUESDAY
+                        java.time.DayOfWeek.WEDNESDAY -> DayOfWeek.WEDNESDAY
+                        java.time.DayOfWeek.THURSDAY -> DayOfWeek.THURSDAY
+                        java.time.DayOfWeek.FRIDAY -> DayOfWeek.FRIDAY
+                        java.time.DayOfWeek.SATURDAY -> DayOfWeek.SATURDAY
                     }
                 }
         )

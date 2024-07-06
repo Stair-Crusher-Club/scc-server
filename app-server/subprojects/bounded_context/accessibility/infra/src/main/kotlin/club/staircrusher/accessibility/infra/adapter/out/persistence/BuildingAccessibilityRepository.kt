@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.EupMyeonDong
 import club.staircrusher.stdlib.time.toOffsetDateTime
+import java.time.Instant
 
 @Suppress("TooManyFunctions")
 @Component
@@ -60,6 +61,16 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findByUserIdAndBetween(userId: String, from: Instant, to: Instant): List<BuildingAccessibility> {
+        return queries.findByUserIdAndBetween(
+            userId = userId,
+            from = from.toOffsetDateTime(),
+            to = to.toOffsetDateTime()
+        )
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun findByEupMyeonDong(eupMyeonDong: EupMyeonDong): List<BuildingAccessibility> {
         return queries.findByEupMyeonDong(eupMyeonDongId = eupMyeonDong.id)
             .executeAsList()
@@ -82,6 +93,14 @@ class BuildingAccessibilityRepository(
 
     override fun countByUserId(userId: String): Int {
         return queries.countByUserId(userId = userId).executeAsOne().toInt()
+    }
+
+    override fun countByUserIdBetween(userId: String, from: Instant, to: Instant): Int {
+        return queries.countByUserIdAndBetween(
+            userId = userId,
+            from = from.toOffsetDateTime(),
+            to = to.toOffsetDateTime()
+        ).executeAsOne().toInt()
     }
 
     override fun remove(id: String) {

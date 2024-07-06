@@ -7,12 +7,15 @@ import club.staircrusher.accessibility.domain.model.StairHeightLevel
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.stdlib.domain.repository.EntityRepository
 import club.staircrusher.stdlib.geography.EupMyeonDong
+import java.time.Instant
 
 interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibility, String> {
     fun findByBuildingIds(buildingIds: Collection<String>): List<BuildingAccessibility>
     fun findByBuildingId(buildingId: String): BuildingAccessibility?
     fun findByPlaceIds(placeIds: Collection<String>): List<BuildingAccessibility>
+    fun findByUserIdAndBetween(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
     fun findByEupMyeonDong(eupMyeonDong: EupMyeonDong): List<BuildingAccessibility>
+    fun countByUserIdBetween(userId: String, from: Instant, to: Instant): Int
     fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>)
     fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>)
     fun countByUserId(userId: String): Int
