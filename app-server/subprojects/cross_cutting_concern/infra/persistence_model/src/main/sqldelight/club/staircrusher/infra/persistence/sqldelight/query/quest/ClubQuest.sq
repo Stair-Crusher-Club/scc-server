@@ -7,7 +7,8 @@ ON CONFLICT(id) DO UPDATE SET
     quest_center_location_x = EXCLUDED.quest_center_location_x,
     quest_center_location_y = EXCLUDED.quest_center_location_y,
     created_at = EXCLUDED.created_at,
-    updated_at = EXCLUDED.updated_at;
+    updated_at = EXCLUDED.updated_at,
+    shortened_admin_url = EXCLUDED.shortened_admin_url;
 
 removeAll:
 DELETE FROM club_quest;
@@ -27,7 +28,7 @@ FROM club_quest
 ORDER BY created_at DESC;
 
 findCursoredSummariesOrderByCreatedAtDesc:
-SELECT id, name, created_at
+SELECT id, name, shortened_admin_url, created_at
 FROM club_quest
 WHERE
     1 = 1

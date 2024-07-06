@@ -63,7 +63,8 @@ fun DryRunnedClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPl
 fun ClubQuestWithDtoInfo.toDTO() = ClubQuestDTO(
     id = quest.id,
     name = quest.name,
-    buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds, placeById) }
+    buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds, placeById) },
+    shortenedAdminUrl = quest.shortenedAdminUrl,
 )
 
 fun ClubQuestTargetBuildingDTO.toModel() = DryRunnedClubQuestTargetBuilding(
@@ -116,4 +117,5 @@ fun ClubQuestTargetPlace.toDTO(
 fun ClubQuestSummary.toDTO() = ClubQuestSummaryDTO(
     id = id,
     name = name,
+    shortenedUrl = shortenedUrl,
 )
