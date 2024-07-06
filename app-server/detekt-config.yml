@@ -3,6 +3,8 @@ complexity:
     active: false
   LongParameterList:
     active: false
+  TooManyFunctions:
+    active: false
 style:
   ForbiddenComment:
     active: false

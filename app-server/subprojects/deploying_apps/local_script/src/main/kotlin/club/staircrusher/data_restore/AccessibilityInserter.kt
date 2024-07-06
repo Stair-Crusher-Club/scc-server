@@ -1,5 +1,6 @@
 package club.staircrusher.data_restore
 
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.StairInfo
@@ -34,6 +35,7 @@ private fun parseTsvToPlaceList(): List<PlaceAccessibility> {
     val errorMessages = mutableListOf<String>()
     val result = lines.map { line ->
         val imageUrls = line[1].split(",")
+        val images = imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
         val placeName = line[2]
         val address = line[3]
         val isFirstFloor = when (val rawIsFirstFloor = line[4]) {
@@ -61,6 +63,7 @@ private fun parseTsvToPlaceList(): List<PlaceAccessibility> {
             stairHeightLevel = null,
             hasSlope = hasSlope,
             imageUrls = imageUrls,
+            images = images,
             userId = userId,
             createdAt = Instant.now(),
             entranceDoorTypes = null,
@@ -136,12 +139,14 @@ private fun parseTsvToBuildingList(): List<BuildingAccessibility> {
             entranceStairInfo = entranceStairInfo,
             entranceStairHeightLevel = null,
             entranceImageUrls = imageUrls, // TODO: 입구 사진과 엘레베이터 사진으로 나누기
+            entranceImages = imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
             hasSlope = hasSlope,
             hasElevator = hasElevator,
             entranceDoorTypes = emptyList(),
             elevatorStairInfo = elevatorStairInfo,
             elevatorStairHeightLevel = null,
             elevatorImageUrls = emptyList(),
+            elevatorImages = emptyList(),
             userId = null,
             createdAt = Instant.now(),
             deletedAt = null,

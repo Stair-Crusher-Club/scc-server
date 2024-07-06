@@ -151,9 +151,9 @@ class ChallengeController(
             userId = authentication?.principal,
             statuses = request.statuses?.mapNotNull {
                 when (it) {
-                    ChallengeStatusDto.inProgress -> ListChallengesUseCase.Status.IN_PROGRESS
-                    ChallengeStatusDto.upcoming -> ListChallengesUseCase.Status.UPCOMING
-                    ChallengeStatusDto.closed -> ListChallengesUseCase.Status.CLOSED
+                    ChallengeStatusDto.IN_PROGRESS -> ListChallengesUseCase.Status.IN_PROGRESS
+                    ChallengeStatusDto.UPCOMING -> ListChallengesUseCase.Status.UPCOMING
+                    ChallengeStatusDto.CLOSED -> ListChallengesUseCase.Status.CLOSED
                     else -> null
                 }
             },

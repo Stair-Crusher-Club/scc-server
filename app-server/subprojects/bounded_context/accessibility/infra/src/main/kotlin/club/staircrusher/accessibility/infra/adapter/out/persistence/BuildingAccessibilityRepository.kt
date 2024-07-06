@@ -1,6 +1,7 @@
 package club.staircrusher.accessibility.infra.adapter.out.persistence
 
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toDomainModel
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
@@ -63,6 +64,20 @@ class BuildingAccessibilityRepository(
         return queries.findByEupMyeonDong(eupMyeonDongId = eupMyeonDong.id)
             .executeAsList()
             .map { it.toDomainModel() }
+    }
+
+    override fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>) {
+        return queries.updateEntranceImages(
+            entranceImages = entranceImages,
+            id = id,
+        )
+    }
+
+    override fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>) {
+        return queries.updateElevatorImages(
+            elevatorImages = elevatorImages,
+            id = id,
+        )
     }
 
     override fun countByUserId(userId: String): Int {

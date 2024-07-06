@@ -841,9 +841,14 @@ components:
         entranceStairHeightLevel:
           $ref: '#/components/schemas/StairHeightLevel'
         entranceImageUrls:
+          deprecated: true
           type: array
           items:
             type: string
+        entranceImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageDto'
         entranceDoorTypes:
           type: array
           items:
@@ -857,9 +862,14 @@ components:
         elevatorStairHeightLevel:
           $ref: '#/components/schemas/StairHeightLevel'
         elevatorImageUrls:
+          deprecated: true
           type: array
           items:
             type: string
+        elevatorImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageDto'
         buildingId:
           type: string
         registeredUserName:
@@ -1306,9 +1316,14 @@ components:
           type: boolean
           description: '다른 층으로 가는 방법이 계단만 있는지 여부'
         imageUrls:
+          deprecated: true
           type: array
           items:
             type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageDto'
         stairInfo:
           $ref: '#/components/schemas/StairInfo'
         stairHeightLevel:
@@ -1613,6 +1628,17 @@ components:
         - WALKING_ASSISTANCE_DEVICE # 보행보조기구
         - CLUCH # 클러치(목발, 지팡이)
         - NONE # 해당사항없음
+
+    ImageDto:
+      type: object
+      properties:
+        imageUrl:
+          type: string
+        thumbnailUrl:
+          type: string
+          description: '아직 썸네일이 생성되지 않았다면 null'
+      required:
+        - imageUrl
 
   responses:
     ApiFailure:

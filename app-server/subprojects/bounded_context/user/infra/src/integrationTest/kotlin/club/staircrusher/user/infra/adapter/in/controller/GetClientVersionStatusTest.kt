@@ -34,7 +34,7 @@ class GetClientVersionStatusTest : SccSpringITBase() {
         )
             .getResult(GetClientVersionStatusResponseDto::class)
             .status
-        assertEquals(GetClientVersionStatusResponseDto.Status.uPGRADENEEDED, status)
+        assertEquals(GetClientVersionStatusResponseDto.Status.UPGRADE_NEEDED, status)
     }
 
     @Test
@@ -45,7 +45,7 @@ class GetClientVersionStatusTest : SccSpringITBase() {
         )
             .getResult(GetClientVersionStatusResponseDto::class)
             .status
-        assertEquals(GetClientVersionStatusResponseDto.Status.uPGRADERECOMMENDED, status)
+        assertEquals(GetClientVersionStatusResponseDto.Status.UPGRADE_RECOMMENDED, status)
     }
 
 }

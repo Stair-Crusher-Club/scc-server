@@ -92,17 +92,21 @@ paths:
             schema:
               type: object
               properties:
+                regionType:
+                  $ref: '#/components/schemas/ClubQuestCreateRegionTypeDTO'
                 centerLocation:
                   $ref: '#/components/schemas/LocationDTO'
                 radiusMeters:
                   type: integer
+                points:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LocationDTO'
                 clusterCount:
                   type: integer
                 maxPlaceCountPerQuest:
                   type: integer
               required:
-                - centerLocation
-                - radiusMeters
                 - clusterCount
                 - maxPlaceCountPerQuest
       responses:
@@ -139,6 +143,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateClubQuestResponseDTO'
+
+  /clubQuests/createAndNotifyDailyClubQuest:
+    post:
+      summary: 구글 폼으로 입력 받은 정보를 기반으로 일상 퀘스트를 즉시 생성하고 알림을 보낸다.
+      operationId: createAndNotifyDailyClubQuest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAndNotifyDailyClubQuestRequestDTO'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAndNotifyDailyClubQuestResponseDTO'
 
   /clubQuests/{clubQuestId}:
     get:
@@ -417,6 +438,12 @@ components:
         - lng
         - lat
 
+    ClubQuestCreateRegionTypeDTO:
+      type: string
+      enum:
+        - CIRCLE
+        - POLYGON
+
     ClubQuestCreateDryRunResultItemDTO:
       description: 퀘스트 생성 시뮬레이션 결과. 각 퀘스트마다 1개의 아이템이 반환된다.
       properties:
@@ -533,6 +560,31 @@ components:
             type: string
       required:
         - clubQuestIds
+
+    CreateAndNotifyDailyClubQuestRequestDTO:
+      type: object
+      properties:
+        requesterName:
+          type: string
+        requesterPhoneNumber:
+          type: string
+        centerLocationPlaceName:
+          type: string
+        maxPlaceCountPerQuest:
+          type: string
+      required:
+        - requesterName
+        - requesterPhoneNumber
+        - centerLocationPlaceName
+        - maxPlaceCountPerQuest
+
+    CreateAndNotifyDailyClubQuestResponseDTO:
+      type: object
+      properties:
+        clubQuestId:
+          type: string
+      required:
+        - clubQuestId
 
     CreateAccessibilityAllowedRegionRequestDTO:
       properties:
