@@ -627,10 +627,15 @@ paths:
                   $ref: '#/components/schemas/Location'
                 distanceMetersLimit:
                   type: integer
+                categories:
+                  type: array
+                  items:
+                    type: string
               required:
                 - distanceMetersLimit
       responses:
         '200':
+          description: 응답 리스트
           content:
             application/json:
               schema:
@@ -1442,7 +1447,28 @@ components:
           description: 장소의 human-readable한 주소.
         location:
           $ref: '#/components/schemas/Location'
-          description: 장소의 위경도.
+        details:
+          $ref: '#/components/schemas/ExternalAccessibilityDetails'
+
+    ExternalAccessibilityDetails:
+      type: object
+      properties:
+        gender:
+          type: boolean
+        accessDesc:
+          type: string
+        availableDesc:
+          type: string
+        entranceDesc:
+          type: string
+        stallDesc:
+          type: string
+        doorDesc:
+          type: string
+        washStandDesc:
+          type: string
+        extra:
+          type: string
 
     PlaceListItem:
       type: object

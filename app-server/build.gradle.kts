@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
@@ -44,7 +45,9 @@ subprojects {
             implementation(rootProject.projects.crossCuttingConcern.infra.springWeb)
         }
         val kotlinLoggingVersion: String by project
+        val kotlinSerialization: String by project
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
     }
 
     tasks.test {

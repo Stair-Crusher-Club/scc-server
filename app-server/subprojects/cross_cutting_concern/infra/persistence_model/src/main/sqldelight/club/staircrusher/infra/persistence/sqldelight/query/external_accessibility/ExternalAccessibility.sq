@@ -6,6 +6,8 @@ ON CONFLICT(id) DO UPDATE SET
     location_x = EXCLUDED.location_x,
     location_y = EXCLUDED.location_y,
     address = EXCLUDED.address,
+    category = EXCLUDED.category,
+    details = EXCLUDED.details,
     created_at = EXCLUDED.created_at,
     updated_at = NULL;
 
@@ -16,6 +18,11 @@ findById:
 SELECT *
 FROM external_accessibility
 WHERE external_accessibility.id = :id;
+
+findByCategoryIn:
+SELECT *
+FROM external_accessibility
+WHERE external_accessibility.category IN :categories;
 
 findAll:
 SELECT *

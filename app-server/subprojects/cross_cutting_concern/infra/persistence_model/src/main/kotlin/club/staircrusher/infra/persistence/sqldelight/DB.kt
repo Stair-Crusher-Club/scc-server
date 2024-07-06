@@ -1,5 +1,6 @@
 package club.staircrusher.infra.persistence.sqldelight
 
+import app.cash.sqldelight.ColumnAdapter
 import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.AccessibilityImageListStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoorTypeListStringColumnAdapter
@@ -14,11 +15,13 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserMobilit
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
+import club.staircrusher.infra.persistence.sqldelight.migration.External_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Scc_user
 import club.staircrusher.infra.persistence.sqldelight.migration.User_auth_info
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 import club.staircrusher.stdlib.persistence.Transaction
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -74,6 +77,16 @@ class DB(dataSource: DataSource) : TransactionManager {
                 }
 
             }
+        ),
+        external_accessibilityAdapter = External_accessibility.Adapter(
+            categoryAdapter = object : ColumnAdapter<ExternalAccessibilityCategory, String> {
+                override fun decode(databaseValue: String): ExternalAccessibilityCategory {
+                    return ExternalAccessibilityCategory.valueOf(databaseValue)
+                }
+
+                override fun encode(value: ExternalAccessibilityCategory): String = value.name
+            }
+
         )
     )
 

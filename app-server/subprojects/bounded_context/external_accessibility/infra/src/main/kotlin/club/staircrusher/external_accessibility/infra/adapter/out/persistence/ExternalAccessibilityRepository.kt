@@ -6,6 +6,7 @@ import club.staircrusher.external_accessibility.infra.adapter.out.persistence.sq
 import club.staircrusher.external_accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
 import club.staircrusher.infra.persistence.sqldelight.DB
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 
 @Suppress("TooManyFunctions")
 @Component
@@ -39,6 +40,12 @@ class ExternalAccessibilityRepository(
 
     override fun findAll(): List<ExternalAccessibility> {
         return queries.findAll()
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
+    override fun findByCategoryIn(categories: Set<ExternalAccessibilityCategory>): List<ExternalAccessibility> {
+        return queries.findByCategoryIn(categories)
             .executeAsList()
             .map { it.toDomainModel() }
     }
