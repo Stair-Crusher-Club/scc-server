@@ -21,8 +21,8 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibil
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility_upvote
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.BuildingAccessibilityUpvoteFindById
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserAndBuildingAccessibilityAndNotDeleted
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserIdAndPlaceAccessilbityIdAndNotDeleted
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindPlaceAccessibilityById
+import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindUpvoteById
+import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted
 import club.staircrusher.stdlib.time.toOffsetDateTime
 
 fun Building_accessibility.toDomainModel() = BuildingAccessibility(
@@ -209,7 +209,7 @@ fun PlaceAccessibilityUpvote.toPersistenceModel() = Place_accessibility_upvote(
     deleted_at = deletedAt?.toOffsetDateTime(),
 )
 
-fun FindPlaceAccessibilityById.toDomainModel(): PlaceAccessibilityUpvote {
+fun FindUpvoteById.toDomainModel(): PlaceAccessibilityUpvote {
     val placeAccessibility = PlaceAccessibility(
         id = id,
         placeId = place_id,
@@ -234,7 +234,7 @@ fun FindPlaceAccessibilityById.toDomainModel(): PlaceAccessibilityUpvote {
     )
 }
 
-fun FindByUserIdAndPlaceAccessilbityIdAndNotDeleted.toDomainModel(): PlaceAccessibilityUpvote {
+fun FindUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted.toDomainModel(): PlaceAccessibilityUpvote {
     val placeAccessibility = PlaceAccessibility(
         id = id,
         placeId = place_id,

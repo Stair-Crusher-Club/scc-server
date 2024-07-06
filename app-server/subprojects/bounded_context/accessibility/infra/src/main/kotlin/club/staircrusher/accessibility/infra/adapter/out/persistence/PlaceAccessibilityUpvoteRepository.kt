@@ -32,11 +32,13 @@ class PlaceAccessibilityUpvoteRepository(
     }
 
     override fun findByIdOrNull(id: String): PlaceAccessibilityUpvote? {
-        return queries.findPlaceAccessibilityById(id = id).executeAsOneOrNull()?.toDomainModel()
+        return queries.findUpvoteById(id = id)
+            .executeAsOneOrNull()
+            ?.toDomainModel()
     }
 
     override fun findUpvote(userId: String, placeAccessibilityId: String): PlaceAccessibilityUpvote? {
-        return queries.findByUserIdAndPlaceAccessilbityIdAndNotDeleted(userId, placeAccessibilityId)
+        return queries.findUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted(userId, placeAccessibilityId)
             .executeAsOneOrNull()
             ?.toDomainModel()
     }

@@ -10,7 +10,7 @@ ON CONFLICT(id) DO UPDATE SET
 removeAll:
 DELETE FROM place_accessibility_upvote;
 
-findPlaceAccessibilityById:
+findUpvoteById:
 SELECT *
 FROM place_accessibility_upvote
     JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
@@ -22,7 +22,7 @@ FROM place_accessibility_upvote
     JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
 WHERE place_id = :placeId;
 
-findByUserIdAndPlaceAccessilbityIdAndNotDeleted:
+findUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted:
 SELECT *
 FROM place_accessibility_upvote
     JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
