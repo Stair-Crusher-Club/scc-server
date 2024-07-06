@@ -4,10 +4,6 @@ package club.staircrusher.stdlib.geography
 
 import at.kopyk.CopyExtensions
 import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 @CopyExtensions
 data class Location(
@@ -29,25 +25,6 @@ data class Location(
     fun minusLat(length: Length) = copy(
         lat = lat - length.toLatDiff()
     )
-
-    fun distanceMeter(location: Location): Length {
-        val earthRadius = 6371.0 // Earth radius in kilometers
-        val lat1 = this.lat
-        val lat2 = location.lat
-        val lon1 = this.lng
-        val lon2 = location.lng
-
-        val dLat = Math.toRadians(lat2 - lat1)
-        val dLon = Math.toRadians(lon2 - lon1)
-
-        val a = sin(dLat / 2) * sin(dLat / 2) +
-            cos(Math.toRadians(lat1)) *
-            cos(Math.toRadians(lat2)) *
-            sin(dLon / 2) *
-            sin(dLon / 2)
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        return Length.ofMeters(earthRadius * c * 1000) // km to m
-    }
 }
 
 /**
