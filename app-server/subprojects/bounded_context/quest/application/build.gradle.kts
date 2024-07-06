@@ -3,6 +3,9 @@ dependencies {
     implementation(projects.boundedContext.place.domain)
     implementation(projects.boundedContext.place.application)
 
+    val coroutineVersion: String by project
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
+
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)

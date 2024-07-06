@@ -38,6 +38,8 @@ management:
     port: 18080
 
 scc:
+  environment: local
+
   kakao:
     api-key: test
 
@@ -63,3 +65,7 @@ scc:
 
   admin:
     password: test
+
+  nhn-cloud:
+    url-shortening:
+      app-key: test
