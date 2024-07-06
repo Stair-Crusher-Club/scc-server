@@ -66,6 +66,8 @@ spec:
               path: /readyz
               port: http
           startupProbe:
+            failureThreshold: 12
+            periodSeconds: 10
             httpGet:
               path: /readyz
               port: http

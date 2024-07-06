@@ -61,7 +61,12 @@ class SqlDelightClubQuestRepository(
         )
             .executeAsList()
             .map {
-                ClubQuestSummary(id = it.id, name = it.name, createdAt = it.created_at.toInstant())
+                ClubQuestSummary(
+                    id = it.id,
+                    name = it.name,
+                    shortenedUrl = it.shortened_admin_url,
+                    createdAt = it.created_at.toInstant(),
+                )
             }
     }
 

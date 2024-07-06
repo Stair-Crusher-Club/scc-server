@@ -480,6 +480,11 @@ components:
           type: string
         name:
           type: string
+        shortenedUrl:
+          type: string
+      required:
+        - id
+        - name
 
     ClubQuestDTO:
       description: 퀘스트.
@@ -492,6 +497,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ClubQuestTargetBuildingDTO'
+        shortenedAdminUrl:
+          type: string
       required:
         - id
         - name
@@ -583,8 +590,11 @@ components:
       properties:
         clubQuestId:
           type: string
+        url:
+          type: string
       required:
         - clubQuestId
+        - url
 
     CreateAccessibilityAllowedRegionRequestDTO:
       properties:
