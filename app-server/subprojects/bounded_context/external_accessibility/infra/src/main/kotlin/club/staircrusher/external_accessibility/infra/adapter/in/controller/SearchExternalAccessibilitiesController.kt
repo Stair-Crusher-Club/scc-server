@@ -12,30 +12,30 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SearchExternalAccessibilitiesController(
-        private val externalAccessibilitySearchService: ExternalAccessibilitySearchService,
+    private val externalAccessibilitySearchService: ExternalAccessibilitySearchService,
 ) {
     @PostMapping("/searchExternalAccessibilities")
     fun search(
-            @RequestBody request: SearchExternalAccessibilitiesPostRequest,
+        @RequestBody request: SearchExternalAccessibilitiesPostRequest,
     ): SearchExternalAccessibilitiesPost200Response {
-                return SearchExternalAccessibilitiesPost200Response(
-                        externalAccessibilitySearchService.searchExternalAccessibilities(
-                                        request.searchText,
-                                        request.currentLocation?.let { Location(lng = it.lng, lat = it.lat) },
-                                        Length.ofMeters(request.distanceMetersLimit),
-                                )
-                                .map {
-                                ExternalAccessibilityListItem(
-                                        id = it.id,
-                                        name = it.name,
-                                        address = it.address,
-                                        location =
-                                                club.staircrusher.api.spec.dto.Location(
-                                                        lng = it.longitude,
-                                                        lat = it.latitude
-                                                ),
-                                )
-                                }
-                )
+        return SearchExternalAccessibilitiesPost200Response(
+            externalAccessibilitySearchService.searchExternalAccessibilities(
+                request.searchText,
+                request.currentLocation?.let { Location(lng = it.lng, lat = it.lat) },
+                Length.ofMeters(request.distanceMetersLimit),
+            )
+                .map {
+                    ExternalAccessibilityListItem(
+                        id = it.id,
+                        name = it.name,
+                        address = it.address,
+                        location =
+                        club.staircrusher.api.spec.dto.Location(
+                            lng = it.longitude,
+                            lat = it.latitude
+                        ),
+                    )
+                }
+        )
     }
 }
