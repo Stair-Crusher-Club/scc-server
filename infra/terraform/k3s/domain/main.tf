@@ -28,3 +28,12 @@ data "terraform_remote_state" "lightsail" {
   }
 }
 
+data "terraform_remote_state" "scc" {
+  backend = "s3"
+  config = {
+    bucket = "scc-prod-tf-remote-state"
+    key    = "scc.tfstate"
+    region = "ap-northeast-2"
+  }
+}
+

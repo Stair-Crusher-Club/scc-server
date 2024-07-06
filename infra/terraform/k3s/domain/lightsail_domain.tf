@@ -114,3 +114,27 @@ resource "aws_lightsail_domain_entry" "dev_admin" {
     create_before_destroy = false
   }
 }
+
+resource "aws_lightsail_domain_entry" "dev_cdn" {
+  domain_name = aws_lightsail_domain.dev_staircrusher_club.domain_name
+  name = "static"
+  type = "A"
+  target = data.terraform_remote_state.scc.outputs.dev_cdn_endpoint
+  is_alias = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
+}
+
+resource "aws_lightsail_domain_entry" "cdn" {
+  domain_name = aws_lightsail_domain.staircrusher_club.domain_name
+  name = "static"
+  type = "A"
+  target = data.terraform_remote_state.scc.outputs.cdn_endpoint
+  is_alias = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
+}
