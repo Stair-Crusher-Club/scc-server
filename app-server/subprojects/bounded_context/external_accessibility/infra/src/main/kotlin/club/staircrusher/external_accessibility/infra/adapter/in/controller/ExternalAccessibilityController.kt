@@ -1,8 +1,6 @@
 package club.staircrusher.external_accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.ExternalAccessibility
-import club.staircrusher.api.spec.dto.ExternalAccessibilityDetails
-import club.staircrusher.api.spec.dto.ExternalAccessibilityListItem
 import club.staircrusher.api.spec.dto.GetExternalAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPostRequest
 import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPost200Response
