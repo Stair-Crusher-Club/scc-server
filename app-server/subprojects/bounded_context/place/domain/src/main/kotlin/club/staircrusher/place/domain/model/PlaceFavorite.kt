@@ -5,7 +5,7 @@ import java.time.Instant
 class PlaceFavorite(
     val id: String,
     val userId: String,
-    val place: Place,
+    val placeId: String,
     var createdAt: Instant,
     var updatedAt: Instant,
     var deletedAt: Instant? = null,
@@ -24,6 +24,6 @@ class PlaceFavorite(
     }
 
     override fun toString(): String {
-        return "PlaceFavorite(id='$id', userId='$userId', place=$place, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt)"
+        return "PlaceFavorite(id='$id', userId='$userId', placeId=$placeId, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt)"
     }
 }

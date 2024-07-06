@@ -767,10 +767,14 @@ components:
         hasOtherPlacesToRegisterInBuilding:
           type: boolean
           description: "'이 건물의 다른 점포 등록하기'를 보여줄지 여부."
+        isFavoritePlace:
+          type: boolean
+          description: 내가 즐겨찾기한 장소인지 여부.
       required:
         - buildingAccessibilityComments
         - placeAccessibilityComments
         - hasOtherPlacesToRegisterInBuilding
+        - isFavoritePlace
 
     AccessibilityRankDto:
       type: object
@@ -1049,6 +1053,8 @@ components:
       properties:
         placeId:
           type: string
+      required:
+        - placeId
 
     EntranceDoorType:
       type: string
@@ -1088,13 +1094,15 @@ components:
     PlaceFavorite:
       type: object
       properties:
-        placeId:
-          type: string
         userId:
           type: string
+        placeId:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
-        - placeId
         - userId
+        - placeId
 
     GetChallengeRequestDto:
       type: object
@@ -1341,7 +1349,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/PlaceListItem'
+            $ref: '#/components/schemas/PlaceFavorite'
       required:
         - totalNumberOfItems
         - items
@@ -1393,6 +1401,9 @@ components:
         address:
           type: string
           description: 점포의 human-readable한 주소.
+        isFavorite:
+          type: boolean
+          description: 내가 즐겨찾기한 점포인지 여부.
       required:
         - id
         - name
