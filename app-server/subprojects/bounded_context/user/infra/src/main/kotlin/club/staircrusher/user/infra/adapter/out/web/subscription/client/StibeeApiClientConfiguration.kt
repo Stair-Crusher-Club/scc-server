@@ -1,5 +1,6 @@
-package club.staircrusher.user.infra.adapter.out.web.login.apple.client
+package club.staircrusher.user.infra.adapter.out.web.subscription.client
 
+import club.staircrusher.user.infra.adapter.out.web.subscription.StibeeProperties
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
@@ -17,9 +18,9 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @Configuration(proxyBeanMethods = false)
-internal open class AppleLoginApiClientConfiguration {
+internal open class StibeeApiClientConfiguration {
     @Bean
-    open fun appleLoginApiClient(): AppleLoginApiClient {
+    open fun stibeeApiClient(stibeeProperties: StibeeProperties): StibeeApiClient {
         val httpClient = HttpClient.create()
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT.toMillis().toInt())
             .compress(true)
@@ -33,9 +34,10 @@ internal open class AppleLoginApiClientConfiguration {
         val decoder = KotlinSerializationJsonDecoder(Json { ignoreUnknownKeys = true })
 
         val client = WebClient.builder()
-            .baseUrl("https://appleid.apple.com")
+            .baseUrl("https://api.stibee.com/v1")
             .clientConnector(ReactorClientHttpConnector(httpClient))
             .codecs { it.defaultCodecs().kotlinSerializationJsonDecoder(decoder) }
+            .defaultHeaders { it.add("AccessToken", stibeeProperties.apiKey) }
             .defaultStatusHandler(HttpStatusCode::isError) { response ->
                 response
                     .bodyToMono(String::class.java)
@@ -47,7 +49,7 @@ internal open class AppleLoginApiClientConfiguration {
         val factory = HttpServiceProxyFactory
             .builder(WebClientAdapter.forClient(client))
             .build()
-        return factory.createClient(AppleLoginApiClient::class.java)
+        return factory.createClient(StibeeApiClient::class.java)
     }
 
     companion object {

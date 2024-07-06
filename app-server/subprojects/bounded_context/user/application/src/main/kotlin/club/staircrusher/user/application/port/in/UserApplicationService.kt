@@ -1,5 +1,6 @@
 package club.staircrusher.user.application.port.`in`
 
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
@@ -9,11 +10,12 @@ import club.staircrusher.stdlib.validation.email.EmailValidator
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
-import java.time.Clock
+import kotlinx.coroutines.runBlocking
 
 @Component
 class UserApplicationService(
@@ -22,8 +24,9 @@ class UserApplicationService(
     private val userAuthService: UserAuthService,
     private val passwordEncryptor: PasswordEncryptor,
     private val userAuthInfoRepository: UserAuthInfoRepository,
-    private val clock: Clock,
+    private val stibeeSubscriptionService: StibeeSubscriptionService,
 ) {
+
     @Deprecated("닉네임 로그인은 사라질 예정")
     fun signUpWithNicknameAndPassword(
         nickname: String,
@@ -61,7 +64,7 @@ class UserApplicationService(
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = params.email,
                 mobilityTools = mutableListOf(),
-                createdAt = clock.instant(),
+                createdAt = SccClock.instant(),
             )
         )
     }
@@ -88,6 +91,7 @@ class UserApplicationService(
         instagramId: String?,
         email: String,
         mobilityTools: List<UserMobilityTool>,
+        isNewsLetterSubscriptionAgreed: Boolean,
     ): User = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val user = userRepository.findById(userId)
         user.nickname = run {
@@ -126,13 +130,21 @@ class UserApplicationService(
         user.mobilityTools.clear()
         user.mobilityTools.addAll(mobilityTools)
         userRepository.save(user)
+
+        if (isNewsLetterSubscriptionAgreed) {
+            transactionManager.doAfterCommit {
+                user.email?.let { subscribeToNewsLetter(it, user.nickname) }
+            }
+        }
+
+        return@doInTransaction user
     }
 
     fun deleteUser(
         userId: String,
     ) = transactionManager.doInTransaction (TransactionIsolationLevel.REPEATABLE_READ) {
         val user = userRepository.findById(userId)
-        user.delete(clock.instant())
+        user.delete(SccClock.instant())
         userRepository.save(user)
 
         userAuthInfoRepository.removeByUserId(userId)
@@ -148,5 +160,16 @@ class UserApplicationService(
 
     fun getAllUsers(): List<User> {
         return userRepository.findAll()
+    }
+
+    private fun subscribeToNewsLetter(email: String, name: String) {
+        runBlocking {
+            stibeeSubscriptionService.registerSubscriber(
+                email = email,
+                name = name,
+                // 일단 false 로 두지만 나중에 동의 버튼이 추가될 수도 있다
+                isMarketingPushAgreed = false,
+            )
+        }
     }
 }

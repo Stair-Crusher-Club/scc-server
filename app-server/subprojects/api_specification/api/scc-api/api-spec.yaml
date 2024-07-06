@@ -706,6 +706,8 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/UserMobilityToolDto'
+                isNewsLetterSubscriptionAgreed:
+                  type: boolean
               required:
                 - nickname
                 - email

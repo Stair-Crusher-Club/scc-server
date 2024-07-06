@@ -66,6 +66,10 @@ scc:
   admin:
     password: test
 
+  stibee:
+    apiKey: test
+    listId: test
+
   nhn-cloud:
     url-shortening:
       app-key: test

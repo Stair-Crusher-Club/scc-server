@@ -4,6 +4,7 @@ import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.stdlib.testing.SccRandom
+import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
@@ -11,9 +12,17 @@ import club.staircrusher.user.infra.adapter.`in`.converter.toModel
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verifyBlocking
+import org.springframework.boot.test.mock.mockito.MockBean
 
 class UpdateUserInfoTest : UserITBase() {
+    @MockBean
+    lateinit var stibeeSubscriptionService: StibeeSubscriptionService
+
     @Test
     fun updateUserInfoTest() {
         val user = transactionManager.doInTransaction {
@@ -153,6 +162,109 @@ class UpdateUserInfoTest : UserITBase() {
             .apply {
                 val result = getResult(ApiErrorResponse::class)
                 assertEquals(ApiErrorResponse.Code.INVALID_EMAIL, result.code)
+            }
+    }
+
+    @Test
+    fun `뉴스레터 수신에 동의하면 stibee 에 연동한다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val changedNickname = SccRandom.string(32)
+        val changedInstagramId = SccRandom.string(32)
+        val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
+        val changedMobilityTools = listOf(
+            UserMobilityTool.ELECTRIC_WHEELCHAIR,
+            UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
+        )
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = changedNickname,
+            instagramId = changedInstagramId,
+            email = changedEmail,
+            mobilityTools = changedMobilityTools.map { it.toDTO() },
+            isNewsLetterSubscriptionAgreed = true,
+        )
+
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                verifyBlocking(stibeeSubscriptionService, atLeastOnce()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
+            }
+    }
+
+    @Test
+    fun `뉴스레터 수신에 동의하지 않으면 stibee 에 연동하지 않는다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val changedNickname = SccRandom.string(32)
+        val changedInstagramId = SccRandom.string(32)
+        val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
+        val changedMobilityTools = listOf(
+            UserMobilityTool.ELECTRIC_WHEELCHAIR,
+            UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
+        )
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = changedNickname,
+            instagramId = changedInstagramId,
+            email = changedEmail,
+            mobilityTools = changedMobilityTools.map { it.toDTO() },
+            isNewsLetterSubscriptionAgreed = false,
+        )
+
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
+            }
+    }
+
+    @Test
+    fun `명시적인 동의 없이는 stibee 에 연동하지 않는다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val changedNickname = SccRandom.string(32)
+        val changedInstagramId = SccRandom.string(32)
+        val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
+        val changedMobilityTools = listOf(
+            UserMobilityTool.ELECTRIC_WHEELCHAIR,
+            UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
+        )
+
+        val params = UpdateUserInfoPostRequest(
+            nickname = changedNickname,
+            instagramId = changedInstagramId,
+            email = changedEmail,
+            mobilityTools = changedMobilityTools.map { it.toDTO() },
+            // 하위 호환성
+            isNewsLetterSubscriptionAgreed = null,
+        )
+
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
             }
     }
 }
