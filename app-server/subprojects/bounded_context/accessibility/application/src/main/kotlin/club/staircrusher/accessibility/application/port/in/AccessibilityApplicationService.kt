@@ -59,6 +59,7 @@ class AccessibilityApplicationService(
         try {
             accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
             accessibilityImageService.generateThumbnailsIfNeeded(placeId)
+            logger.info { "Thumbnail generation complete" }
         } catch (e: Throwable) {
             logger.error(e) { "Failed to generate thumbnail and migrate images for place $placeId" }
         }
