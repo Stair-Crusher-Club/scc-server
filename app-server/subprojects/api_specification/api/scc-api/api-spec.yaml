@@ -254,7 +254,7 @@ paths:
 
   /getAccessibilityActivityReport:
     get:
-      summary: 유저 정복활동을 조회한다
+      summary: 유저 접근성 정보 정복 활동을 조회한다
       responses:
         '200':
           content:
