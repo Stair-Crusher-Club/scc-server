@@ -50,7 +50,7 @@ class DB(dataSource: DataSource) {
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_imagesAdapter = AccessibilityImageListStringColumnAdapter,
-            elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
+        elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
             boundary_verticesAdapter = LocationListToTextColumnAdapter,
@@ -99,6 +99,7 @@ class DB(dataSource: DataSource) {
         )
     )
 
+    val accessibilityImageFaceBlurringHistoryQueries = scc.accessibilityImageFaceBlurringHistoryQueries
     val buildingQueries = scc.buildingQueries
     val placeQueries = scc.placeQueries
     val placeFavoriteQueries = scc.placeFavoriteQueries

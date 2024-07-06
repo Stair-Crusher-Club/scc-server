@@ -4,14 +4,14 @@ data "aws_iam_policy_document" "scc" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
-      type        = "Federated"
+      type = "Federated"
       identifiers = [data.terraform_remote_state.oidc.outputs.k3s_oidc_arn]
     }
 
     condition {
       test     = "StringEquals"
       variable = "k3s.staircrusher.club:sub"
-      values   = ["system:serviceaccount:scc:scc-server"]
+      values = ["system:serviceaccount:scc:scc-server"]
     }
   }
 }
@@ -70,14 +70,14 @@ data "aws_iam_policy_document" "scc_deploy_secret" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
-      type        = "Federated"
+      type = "Federated"
       identifiers = [data.terraform_remote_state.oidc.outputs.k3s_oidc_arn]
     }
 
     condition {
       test     = "StringEquals"
       variable = "k3s.staircrusher.club:sub"
-      values   = [
+      values = [
         "system:serviceaccount:scc:scc-server-deploy-secret",
         "system:serviceaccount:scc-redash:scc-redash-deploy-secret",
       ]
@@ -113,4 +113,21 @@ resource "aws_iam_policy" "scc_deploy_secret_kms_access" {
 resource "aws_iam_role_policy_attachment" "scc_deploy_secret_kms_read_access" {
   role       = aws_iam_role.scc_deploy_secret.name
   policy_arn = aws_iam_policy.scc_deploy_secret_kms_access.arn
+}
+
+data "aws_iam_policy_document" "scc_rekognition_access" {
+  statement {
+    actions = [
+      "rekognition:DetectFaces",
+    ]
+    resources = [
+      aws_s3_bucket.accessibility_images.arn,
+      "${aws_s3_bucket.accessibility_images.arn}/*",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "scc_rekognition_access" {
+  name   = "scc-rekognition-access"
+  policy = data.aws_iam_policy_document.scc_rekognition_access.json
 }

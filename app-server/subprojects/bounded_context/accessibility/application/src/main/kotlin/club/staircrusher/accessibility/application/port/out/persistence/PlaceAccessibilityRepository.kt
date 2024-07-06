@@ -15,11 +15,12 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     fun findByPlaceId(placeId: String): PlaceAccessibility?
     fun findByUserId(userId: String): List<PlaceAccessibility>
     fun findByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): List<PlaceAccessibility>
+    fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
+    fun findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant?): List<PlaceAccessibility>
     fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int
     fun countByUserId(userId: String): Int
     fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int
     fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean
-    fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
     fun searchForAdmin(
         placeName: String?,
         createdAtFrom: Instant?,

@@ -320,7 +320,6 @@ class ITDataGenerator {
         stairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
         hasSlope: Boolean = true,
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
-        imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
         user: User? = null,
         at: Instant = clock.instant(),
@@ -336,7 +335,7 @@ class ITDataGenerator {
                 stairHeightLevel = stairHeightLevel,
                 hasSlope = hasSlope,
                 entranceDoorTypes = entranceDoorTypes,
-                imageUrls = imageUrls,
+                imageUrls = emptyList(),
                 images = images,
                 userId = user?.id,
                 createdAt = at,
@@ -348,10 +347,12 @@ class ITDataGenerator {
         building: Building,
         entranceStairInfo: StairInfo = StairInfo.NONE,
         entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.THUMB,
+        entranceImages: List<AccessibilityImage> = emptyList(),
+        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         hasSlope: Boolean = true,
         hasElevator: Boolean = true,
-        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
+        elevatorImages: List<AccessibilityImage> = emptyList(),
         user: User? = null,
         at: Instant = clock.instant(),
     ): BuildingAccessibility {
@@ -362,14 +363,14 @@ class ITDataGenerator {
                 entranceStairInfo = entranceStairInfo,
                 entranceStairHeightLevel = entranceStairHeightLevel,
                 entranceImageUrls = emptyList(),
-                entranceImages = emptyList(),
+                entranceImages = entranceImages,
                 hasSlope = hasSlope,
                 hasElevator = hasElevator,
                 entranceDoorTypes = entranceDoorTypes,
                 elevatorStairInfo = StairInfo.NONE,
                 elevatorStairHeightLevel = elevatorStairHeightLevel,
                 elevatorImageUrls = emptyList(),
-                elevatorImages = emptyList(),
+                elevatorImages = elevatorImages,
                 userId = user?.id,
                 createdAt = at,
             ),
@@ -379,13 +380,18 @@ class ITDataGenerator {
     fun registerBuildingAndPlaceAccessibility(
         place: Place,
         user: User? = null,
-        imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
         at: Instant = clock.instant(),
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
-            registerPlaceAccessibility(place = place, user = user, imageUrls = imageUrls, images = images, at = at),
-            registerBuildingAccessibilityIfNotExists(place.building, user = user, at = at),
+            registerPlaceAccessibility(place = place, user = user, images = images, at = at),
+            registerBuildingAccessibilityIfNotExists(
+                place.building,
+                user = user,
+                entranceImages = images,
+                elevatorImages = images,
+                at = at
+            ),
         )
     }
 

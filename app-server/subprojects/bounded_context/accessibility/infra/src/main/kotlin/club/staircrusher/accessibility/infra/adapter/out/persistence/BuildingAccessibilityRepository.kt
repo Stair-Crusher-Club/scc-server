@@ -77,6 +77,14 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant?): List<BuildingAccessibility> {
+        return queries.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+            createdAt = (createdAt ?: Instant.EPOCH).toOffsetDateTime(), limit = 1
+        )
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>) {
         return queries.updateEntranceImages(
             entranceImages = entranceImages,

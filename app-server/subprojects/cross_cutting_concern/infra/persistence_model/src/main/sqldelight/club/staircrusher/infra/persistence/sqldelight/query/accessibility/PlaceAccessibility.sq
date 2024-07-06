@@ -51,6 +51,15 @@ WHERE
     AND pa.created_at <=:to
     AND pa.deleted_at IS NULL;
 
+findByCreatedAtGreaterThanAndOrderByCreatedAtAsc:
+SELECT pa.*
+FROM place_accessibility pa
+WHERE
+    pa.created_at > :createdAt
+    AND pa.deleted_at IS NULL
+ORDER BY pa.created_at ASC, pa.id DESC
+LIMIT :limit;
+
 countByEupMyeonDong:
 SELECT COUNT(1)
 FROM place_accessibility
