@@ -1028,6 +1028,28 @@ components:
         - Upcoming # 오픈 예정
         - Closed # 종료된 챌린지
 
+    CreatePlaceFavoriteRequestDto:
+      type: object
+      properties:
+        placeId:
+          type: string
+      required:
+        - placeId
+
+    CreatePlaceFavoriteResponseDto:
+      type: object
+      properties:
+        placeFavorite:
+          $ref: '#/components/schemas/PlaceFavorite'
+      required:
+        - placeFavorite
+
+    DeletePlaceFavoriteRequestDto:
+      type: object
+      properties:
+        placeId:
+          type: string
+
     EntranceDoorType:
       type: string
       enum:
@@ -1062,6 +1084,17 @@ components:
           format: int64
       required:
         - value
+
+    PlaceFavorite:
+      type: object
+      properties:
+        placeId:
+          type: string
+        userId:
+          type: string
+      required:
+        - placeId
+        - userId
 
     GetChallengeRequestDto:
       type: object
@@ -1274,6 +1307,34 @@ components:
           type: integer
           format: int64
           description: 정복한 장소의 전체 갯수
+        nextToken:
+          type: string
+          description: 다음 페이지 정보. 없으면 더 이상 요청할 값이 없음을 의미한다.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceListItem'
+      required:
+        - totalNumberOfItems
+        - items
+
+    ListPlaceFavoritesRequestDto:
+      type: object
+      properties:
+        nextToken:
+          type: string
+          description: 페이지 정보. 없으면 첫 페이지 요소들을 내려준다.
+        limit:
+          type: integer
+          format: int64
+
+    ListPlaceFavoritesResponseDto:
+      type: object
+      properties:
+        totalNumberOfItems:
+          description: 즐겨찾기한 장소의 전체 갯수
+          type: integer
+          format: int64
         nextToken:
           type: string
           description: 다음 페이지 정보. 없으면 더 이상 요청할 값이 없음을 의미한다.
