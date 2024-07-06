@@ -16,7 +16,6 @@ import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.runBlocking
-import java.util.concurrent.Executors
 
 @Component
 class UserApplicationService(
@@ -27,7 +26,6 @@ class UserApplicationService(
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val stibeeSubscriptionService: StibeeSubscriptionService,
 ) {
-    private val taskExecutor = Executors.newCachedThreadPool()
 
     @Deprecated("닉네임 로그인은 사라질 예정")
     fun signUpWithNicknameAndPassword(
@@ -165,15 +163,13 @@ class UserApplicationService(
     }
 
     private fun subscribeToNewsLetter(email: String, name: String) {
-        taskExecutor.submit {
-            runBlocking {
-                stibeeSubscriptionService.registerSubscriber(
-                    email = email,
-                    name = name,
-                    // 일단 false 로 두지만 나중에 동의 버튼이 추가될 수도 있다
-                    isMarketingPushAgreed = false,
-                )
-            }
+        runBlocking {
+            stibeeSubscriptionService.registerSubscriber(
+                email = email,
+                name = name,
+                // 일단 false 로 두지만 나중에 동의 버튼이 추가될 수도 있다
+                isMarketingPushAgreed = false,
+            )
         }
     }
 }
