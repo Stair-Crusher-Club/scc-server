@@ -3,7 +3,10 @@ INSERT INTO place_favorite
 VALUES :place_favorite
 ON CONFLICT(id) DO UPDATE SET
     place_id = EXCLUDED.place_id,
-    user_id = EXCLUDED.user_id;
+    user_id = EXCLUDED.user_id,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at,
+    deleted_at = EXCLUDED.deleted_at;
 
 removeAll:
 DELETE FROM place_favorite;

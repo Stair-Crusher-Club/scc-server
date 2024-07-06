@@ -770,13 +770,16 @@ components:
         isFavoritePlace:
           type: boolean
           description: 내가 즐겨찾기한 장소인지 여부.
-        favoriteCount:
+        totalFavoriteCount:
           type: integer
+          format: int64
           description: 이 장소를 즐겨찾기한 사람 수.
       required:
         - buildingAccessibilityComments
         - placeAccessibilityComments
         - hasOtherPlacesToRegisterInBuilding
+        - isFavoritePlace
+        - totalFavoriteCount
 
     AccessibilityRankDto:
       type: object
@@ -1341,7 +1344,7 @@ components:
         - totalNumberOfItems
         - items
 
-    ListPlaceFavoritesRequestDto:
+    ListPlaceFavoritesByUserRequestDto:
       type: object
       properties:
         nextToken:
@@ -1351,7 +1354,7 @@ components:
           type: integer
           format: int64
 
-    ListPlaceFavoritesResponseDto:
+    ListPlaceFavoritesByUserResponseDto:
       type: object
       properties:
         totalNumberOfItems:

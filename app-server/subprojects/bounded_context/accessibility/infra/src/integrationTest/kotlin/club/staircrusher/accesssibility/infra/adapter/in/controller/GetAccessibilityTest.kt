@@ -39,19 +39,31 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 val result = getResult(AccessibilityInfoDto::class)
                 assertEquals(buildingAccessibility.id, result.buildingAccessibility!!.id)
                 assertEquals(buildingAccessibility.buildingId, result.buildingAccessibility!!.buildingId)
-                assertEquals(buildingAccessibility.entranceStairInfo, result.buildingAccessibility!!.entranceStairInfo.toModel())
+                assertEquals(
+                    buildingAccessibility.entranceStairInfo,
+                    result.buildingAccessibility!!.entranceStairInfo.toModel()
+                )
                 assertEquals(buildingAccessibility.hasSlope, result.buildingAccessibility!!.hasSlope)
                 assertEquals(buildingAccessibility.hasElevator, result.buildingAccessibility!!.hasElevator)
-                assertEquals(buildingAccessibility.elevatorStairInfo, result.buildingAccessibility!!.elevatorStairInfo.toModel())
+                assertEquals(
+                    buildingAccessibility.elevatorStairInfo,
+                    result.buildingAccessibility!!.elevatorStairInfo.toModel()
+                )
                 assertEquals(user.nickname, result.buildingAccessibility!!.registeredUserName)
                 assertTrue(result.buildingAccessibility!!.isUpvoted)
                 assertEquals(3, result.buildingAccessibility!!.totalUpvoteCount)
                 assertEquals(1, result.buildingAccessibilityComments.size)
                 assertEquals(buildingAccessibilityComment.id, result.buildingAccessibilityComments[0].id)
-                assertEquals(buildingAccessibilityComment.buildingId, result.buildingAccessibilityComments[0].buildingId)
+                assertEquals(
+                    buildingAccessibilityComment.buildingId,
+                    result.buildingAccessibilityComments[0].buildingId
+                )
                 assertNull(result.buildingAccessibilityComments[0].user)
                 assertEquals(buildingAccessibilityComment.comment, result.buildingAccessibilityComments[0].comment)
-                assertEquals(buildingAccessibilityComment.createdAt.toEpochMilli(), result.buildingAccessibilityComments[0].createdAt.value)
+                assertEquals(
+                    buildingAccessibilityComment.createdAt.toEpochMilli(),
+                    result.buildingAccessibilityComments[0].createdAt.value
+                )
 
                 assertEquals(placeAccessibility.id, result.placeAccessibility!!.id)
                 assertEquals(placeAccessibility.placeId, result.placeAccessibility!!.placeId)
@@ -66,7 +78,12 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertEquals(placeAccessibilityComment.placeId, result.placeAccessibilityComments[0].placeId)
                 assertNotNull(result.placeAccessibilityComments[0].user)
                 assertEquals(placeAccessibilityComment.comment, result.placeAccessibilityComments[0].comment)
-                assertEquals(placeAccessibilityComment.createdAt.toEpochMilli(), result.placeAccessibilityComments[0].createdAt.value)
+                assertEquals(
+                    placeAccessibilityComment.createdAt.toEpochMilli(),
+                    result.placeAccessibilityComments[0].createdAt.value
+                )
+                assertEquals(result.totalFavoriteCount, 0)
+                assertEquals(result.isFavoritePlace, false)
 
                 assertFalse(result.hasOtherPlacesToRegisterInBuilding)
 
@@ -257,38 +274,101 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Test
+    fun `즐겨찾기 등록한 유저에게는 즐겨찾기 등록했는지 정보를 내려준다`() {
+        val (hasFavoriteUser, place) = registerAccessibility()
+        transactionManager.doInTransaction { testDataGenerator.createPlaceFavorite(hasFavoriteUser.id, place.id) }
+        mvc
+            .sccRequest("/getAccessibility", GetAccessibilityPostRequest(placeId = place.id), user = hasFavoriteUser)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(AccessibilityInfoDto::class)
+                assertTrue(result.isFavoritePlace)
+                assertEquals(result.totalFavoriteCount, 1L)
+            }
+
+        val doesNotHaveFavoriteUser = testDataGenerator.createUser()
+        mvc
+            .sccRequest(
+                "/getAccessibility",
+                GetAccessibilityPostRequest(placeId = place.id),
+                user = doesNotHaveFavoriteUser
+            )
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                val result = getResult(AccessibilityInfoDto::class)
+                assertFalse(result.isFavoritePlace)
+                assertEquals(result.totalFavoriteCount, 1L)
+            }
+    }
+
     private fun registerAccessibility(overridingBuilding: Building? = null): RegisterAccessibilityResult {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
         }
         return transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = overridingBuilding)
-            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
+            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(
+                place,
+                user
+            )
 
             repeat(2) {
                 testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility)
             }
             testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user)
 
-            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
+            val buildingAccessibilityComment =
+                testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
             val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
 
-            RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment)
+            RegisterAccessibilityResult(
+                user,
+                place,
+                placeAccessibility,
+                buildingAccessibility,
+                placeAccessibilityComment,
+                buildingAccessibilityComment
+            )
         }
     }
 
-    private fun registerAccessibilityWithImages(imageUrls: List<String>? = null, images: List<AccessibilityImage>? = null) : RegisterAccessibilityResult {
+    private fun registerAccessibilityWithImages(
+        imageUrls: List<String>? = null,
+        images: List<AccessibilityImage>? = null
+    ): RegisterAccessibilityResult {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createUser()
         }
         return transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
-            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user, imageUrls ?: emptyList(), images ?: emptyList())
+            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(
+                place,
+                user,
+                imageUrls ?: emptyList(),
+                images ?: emptyList()
+            )
 
-            val buildingAccessibilityComment = testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
+            val buildingAccessibilityComment =
+                testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
             val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
 
-            RegisterAccessibilityResult(user, place, placeAccessibility, buildingAccessibility, placeAccessibilityComment, buildingAccessibilityComment)
+            RegisterAccessibilityResult(
+                user,
+                place,
+                placeAccessibility,
+                buildingAccessibility,
+                placeAccessibilityComment,
+                buildingAccessibilityComment
+            )
         }
     }
 

@@ -22,4 +22,8 @@ dependencies {
 
     val guavaVersion: String by project
     implementation("com.google.guava:guava:$guavaVersion")
+
+    testImplementation(projects.apiSpecification.domainEvent)
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 }

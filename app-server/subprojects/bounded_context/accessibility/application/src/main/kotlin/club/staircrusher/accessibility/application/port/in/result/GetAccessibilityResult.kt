@@ -14,7 +14,7 @@ data class GetAccessibilityResult(
     val hasOtherPlacesToRegisterInSameBuilding: Boolean,
     val isLastPlaceAccessibilityInBuilding: Boolean,
     val isFavoritePlace: Boolean,
-    val favoriteCounts: Long
+    val totalFavoriteCount: Long
 ) {
     data class BuildingAccessibilityUpvoteInfo(
         val isUpvoted: Boolean,

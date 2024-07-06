@@ -3,15 +3,17 @@ package club.staircrusher.place.application.port.`in`
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.domain.model.PlaceFavorite
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.persistence.TransactionManager
 
 @Component
 class ListPlaceFavoritesByUserUseCase(
-    private val placeFavoriteRepository: PlaceFavoriteRepository
+    private val placeFavoriteRepository: PlaceFavoriteRepository,
+    private val transactionManager: TransactionManager
 ) {
-    fun handle(request: Request): Response {
+    fun handle(request: Request): Response = transactionManager.doInTransaction {
         val favorites = placeFavoriteRepository.findByUserId(request.userId)
         // TODO: next token 처리
-        return Response(
+        return@doInTransaction Response(
             totalCount = favorites.size.toLong(),
             favorites = favorites,
             nextToken = null

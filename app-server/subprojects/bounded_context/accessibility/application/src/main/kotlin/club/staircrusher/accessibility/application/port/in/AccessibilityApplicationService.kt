@@ -116,7 +116,7 @@ class AccessibilityApplicationService(
             isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id)
                 ?: false,
             isFavoritePlace = userId?.let { placeFavoriteRepository.findByUserIdAndPlaceId(it, placeId) } != null,
-            favoriteCounts = placeFavoriteRepository.countByPlaceId(placeId),
+            totalFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId),
         )
     }
 

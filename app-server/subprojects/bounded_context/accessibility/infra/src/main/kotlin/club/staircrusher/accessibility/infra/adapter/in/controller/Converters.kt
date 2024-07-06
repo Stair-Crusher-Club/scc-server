@@ -80,6 +80,8 @@ fun GetAccessibilityResult.toDTO(authUser: AuthUser?) = AccessibilityInfoDto(
         it.value.toDTO(accessibilityRegisterer = it.accessibilityRegisterer)
     },
     hasOtherPlacesToRegisterInBuilding = hasOtherPlacesToRegisterInSameBuilding,
+    isFavoritePlace = isFavoritePlace,
+    totalFavoriteCount = totalFavoriteCount,
 )
 
 fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
