@@ -1,6 +1,8 @@
 package club.staircrusher.external_accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.api.converter.toDTO
+import club.staircrusher.api.spec.dto.ExternalAccessibility
+import club.staircrusher.api.spec.dto.GetExternalAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPostRequest
 import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPost200Response
 import club.staircrusher.user.domain.model.User
@@ -17,7 +19,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import kotlin.random.Random
 
-class SearchExternalAccessibilitiesControllerTest : ExternalAccessibilityITBase() {
+class ExternalAccessibilityControllerTest : ExternalAccessibilityITBase() {
 
     @Autowired
     private lateinit var externalAccessibilityRepository: ExternalAccessibilityRepository
@@ -30,7 +32,7 @@ class SearchExternalAccessibilitiesControllerTest : ExternalAccessibilityITBase(
     }
 
     @Test
-    fun 정상_동작() {
+    fun 서치_정상_동작() {
         val currentLocation = Location(127.5, 37.5)
         // 데이터가 없다면 보여주지 않는다.
         val response = mvc.sccRequest(
@@ -66,5 +68,16 @@ class SearchExternalAccessibilitiesControllerTest : ExternalAccessibilityITBase(
         )
             .getResult(SearchExternalAccessibilitiesPost200Response::class).items ?: emptyList()
         assertEquals(1, response3.size)
+    }
+
+    @Test
+    fun 서치_단건_조회() {
+        val data = testDataGenerator.createExternalAccessibility()
+        val response = mvc.sccRequest(
+            "/getExternalAccessibility",
+            GetExternalAccessibilityPostRequest(externalAccessibilityId = data.id)
+        )
+            .getResult(ExternalAccessibility::class)
+        assertEquals(data.name, response.name)
     }
 }

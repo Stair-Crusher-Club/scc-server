@@ -643,9 +643,32 @@ paths:
                 properties:
                   items:
                     items:
-                      $ref: '#/components/schemas/ExternalAccessibilityListItem'
+                      $ref: '#/components/schemas/ExternalAccessibility'
                     type: array
                 type: object
+
+  /getExternalAccessibility:
+    post:
+      summary: 공공 접근성 정보를 확인한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                externalAccessibilityId:
+                  type: string
+              required:
+                - externalAccessibilityId
+      responses:
+        '200':
+          description: 해당 접근성 정보를 응답으로 내려준다.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccessibility'
+
 
   /searchPlaces:
     post:
@@ -1435,7 +1458,7 @@ components:
         - HOSPITAL
         - PHARMACY
     
-    ExternalAccessibilityListItem:
+    ExternalAccessibility:
       type: object
       properties:
         id:
@@ -1448,10 +1471,13 @@ components:
           description: 장소의 human-readable한 주소.
         location:
           $ref: '#/components/schemas/Location'
+        category:
+          type: string
+          description: 장소의 종류
         toilet_details:
-          $ref: '#/components/schemas/ExternalAccessibilityDetails'
+          $ref: '#/components/schemas/ToiletAccessibilityDetails'
 
-    ExternalAccessibilityDetails:
+    ToiletAccessibilityDetails:
       type: object
       properties:
         gender:
