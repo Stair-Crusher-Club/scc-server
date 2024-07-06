@@ -39,7 +39,7 @@ class SearchExternalAccessibilitiesController(
                             lng = it.location.lng,
                             lat = it.location.lat,
                         ),
-                        details = it.toiletDetails?.run {
+                        toiletDetails = it.toiletDetails?.run {
                             ExternalAccessibilityDetails(
                                 gender = gender,
                                 accessDesc = accessDesc,

@@ -629,6 +629,7 @@ paths:
                   type: integer
                 categories:
                   type: array
+                  description: 조회하고 싶은 접근성 정보 카테고리. 현재 화장실 (TOILET) 만 있음.
                   items:
                     type: string
               required:
@@ -1447,7 +1448,7 @@ components:
           description: 장소의 human-readable한 주소.
         location:
           $ref: '#/components/schemas/Location'
-        details:
+        toilet_details:
           $ref: '#/components/schemas/ExternalAccessibilityDetails'
 
     ExternalAccessibilityDetails:

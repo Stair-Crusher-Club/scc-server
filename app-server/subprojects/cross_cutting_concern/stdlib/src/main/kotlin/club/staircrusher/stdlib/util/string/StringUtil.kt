@@ -1,6 +1,6 @@
 package club.staircrusher.stdlib.util.string
 
-fun String.emptyToNull() = if (this.isBlank()) null else this
+fun String.emptyToNull() = this.ifBlank { null }
 
 // https://en.wikipedia.org/wiki/Levenshtein_distance#:~:text=The%20Levenshtein%20distance%20between%20two,defined%20the%20metric%20in%201965.
 // string similarity by levenshtein distance considering korean
