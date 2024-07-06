@@ -47,7 +47,8 @@ SELECT pa.*
 FROM place_accessibility pa
 WHERE
     pa.user_id = :userId
-    AND pa.created_at BETWEEN :from AND :to
+    AND pa.created_at >= :from
+    AND pa.created_at <=:to
     AND pa.deleted_at IS NULL;
 
 countByEupMyeonDong:
@@ -110,7 +111,8 @@ SELECT COUNT(1)
 FROM place_accessibility pa
 WHERE
     pa.user_id = :userId
-    AND pa.created_at BETWEEN :from AND :to
+    AND pa.created_at >= :from
+    AND pa.created_at <=:to
     AND pa.deleted_at IS NULL;
 
 remove:

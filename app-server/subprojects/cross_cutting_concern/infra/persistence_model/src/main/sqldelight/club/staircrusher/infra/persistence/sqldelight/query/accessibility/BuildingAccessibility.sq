@@ -47,7 +47,8 @@ SELECT ba.*
 FROM building_accessibility ba
 WHERE
     ba.user_id = :userId
-    AND ba.created_at BETWEEN :from AND :to
+    AND ba.created_at >= :from
+    AND ba.created_at <=:to
     AND ba.deleted_at IS NULL;
 
 findByEupMyeonDong:
@@ -78,7 +79,8 @@ SELECT COUNT(1)
 FROM building_accessibility ba
 WHERE
     ba.user_id = :userId
-    AND ba.created_at BETWEEN :from AND :to
+    AND ba.created_at >= :from
+    AND ba.created_at <=:to
     AND ba.deleted_at IS NULL;
 
 remove:

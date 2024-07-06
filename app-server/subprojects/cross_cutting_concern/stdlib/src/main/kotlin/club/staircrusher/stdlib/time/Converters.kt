@@ -1,5 +1,6 @@
 package club.staircrusher.stdlib.time
 
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
@@ -26,3 +27,12 @@ fun Instant.toEndOfMonth(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): Instant =
         .with(TemporalAdjusters.lastDayOfMonth())
         .with(LocalTime.MAX)
         .toInstant()
+
+fun Instant.toStartOfWeek(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): Instant =
+    atZone(zoneId)
+        .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        .truncatedTo(ChronoUnit.DAYS)
+        .toInstant()
+
+fun Instant.getDayOfMonth(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): Int =
+    atZone(zoneId).dayOfMonth

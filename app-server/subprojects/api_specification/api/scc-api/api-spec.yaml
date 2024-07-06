@@ -1058,7 +1058,9 @@ components:
           items:
             $ref: '#/components/schemas/DayOfWeek'
       required:
-        - user
+        - todayConqueredCount
+        - thisMonthConqueredCount
+        - thisWeekConqueredWeekdays
 
     GetChallengeRequestDto:
       type: object

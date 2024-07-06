@@ -6,9 +6,11 @@ import club.staircrusher.stdlib.time.toEndOfDay
 import club.staircrusher.stdlib.time.toEndOfMonth
 import club.staircrusher.stdlib.time.toStartOfDay
 import club.staircrusher.stdlib.time.toStartOfMonth
+import club.staircrusher.stdlib.time.toStartOfWeek
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @Component
 class GetAccessibilityActivityReportUseCase(
@@ -16,16 +18,15 @@ class GetAccessibilityActivityReportUseCase(
 ) {
     fun handle(request: Request): Response {
         val now = SccClock.instant()
-
-        now.atZone(ZoneId.of("Asia/Seoul")).toLocalDate().atStartOfDay()
         val todayConqueredCount = accessibilityApplicationService.countByUserIdAndBetween(
             userId = request.userId, from = now.toStartOfDay(), to = now.toEndOfDay()
         )
         val thisMonthConqueredCount = accessibilityApplicationService.countByUserIdAndBetween(
             userId = request.userId, from = now.toStartOfMonth(), to = now.toEndOfMonth()
         )
+        val startOfWeek = now.toStartOfWeek()
         val (placeAccessibilities, buildingAccessibilities) = accessibilityApplicationService.findByUserIdAndBetween(
-            userId = request.userId, from = now.toStartOfDay(), to = now.toEndOfDay()
+            userId = request.userId, from = startOfWeek, to = startOfWeek.plus(6, ChronoUnit.DAYS).toEndOfDay()
         )
         val hasActivityOnDayOfWeek = checkWhetherActivityExistsOnDayOfWeek(placeAccessibilities.map { it.createdAt }
             .plus(buildingAccessibilities.map { it.createdAt }))
