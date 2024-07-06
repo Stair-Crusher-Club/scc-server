@@ -44,3 +44,7 @@ scc:
   stibee:
     apiKey: test
     listId: test
+
+  nhn-cloud:
+    url-shortening:
+      appKey: test

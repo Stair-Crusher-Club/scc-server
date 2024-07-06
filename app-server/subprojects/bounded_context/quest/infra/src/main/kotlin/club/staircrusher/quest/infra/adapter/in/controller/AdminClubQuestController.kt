@@ -104,16 +104,17 @@ class AdminClubQuestController(
             .replace(Regex("개.*"), "")
             .toIntOrNull()
             ?: throw IllegalArgumentException("maxPlaceCountPerQuest(${request.maxPlaceCountPerQuest})를 숫자로 변환할 수 없습니다.")
-        val quest = createAndNotifyDailyClubQuestUseCase.handle(
+        val result = createAndNotifyDailyClubQuestUseCase.handle(
             requesterName = request.requesterName,
             requesterPhoneNumber = request.requesterPhoneNumber,
             centerLocationPlaceName = request.centerLocationPlaceName,
             maxPlaceCountPerQuest = maxPlaceCountPerQuest,
         )
 
-        crossValidateClubQuestPlacesUseCase.handleAsync(quest.id)
+        crossValidateClubQuestPlacesUseCase.handleAsync(result.clubQuest.id)
         return CreateAndNotifyDailyClubQuestResponseDTO(
-            clubQuestId = quest.id,
+            clubQuestId = result.clubQuest.id,
+            url = result.url,
         )
     }
 
