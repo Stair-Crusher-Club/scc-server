@@ -7,6 +7,7 @@ package club.staircrusher.stdlib.env
  * 2024.07 기준 SccEnvSpringInitializer가 설정해준다.
  */
 enum class SccEnv {
+    TEST,
     LOCAL,
     DEV,
     PROD,

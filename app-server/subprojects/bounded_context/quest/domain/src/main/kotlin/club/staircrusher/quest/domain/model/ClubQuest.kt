@@ -27,6 +27,7 @@ class ClubQuest(
     val originalAdminUrl: String
         get() {
             val baseUrl = when (SccEnv.getEnv()) {
+                SccEnv.TEST,
                 SccEnv.LOCAL -> "https://localhost:3066"
                 SccEnv.DEV -> "https://admin.dev.staircrusher.club"
                 SccEnv.PROD -> "https://admin.staircrusher.club"
