@@ -6,6 +6,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
+import club.staircrusher.stdlib.geography.LocationUtils
 import club.staircrusher.stdlib.util.string.isSimilarWith
 
 @Component
@@ -25,7 +26,7 @@ class ExternalAccessibilitySearchService(
             // FIXME: 현재 fullscan 후 필터링 중, 나중에 spatial index 걸어주기
             .filter {
                 currentLocation ?: return@filter true
-                val distance = currentLocation.distanceMeter(it.location)
+                val distance = LocationUtils.calculateDistance(currentLocation, it.location)
                 distance <= distanceMetersLimit
             }
             .filter {

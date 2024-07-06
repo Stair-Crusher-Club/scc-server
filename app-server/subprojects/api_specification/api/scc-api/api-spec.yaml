@@ -1476,6 +1476,11 @@ components:
           description: 장소의 종류
         toilet_details:
           $ref: '#/components/schemas/ToiletAccessibilityDetails'
+      required:
+        - id
+        - name
+        - location
+        - category
 
     ToiletAccessibilityDetails:
       type: object
