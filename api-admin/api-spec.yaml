@@ -131,11 +131,20 @@ paths:
               properties:
                 questNamePrefix:
                   type: string
+                purposeType:
+                  $ref: '#/components/schemas/ClubQuestPurposeTypeEnumDTO'
+                startAt:
+                  $ref: '#/components/schemas/EpochMillisTimestamp'
+                endAt:
+                  $ref: '#/components/schemas/EpochMillisTimestamp'
                 dryRunResults:
                   items:
                     $ref: '#/components/schemas/ClubQuestCreateDryRunResultItemDTO'
               required:
                 - questNamePrefix
+                - purposeType
+                - startAt
+                - endAt
                 - dryRunResults
       responses:
         '200':
@@ -424,6 +433,16 @@ paths:
 components:
   # Reusable schemas (data models)
   schemas:
+    EpochMillisTimestamp:
+      description: 특정 시각을 표현하기 위한 모델.
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int64
+      required:
+        - value
+
     LocationDTO:
       description: 위치를 위경도로 표현하기 위한 모델.
       type: object
@@ -460,6 +479,14 @@ components:
         - questCenterLocation
         - targetBuildings
 
+    ClubQuestPurposeTypeEnumDTO:
+      type: string
+      enum:
+        - CRUSHER_CLUB
+        - DAILY_CLUB
+        - COLLABO_CLUB
+        - ESG_PARTNERS
+
     GetCursoredClubQuestSummariesResultDTO:
       type: object
       properties:
@@ -480,11 +507,20 @@ components:
           type: string
         name:
           type: string
+        purposeType:
+          $ref: '#/components/schemas/ClubQuestPurposeTypeEnumDTO'
+        startAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        endAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
         shortenedUrl:
           type: string
       required:
         - id
         - name
+        - purposeType
+        - startAt
+        - endAt
 
     ClubQuestDTO:
       description: 퀘스트.
@@ -493,15 +529,24 @@ components:
           type: string
         name:
           type: string
+        purposeType:
+          $ref: '#/components/schemas/ClubQuestPurposeTypeEnumDTO'
+        startAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        endAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
         buildings:
           type: array
           items:
             $ref: '#/components/schemas/ClubQuestTargetBuildingDTO'
-        shortenedAdminUrl:
+        shortenedUrl:
           type: string
       required:
         - id
         - name
+        - purposeType
+        - startAt
+        - endAt
         - buildings
 
     ClubQuestTargetBuildingDTO:

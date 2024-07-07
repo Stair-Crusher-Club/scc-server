@@ -1,0 +1,12 @@
+import club.staircrusher.quest.domain.model.ClubQuestPurposeType;
+
+ALTER TABLE club_quest
+    ADD COLUMN purpose_type VARCHAR(32) AS ClubQuestPurposeType NOT NULL DEFAULT 'CRUSHER_CLUB',
+    ADD COLUMN start_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN end_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- 실제 배포할 때는 마이그레이션을 위하 아래 쿼리를 함께 실행해줘야 한다.
+-- UPDATE club_quest set start_at = created_at;
+-- UPDATE club_quest set end_at = created_at + interval '7 days';
+-- ALTER TABLE club_quest ALTER COLUMN start_at DROP DEFAULT;
+-- ALTER TABLE club_quest ALTER COLUMN end_at DROP DEFAULT;

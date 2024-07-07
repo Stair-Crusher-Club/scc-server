@@ -9,6 +9,7 @@ import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSea
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestPurposeType
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 import club.staircrusher.quest.util.HumanReadablePrefixGenerator
@@ -23,6 +24,7 @@ import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import java.time.Clock
 import java.time.Duration
+import java.time.Instant
 
 @Component
 class ClubQuestCreateAplService(
@@ -153,6 +155,9 @@ class ClubQuestCreateAplService(
 
     fun createFromDryRunResult(
         questNamePrefix: String,
+        purposeType: ClubQuestPurposeType,
+        startAt: Instant,
+        endAt: Instant,
         dryRunResultItems: List<ClubQuestCreateDryRunResultItem>,
     ): List<ClubQuest> {
         val quests = transactionManager.doInTransaction {
@@ -160,6 +165,9 @@ class ClubQuestCreateAplService(
                 clubQuestRepository.save(
                     ClubQuest.of(
                         name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
+                        purposeType = purposeType,
+                        startAt = startAt,
+                        endAt = endAt,
                         dryRunResultItem = dryRunResultItem,
                         createdAt = clock.instant(),
                     )

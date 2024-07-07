@@ -6,6 +6,7 @@ import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetP
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestPurposeType
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 import club.staircrusher.stdlib.clock.SccClock
@@ -19,6 +20,7 @@ import org.mockito.kotlin.stub
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import java.time.Duration
 
 @SpringBootTest(classes = [SccSpringITApplication::class], webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class CrossValidateClubQuestPlacesUseCaseTest {
@@ -49,8 +51,12 @@ class CrossValidateClubQuestPlacesUseCaseTest {
             val place1 = dataGenerator.createBuildingAndPlace()
             val building = place1.building
             val place2 = dataGenerator.createPlace(building = building)
+            val now = SccClock.instant()
             val clubQuest = ClubQuest.of(
                 name = "quest",
+                purposeType = ClubQuestPurposeType.CRUSHER_CLUB,
+                startAt = now,
+                endAt = now + Duration.ofDays(7),
                 dryRunResultItem = ClubQuestCreateDryRunResultItem(
                     questNamePostfix = "1",
                     questCenterLocation = building.location,
@@ -76,7 +82,7 @@ class CrossValidateClubQuestPlacesUseCaseTest {
                         ),
                     ),
                 ),
-                createdAt = SccClock.instant(),
+                createdAt = now,
             )
             clubQuestRepository.save(clubQuest)
             Triple(place1, place2, clubQuest)

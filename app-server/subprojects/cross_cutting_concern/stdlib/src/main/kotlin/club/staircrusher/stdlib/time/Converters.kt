@@ -44,3 +44,5 @@ fun Instant.getDayOfMonth(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): Int =
 
 fun Instant.getDayOfWeek(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): DayOfWeek =
     atZone(zoneId).dayOfWeek
+
+fun Long.epochMilliToInstant() = Instant.ofEpochMilli(this)
