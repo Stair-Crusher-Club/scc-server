@@ -383,24 +383,24 @@ class AccessibilityApplicationService(
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 
-    fun countByUserIdAndBetween(userId: String, from: Instant, to: Instant): Int =
-        placeAccessibilityRepository.countByUserIdAndBetween(
+    fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int =
+        placeAccessibilityRepository.countByUserIdAndCreatedAtBetween(
             userId,
             from,
             to
-        ) + buildingAccessibilityRepository.countByUserIdBetween(
+        ) + buildingAccessibilityRepository.countByUserIdCreatedAtBetween(
             userId,
             from,
             to
         )
 
-    fun findByUserIdAndBetween(
+    fun findByUserIdAndCreatedAtBetween(
         userId: String,
         from: Instant,
         to: Instant
     ): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
-        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndBetween(userId, from, to)
-        val buildingAccessibilities = buildingAccessibilityRepository.findByUserIdAndBetween(userId, from, to)
+        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
+        val buildingAccessibilities = buildingAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 }

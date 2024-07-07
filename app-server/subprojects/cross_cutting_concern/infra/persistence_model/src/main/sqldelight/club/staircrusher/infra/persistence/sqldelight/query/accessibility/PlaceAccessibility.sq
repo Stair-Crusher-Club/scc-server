@@ -42,7 +42,7 @@ FROM place_accessibility
 WHERE user_id = :userId
     AND deleted_at IS NULL;
 
-findByUserIdAndBetween:
+findByUserIdAndCreatedAtBetween:
 SELECT pa.*
 FROM place_accessibility pa
 WHERE
@@ -106,7 +106,7 @@ SELECT COUNT(*)
 FROM place_accessibility pa
 WHERE pa.deleted_at IS NULL;
 
-countByUserIdAndBetween:
+countByUserIdAndCreatedAtBetween:
 SELECT COUNT(1)
 FROM place_accessibility pa
 WHERE

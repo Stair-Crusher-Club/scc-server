@@ -18,14 +18,14 @@ class GetAccessibilityActivityReportUseCase(
 ) {
     fun handle(request: Request): Response {
         val now = SccClock.instant()
-        val todayConqueredCount = accessibilityApplicationService.countByUserIdAndBetween(
+        val todayConqueredCount = accessibilityApplicationService.countByUserIdAndCreatedAtBetween(
             userId = request.userId, from = now.toStartOfDay(), to = now.toEndOfDay()
         )
-        val thisMonthConqueredCount = accessibilityApplicationService.countByUserIdAndBetween(
+        val thisMonthConqueredCount = accessibilityApplicationService.countByUserIdAndCreatedAtBetween(
             userId = request.userId, from = now.toStartOfMonth(), to = now.toEndOfMonth()
         )
         val startOfWeek = now.toStartOfWeek()
-        val (placeAccessibilities, buildingAccessibilities) = accessibilityApplicationService.findByUserIdAndBetween(
+        val (placeAccessibilities, buildingAccessibilities) = accessibilityApplicationService.findByUserIdAndCreatedAtBetween(
             userId = request.userId, from = startOfWeek, to = startOfWeek.plus(6, ChronoUnit.DAYS).toEndOfDay()
         )
         val hasActivityOnDayOfWeek = checkWhetherActivityExistsOnDayOfWeek(placeAccessibilities.map { it.createdAt }

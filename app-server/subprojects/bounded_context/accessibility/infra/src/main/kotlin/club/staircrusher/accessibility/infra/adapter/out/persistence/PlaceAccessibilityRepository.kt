@@ -58,8 +58,8 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun findByUserIdAndBetween(userId: String, from: Instant, to: Instant): List<PlaceAccessibility> {
-        return queries.findByUserIdAndBetween(
+    override fun findByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): List<PlaceAccessibility> {
+        return queries.findByUserIdAndCreatedAtBetween(
             userId = userId,
             from = from.toOffsetDateTime(),
             to = to.toOffsetDateTime()
@@ -78,8 +78,8 @@ class PlaceAccessibilityRepository(
         return queries.countByUserId(userId = userId).executeAsOne().toInt()
     }
 
-    override fun countByUserIdAndBetween(userId: String, from: Instant, to: Instant): Int {
-        return queries.countByUserIdAndBetween(
+    override fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int {
+        return queries.countByUserIdAndCreatedAtBetween(
             userId = userId,
             from = from.toOffsetDateTime(),
             to = to.toOffsetDateTime()

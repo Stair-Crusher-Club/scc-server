@@ -42,7 +42,7 @@ FROM building_accessibility
 WHERE place.id IN :placeIds
     AND building_accessibility.deleted_at IS NULL;
 
-findByUserIdAndBetween:
+findByUserIdAndCreatedAtBetween:
 SELECT ba.*
 FROM building_accessibility ba
 WHERE
@@ -74,7 +74,7 @@ FROM building_accessibility
 WHERE user_id = :userId
     AND deleted_at IS NULL;
 
-countByUserIdAndBetween:
+countByUserIdAndCreatedAtBetween:
 SELECT COUNT(1)
 FROM building_accessibility ba
 WHERE

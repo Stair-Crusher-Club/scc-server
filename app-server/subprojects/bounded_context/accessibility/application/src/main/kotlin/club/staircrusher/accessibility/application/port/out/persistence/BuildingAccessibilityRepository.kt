@@ -13,9 +13,9 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
     fun findByBuildingIds(buildingIds: Collection<String>): List<BuildingAccessibility>
     fun findByBuildingId(buildingId: String): BuildingAccessibility?
     fun findByPlaceIds(placeIds: Collection<String>): List<BuildingAccessibility>
-    fun findByUserIdAndBetween(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
+    fun findByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
     fun findByEupMyeonDong(eupMyeonDong: EupMyeonDong): List<BuildingAccessibility>
-    fun countByUserIdBetween(userId: String, from: Instant, to: Instant): Int
+    fun countByUserIdCreatedAtBetween(userId: String, from: Instant, to: Instant): Int
     fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>)
     fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>)
     fun countByUserId(userId: String): Int

@@ -61,8 +61,8 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun findByUserIdAndBetween(userId: String, from: Instant, to: Instant): List<BuildingAccessibility> {
-        return queries.findByUserIdAndBetween(
+    override fun findByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): List<BuildingAccessibility> {
+        return queries.findByUserIdAndCreatedAtBetween(
             userId = userId,
             from = from.toOffsetDateTime(),
             to = to.toOffsetDateTime()
@@ -95,8 +95,8 @@ class BuildingAccessibilityRepository(
         return queries.countByUserId(userId = userId).executeAsOne().toInt()
     }
 
-    override fun countByUserIdBetween(userId: String, from: Instant, to: Instant): Int {
-        return queries.countByUserIdAndBetween(
+    override fun countByUserIdCreatedAtBetween(userId: String, from: Instant, to: Instant): Int {
+        return queries.countByUserIdAndCreatedAtBetween(
             userId = userId,
             from = from.toOffsetDateTime(),
             to = to.toOffsetDateTime()
