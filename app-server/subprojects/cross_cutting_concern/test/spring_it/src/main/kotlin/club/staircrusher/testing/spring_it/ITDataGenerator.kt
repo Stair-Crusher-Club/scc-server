@@ -273,7 +273,8 @@ class ITDataGenerator {
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
-        user: User? = null
+        user: User? = null,
+        at: Instant = clock.instant(),
     ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
             PlaceAccessibility(
@@ -289,7 +290,7 @@ class ITDataGenerator {
                 imageUrls = imageUrls,
                 images = images,
                 userId = user?.id,
-                createdAt = clock.instant(),
+                createdAt = at,
             ),
         )
     }
@@ -302,7 +303,8 @@ class ITDataGenerator {
         hasElevator: Boolean = true,
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
-        user: User? = null
+        user: User? = null,
+        at: Instant = clock.instant(),
     ): BuildingAccessibility {
         return buildingAccessibilityRepository.findByBuildingId(building.id) ?: buildingAccessibilityRepository.save(
             BuildingAccessibility(
@@ -320,7 +322,7 @@ class ITDataGenerator {
                 elevatorImageUrls = emptyList(),
                 elevatorImages = emptyList(),
                 userId = user?.id,
-                createdAt = clock.instant(),
+                createdAt = at,
             ),
         )
     }
@@ -330,10 +332,11 @@ class ITDataGenerator {
         user: User? = null,
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
+        at: Instant = clock.instant(),
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
-            registerPlaceAccessibility(place = place, user = user, imageUrls = imageUrls, images = images),
-            registerBuildingAccessibilityIfNotExists(place.building, user = user),
+            registerPlaceAccessibility(place = place, user = user, imageUrls = imageUrls, images = images, at = at),
+            registerBuildingAccessibilityIfNotExists(place.building, user = user, at = at),
         )
     }
 
