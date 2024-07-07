@@ -13,7 +13,6 @@ DELETE FROM place_accessibility_upvote;
 findUpvoteById:
 SELECT *
 FROM place_accessibility_upvote
-    JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
 WHERE place_accessibility_upvote.id = :id;
 
 findUpvoteByPlaceId:
@@ -25,7 +24,6 @@ WHERE place_id = :placeId;
 findUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted:
 SELECT *
 FROM place_accessibility_upvote
-    JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
 WHERE
     place_accessibility_upvote.user_id = :userId
     AND place_accessibility_upvote.place_accessibility_id = :placeAccessibilityId
