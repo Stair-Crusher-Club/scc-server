@@ -14,6 +14,7 @@ fun ClubQuest.toPersistenceModel() = Club_quest(
     name = name,
     quest_center_location_x = questCenterLocation.lng,
     quest_center_location_y = questCenterLocation.lat,
+    shortened_admin_url = shortenedAdminUrl,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = updatedAt.toOffsetDateTime(),
 )
@@ -23,6 +24,7 @@ fun Club_quest.toDomainModel(targetBuildings: List<ClubQuestTargetBuilding>) = C
     name = name,
     questCenterLocation = Location(lng = quest_center_location_x, lat = quest_center_location_y),
     targetBuildings = targetBuildings.sortedBy { it.name.padStart(5, '0') },
+    shortenedAdminUrl = shortened_admin_url,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant(),
 )

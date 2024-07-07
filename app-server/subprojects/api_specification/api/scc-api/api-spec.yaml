@@ -264,6 +264,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetClientVersionStatusResponseDto'
 
+  /getAccessibilityActivityReport:
+    get:
+      summary: 유저 접근성 정보 정복 활동을 조회한다
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAccessibilityActivityReportResponseDto'
+
   /getUserInfo:
     get:
       summary: 유저 정보를 조회한다.
@@ -720,6 +730,8 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/UserMobilityToolDto'
+                isNewsLetterSubscriptionAgreed:
+                  type: boolean
               required:
                 - nickname
                 - email
@@ -1062,6 +1074,25 @@ components:
           format: int64
       required:
         - value
+
+    GetAccessibilityActivityReportResponseDto:
+      type: object
+      properties:
+        todayConqueredCount:
+          description: 오늘 정복한 장소/건물 수
+          type: integer
+          format: int32
+        thisMonthConqueredCount:
+          description: 이번달 정복한 장소/건물 수
+          type: integer
+          format: int32
+        thisWeekConqueredWeekdays:
+          description: 이번주 정복한 요일들 일요일(0) - 토요일(6)
+          type: array
+          items:
+            $ref: '#/components/schemas/DayOfWeek'
+      required:
+        - user
 
     GetChallengeRequestDto:
       type: object
@@ -1682,6 +1713,17 @@ components:
           description: '아직 썸네일이 생성되지 않았다면 null'
       required:
         - imageUrl
+
+    DayOfWeek:
+      type: string
+      enum:
+        - SUNDAY
+        - MONDAY
+        - TUESDAY
+        - WEDNESDAY
+        - THURSDAY
+        - FRIDAY
+        - SATURDAY
 
   responses:
     ApiFailure:
