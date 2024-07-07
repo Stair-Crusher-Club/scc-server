@@ -15,12 +15,6 @@ SELECT *
 FROM place_accessibility_upvote
 WHERE place_accessibility_upvote.id = :id;
 
-findUpvoteByPlaceId:
-SELECT *
-FROM place_accessibility_upvote
-    JOIN place_accessibility ON place_accessibility.id = place_accessibility_upvote.place_accessibility_id
-WHERE place_id = :placeId;
-
 findUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted:
 SELECT *
 FROM place_accessibility_upvote

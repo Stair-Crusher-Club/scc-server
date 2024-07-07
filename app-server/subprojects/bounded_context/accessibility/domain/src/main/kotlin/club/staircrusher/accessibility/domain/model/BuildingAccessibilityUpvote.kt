@@ -5,7 +5,7 @@ import java.time.Instant
 class BuildingAccessibilityUpvote(
     val id: String,
     val userId: String,
-    val buildingAccessibility: BuildingAccessibility,
+    val buildingAccessibilityId: BuildingAccessibility,
     var createdAt: Instant,
     var deletedAt: Instant? = null,
 ) {
