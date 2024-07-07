@@ -788,10 +788,14 @@ openobserve-collector:
           processors: [batch, k8sattributes, resourcedetection]
           exporters: [otlphttp/openobserve_k8s_events]
         metrics:
-          receivers: [k8s_cluster, spanmetrics, servicegraph]
+          # receivers: [k8s_cluster, prometheus, spanmetrics, servicegraph]
+          # spanmetrics 에서 health check 를 포함한 모든 api 콜의 span metrics 를 처리하다 보니
+          # 너무 많은 양의 데이터가 ingest 되어서 필터링 로직을 붙이기 전까지 일단 제외한다
+          receivers: [k8s_cluster, servicegraph]
           processors: [batch, k8sattributes, resourcedetection]
           exporters: [otlphttp/openobserve]
         traces:
           receivers: [otlp]
-          processors: [batch, k8sattributes, resourcedetection]
-          exporters: [otlphttp/openobserve, spanmetrics, servicegraph]
+          processors: [batch, k8sattributes, resourcedetection, tail_sampling]
+          # exporters: [otlphttp/openobserve, spanmetrics, servicegraph]
+          exporters: [ otlphttp/openobserve, servicegraph ]
