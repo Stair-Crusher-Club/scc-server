@@ -4,3 +4,4 @@ import java.time.Instant
 import java.time.ZoneOffset
 
 fun Instant.toOffsetDateTime() = atOffset(ZoneOffset.UTC)
+fun Long.epochMilliToInstant() = Instant.ofEpochMilli(this)

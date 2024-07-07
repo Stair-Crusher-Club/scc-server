@@ -2,9 +2,12 @@ package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.quest.domain.model.ClubQuest
+import club.staircrusher.quest.domain.model.ClubQuestPurposeType
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
+import java.time.Duration
 
 @Component
 class CreateAndNotifyDailyClubQuestUseCase(
@@ -42,8 +45,12 @@ class CreateAndNotifyDailyClubQuestUseCase(
         }
 
         return transactionManager.doInTransaction {
+            val now = SccClock.instant()
             clubQuestCreateAplService.createFromDryRunResult(
                 "${requesterName}님을 위한 일상 퀘스트",
+                purposeType = ClubQuestPurposeType.DAILY_CLUB,
+                startAt = now,
+                endAt = now + CLUB_QUEST_EXPIRY_DURATION,
                 dryRunResultItems = dryRunResultItems,
             )[0]
         }.let {
@@ -56,5 +63,6 @@ class CreateAndNotifyDailyClubQuestUseCase(
 
     companion object {
         private const val CLUB_QUEST_REGION_RADIUS_METERS = 300
+        private val CLUB_QUEST_EXPIRY_DURATION = Duration.ofDays(14)!!
     }
 }

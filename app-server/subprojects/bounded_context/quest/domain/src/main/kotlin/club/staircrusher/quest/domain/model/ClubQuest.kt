@@ -9,6 +9,9 @@ import java.time.Instant
 class ClubQuest(
     val id: String,
     val name: String,
+    val purposeType: ClubQuestPurposeType,
+    val startAt: Instant,
+    val endAt: Instant,
     val questCenterLocation: Location,
     targetBuildings: List<ClubQuestTargetBuilding>,
     val createdAt: Instant,
@@ -51,13 +54,20 @@ class ClubQuest(
     companion object {
         fun of(
             name: String,
+            purposeType: ClubQuestPurposeType,
+            startAt: Instant,
+            endAt: Instant,
             dryRunResultItem: ClubQuestCreateDryRunResultItem,
             createdAt: Instant,
         ): ClubQuest {
             val id = EntityIdGenerator.generateRandom()
+            require(startAt < endAt) { "퀘스트 종료 시각($endAt)은 퀘스트 시작 시각($startAt) 이후여야 합니다." }
             return ClubQuest(
                 id = id,
                 name = name,
+                purposeType = purposeType,
+                startAt = startAt,
+                endAt = endAt,
                 questCenterLocation = dryRunResultItem.questCenterLocation,
                 targetBuildings = dryRunResultItem.targetBuildings.map {
                     ClubQuestTargetBuilding.of(valueObject = it, clubQuestId = id)

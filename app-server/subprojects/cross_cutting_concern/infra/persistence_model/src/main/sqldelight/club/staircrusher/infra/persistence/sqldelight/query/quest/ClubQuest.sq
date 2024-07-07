@@ -28,7 +28,7 @@ FROM club_quest
 ORDER BY created_at DESC;
 
 findCursoredSummariesOrderByCreatedAtDesc:
-SELECT id, name, shortened_admin_url, created_at
+SELECT id, name, purpose_type, start_at, end_at, shortened_admin_url, created_at
 FROM club_quest
 WHERE
     1 = 1
