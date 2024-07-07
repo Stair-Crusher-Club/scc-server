@@ -41,3 +41,6 @@ fun Instant.toEndOfWeek(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): Instant =
 
 fun Instant.getDayOfMonth(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): Int =
     atZone(zoneId).dayOfMonth
+
+fun Instant.getDayOfWeek(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): DayOfWeek =
+    atZone(zoneId).dayOfWeek
