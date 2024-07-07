@@ -58,6 +58,16 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): List<PlaceAccessibility> {
+        return queries.findByUserIdAndCreatedAtBetween(
+            userId = userId,
+            from = from.toOffsetDateTime(),
+            to = to.toOffsetDateTime()
+        )
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int {
         return queries.countByEupMyeonDong(eupMyeonDongId = eupMyeonDong.id)
             .executeAsOne()
@@ -66,6 +76,14 @@ class PlaceAccessibilityRepository(
 
     override fun countByUserId(userId: String): Int {
         return queries.countByUserId(userId = userId).executeAsOne().toInt()
+    }
+
+    override fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int {
+        return queries.countByUserIdAndCreatedAtBetween(
+            userId = userId,
+            from = from.toOffsetDateTime(),
+            to = to.toOffsetDateTime()
+        ).executeAsOne().toInt()
     }
 
     override fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean {

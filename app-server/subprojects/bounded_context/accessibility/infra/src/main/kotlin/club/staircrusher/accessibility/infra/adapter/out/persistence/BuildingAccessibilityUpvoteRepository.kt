@@ -1,7 +1,6 @@
 package club.staircrusher.accessibility.infra.adapter.out.persistence
 
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityUpvoteRepository
-import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toDomainModel
 import club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight.toPersistenceModel
@@ -28,7 +27,8 @@ class BuildingAccessibilityUpvoteRepository(
     }
 
     override fun findById(id: String): BuildingAccessibilityUpvote {
-        return findByIdOrNull(id) ?: throw IllegalArgumentException("BuildingAccessibilityComment of id $id does not exist.")
+        return findByIdOrNull(id)
+            ?: throw IllegalArgumentException("BuildingAccessibilityComment of id $id does not exist.")
     }
 
     override fun findByIdOrNull(id: String): BuildingAccessibilityUpvote? {
@@ -37,11 +37,11 @@ class BuildingAccessibilityUpvoteRepository(
 
     override fun findExistingUpvote(
         userId: String,
-        buildingAccessibility: BuildingAccessibility
+        buildingAccessibilityId: String
     ): BuildingAccessibilityUpvote? {
         return queries.findByUserAndBuildingAccessibilityAndNotDeleted(
             userId = userId,
-            buildingAccessibilityId = buildingAccessibility.id,
+            buildingAccessibilityId = buildingAccessibilityId,
         ).executeAsOneOrNull()?.toDomainModel()
     }
 

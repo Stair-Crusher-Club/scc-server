@@ -16,12 +16,6 @@ FROM building_accessibility_upvote
     JOIN building_accessibility ON building_accessibility.id = building_accessibility_upvote.building_accessibility_id
 WHERE building_accessibility_upvote.id = :id;
 
-buildingAccessibilityUpvoteFindByBuildingId:
-SELECT *
-FROM building_accessibility_upvote
-    JOIN building_accessibility ON building_accessibility.id = building_accessibility_upvote.building_accessibility_id
-WHERE building_id = :buildingId;
-
 findByUserAndBuildingAccessibilityAndNotDeleted:
 SELECT *
 FROM building_accessibility_upvote

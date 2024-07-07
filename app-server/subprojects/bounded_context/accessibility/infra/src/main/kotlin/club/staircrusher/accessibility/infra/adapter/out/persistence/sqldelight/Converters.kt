@@ -9,6 +9,7 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
+import club.staircrusher.accessibility.domain.model.PlaceAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_rank
@@ -17,6 +18,7 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessi
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility_upvote
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility_comment
+import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility_upvote
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.BuildingAccessibilityUpvoteFindById
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserAndBuildingAccessibilityAndNotDeleted
 import club.staircrusher.stdlib.time.toOffsetDateTime
@@ -195,6 +197,25 @@ fun PlaceAccessibilityComment.toPersistenceModel() = Place_accessibility_comment
     updated_at = createdAt.toOffsetDateTime(),
     deleted_at = deletedAt?.toOffsetDateTime(),
 )
+
+fun PlaceAccessibilityUpvote.toPersistenceModel() = Place_accessibility_upvote(
+    id = id,
+    user_id = userId,
+    place_accessibility_id = placeAccessibilityId,
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = createdAt.toOffsetDateTime(),
+    deleted_at = deletedAt?.toOffsetDateTime(),
+)
+
+fun Place_accessibility_upvote.toDomainModel(): PlaceAccessibilityUpvote {
+    return PlaceAccessibilityUpvote(
+        id = id,
+        userId = user_id,
+        placeAccessibilityId = place_accessibility_id,
+        createdAt = created_at.toInstant(),
+        deletedAt = deleted_at?.toInstant()
+    )
+}
 
 fun AccessibilityRank.toPersistenceModel() = Accessibility_rank(
     id = id,
