@@ -3,9 +3,6 @@ package club.staircrusher.accessibility.application.port.`in`
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.time.getDayOfWeek
-import club.staircrusher.stdlib.time.toEndOfDay
-import club.staircrusher.stdlib.time.toEndOfMonth
-import club.staircrusher.stdlib.time.toEndOfWeek
 import club.staircrusher.stdlib.time.toStartOfDay
 import club.staircrusher.stdlib.time.toStartOfMonth
 import club.staircrusher.stdlib.time.toStartOfWeek
@@ -18,13 +15,13 @@ class GetAccessibilityActivityReportUseCase(
     fun handle(request: Request): Response {
         val now = SccClock.instant()
         val todayConqueredCount = accessibilityApplicationService.countByUserIdAndCreatedAtBetween(
-            userId = request.userId, from = now.toStartOfDay(), to = now.toEndOfDay()
+            userId = request.userId, from = now.toStartOfDay(), to = now
         )
         val thisMonthConqueredCount = accessibilityApplicationService.countByUserIdAndCreatedAtBetween(
-            userId = request.userId, from = now.toStartOfMonth(), to = now.toEndOfMonth()
+            userId = request.userId, from = now.toStartOfMonth(), to = now
         )
         val (placeAccessibilities, buildingAccessibilities) = accessibilityApplicationService.findByUserIdAndCreatedAtBetween(
-            userId = request.userId, from = now.toStartOfWeek(), to = now.toEndOfWeek()
+            userId = request.userId, from = now.toStartOfWeek(), to = now
         )
         val createdAts = placeAccessibilities.map { it.createdAt }.plus(buildingAccessibilities.map { it.createdAt })
         return Response(
