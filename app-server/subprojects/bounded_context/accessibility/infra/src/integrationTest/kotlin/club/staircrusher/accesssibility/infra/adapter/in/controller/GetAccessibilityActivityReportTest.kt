@@ -2,21 +2,24 @@ package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.DayOfWeek
 import club.staircrusher.api.spec.dto.GetAccessibilityActivityReportResponseDto
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.time.getDayOfMonth
 import club.staircrusher.stdlib.time.toEndOfMonth
 import club.staircrusher.stdlib.time.toStartOfMonth
 import club.staircrusher.stdlib.time.toStartOfWeek
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
+import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.temporal.ChronoUnit
 
 class GetAccessibilityActivityReportTest : SccSpringITBase() {
+    @Autowired
+    lateinit var clock: MockSccClock
 
     @Test
     fun `오늘, 이번달, 이번주 정복량을 내려준다`() {
-        val now = SccClock.instant()
+        val now = clock.instant()
         val startDayOfThisMonth = now.toStartOfMonth()
         val lastDayOfThisMonth = now.toEndOfMonth()
 
