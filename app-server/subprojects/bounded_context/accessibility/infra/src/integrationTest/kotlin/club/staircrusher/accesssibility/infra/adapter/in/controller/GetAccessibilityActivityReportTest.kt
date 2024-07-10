@@ -18,14 +18,13 @@ class GetAccessibilityActivityReportTest : SccSpringITBase() {
     fun `오늘, 이번달, 이번주 정복량을 내려준다`() {
         val now = SccClock.instant()
         val startDayOfThisMonth = now.toStartOfMonth()
-
         val lastDayOfThisMonth = now.toEndOfMonth()
 
         val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
-        transactionManager.doInTransaction {
-            // 매일 12시에 1개씩 등록
-            return@doInTransaction (0 until lastDayOfThisMonth.getDayOfMonth()).map { index ->
-                val createdAt = startDayOfThisMonth.plus(12L + index * 24L, ChronoUnit.HOURS)
+        (0 until lastDayOfThisMonth.getDayOfMonth()).map { index ->
+            // 매일 오후 6시에 1개씩 등록
+            transactionManager.doInTransaction {
+                val createdAt = startDayOfThisMonth.plus(18L + index * 24L, ChronoUnit.HOURS)
                 val place = testDataGenerator.createBuildingAndPlace()
                 val placeAccessibility =
                     testDataGenerator.registerPlaceAccessibility(place = place, user = user, at = createdAt)
@@ -35,7 +34,7 @@ class GetAccessibilityActivityReportTest : SccSpringITBase() {
                         user = user,
                         at = createdAt
                     )
-                return@map placeAccessibility to buildingAccessibility
+                return@doInTransaction placeAccessibility to buildingAccessibility
             }
         }
         val result = mvc
