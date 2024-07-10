@@ -3,43 +3,46 @@ package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.DayOfWeek
 import club.staircrusher.api.spec.dto.GetAccessibilityActivityReportResponseDto
 import club.staircrusher.stdlib.time.getDayOfMonth
-import club.staircrusher.stdlib.time.toEndOfMonth
-import club.staircrusher.stdlib.time.toStartOfMonth
 import club.staircrusher.stdlib.time.toStartOfWeek
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.testing.spring_it.mock.MockSccClock
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.temporal.ChronoUnit
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 class GetAccessibilityActivityReportTest : SccSpringITBase() {
     @Autowired
     lateinit var clock: MockSccClock
 
+    @AfterEach
+    fun cleanUp() {
+        clock.reset()
+    }
+
     @Test
     fun `오늘, 이번달, 이번주 정복량을 내려준다`() {
-        val now = clock.instant()
-        val startDayOfThisMonth = now.toStartOfMonth()
-        val lastDayOfThisMonth = now.toEndOfMonth()
+        val baseLocalDateTime = LocalDateTime.of(2024, 7, 1, 12, 0)
 
         val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
-        (0 until lastDayOfThisMonth.getDayOfMonth()).map { index ->
-            // 매일 오후 6시에 1개씩 등록
+        (0 until 10).map { index ->
             transactionManager.doInTransaction {
-                val createdAt = startDayOfThisMonth.plus(18L + index * 24L, ChronoUnit.HOURS)
+                val createdAt = ZonedDateTime.of(baseLocalDateTime.plusDays(index.toLong()), clock.zone).toInstant()
                 val place = testDataGenerator.createBuildingAndPlace()
-                val placeAccessibility =
-                    testDataGenerator.registerPlaceAccessibility(place = place, user = user, at = createdAt)
-                val buildingAccessibility =
-                    testDataGenerator.registerBuildingAccessibilityIfNotExists(
-                        building = place.building,
-                        user = user,
-                        at = createdAt
-                    )
-                return@doInTransaction placeAccessibility to buildingAccessibility
+                testDataGenerator.registerPlaceAccessibility(place = place, user = user, at = createdAt)
+                testDataGenerator.registerBuildingAccessibilityIfNotExists(
+                    building = place.building,
+                    user = user,
+                    at = createdAt
+                )
             }
         }
+
+        val now = ZonedDateTime.of(baseLocalDateTime.plusHours(1L), clock.zone).toInstant()
+        clock.setTime(now)
+
         val result = mvc
             .sccRequest("/getAccessibilityActivityReport", null, user = user)
             .getResult(GetAccessibilityActivityReportResponseDto::class)
