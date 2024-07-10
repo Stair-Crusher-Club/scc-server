@@ -12,6 +12,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.LocationUtils
+import club.staircrusher.stdlib.place.PlaceCategory
 
 @Component
 class PlaceSearchService(
@@ -79,11 +80,25 @@ class PlaceSearchService(
             .toSearchPlacesResult(currentLocation = null)
     }
 
-    suspend fun getPlace(placeId: String): SearchPlacesResult {
+    fun getPlace(placeId: String): SearchPlacesResult {
         val place = placeApplicationService.findPlace(placeId) ?: throw IllegalArgumentException("Place with id $placeId does not exist.")
         return listOf(place)
             .toSearchPlacesResult(currentLocation = null)
             .first()
+    }
+
+    suspend fun listNearbyPlacesByCategory(placeCategory: PlaceCategory, currentLocation: Location, radiusMeters: Int): List<SearchPlacesResult> {
+        val places = placeApplicationService.findAllByCategory(
+            category = placeCategory,
+            option = MapsService.SearchByCategoryOption(
+                region = MapsService.SearchByCategoryOption.CircleRegion(
+                    centerLocation = currentLocation,
+                    radiusMeters = radiusMeters,
+                )
+            )
+        )
+
+        return places.toSearchPlacesResult(currentLocation)
     }
 
     private fun List<Place>.toSearchPlacesResult(currentLocation: Location?): List<SearchPlacesResult> {
@@ -111,7 +126,7 @@ class PlaceSearchService(
         limit: Int?,
     ): List<SearchPlacesResult> {
         return this.filter { result ->
-            val scoreChecked = maxAccessibilityScore?.let { result.accessibilityScore ?: Double.MAX_VALUE <= it } ?: true
+            val scoreChecked = maxAccessibilityScore?.let { (result.accessibilityScore ?: Double.MAX_VALUE) <= it } ?: true
             val slopeChecked = hasSlope?.let { result.placeAccessibility?.hasSlope == it } ?: true
             val accessibilityRegisteredChecked = isAccessibilityRegistered?.let { (result.placeAccessibility !== null) == it } ?: true
             scoreChecked && slopeChecked && accessibilityRegisteredChecked

@@ -45,7 +45,7 @@ class SearchPlacesController(
     }
 
     @PostMapping("/getPlaceWithBuilding")
-    suspend fun getPlace(@RequestBody request: GetAccessibilityPostRequest): PlaceListItem {
+    fun getPlace(@RequestBody request: GetAccessibilityPostRequest): PlaceListItem {
         return placeSearchService.getPlace(request.placeId).toDTO()
     }
 
@@ -55,5 +55,10 @@ class SearchPlacesController(
             items = listSearchKeywordOfPlaceCategoryUseCase.handle()
                 .map { SearchKeywordOfPlaceCategoryDto(it.first.toDto(), it.second) }
         )
+    }
+
+    @PostMapping("/listNearbyAccessiblePlaces")
+    fun listNearbyAccessiblePlaces() {
+        TODO("Not implemented yet")
     }
 }

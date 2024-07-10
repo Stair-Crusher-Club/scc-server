@@ -7,12 +7,12 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.di.annotation.Component
 
 @Component
-class ListConqueredPlacesQuery(
+class ListConqueredPlacesUseCase(
     private val transactionManager: TransactionManager,
     private val placeApplicationService: PlaceApplicationService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
-    fun listConqueredPlaces(userId: String): List<PlaceSearchService.SearchPlacesResult> = transactionManager.doInTransaction {
+    fun handle(userId: String): List<PlaceSearchService.SearchPlacesResult> = transactionManager.doInTransaction {
         val (placeAccessibilities, buildingAccessibilities) = accessibilityApplicationService.findByUserId(userId)
         val placeAccessibilityByPlaceId = placeAccessibilities.associateBy { it.placeId }
         val buildingAccessibilityByBuildingId = buildingAccessibilities.associateBy { it.buildingId }
