@@ -309,6 +309,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Test
     fun `현재 사용중인 s3 bucket 에 대해서만 CDN 으로 라우팅된 이미지 url 이 내려간다`() {
         val imageUrlFromActiveBucket = "https://test.s3.ap-northeast-2.amazonaws.com/1.jpg"
         val imageUrlFromOldBucket = "https://some-other-bucket.s3.ap-northeast-2.amazonaws.com/2.jpg"
