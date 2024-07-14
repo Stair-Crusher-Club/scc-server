@@ -22,10 +22,12 @@ import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
+import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.domain.model.PlaceFavorite
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.geography.Location
@@ -54,6 +56,9 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var placeRepository: PlaceRepository
+
+    @Autowired
+    private lateinit var placeFavoriteRepository: PlaceFavoriteRepository
 
     @Autowired
     private lateinit var buildingRepository: BuildingRepository
@@ -212,6 +217,23 @@ class ITDataGenerator {
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
                 description = description,
+            )
+        )
+    }
+
+    fun createPlaceFavorite(
+        userId: String,
+        placeId: String,
+        at: Instant = clock.instant()
+    ): PlaceFavorite {
+        return placeFavoriteRepository.save(
+            PlaceFavorite(
+                id = EntityIdGenerator.generateRandom(),
+                userId = userId,
+                placeId = placeId,
+                createdAt = at,
+                updatedAt = at,
+                deletedAt = null,
             )
         )
     }

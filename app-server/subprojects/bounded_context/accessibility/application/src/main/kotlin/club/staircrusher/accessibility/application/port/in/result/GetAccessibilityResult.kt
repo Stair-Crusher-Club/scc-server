@@ -13,6 +13,8 @@ data class GetAccessibilityResult(
     val placeAccessibilityComments: List<WithUserInfo<PlaceAccessibilityComment>>,
     val hasOtherPlacesToRegisterInSameBuilding: Boolean,
     val isLastPlaceAccessibilityInBuilding: Boolean,
+    val isFavoritePlace: Boolean,
+    val totalFavoriteCount: Long
 ) {
     data class BuildingAccessibilityUpvoteInfo(
         val isUpvoted: Boolean,

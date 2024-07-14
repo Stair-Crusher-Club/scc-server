@@ -32,6 +32,5 @@ class GivePlaceAccessibilityUpvoteUseCase(
                 createdAt = clock.instant(),
             )
         )
-
     }
 }

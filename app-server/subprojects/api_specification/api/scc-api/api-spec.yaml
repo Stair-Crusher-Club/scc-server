@@ -779,10 +779,19 @@ components:
         hasOtherPlacesToRegisterInBuilding:
           type: boolean
           description: "'이 건물의 다른 점포 등록하기'를 보여줄지 여부."
+        isFavoritePlace:
+          type: boolean
+          description: 내가 즐겨찾기한 장소인지 여부.
+        totalFavoriteCount:
+          type: integer
+          format: int64
+          description: 이 장소를 즐겨찾기한 사람 수.
       required:
         - buildingAccessibilityComments
         - placeAccessibilityComments
         - hasOtherPlacesToRegisterInBuilding
+        - isFavoritePlace
+        - totalFavoriteCount
 
     AccessibilityRankDto:
       type: object
@@ -1040,6 +1049,43 @@ components:
         - Upcoming # 오픈 예정
         - Closed # 종료된 챌린지
 
+    CreatePlaceFavoriteRequestDto:
+      type: object
+      properties:
+        placeId:
+          type: string
+      required:
+        - placeId
+
+    CreatePlaceFavoriteResponseDto:
+      type: object
+      properties:
+        totalPlaceFavoriteCount:
+          type: integer
+          format: int64
+        placeFavorite:
+          $ref: '#/components/schemas/PlaceFavorite'
+      required:
+        - totalPlaceFavoriteCount
+        - placeFavorite
+
+    DeletePlaceFavoriteRequestDto:
+      type: object
+      properties:
+        placeId:
+          type: string
+      required:
+        - placeId
+
+    DeletePlaceFavoriteResponseDto:
+      type: object
+      properties:
+        totalPlaceFavoriteCount:
+          type: integer
+          format: int64
+      required:
+        - totalPlaceFavoriteCount
+
     EntranceDoorType:
       type: string
       enum:
@@ -1074,6 +1120,19 @@ components:
           format: int64
       required:
         - value
+
+    PlaceFavorite:
+      type: object
+      properties:
+        userId:
+          type: string
+        placeId:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+      required:
+        - userId
+        - placeId
 
     GetAccessibilityActivityReportResponseDto:
       type: object
@@ -1318,6 +1377,34 @@ components:
         - totalNumberOfItems
         - items
 
+    ListPlaceFavoritesByUserRequestDto:
+      type: object
+      properties:
+        nextToken:
+          type: string
+          description: 페이지 정보. 없으면 첫 페이지 요소들을 내려준다.
+        limit:
+          type: integer
+          format: int64
+
+    ListPlaceFavoritesByUserResponseDto:
+      type: object
+      properties:
+        totalNumberOfItems:
+          description: 즐겨찾기한 장소의 전체 갯수
+          type: integer
+          format: int64
+        nextToken:
+          type: string
+          description: 다음 페이지 정보. 없으면 더 이상 요청할 값이 없음을 의미한다.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceFavorite'
+      required:
+        - totalNumberOfItems
+        - items
+
     Location:
       description: 위치를 위경도로 표현하기 위한 모델.
       type: object
@@ -1365,6 +1452,9 @@ components:
         address:
           type: string
           description: 점포의 human-readable한 주소.
+        isFavorite:
+          type: boolean
+          description: 내가 즐겨찾기한 점포인지 여부.
       required:
         - id
         - name

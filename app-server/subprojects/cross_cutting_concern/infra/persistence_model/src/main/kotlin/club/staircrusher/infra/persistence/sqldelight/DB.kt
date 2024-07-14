@@ -84,6 +84,7 @@ class DB(dataSource: DataSource) : TransactionManager {
 
     val buildingQueries = scc.buildingQueries
     val placeQueries = scc.placeQueries
+    val placeFavoriteQueries = scc.placeFavoriteQueries
     val buildingAccessibilityQueries = scc.buildingAccessibilityQueries
     val buildingAccessibilityCommentQueries = scc.buildingAccessibilityCommentQueries
     val buildingAccessibilityUpvoteQueries = scc.buildingAccessibilityUpvoteQueries

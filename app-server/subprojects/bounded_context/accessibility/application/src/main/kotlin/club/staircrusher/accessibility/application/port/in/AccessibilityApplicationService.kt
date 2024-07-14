@@ -19,6 +19,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.place.application.port.`in`.BuildingService
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
+import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.clock.SccClock
@@ -39,6 +40,7 @@ class AccessibilityApplicationService(
     private val buildingService: BuildingService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val placeAccessibilityCommentRepository: PlaceAccessibilityCommentRepository,
+    private val placeFavoriteRepository: PlaceFavoriteRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val buildingAccessibilityCommentRepository: BuildingAccessibilityCommentRepository,
     private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,
@@ -115,6 +117,8 @@ class AccessibilityApplicationService(
             ),
             isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id)
                 ?: false,
+            isFavoritePlace = userId?.let { placeFavoriteRepository.findByUserIdAndPlaceId(it, placeId) } != null,
+            totalFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId),
         )
     }
 
