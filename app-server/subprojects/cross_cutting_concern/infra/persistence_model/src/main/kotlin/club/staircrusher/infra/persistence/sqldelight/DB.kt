@@ -2,6 +2,7 @@ package club.staircrusher.infra.persistence.sqldelight
 
 import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.AccessibilityImageListStringColumnAdapter
+import club.staircrusher.infra.persistence.sqldelight.column_adapter.ClubQuestPurposeTypeStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoorTypeListStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
@@ -14,6 +15,7 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.UserMobilit
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
+import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Scc_user
@@ -74,6 +76,9 @@ class DB(dataSource: DataSource) : TransactionManager {
                 }
 
             }
+        ),
+        club_questAdapter = Club_quest.Adapter(
+            purpose_typeAdapter = ClubQuestPurposeTypeStringColumnAdapter,
         )
     )
 

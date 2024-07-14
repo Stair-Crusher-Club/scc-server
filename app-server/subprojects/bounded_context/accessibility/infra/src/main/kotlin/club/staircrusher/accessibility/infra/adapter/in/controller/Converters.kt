@@ -42,14 +42,14 @@ fun BuildingAccessibility.toDTO(
     id = id,
     entranceStairInfo = entranceStairInfo.toDTO(),
     entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
-    entranceImageUrls = entranceImageUrls.map { SccCdn.replaceIfPossible(it) },
+    entranceImageUrls = entranceImageUrls.map { SccCdn.forAccessibilityImage(it) },
     entranceImages = entranceImages.map { it.toDTO() },
     hasSlope = hasSlope,
     hasElevator = hasElevator,
     entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
     elevatorStairInfo = elevatorStairInfo.toDTO(),
     elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
-    elevatorImageUrls = elevatorImageUrls.map { SccCdn.replaceIfPossible(it) },
+    elevatorImageUrls = elevatorImageUrls.map { SccCdn.forAccessibilityImage(it) },
     elevatorImages = elevatorImages.map { it.toDTO() },
     buildingId = buildingId,
     isUpvoted = isUpvoted,
@@ -125,7 +125,7 @@ fun PlaceAccessibility.toDTO(
         floors = floors,
         isFirstFloor = isFirstFloor,
         isStairOnlyOption = isStairOnlyOption,
-        imageUrls = imageUrls.map { SccCdn.replaceIfPossible(it) },
+        imageUrls = imageUrls.map { SccCdn.forAccessibilityImage(it) },
         images = images.map { it.toDTO() },
         stairInfo = stairInfo.toDTO(),
         stairHeightLevel = stairHeightLevel?.toDTO(),
@@ -217,6 +217,6 @@ fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) =
     )
 
 fun AccessibilityImage.toDTO() = club.staircrusher.api.spec.dto.ImageDto(
-    imageUrl = SccCdn.replaceIfPossible(imageUrl),
-    thumbnailUrl = thumbnailUrl,
+    imageUrl = SccCdn.forAccessibilityImage(imageUrl),
+    thumbnailUrl = thumbnailUrl?.let { SccCdn.forAccessibilityImage(it) },
 )

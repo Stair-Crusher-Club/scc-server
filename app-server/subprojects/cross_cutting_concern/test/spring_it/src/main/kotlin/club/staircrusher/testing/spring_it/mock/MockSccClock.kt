@@ -33,6 +33,10 @@ class MockSccClock private constructor() : SccClock() {
         instant = Instant.now()
     }
 
+    fun setTime(newInstant: Instant) {
+        instant = newInstant
+    }
+
     companion object {
         private lateinit var instance: MockSccClock
         private val monitor = Any()

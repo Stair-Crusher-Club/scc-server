@@ -1,6 +1,7 @@
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -19,4 +20,5 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
 }

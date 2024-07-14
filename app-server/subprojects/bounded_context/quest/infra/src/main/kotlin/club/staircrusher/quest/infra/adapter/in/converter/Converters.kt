@@ -5,6 +5,7 @@ import club.staircrusher.admin_api.converter.toModel
 import club.staircrusher.admin_api.spec.dto.ClubQuestCreateDryRunResultItemDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestCreateRegionTypeDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
+import club.staircrusher.admin_api.spec.dto.ClubQuestPurposeTypeEnumDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestSummaryDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
@@ -12,6 +13,7 @@ import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateRegionType
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestPurposeType
 import club.staircrusher.quest.domain.model.ClubQuestSummary
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
@@ -21,6 +23,20 @@ import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 fun ClubQuestCreateRegionTypeDTO.toModel() = when (this) {
     ClubQuestCreateRegionTypeDTO.CIRCLE -> ClubQuestCreateRegionType.CIRCLE
     ClubQuestCreateRegionTypeDTO.POLYGON -> ClubQuestCreateRegionType.POLYGON
+}
+
+fun ClubQuestPurposeType.toDTO() = when (this) {
+    ClubQuestPurposeType.CRUSHER_CLUB -> ClubQuestPurposeTypeEnumDTO.CRUSHER_CLUB
+    ClubQuestPurposeType.DAILY_CLUB -> ClubQuestPurposeTypeEnumDTO.DAILY_CLUB
+    ClubQuestPurposeType.COLLABO_CLUB -> ClubQuestPurposeTypeEnumDTO.COLLABO_CLUB
+    ClubQuestPurposeType.ESG_PARTNERS -> ClubQuestPurposeTypeEnumDTO.ESG_PARTNERS
+}
+
+fun ClubQuestPurposeTypeEnumDTO.toModel() = when (this) {
+    ClubQuestPurposeTypeEnumDTO.CRUSHER_CLUB -> ClubQuestPurposeType.CRUSHER_CLUB
+    ClubQuestPurposeTypeEnumDTO.DAILY_CLUB -> ClubQuestPurposeType.DAILY_CLUB
+    ClubQuestPurposeTypeEnumDTO.COLLABO_CLUB -> ClubQuestPurposeType.COLLABO_CLUB
+    ClubQuestPurposeTypeEnumDTO.ESG_PARTNERS -> ClubQuestPurposeType.ESG_PARTNERS
 }
 
 fun ClubQuestCreateDryRunResultItemDTO.toModel() = ClubQuestCreateDryRunResultItem(
@@ -63,7 +79,11 @@ fun DryRunnedClubQuestTargetPlace.toDTO(isConquered: Boolean): ClubQuestTargetPl
 fun ClubQuestWithDtoInfo.toDTO() = ClubQuestDTO(
     id = quest.id,
     name = quest.name,
-    buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds, placeById) }
+    purposeType = quest.purposeType.toDTO(),
+    startAt = quest.startAt.toDTO(),
+    endAt = quest.endAt.toDTO(),
+    buildings = quest.targetBuildings.map { it.toDTO(conqueredPlaceIds, placeById) },
+    shortenedUrl = quest.shortenedAdminUrl,
 )
 
 fun ClubQuestTargetBuildingDTO.toModel() = DryRunnedClubQuestTargetBuilding(
@@ -116,4 +136,8 @@ fun ClubQuestTargetPlace.toDTO(
 fun ClubQuestSummary.toDTO() = ClubQuestSummaryDTO(
     id = id,
     name = name,
+    purposeType = purposeType.toDTO(),
+    startAt = startAt.toDTO(),
+    endAt = endAt.toDTO(),
+    shortenedUrl = shortenedUrl,
 )

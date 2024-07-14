@@ -21,16 +21,16 @@ class GivePlaceAccessibilityUpvoteUseCase(
         user: AuthUser,
         placeAccessibilityId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
+        placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)
+            ?: throw IllegalArgumentException("PlaceAccessibility of id $placeAccessibilityId does not exist.")
         val existingUpvote = placeAccessibilityUpvoteRepository.findUpvote(user.id, placeAccessibilityId)
-        existingUpvote ?: placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)?.let {
-            placeAccessibilityUpvoteRepository.save(
-                PlaceAccessibilityUpvote(
-                    id = EntityIdGenerator.generateRandom(),
-                    userId = user.id,
-                    placeAccessibility = it,
-                    createdAt = clock.instant(),
-                )
+        existingUpvote ?: placeAccessibilityUpvoteRepository.save(
+            PlaceAccessibilityUpvote(
+                id = EntityIdGenerator.generateRandom(),
+                userId = user.id,
+                placeAccessibilityId = placeAccessibilityId,
+                createdAt = clock.instant(),
             )
-        }
+        )
     }
 }

@@ -21,8 +21,6 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibil
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility_upvote
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.BuildingAccessibilityUpvoteFindById
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserAndBuildingAccessibilityAndNotDeleted
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindUpvoteById
-import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted
 import club.staircrusher.stdlib.time.toOffsetDateTime
 
 fun Building_accessibility.toDomainModel() = BuildingAccessibility(
@@ -203,64 +201,21 @@ fun PlaceAccessibilityComment.toPersistenceModel() = Place_accessibility_comment
 fun PlaceAccessibilityUpvote.toPersistenceModel() = Place_accessibility_upvote(
     id = id,
     user_id = userId,
-    place_accessibility_id = placeAccessibility.id,
+    place_accessibility_id = placeAccessibilityId,
     created_at = createdAt.toOffsetDateTime(),
     updated_at = createdAt.toOffsetDateTime(),
     deleted_at = deletedAt?.toOffsetDateTime(),
 )
 
-fun FindUpvoteById.toDomainModel(): PlaceAccessibilityUpvote {
-    val placeAccessibility = PlaceAccessibility(
-        id = id,
-        placeId = place_id,
-        floors = floors,
-        isFirstFloor = is_first_floor,
-        isStairOnlyOption = is_stair_only_option,
-        stairInfo = StairInfo.valueOf(stair_info),
-        stairHeightLevel = stair_height_level,
-        hasSlope = has_slope,
-        entranceDoorTypes = entrance_door_types,
-        imageUrls = image_urls,
-        images = images,
-        userId = user_id,
-        createdAt = created_at.toInstant(),
-        deletedAt = deleted_at?.toInstant(),
-    )
+fun Place_accessibility_upvote.toDomainModel(): PlaceAccessibilityUpvote {
     return PlaceAccessibilityUpvote(
         id = id,
         userId = user_id,
-        placeAccessibility = placeAccessibility,
+        placeAccessibilityId = place_accessibility_id,
         createdAt = created_at.toInstant(),
         deletedAt = deleted_at?.toInstant()
     )
 }
-
-fun FindUpvoteByUserIdAndPlaceAccessilbityIdAndNotDeleted.toDomainModel(): PlaceAccessibilityUpvote {
-    val placeAccessibility = PlaceAccessibility(
-        id = id,
-        placeId = place_id,
-        floors = floors,
-        isFirstFloor = is_first_floor,
-        isStairOnlyOption = is_stair_only_option,
-        stairInfo = StairInfo.valueOf(stair_info),
-        stairHeightLevel = stair_height_level,
-        hasSlope = has_slope,
-        entranceDoorTypes = entrance_door_types,
-        imageUrls = image_urls,
-        images = images,
-        userId = user_id,
-        createdAt = created_at.toInstant(),
-        deletedAt = deleted_at?.toInstant(),
-    )
-    return PlaceAccessibilityUpvote(
-        id = id,
-        userId = user_id,
-        placeAccessibility = placeAccessibility,
-        createdAt = created_at.toInstant(),
-        deletedAt = deleted_at?.toInstant()
-    )
-}
-
 
 fun AccessibilityRank.toPersistenceModel() = Accessibility_rank(
     id = id,

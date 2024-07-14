@@ -6,8 +6,10 @@ import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
+import club.staircrusher.quest.application.port.out.web.UrlShorteningService
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
+import club.staircrusher.quest.domain.model.ClubQuestPurposeType
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 import club.staircrusher.quest.util.HumanReadablePrefixGenerator
@@ -15,8 +17,14 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import mu.KotlinLogging
 import java.time.Clock
+import java.time.Duration
+import java.time.Instant
 
 @Component
 class ClubQuestCreateAplService(
@@ -26,6 +34,7 @@ class ClubQuestCreateAplService(
     private val clubQuestTargetBuildingClusterer: ClubQuestTargetBuildingClusterer,
     private val transactionManager: TransactionManager,
     private val accessibilityApplicationService: AccessibilityApplicationService,
+    private val urlShorteningService: UrlShorteningService,
 ) {
     suspend fun createDryRun(
         regionType: ClubQuestCreateRegionType?,
@@ -146,14 +155,46 @@ class ClubQuestCreateAplService(
 
     fun createFromDryRunResult(
         questNamePrefix: String,
-        dryRunResultItems: List<ClubQuestCreateDryRunResultItem>
-    ) = transactionManager.doInTransaction {
-        dryRunResultItems.mapIndexed { idx, dryRunResultItem ->
-            clubQuestRepository.save(ClubQuest.of(
-                name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
-                dryRunResultItem = dryRunResultItem,
-                createdAt = clock.instant(),
-            ))
+        purposeType: ClubQuestPurposeType,
+        startAt: Instant,
+        endAt: Instant,
+        dryRunResultItems: List<ClubQuestCreateDryRunResultItem>,
+    ): List<ClubQuest> {
+        val quests = transactionManager.doInTransaction {
+            dryRunResultItems.mapIndexed { idx, dryRunResultItem ->
+                clubQuestRepository.save(
+                    ClubQuest.of(
+                        name = "$questNamePrefix - ${getQuestNamePostfix(idx)}",
+                        purposeType = purposeType,
+                        startAt = startAt,
+                        endAt = endAt,
+                        dryRunResultItem = dryRunResultItem,
+                        createdAt = clock.instant(),
+                    )
+                )
+            }
+        }
+
+        return runBlocking {
+            quests.map { quest ->
+                async {
+                    val shortenedAdminUrl = try {
+                        val originalAdminUrl = quest.originalAdminUrl
+                        urlShorteningService.shorten(
+                            originalAdminUrl,
+                            expiryDuration = Duration.ofDays(365 * 100),
+                        )
+                    } catch (t: Throwable) {
+                        logger.error("Failed to create shortened url for ClubQuest(${quest.id})", t)
+                        return@async quest
+                    }
+                    transactionManager.doInTransaction {
+                        val reloadedQuest = clubQuestRepository.findById(quest.id)
+                        reloadedQuest.updateShortenedAdminUrl(shortenedAdminUrl)
+                        clubQuestRepository.save(reloadedQuest)
+                    }
+                }
+            }.awaitAll()
         }
     }
 
@@ -163,5 +204,9 @@ class ClubQuestCreateAplService(
 
     private fun getQuestNamePostfix(idx: Int): String {
         return "${HumanReadablePrefixGenerator.generateByAlphabet(idx)}조"
+    }
+
+    companion object {
+        private val logger = KotlinLogging.logger {  }
     }
 }

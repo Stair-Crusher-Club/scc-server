@@ -3,8 +3,10 @@ package club.staircrusher.testing.spring_it.mock
 import club.staircrusher.accessibility.application.port.`in`.image.ThumbnailGenerator
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.quest.application.port.out.web.UrlShorteningService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
+import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.service.ClientVersionService
 import jakarta.annotation.Priority
 import org.springframework.boot.autoconfigure.AutoConfiguration
@@ -49,5 +51,17 @@ open class SccSpringItMockConfiguration {
     @Primary
     open fun mockThumbnailGenerator(): ThumbnailGenerator {
         return MockThumbnailGenerator()
+    }
+
+    @Bean
+    @Primary
+    open fun mockStibeeSubscriptionService(): StibeeSubscriptionService {
+        return MockStibeeSubscriptionService()
+    }
+
+    @Bean
+    @Primary
+    open fun mockUrlShorteningService(): UrlShorteningService {
+        return MockUrlShorteningService()
     }
 }

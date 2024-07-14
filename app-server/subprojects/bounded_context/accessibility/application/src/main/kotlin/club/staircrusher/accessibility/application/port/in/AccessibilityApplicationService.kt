@@ -30,6 +30,7 @@ import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import mu.KotlinLogging
+import java.time.Instant
 
 @Suppress("TooManyFunctions")
 @Component
@@ -61,6 +62,7 @@ class AccessibilityApplicationService(
         try {
             accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
             accessibilityImageService.generateThumbnailsIfNeeded(placeId)
+            logger.info { "Thumbnail generation complete" }
         } catch (e: Throwable) {
             logger.error(e) { "Failed to generate thumbnail and migrate images for place $placeId" }
         }
@@ -383,6 +385,27 @@ class AccessibilityApplicationService(
 
         val buildingAccessibilities =
             buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.placeId })
+        return Pair(placeAccessibilities, buildingAccessibilities)
+    }
+
+    fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int =
+        placeAccessibilityRepository.countByUserIdAndCreatedAtBetween(
+            userId,
+            from,
+            to
+        ) + buildingAccessibilityRepository.countByUserIdCreatedAtBetween(
+            userId,
+            from,
+            to
+        )
+
+    fun findByUserIdAndCreatedAtBetween(
+        userId: String,
+        from: Instant,
+        to: Instant
+    ): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
+        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
+        val buildingAccessibilities = buildingAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 }
