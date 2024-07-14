@@ -25,6 +25,9 @@ dependencies {
 
     val jacksonModuleKotlinVersion: String by project
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
 }
 
 idea {

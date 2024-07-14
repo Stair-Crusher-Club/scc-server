@@ -1,13 +1,12 @@
 package club.staircrusher.spring_web.mock
 
-import club.staircrusher.user.domain.model.User
-import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.stdlib.di.annotation.Component
-import org.junit.jupiter.api.Order
-import org.springframework.core.Ordered
+import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.domain.model.User
+import org.springframework.context.annotation.Primary
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Primary
 class InMemoryUserRepository : UserRepository {
     private val userById = mutableMapOf<String, User>()
     override fun findByNickname(nickname: String): User? {

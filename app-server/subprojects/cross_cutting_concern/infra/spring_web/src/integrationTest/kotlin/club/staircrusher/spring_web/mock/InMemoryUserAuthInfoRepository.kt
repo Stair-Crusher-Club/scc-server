@@ -1,11 +1,13 @@
 package club.staircrusher.spring_web.mock
 
-import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
+import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType
+import org.springframework.context.annotation.Primary
 
 @Component
+@Primary
 class InMemoryUserAuthInfoRepository : UserAuthInfoRepository {
     private val userById = mutableMapOf<String, UserAuthInfo>()
     override fun save(entity: UserAuthInfo): UserAuthInfo {

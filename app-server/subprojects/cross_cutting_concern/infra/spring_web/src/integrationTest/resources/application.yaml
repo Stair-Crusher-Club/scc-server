@@ -1,3 +1,53 @@
+spring:
+  datasource:
+    username: test
+    password: test
+    url: jdbc:postgresql://localhost:15432/scc_test
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 2000
+      data-source-properties.cachePrepStmts: true
+      data-source-properties.prepStmtCacheSize: 250
+      data-source-properties.prepStmtCacheSqlLimit: 2048
+      pool-name: writer
+      maximum-pool-size: 16
+      minimum-idle: 10
+
 scc:
+  environment: test
+
+  kakao:
+    apiKey: test
+
+  naver:
+    open-api:
+      client-id: test
+      client-secret: test
+
+  s3:
+    imageUpload:
+      bucketName: test
+      thumbnailBucketName: test
+      accessKey: test
+      secretKey: test
+
+  cloudfront:
+    domain: cloudfronttest
+
   admin:
     password: adminPassword
+
+  kakao-login:
+    oauth-client-id: test
+
+  apple-login:
+    service-id: test
+    client-secret: test
+
+  stibee:
+    apiKey: test
+    listId: test
+
+  nhn-cloud:
+    url-shortening:
+      appKey: test

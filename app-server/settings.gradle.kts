@@ -31,6 +31,8 @@ pluginManagement {
     plugins {
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
+        kotlin("plugin.spring") version kotlinVersion apply false
+        kotlin("plugin.jpa") version kotlinVersion apply false
 
         id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
         id("org.springframework.boot") version springBootVersion
