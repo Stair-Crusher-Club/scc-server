@@ -4,8 +4,8 @@ import club.staircrusher.api.spec.dto.CreatePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.CreatePlaceFavoriteResponseDto
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteResponseDto
-import club.staircrusher.api.spec.dto.ListPlaceFavoritesRequestDto
-import club.staircrusher.api.spec.dto.ListPlaceFavoritesResponseDto
+import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserRequestDto
+import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserResponseDto
 import club.staircrusher.place.application.port.`in`.CreatePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.DeletePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.ListPlaceFavoritesByUserUseCase
@@ -56,9 +56,9 @@ class PlaceFavoriteController(
 
     @PostMapping("/listPlaceFavoritesByUser")
     fun listPlaceFavorites(
-        @RequestBody request: ListPlaceFavoritesRequestDto,
+        @RequestBody request: ListPlaceFavoritesByUserRequestDto,
         authentication: SccAppAuthentication?,
-    ): ListPlaceFavoritesResponseDto {
+    ): ListPlaceFavoritesByUserResponseDto {
         val userId = authentication?.details?.id ?: throw IllegalArgumentException("Unauthorized")
         val response = listPlaceFavoritesByUserUseCase.handle(
             ListPlaceFavoritesByUserUseCase.Request(
@@ -67,7 +67,7 @@ class PlaceFavoriteController(
                 nextToken = request.nextToken
             )
         )
-        return ListPlaceFavoritesResponseDto(
+        return ListPlaceFavoritesByUserResponseDto(
             totalNumberOfItems = response.totalCount,
             items = response.favorites.map { it.toDto() },
             nextToken = response.nextToken
