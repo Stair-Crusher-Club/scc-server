@@ -3,6 +3,8 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.application.server_log.port.`in`.SccServerLogger
+import club.staircrusher.domain.server_log.NewsletterSubscribedOnSignupPayload
 import club.staircrusher.stdlib.testing.SccRandom
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.model.UserMobilityTool
@@ -16,12 +18,16 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.springframework.boot.test.mock.mockito.MockBean
 
 class UpdateUserInfoTest : UserITBase() {
     @MockBean
     lateinit var stibeeSubscriptionService: StibeeSubscriptionService
+
+    @MockBean
+    lateinit var sccServerLogger: SccServerLogger
 
     @Test
     fun updateUserInfoTest() {
@@ -196,6 +202,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 verifyBlocking(stibeeSubscriptionService, atLeastOnce()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
+                verify(sccServerLogger, atLeastOnce()).record(NewsletterSubscribedOnSignupPayload(user.id))
             }
     }
 
@@ -230,6 +237,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
+                verify(sccServerLogger, never()).record(NewsletterSubscribedOnSignupPayload(user.id))
             }
     }
 
@@ -265,6 +273,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
+                verify(sccServerLogger, never()).record(NewsletterSubscribedOnSignupPayload(user.id))
             }
     }
 }

@@ -1,0 +1,8 @@
+save:
+INSERT INTO server_log
+VALUES :server_log
+ON CONFLICT(id) DO UPDATE SET
+    id = EXCLUDED.id,
+    type = EXCLUDED.type,
+    payload = EXCLUDED.payload,
+    created_at = EXCLUDED.created_at;

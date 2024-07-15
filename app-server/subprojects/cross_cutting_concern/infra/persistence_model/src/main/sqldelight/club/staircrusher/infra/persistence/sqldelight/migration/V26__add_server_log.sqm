@@ -1,0 +1,12 @@
+import club.staircrusher.domain.server_log.ServerLogPayload;
+import club.staircrusher.domain.server_log.ServerLogType;
+
+CREATE TABLE IF NOT EXISTS server_log (
+    id VARCHAR(36) NOT NULL,
+    type VARCHAR(64) AS ServerLogType NOT NULL,
+    payload TEXT AS ServerLogPayload NOT NULL DEFAULT '',
+    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_server_log_1 ON server_log(type, created_at);
