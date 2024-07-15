@@ -9,6 +9,7 @@ dependencies {
 
     api(projects.apiSpecification.api)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
+    implementation(projects.crossCuttingConcern.infra.serverLog)
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-webflux")
     implementation("io.projectreactor.netty:reactor-netty")
@@ -20,6 +21,5 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
-    integrationTestImplementation(projects.crossCuttingConcern.application.serverLog)
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
 }
