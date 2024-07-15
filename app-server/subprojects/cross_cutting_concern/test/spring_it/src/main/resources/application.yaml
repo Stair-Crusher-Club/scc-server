@@ -31,6 +31,9 @@ scc:
       accessKey: test
       secretKey: test
 
+  cloudfront:
+    domain: cloudfronttest
+
   admin:
     password: adminPassword
 
@@ -40,3 +43,11 @@ scc:
   apple-login:
     service-id: test
     client-secret: test
+
+  stibee:
+    apiKey: test
+    listId: test
+
+  nhn-cloud:
+    url-shortening:
+      appKey: test

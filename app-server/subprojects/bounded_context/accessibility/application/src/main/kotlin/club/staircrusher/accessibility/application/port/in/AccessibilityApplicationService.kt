@@ -19,6 +19,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.place.application.port.`in`.BuildingService
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
+import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.clock.SccClock
@@ -29,6 +30,7 @@ import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import mu.KotlinLogging
+import java.time.Instant
 
 @Suppress("TooManyFunctions")
 @Component
@@ -38,6 +40,7 @@ class AccessibilityApplicationService(
     private val buildingService: BuildingService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val placeAccessibilityCommentRepository: PlaceAccessibilityCommentRepository,
+    private val placeFavoriteRepository: PlaceFavoriteRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val buildingAccessibilityCommentRepository: BuildingAccessibilityCommentRepository,
     private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,
@@ -59,6 +62,7 @@ class AccessibilityApplicationService(
         try {
             accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
             accessibilityImageService.generateThumbnailsIfNeeded(placeId)
+            logger.info { "Thumbnail generation complete" }
         } catch (e: Throwable) {
             logger.error(e) { "Failed to generate thumbnail and migrate images for place $placeId" }
         }
@@ -85,7 +89,7 @@ class AccessibilityApplicationService(
                 isUpvoted = userId?.let {
                     buildingAccessibilityUpvoteRepository.findExistingUpvote(
                         userId,
-                        buildingAccessibility,
+                        buildingAccessibility.id,
                     )
                 } != null,
                 totalUpvoteCount = buildingAccessibilityUpvoteRepository.countUpvotes(buildingAccessibility.id),
@@ -113,6 +117,8 @@ class AccessibilityApplicationService(
             ),
             isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id)
                 ?: false,
+            isFavoritePlace = userId?.let { placeFavoriteRepository.findByUserIdAndPlaceId(it, placeId) } != null,
+            totalFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId),
         )
     }
 
@@ -215,8 +221,10 @@ class AccessibilityApplicationService(
             ) {
                 throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
-            val entranceImages = it.entranceImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
-            val elevatorImages = it.elevatorImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
+            val entranceImages =
+                it.entranceImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
+            val elevatorImages =
+                it.elevatorImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
 
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
@@ -277,7 +285,12 @@ class AccessibilityApplicationService(
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
                 entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
-                images = createPlaceAccessibilityParams.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
+                images = createPlaceAccessibilityParams.imageUrls.map {
+                    AccessibilityImage(
+                        imageUrl = it,
+                        thumbnailUrl = null
+                    )
+                },
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = SccClock.instant(),
             )
@@ -372,6 +385,27 @@ class AccessibilityApplicationService(
 
         val buildingAccessibilities =
             buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.placeId })
+        return Pair(placeAccessibilities, buildingAccessibilities)
+    }
+
+    fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int =
+        placeAccessibilityRepository.countByUserIdAndCreatedAtBetween(
+            userId,
+            from,
+            to
+        ) + buildingAccessibilityRepository.countByUserIdCreatedAtBetween(
+            userId,
+            from,
+            to
+        )
+
+    fun findByUserIdAndCreatedAtBetween(
+        userId: String,
+        from: Instant,
+        to: Instant
+    ): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
+        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
+        val buildingAccessibilities = buildingAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 }

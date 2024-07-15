@@ -1,9 +1,12 @@
 package club.staircrusher.place.infra.adapter.out.persistence
 
+import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.infra.persistence.sqldelight.migration.Building
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
+import club.staircrusher.infra.persistence.sqldelight.migration.Place_favorite
 import club.staircrusher.infra.persistence.sqldelight.query.place.FindById
 import club.staircrusher.place.domain.model.BuildingAddress
+import club.staircrusher.place.domain.model.PlaceFavorite
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.time.toOffsetDateTime
 import java.time.Instant
@@ -113,3 +116,34 @@ fun club.staircrusher.place.domain.model.Place.toPersistenceModel(): Place {
         is_not_accessible = isNotAccessible,
     )
 }
+
+fun PlaceFavorite.toPersistenceModel(): Place_favorite {
+    return Place_favorite(
+        id = id,
+        place_id = placeId,
+        user_id = userId,
+        created_at = Instant.now().toOffsetDateTime(),
+        updated_at = Instant.now().toOffsetDateTime(),
+        deleted_at = deletedAt?.toOffsetDateTime()
+    )
+}
+
+fun Place_favorite.toDomainModel(): PlaceFavorite {
+    return PlaceFavorite(
+        id = id,
+        placeId = place_id,
+        userId = user_id,
+        createdAt = created_at.toInstant(),
+        updatedAt = updated_at.toInstant(),
+        deletedAt = deleted_at?.toInstant()
+    )
+}
+
+fun PlaceFavorite.toDto(): club.staircrusher.api.spec.dto.PlaceFavorite {
+    return club.staircrusher.api.spec.dto.PlaceFavorite(
+        placeId = placeId,
+        userId = userId,
+        createdAt = EpochMillisTimestamp(updatedAt.toEpochMilli()),
+    )
+}
+

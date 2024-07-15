@@ -40,6 +40,7 @@ class UserController(
             instagramId = request.instagramId,
             email = request.email,
             mobilityTools = request.mobilityTools.map { it.toModel() },
+            isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed ?: false,
         )
         return UpdateUserInfoPost200Response(
             user = updatedUser.toDTO(),

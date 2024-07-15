@@ -1,0 +1,43 @@
+save:
+INSERT INTO place_favorite
+VALUES :place_favorite
+ON CONFLICT(id) DO UPDATE SET
+    place_id = EXCLUDED.place_id,
+    user_id = EXCLUDED.user_id,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at,
+    deleted_at = EXCLUDED.deleted_at;
+
+removeAll:
+DELETE FROM place_favorite;
+
+findPlaceFavoriteById:
+SELECT *
+FROM place_favorite
+WHERE place_favorite.id = :id;
+
+findPlaceFavoriteByUserId:
+SELECT *
+FROM place_favorite
+WHERE place_favorite.user_id = :user_id;
+
+findPlaceFavoriteByUserIdAndPlaceId:
+SELECT *
+FROM place_favorite
+WHERE
+    place_favorite.user_id = :user_id
+    AND place_favorite.place_id = :place_id;
+
+findPlaceFavoriteByPlaceIdAndDeletedAtIsNull:
+SELECT *
+FROM place_favorite
+WHERE
+    place_favorite.place_id = :place_id
+    AND place_favorite.deleted_at IS NULL;
+
+countPlaceFavoritesByPlaceIdAndDeletedAtIsNull:
+SELECT COUNT(1)
+FROM place_favorite
+WHERE
+    place_favorite.place_id = :place_id
+    AND place_favorite.deleted_at IS NULL;

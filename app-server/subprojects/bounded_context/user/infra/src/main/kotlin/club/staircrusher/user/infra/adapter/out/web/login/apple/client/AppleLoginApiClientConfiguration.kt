@@ -28,7 +28,7 @@ internal open class AppleLoginApiClientConfiguration {
                 it.addHandlerLast(ReadTimeoutHandler(READ_TIMEOUT.toSeconds(), TimeUnit.SECONDS))
                 it.addHandlerLast(WriteTimeoutHandler(WRITE_TIMEOUT.toSeconds(), TimeUnit.SECONDS))
             }
-            .responseTimeout(Duration.ofSeconds(2))
+            .responseTimeout(RESPONSE_TIMEOUT)
 
         val decoder = KotlinSerializationJsonDecoder(Json { ignoreUnknownKeys = true })
 
@@ -54,5 +54,6 @@ internal open class AppleLoginApiClientConfiguration {
         private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
         private val READ_TIMEOUT = Duration.ofSeconds(10)
         private val WRITE_TIMEOUT = Duration.ofSeconds(10)
+        private val RESPONSE_TIMEOUT = Duration.ofSeconds(2)
     }
 }

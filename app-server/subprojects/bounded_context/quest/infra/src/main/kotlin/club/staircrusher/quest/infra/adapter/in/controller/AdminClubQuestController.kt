@@ -23,6 +23,7 @@ import club.staircrusher.quest.application.port.`in`.GetCursoredClubQuestSummari
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.quest.infra.adapter.`in`.converter.toModel
+import club.staircrusher.stdlib.time.epochMilliToInstant
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -88,6 +89,9 @@ class AdminClubQuestController(
     fun createClubQuest(@RequestBody request: CreateClubQuestRequest): CreateClubQuestResponseDTO {
         val quests = clubQuestCreateAplService.createFromDryRunResult(
             questNamePrefix = request.questNamePrefix,
+            purposeType = request.purposeType.toModel(),
+            startAt = request.startAt.value.epochMilliToInstant(),
+            endAt = request.endAt.value.epochMilliToInstant(),
             dryRunResultItems = request.dryRunResults.map { it.toModel() }
         )
         quests.forEach { quest ->
@@ -104,16 +108,17 @@ class AdminClubQuestController(
             .replace(Regex("개.*"), "")
             .toIntOrNull()
             ?: throw IllegalArgumentException("maxPlaceCountPerQuest(${request.maxPlaceCountPerQuest})를 숫자로 변환할 수 없습니다.")
-        val quest = createAndNotifyDailyClubQuestUseCase.handle(
+        val result = createAndNotifyDailyClubQuestUseCase.handle(
             requesterName = request.requesterName,
             requesterPhoneNumber = request.requesterPhoneNumber,
             centerLocationPlaceName = request.centerLocationPlaceName,
             maxPlaceCountPerQuest = maxPlaceCountPerQuest,
         )
 
-        crossValidateClubQuestPlacesUseCase.handleAsync(quest.id)
+        crossValidateClubQuestPlacesUseCase.handleAsync(result.clubQuest.id)
         return CreateAndNotifyDailyClubQuestResponseDTO(
-            clubQuestId = quest.id,
+            clubQuestId = result.clubQuest.id,
+            url = result.url,
         )
     }
 
