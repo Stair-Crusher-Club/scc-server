@@ -20,7 +20,7 @@ class SccServerPersistentEventRecorder(
         val serverEvent = try {
             ServerEvent(
                 id = EntityIdGenerator.generateRandom(),
-                type = payload.type,
+                type = payload.getType(),
                 payload = payload,
                 createdAt = SccClock.instant(),
             )
