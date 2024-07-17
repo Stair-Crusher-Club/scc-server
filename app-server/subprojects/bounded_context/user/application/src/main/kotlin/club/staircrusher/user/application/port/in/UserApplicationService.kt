@@ -1,7 +1,7 @@
 package club.staircrusher.user.application.port.`in`
 
-import club.staircrusher.application.server_log.port.`in`.SccServerLogger
-import club.staircrusher.domain.server_log.NewsletterSubscribedOnSignupPayload
+import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
+import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -27,7 +27,7 @@ class UserApplicationService(
     private val passwordEncryptor: PasswordEncryptor,
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val stibeeSubscriptionService: StibeeSubscriptionService,
-    private val sccServerLogger: SccServerLogger,
+    private val sccServerEventRecorder: SccServerEventRecorder,
 ) {
 
     @Deprecated("닉네임 로그인은 사라질 예정")
@@ -166,7 +166,7 @@ class UserApplicationService(
     }
 
     private fun subscribeToNewsLetter(userId: String, email: String, name: String) {
-        sccServerLogger.record(NewsletterSubscribedOnSignupPayload(userId))
+        sccServerEventRecorder.record(NewsletterSubscribedOnSignupPayload(userId))
         runBlocking {
             stibeeSubscriptionService.registerSubscriber(
                 email = email,

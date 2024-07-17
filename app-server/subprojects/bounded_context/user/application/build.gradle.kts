@@ -1,3 +1,3 @@
 dependencies {
-    implementation(projects.crossCuttingConcern.application.serverLog)
+    implementation(projects.crossCuttingConcern.application.serverEvent)
 }

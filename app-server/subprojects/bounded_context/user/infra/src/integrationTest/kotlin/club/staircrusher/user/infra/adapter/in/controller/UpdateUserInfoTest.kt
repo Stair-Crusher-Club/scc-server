@@ -3,8 +3,8 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
-import club.staircrusher.application.server_log.port.`in`.SccServerLogger
-import club.staircrusher.domain.server_log.NewsletterSubscribedOnSignupPayload
+import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
+import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
 import club.staircrusher.stdlib.testing.SccRandom
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.model.UserMobilityTool
@@ -27,7 +27,7 @@ class UpdateUserInfoTest : UserITBase() {
     lateinit var stibeeSubscriptionService: StibeeSubscriptionService
 
     @MockBean
-    lateinit var sccServerLogger: SccServerLogger
+    lateinit var sccServerEventRecorder: SccServerEventRecorder
 
     @Test
     fun updateUserInfoTest() {
@@ -202,7 +202,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 verifyBlocking(stibeeSubscriptionService, atLeastOnce()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
-                verify(sccServerLogger, atLeastOnce()).record(NewsletterSubscribedOnSignupPayload(user.id))
+                verify(sccServerEventRecorder, atLeastOnce()).record(NewsletterSubscribedOnSignupPayload(user.id))
             }
     }
 
@@ -237,7 +237,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
-                verify(sccServerLogger, never()).record(NewsletterSubscribedOnSignupPayload(user.id))
+                verify(sccServerEventRecorder, never()).record(NewsletterSubscribedOnSignupPayload(user.id))
             }
     }
 
@@ -273,7 +273,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
-                verify(sccServerLogger, never()).record(NewsletterSubscribedOnSignupPayload(user.id))
+                verify(sccServerEventRecorder, never()).record(NewsletterSubscribedOnSignupPayload(user.id))
             }
     }
 }
