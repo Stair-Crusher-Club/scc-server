@@ -7,4 +7,8 @@ data class ServerEvent(
     val type: ServerEventType,
     val payload: ServerEventPayload,
     val createdAt: Instant,
-)
+) {
+    init {
+        check(type == payload.getType())
+    }
+}
