@@ -16,7 +16,7 @@ class SccServerPersistentEventRecorder(
     override fun record(payload: ServerEventPayload) = transactionManager.doInTransaction {
         val serverEvent = ServerEvent(
             id = EntityIdGenerator.generateRandom(),
-            type = payload.getType(),
+            type = payload.type,
             payload = payload,
             createdAt = SccClock.instant(),
         )
