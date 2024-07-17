@@ -1,6 +1,9 @@
 package club.staircrusher.infra.persistence.sqldelight
 
+import app.cash.sqldelight.ColumnAdapter
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.domain.server_event.ServerEventPayload
+import club.staircrusher.domain.server_event.ServerEventType
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.AccessibilityImageListStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ClubQuestPurposeTypeStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoorTypeListStringColumnAdapter
@@ -19,6 +22,7 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Scc_user
+import club.staircrusher.infra.persistence.sqldelight.migration.Server_event
 import club.staircrusher.infra.persistence.sqldelight.migration.User_auth_info
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.Transaction
@@ -79,6 +83,26 @@ class DB(dataSource: DataSource) : TransactionManager {
         ),
         club_questAdapter = Club_quest.Adapter(
             purpose_typeAdapter = ClubQuestPurposeTypeStringColumnAdapter,
+        ),
+        server_eventAdapter = Server_event.Adapter(
+            typeAdapter = object : ColumnAdapter<ServerEventType, String> {
+                override fun decode(databaseValue: String): ServerEventType {
+                    return ServerEventType.valueOf(databaseValue)
+                }
+
+                override fun encode(value: ServerEventType): String {
+                    return value.name
+                }
+            },
+            payloadAdapter = object : ColumnAdapter<ServerEventPayload, String> {
+                override fun decode(databaseValue: String): ServerEventPayload {
+                    return objectMapper.readValue(databaseValue)
+                }
+
+                override fun encode(value: ServerEventPayload): String {
+                    return objectMapper.writeValueAsString(value)
+                }
+            }
         )
     )
 
@@ -102,6 +126,7 @@ class DB(dataSource: DataSource) : TransactionManager {
     val challengeContributionQueries = scc.challengeContributionQueries
     val challengeParticipationQueries = scc.challengeParticipationQueries
     val challengeRankQueries = scc.challengeRankQueries
+    val serverEventQueries = scc.serverEventQueries
 
 
     override fun <T> doInTransaction(block: Transaction<T>.() -> T): T {

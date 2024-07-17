@@ -18,4 +18,5 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
     integrationTestImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
     integrationTestImplementation("org.springframework.boot:spring-boot-starter-test")
+    integrationTestImplementation(projects.crossCuttingConcern.application.serverEvent)
 }
