@@ -9,6 +9,6 @@ data class ServerEvent(
     val createdAt: Instant,
 ) {
     init {
-        check(type == payload.getType())
+        check(type == payload.type)
     }
 }
