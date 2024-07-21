@@ -29,7 +29,7 @@ class LoginWithAppleUseCase(
             appleLoginService.getAppleLoginTokens(authorizationCode)
         }
 
-        val userAuthInfo = userAuthInfoRepository.findByExternalId(UserAuthProviderType.APPLE, appleLoginTokens.idToken.appleLoginUserId)
+        val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.APPLE, appleLoginTokens.idToken.appleLoginUserId)
         if (userAuthInfo != null) {
             doLoginForExistingUser(userAuthInfo)
         } else {
@@ -39,7 +39,7 @@ class LoginWithAppleUseCase(
 
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
-        val user = userRepository.findById(userAuthInfo.userId)
+        val user = userRepository.findById(userAuthInfo.userId).get()
         return LoginResult(
             authTokens = authTokens,
             user = user,

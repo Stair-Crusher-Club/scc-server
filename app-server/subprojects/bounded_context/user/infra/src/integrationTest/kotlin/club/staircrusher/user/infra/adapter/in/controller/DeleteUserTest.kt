@@ -53,7 +53,7 @@ class DeleteUserTest : UserITBase() {
             .andExpect {
                 status { isNoContent() }
                 transactionManager.doInTransaction {
-                    val deletedUser = userRepository.findById(user.id)
+                    val deletedUser = userRepository.findById(user.id).get()
                     assertTrue(deletedUser.isDeleted)
                 }
             }
@@ -88,7 +88,7 @@ class DeleteUserTest : UserITBase() {
                 val result = getResult(LoginResultDto::class)
 
                 val newUser = transactionManager.doInTransaction {
-                    userRepository.findById(result.user.id)
+                    userRepository.findById(result.user.id).get()
                 }
 
                 val newUserAuthInfo = transactionManager.doInTransaction {
@@ -113,7 +113,7 @@ class DeleteUserTest : UserITBase() {
             .run {
                 val result = getResult(LoginResultDto::class)
                 val otherUser = transactionManager.doInTransaction {
-                    userRepository.findById(result.user.id)
+                    userRepository.findById(result.user.id).get()
                 }
                 assertNotNull(otherUser)
                 assertNotEquals(user.id, otherUser.id)
@@ -128,7 +128,7 @@ class DeleteUserTest : UserITBase() {
                 // then
                 status { isNoContent() }
                 transactionManager.doInTransaction {
-                    val deletedUser = userRepository.findById(user.id)
+                    val deletedUser = userRepository.findById(user.id).get()
                     assertTrue(deletedUser.isDeleted)
 
                     val userAuthInfo = userAuthInfoRepository.findByUserId(user.id).find { it.authProviderType == UserAuthProviderType.KAKAO }
