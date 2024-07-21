@@ -7,7 +7,8 @@ import jakarta.persistence.AttributeConverter
 
 abstract class ListToTextAttributeConverter<E> : AttributeConverter<List<E>, String> {
     override fun convertToDatabaseColumn(attribute: List<E>): String {
-        return objectMapper.writeValueAsString(attribute)
+//        return objectMapper.writeValueAsString(attribute) // FIXME: json으로 바꾸기
+        return attribute.joinToString(LEGACY_DELIMITER) { convertElementToTextColumn(it) }
     }
 
     override fun convertToEntityAttribute(column: String): List<E> {
@@ -29,6 +30,7 @@ abstract class ListToTextAttributeConverter<E> : AttributeConverter<List<E>, Str
             .map(::convertElementFromTextColumn)
     }
 
+    abstract fun convertElementToTextColumn(element: E): String
     abstract fun convertElementFromTextColumn(text: String): E
 
     companion object {
