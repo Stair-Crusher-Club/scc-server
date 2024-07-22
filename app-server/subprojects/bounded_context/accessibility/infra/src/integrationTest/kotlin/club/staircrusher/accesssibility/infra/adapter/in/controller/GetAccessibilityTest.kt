@@ -253,7 +253,10 @@ class GetAccessibilityTest : AccessibilityITBase() {
         val imageUrl = "resources/example.jpg"
         // MockFileManagementService 에서 filename 을 그대로 return 하도록 했기 때문
         val expectedThumbnailUrl = "thumbnail_example.webp"
-        val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
+        val (user, place) = registerAccessibilityWithImages(
+            imageUrls = listOf(imageUrl),
+            images = listOf(AccessibilityImage(imageUrl))
+        )
         val params = GetAccessibilityPostRequest(
             placeId = place.id
         )

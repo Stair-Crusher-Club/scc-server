@@ -85,6 +85,10 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findAll(): List<BuildingAccessibility> {
+        return queries.findAll().executeAsList().map { it.toDomainModel() }
+    }
+
     override fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>) {
         return queries.updateEntranceImages(
             entranceImages = entranceImages,

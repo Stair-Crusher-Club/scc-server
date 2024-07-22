@@ -6,7 +6,7 @@ data class AccessibilityImageFaceBlurringHistory(
     val id: String,
     val placeAccessibilityId: String?,
     val buildingAccessibilityId: String?,
-    val beforeImageUrl: String,
+    val beforeImageUrl: String?,
     val afterImageUrl: String?,
     val detectedPeopleCount: Int?,
     val createdAt: Instant,

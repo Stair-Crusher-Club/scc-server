@@ -26,26 +26,34 @@ open class AccessibilityImageFaceBlurringService(
         if (placeAccessibility == null) return
         val imageUrls = placeAccessibility.images.map { it.imageUrl }
         val result = detectAndBlurFaces(imageUrls)
+        val blurredImages = result.filter { it.isBlurred() }
         transactionManager.doInTransaction {
-            val histories = result.filter { it.isBlurred() }.map {
+            if (blurredImages.isEmpty()) {
+                // 얼굴이 감지 되지 않으면 다음 accessibility 를 검사하기 위해 history 를 저장한다.
                 accessibilityImageFaceBlurringHistoryRepository.save(
                     AccessibilityImageFaceBlurringHistory(
                         id = EntityIdGenerator.generateRandom(),
-                        placeAccessibilityId = placeAccessibilityId,
-                        buildingAccessibilityId = null,
-                        beforeImageUrl = it.originalImageUrl,
-                        afterImageUrl = it.blurredImageUrl,
-                        detectedPeopleCount = it.detectedPeopleCount,
-                        createdAt = SccClock.instant(),
-                        updatedAt = SccClock.instant()
+                        placeAccessibilityId = placeAccessibilityId, buildingAccessibilityId = null,
+                        beforeImageUrl = null, afterImageUrl = null, detectedPeopleCount = 0,
+                        createdAt = SccClock.instant(), updatedAt = SccClock.instant()
                     )
                 )
+            } else {
+                val histories = blurredImages.map {
+                    AccessibilityImageFaceBlurringHistory(
+                        id = EntityIdGenerator.generateRandom(),
+                        placeAccessibilityId = placeAccessibilityId, buildingAccessibilityId = null,
+                        beforeImageUrl = it.originalImageUrl, afterImageUrl = it.blurredImageUrl,
+                        detectedPeopleCount = it.detectedPeopleCount,
+                        createdAt = SccClock.instant(), updatedAt = SccClock.instant()
+                    )
+                }
+                accessibilityImageFaceBlurringHistoryRepository.saveAll(histories)
+                accessibilityImageService.doUpdatePlaceAccessibilityOriginalImages(
+                    placeAccessibilityId,
+                    result.map { it.blurredImageUrl }
+                )
             }
-            accessibilityImageFaceBlurringHistoryRepository.saveAll(histories)
-            accessibilityImageService.doUpdatePlaceAccessibilityOriginalImages(
-                placeAccessibilityId,
-                result.map { it.blurredImageUrl }
-            )
         }
     }
 
@@ -56,27 +64,36 @@ open class AccessibilityImageFaceBlurringService(
         if (buildingAccessibility == null) return
         val entranceResult = detectAndBlurFaces(buildingAccessibility.entranceImages.map { it.imageUrl })
         val elevatorResult = detectAndBlurFaces(buildingAccessibility.elevatorImages.map { it.imageUrl })
+        val blurredImages = (entranceResult + elevatorResult).filter { it.isBlurred() }
         transactionManager.doInTransaction {
-            val histories = (entranceResult + elevatorResult)
-                .filter { it.isBlurred() }
-                .map {
+            if (blurredImages.isEmpty()) {
+                // 얼굴이 감지 되지 않으면 다음 accessibility 를 검사하기 위해 history 를 저장한다.
+                accessibilityImageFaceBlurringHistoryRepository.save(
                     AccessibilityImageFaceBlurringHistory(
                         id = EntityIdGenerator.generateRandom(),
-                        placeAccessibilityId = null,
-                        buildingAccessibilityId = buildingAccessibilityId,
-                        beforeImageUrl = it.originalImageUrl,
-                        afterImageUrl = it.blurredImageUrl,
-                        detectedPeopleCount = it.detectedPeopleCount,
-                        createdAt = SccClock.instant(),
-                        updatedAt = SccClock.instant()
+                        placeAccessibilityId = null, buildingAccessibilityId = buildingAccessibilityId,
+                        beforeImageUrl = null, afterImageUrl = null, detectedPeopleCount = 0,
+                        createdAt = SccClock.instant(), updatedAt = SccClock.instant()
                     )
-                }
-            accessibilityImageFaceBlurringHistoryRepository.saveAll(histories)
-            accessibilityImageService.doUpdateBuildingAccessibilityOriginalImages(
-                buildingAccessibilityId,
-                entranceResult.map { it.blurredImageUrl },
-                elevatorResult.map { it.blurredImageUrl }
-            )
+                )
+            } else {
+                val histories = blurredImages
+                    .map {
+                        AccessibilityImageFaceBlurringHistory(
+                            id = EntityIdGenerator.generateRandom(),
+                            placeAccessibilityId = null, buildingAccessibilityId = buildingAccessibilityId,
+                            beforeImageUrl = it.originalImageUrl, afterImageUrl = it.blurredImageUrl,
+                            detectedPeopleCount = it.detectedPeopleCount,
+                            createdAt = SccClock.instant(), updatedAt = SccClock.instant()
+                        )
+                    }
+                accessibilityImageFaceBlurringHistoryRepository.saveAll(histories)
+                accessibilityImageService.doUpdateBuildingAccessibilityOriginalImages(
+                    buildingAccessibilityId,
+                    entranceResult.map { it.blurredImageUrl },
+                    elevatorResult.map { it.blurredImageUrl }
+                )
+            }
         }
     }
 

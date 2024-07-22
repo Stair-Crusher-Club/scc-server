@@ -22,7 +22,7 @@ class AccessibilityImagePostProcessController(
         @RequestBody params: BlurFacesInPlaceAccessibilityImagesParams,
     ) {
         // TODO: UpdateChallengeRank 처럼 IP 체크
-        blurFacesInPlaceAccessibilityImagesUseCase.handleAsync(params.placeAccessibilityId)
+        blurFacesInPlaceAccessibilityImagesUseCase.handle(params.placeAccessibilityId)
     }
 
     @PostMapping("/blurFacesInBuildingAccessibilityImages")
@@ -30,7 +30,7 @@ class AccessibilityImagePostProcessController(
         @RequestBody params: BlurFacesInBuildingAccessibilityImagesParams,
     ) {
         // TODO: UpdateChallengeRank 처럼 IP 체크
-        blurFacesInBuildingAccessibilityImagesUseCase.handleAsync(params.buildingAccessibilityId)
+        blurFacesInBuildingAccessibilityImagesUseCase.handle(params.buildingAccessibilityId)
     }
 
     @PostMapping("/blurFacesInLatestPlaceAccessibilityImages")

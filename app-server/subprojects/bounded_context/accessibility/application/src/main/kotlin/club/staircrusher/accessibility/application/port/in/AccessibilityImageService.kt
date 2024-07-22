@@ -51,7 +51,8 @@ class AccessibilityImageService(
         val buildingAccessibility =
             buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId) ?: return null
         val newBuildingAccessibility = buildingAccessibility.copy(
-            entranceImageUrls = emptyList(), elevatorImageUrls = emptyList(),
+            entranceImageUrls = originalEntranceImageUrls,
+            elevatorImageUrls = originalElevatorImageUrls,
             entranceImages = originalEntranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
             elevatorImages = originalElevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
         )

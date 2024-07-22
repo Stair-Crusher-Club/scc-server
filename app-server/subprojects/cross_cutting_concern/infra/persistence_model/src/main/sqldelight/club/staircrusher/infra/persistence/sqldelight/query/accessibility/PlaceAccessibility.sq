@@ -11,6 +11,7 @@ ON CONFLICT(id) DO UPDATE SET
     has_slope = EXCLUDED.has_slope,
     entrance_door_types = EXCLUDED.entrance_door_types,
     image_urls = EXCLUDED.image_urls,
+    images = EXCLUDED.images,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at,
     deleted_at = NULL;
