@@ -1,6 +1,7 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
 import club.staircrusher.api.converter.toDTO
+import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.PlaceCategoryDto
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place.domain.model.Building
@@ -31,6 +32,7 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
         floors = placeAccessibility?.floors ?: emptyList(),
         hasSlope = placeAccessibility?.hasSlope ?: false,
         imageUrls = placeAccessibility?.imageUrls ?: emptyList(),
+        createdAt = placeAccessibility?.createdAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
     ),
 )
 
