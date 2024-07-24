@@ -1608,6 +1608,8 @@ components:
           type: array
           items:
             type: integer
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
         - imageUrls
         - hasSlope
