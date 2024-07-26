@@ -34,8 +34,8 @@ class LoginWithKakaoTest : UserITBase() {
     @BeforeEach
     fun setUp() {
         transactionManager.doInTransaction {
-            userAuthInfoRepository.removeAll()
-            userRepository.removeAll()
+            userAuthInfoRepository.deleteAll()
+            userRepository.deleteAll()
         }
     }
 
@@ -65,7 +65,7 @@ class LoginWithKakaoTest : UserITBase() {
                 val result = getResult(LoginResultDto::class)
 
                 val newUser = transactionManager.doInTransaction {
-                    userRepository.findById(result.user.id)
+                    userRepository.findById(result.user.id).get()
                 }
                 assertNull(newUser.encryptedPassword)
                 assertNull(newUser.email)
@@ -88,7 +88,7 @@ class LoginWithKakaoTest : UserITBase() {
                 val result = getResult(LoginResultDto::class)
 
                 val user = transactionManager.doInTransaction {
-                    userRepository.findById(result.user.id)
+                    userRepository.findById(result.user.id).get()
                 }
                 assertEquals(userId, user.id)
                 assertNull(user.email)

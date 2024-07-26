@@ -18,6 +18,7 @@ import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.runBlocking
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class UserApplicationService(
@@ -56,7 +57,7 @@ class UserApplicationService(
         if (normalizedNickname.length < 2) {
             throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
         }
-        if (userRepository.findByNickname(normalizedNickname) != null) {
+        if (userRepository.findFirstByNickname(normalizedNickname) != null) {
             throw SccDomainException("${normalizedNickname}은 이미 사용된 닉네임입니다.")
         }
         return userRepository.save(
@@ -77,7 +78,7 @@ class UserApplicationService(
         nickname: String,
         password: String
     ): AuthTokens = transactionManager.doInTransaction {
-        val user = userRepository.findByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
+        val user = userRepository.findFirstByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
         if (user.isDeleted) {
             throw SccDomainException("잘못된 계정입니다.")
         }
@@ -96,7 +97,7 @@ class UserApplicationService(
         mobilityTools: List<UserMobilityTool>,
         isNewsLetterSubscriptionAgreed: Boolean,
     ): User = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val user = userRepository.findById(userId)
+        val user = userRepository.findById(userId).get()
         user.nickname = run {
             val normalizedNickname = nickname.trim()
             if (normalizedNickname.length < 2) {
@@ -105,7 +106,7 @@ class UserApplicationService(
                     SccDomainException.ErrorCode.INVALID_NICKNAME,
                 )
             }
-            if (userRepository.findByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
+            if (userRepository.findFirstByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException(
                     "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
                     SccDomainException.ErrorCode.INVALID_NICKNAME,
@@ -121,7 +122,7 @@ class UserApplicationService(
                     SccDomainException.ErrorCode.INVALID_EMAIL,
                 )
             }
-            if (userRepository.findByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
+            if (userRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException(
                     "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
                     SccDomainException.ErrorCode.INVALID_EMAIL,
@@ -146,7 +147,7 @@ class UserApplicationService(
     fun deleteUser(
         userId: String,
     ) = transactionManager.doInTransaction (TransactionIsolationLevel.REPEATABLE_READ) {
-        val user = userRepository.findById(userId)
+        val user = userRepository.findById(userId).get()
         user.delete(SccClock.instant())
         userRepository.save(user)
 
@@ -158,11 +159,11 @@ class UserApplicationService(
     }
 
     fun getUsers(userIds: List<String>): List<User> = transactionManager.doInTransaction {
-        userRepository.findByIdIn(userIds)
+        userRepository.findAllById(userIds).toList()
     }
 
     fun getAllUsers(): List<User> {
-        return userRepository.findAll()
+        return userRepository.findAll().toList()
     }
 
     private fun subscribeToNewsLetter(userId: String, email: String, name: String) {

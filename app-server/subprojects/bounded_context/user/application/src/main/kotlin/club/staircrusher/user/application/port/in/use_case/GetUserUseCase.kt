@@ -11,6 +11,6 @@ class GetUserUseCase(
     private val userRepository: UserRepository,
 ) {
     fun handle(userId: String): User = transactionManager.doInTransaction {
-        return@doInTransaction userRepository.findById(userId)
+        return@doInTransaction userRepository.findById(userId).get()
     }
 }

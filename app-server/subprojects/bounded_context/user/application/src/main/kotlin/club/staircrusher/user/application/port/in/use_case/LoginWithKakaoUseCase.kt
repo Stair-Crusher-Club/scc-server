@@ -26,7 +26,7 @@ class LoginWithKakaoUseCase(
     fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String): LoginResult = transactionManager.doInTransaction {
         val idToken = kakaoLoginService.parseIdToken(rawKakaoIdToken)
 
-        val userAuthInfo = userAuthInfoRepository.findByExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
+        val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
         if (userAuthInfo != null) {
             doLoginForExistingUser(userAuthInfo)
         } else {
@@ -36,7 +36,7 @@ class LoginWithKakaoUseCase(
 
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
-        val user = userRepository.findById(userAuthInfo.userId)
+        val user = userRepository.findById(userAuthInfo.userId).get()
         return LoginResult(
             authTokens = authTokens,
             user = user,
