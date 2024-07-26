@@ -55,6 +55,7 @@ class DeleteUserTest : UserITBase() {
                 transactionManager.doInTransaction {
                     val deletedUser = userRepository.findById(user.id).get()
                     assertTrue(deletedUser.isDeleted)
+                    assertNull(deletedUser.email)
                 }
             }
 
