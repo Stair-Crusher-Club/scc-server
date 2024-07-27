@@ -127,6 +127,46 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCaseTest {
         Assertions.assertTrue(result.isNotEmpty())
     }
 
+    @Test
+    fun `BuildingAccessibility 이미지 중 얼굴이 감지된 사진만 업데이트한다`() = runBlocking {
+        val (_, _, buildingAccessibility) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES, MockDetectFacesService.URL_WITHOUT_FACES)
+        )
+
+        blurFacesInLatestBuildingAccessibilityImagesUseCase.handle()
+
+        val reloadBuildingAccessibility = transactionManager.doInTransaction {
+            buildingAccessibilityRepository.findByIdOrNull(buildingAccessibility.id)
+        }
+        val entranceImages = reloadBuildingAccessibility?.entranceImages?.map { it.imageUrl } ?: emptyList()
+        Assertions.assertFalse(entranceImages.contains(MockDetectFacesService.URL_WITH_FACES))
+        Assertions.assertTrue(entranceImages.contains(MockDetectFacesService.URL_WITHOUT_FACES))
+        val elevatorImages = reloadBuildingAccessibility?.entranceImages?.map { it.imageUrl } ?: emptyList()
+        Assertions.assertFalse(elevatorImages.contains(MockDetectFacesService.URL_WITH_FACES))
+        Assertions.assertTrue(elevatorImages.contains(MockDetectFacesService.URL_WITHOUT_FACES))
+    }
+
+
+
+    @Test
+    fun `이미 썸네일 처리가 된 BuildingAccessibility 의 경우 블러링 한 이미지 사용을 위해 썸네일 url을 제거한다`() = runBlocking {
+        val (_, _, buildingAccessibility) = registerPlaceAccessibilityAndBuildingAccessibility(
+            imageUrls = listOf(MockDetectFacesService.URL_WITH_FACES, MockDetectFacesService.URL_WITHOUT_FACES)
+        )
+
+        blurFacesInLatestBuildingAccessibilityImagesUseCase.handle()
+
+        val reloadBuildingAccessibility = transactionManager.doInTransaction {
+            buildingAccessibilityRepository.findByIdOrNull(buildingAccessibility.id)
+        }
+        val entranceImages = reloadBuildingAccessibility?.entranceImages ?: emptyList()
+        Assertions.assertTrue(entranceImages.isNotEmpty())
+        Assertions.assertTrue(entranceImages.mapNotNull { it.thumbnailUrl }.isEmpty())
+        val elevatorImages = reloadBuildingAccessibility?.entranceImages ?: emptyList()
+        Assertions.assertTrue(elevatorImages.isNotEmpty())
+        Assertions.assertTrue(elevatorImages.mapNotNull { it.thumbnailUrl }.isEmpty())
+    }
+
     private fun registerPlaceAccessibilityAndBuildingAccessibility(imageUrls: List<String>) =
         transactionManager.doInTransaction {
             val user = dataGenerator.createUser()

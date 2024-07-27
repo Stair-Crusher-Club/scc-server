@@ -45,13 +45,15 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCase(
             val originalImageUrls = (entranceResults + elevatorResults).map { it.originalImageUrl }
             val blurredImageUrls = (entranceResults + elevatorResults).filter { it.isBlurred() }.map { it.blurredImageUrl }
             val detectedPeopleCounts = (entranceResults + elevatorResults).map { it.detectedPeopleCount }
-            AccessibilityImageFaceBlurringHistory(
-                id = EntityIdGenerator.generateRandom(),
-                placeAccessibilityId = null, buildingAccessibilityId = targetAccessibility.id,
-                originalImageUrls = originalImageUrls,
-                blurredImageUrls = blurredImageUrls,
-                detectedPeopleCounts = detectedPeopleCounts,
-                createdAt = SccClock.instant(), updatedAt = SccClock.instant()
+            accessibilityImageFaceBlurringHistoryRepository.save(
+                AccessibilityImageFaceBlurringHistory(
+                    id = EntityIdGenerator.generateRandom(),
+                    placeAccessibilityId = null, buildingAccessibilityId = targetAccessibility.id,
+                    originalImageUrls = originalImageUrls,
+                    blurredImageUrls = blurredImageUrls,
+                    detectedPeopleCounts = detectedPeopleCounts,
+                    createdAt = SccClock.instant(), updatedAt = SccClock.instant()
+                )
             )
         }
     }

@@ -124,6 +124,38 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCaseTest {
         Assertions.assertTrue(result.isNotEmpty())
     }
 
+    @Test
+    fun `PlaceAccessibility 이미지 중 얼굴이 감지된 사진만 업데이트한다`() = runBlocking {
+        val (_, placeAccessibility, _) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES, MockDetectFacesService.URL_WITHOUT_FACES)
+        )
+
+        blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
+
+        val reloadPlaceAccessibility = transactionManager.doInTransaction {
+            placeAccessibilityRepository.findByIdOrNull(placeAccessibility.id)
+        }
+        val imageUrls = reloadPlaceAccessibility?.images?.map { it.imageUrl } ?: emptyList()
+        Assertions.assertFalse(imageUrls.contains(MockDetectFacesService.URL_WITH_FACES))
+        Assertions.assertTrue(imageUrls.contains(MockDetectFacesService.URL_WITHOUT_FACES))
+    }
+
+    @Test
+    fun `이미 썸네일 처리가 된 PlaceAccessibility 의 경우 블러링 한 이미지 사용을 위해 썸네일 url을 제거한다`() = runBlocking {
+        val (_, placeAccessibility, _) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES, MockDetectFacesService.URL_WITHOUT_FACES)
+        )
+
+        blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
+
+        val reloadPlaceAccessibility = transactionManager.doInTransaction {
+            placeAccessibilityRepository.findByIdOrNull(placeAccessibility.id)
+        }
+        val images = reloadPlaceAccessibility?.images ?: emptyList()
+        Assertions.assertTrue(images.isNotEmpty())
+        Assertions.assertTrue(images.mapNotNull { it.thumbnailUrl }.isEmpty())
+    }
+
     private fun registerPlaceAccessibilityAndBuildingAccessibility(imageUrls: List<String>) =
         transactionManager.doInTransaction {
             val user = dataGenerator.createUser()
