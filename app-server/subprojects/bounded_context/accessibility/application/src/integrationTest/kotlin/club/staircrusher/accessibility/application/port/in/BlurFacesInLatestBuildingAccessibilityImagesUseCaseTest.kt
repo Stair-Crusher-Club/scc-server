@@ -113,8 +113,8 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCaseTest {
             accessibilityImageFaceBlurringHistoryRepository.save(
                 AccessibilityImageFaceBlurringHistory(
                     id = "", placeAccessibilityId = null, buildingAccessibilityId = oldestBuildingAccessibility.id,
-                    beforeImageUrl = "image_url", afterImageUrl = "blurred_image_url",
-                    detectedPeopleCount = null, createdAt = clock.instant(), updatedAt = clock.instant()
+                    originalImageUrls = listOf("image_url"), blurredImageUrls = listOf("blurred_image_url"),
+                    detectedPeopleCounts = emptyList(), createdAt = clock.instant(), updatedAt = clock.instant()
                 )
             )
         }

@@ -4,8 +4,9 @@ VALUES :accessibility_image_face_blurring_history
 ON CONFLICT(id) DO UPDATE SET
     place_accessibility_id = EXCLUDED.place_accessibility_id,
     building_accessibility_id = EXCLUDED.building_accessibility_id,
-    before_image_url = EXCLUDED.after_image_url,
-    detected_people_count = EXCLUDED.detected_people_count,
+    original_image_urls = EXCLUDED.original_image_urls,
+    blurred_image_urls = EXCLUDED.blurred_image_urls,
+    detected_people_counts = EXCLUDED.detected_people_counts,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at;
 

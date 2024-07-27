@@ -1,10 +1,14 @@
+import kotlin.Int;
+import kotlin.String;
+import kotlin.collections.List;
+
 CREATE TABLE IF NOT EXISTS accessibility_image_face_blurring_history (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
     place_accessibility_id VARCHAR(36) NULL,
     building_accessibility_id VARCHAR(36) NULL,
-    before_image_url TEXT NULL,
-    after_image_url TEXT NULL,
-    detected_people_count INT NULL,
+    original_image_urls TEXT AS List<String> NOT NULL DEFAULT '[]',
+    blurred_image_urls TEXT AS List<String> NOT NULL DEFAULT '[]',
+    detected_people_counts TEXT AS List<Int> NOT NULL,
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

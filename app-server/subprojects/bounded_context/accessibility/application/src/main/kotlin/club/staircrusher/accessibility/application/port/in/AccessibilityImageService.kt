@@ -45,16 +45,16 @@ class AccessibilityImageService(
 
     fun doUpdateBuildingAccessibilityOriginalImages(
         buildingAccessibilityId: String,
-        originalEntranceImageUrls: List<String>,
-        originalElevatorImageUrls: List<String>
+        entranceImageUrls: List<String>,
+        elevatorImageUrls: List<String>
     ): BuildingAccessibility? {
         val buildingAccessibility =
             buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId) ?: return null
         val newBuildingAccessibility = buildingAccessibility.copy(
-            entranceImageUrls = originalEntranceImageUrls,
-            elevatorImageUrls = originalElevatorImageUrls,
-            entranceImages = originalEntranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
-            elevatorImages = originalElevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            entranceImageUrls = entranceImageUrls,
+            elevatorImageUrls = elevatorImageUrls,
+            entranceImages = entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
+            elevatorImages = elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
         )
         return buildingAccessibilityRepository.save(newBuildingAccessibility)
     }
