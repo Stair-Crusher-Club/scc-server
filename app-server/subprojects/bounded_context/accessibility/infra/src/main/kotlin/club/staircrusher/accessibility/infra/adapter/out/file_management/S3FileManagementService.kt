@@ -78,7 +78,7 @@ internal class S3FileManagementService(
 
     override suspend fun uploadImage(fileName: String, fileBytes: ByteArray): String? {
         try {
-            return upload(properties.thumbnailBucketName, fileName, fileBytes)
+            return upload(properties.bucketName, fileName, fileBytes)
         } catch (t: Throwable) {
             logger.error(t) { "Failed to upload image: $fileName" }
             return null
@@ -104,7 +104,7 @@ internal class S3FileManagementService(
         return s3Client
             .utilities()
             .getUrl {
-                it.bucket(properties.thumbnailBucketName)
+                it.bucket(properties.bucketName)
                 it.key(fileName)
             }
             .toString()
