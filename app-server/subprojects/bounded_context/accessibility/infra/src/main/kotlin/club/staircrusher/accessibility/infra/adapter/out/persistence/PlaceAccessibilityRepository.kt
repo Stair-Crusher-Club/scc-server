@@ -97,12 +97,12 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant?): List<PlaceAccessibility> {
+    override fun findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant?): PlaceAccessibility? {
         return queries.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
             createdAt = (createdAt ?: Instant.EPOCH).toOffsetDateTime(), limit = 1
         )
-            .executeAsList()
-            .map { it.toDomainModel() }
+            .executeAsOneOrNull()
+            ?.toDomainModel()
     }
 
     override fun searchForAdmin(

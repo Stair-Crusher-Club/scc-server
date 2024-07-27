@@ -29,8 +29,7 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
             val lastBlurredPlaceAccessibility = latestHistory?.let { history ->
                 history.placeAccessibilityId?.let { placeAccessibilityRepository.findByIdOrNull(it) }
             }
-            placeAccessibilityRepository.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt = lastBlurredPlaceAccessibility?.createdAt)
-                .firstOrNull()
+            placeAccessibilityRepository.findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt = lastBlurredPlaceAccessibility?.createdAt)
         } ?: return
         runBlocking {
             accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id)
