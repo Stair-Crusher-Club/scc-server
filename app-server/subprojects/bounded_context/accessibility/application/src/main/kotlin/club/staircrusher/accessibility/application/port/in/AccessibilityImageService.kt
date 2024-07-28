@@ -74,11 +74,10 @@ class AccessibilityImageService(
                 ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it) }
                 ?: return null
         if (placeAccessibility.images.isEmpty() && placeAccessibility.imageUrls.isNotEmpty()) {
-            val placeAccessibilityImages =
-                placeAccessibility.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            val placeAccessibilityImages = placeAccessibility.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
             placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
         }
-        return placeAccessibility
+        return placeId?.let { placeAccessibilityRepository.findByPlaceId(it) } ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it) }
     }
 
     fun doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(
@@ -97,7 +96,7 @@ class AccessibilityImageService(
             buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, buildingElevatorImages)
         }
 
-        return buildingAccessibility
+        return buildingId?.let { buildingAccessibilityRepository.findByBuildingId(it) } ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it) }
     }
 
     fun generateThumbnailsIfNeeded(placeId: String) {

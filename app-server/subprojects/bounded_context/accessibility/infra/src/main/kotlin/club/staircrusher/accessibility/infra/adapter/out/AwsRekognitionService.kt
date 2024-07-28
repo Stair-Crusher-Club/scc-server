@@ -2,7 +2,6 @@ package club.staircrusher.accessibility.infra.adapter.out
 
 import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
-import club.staircrusher.accessibility.infra.adapter.out.file_management.S3ImageUploadProperties
 import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 import club.staircrusher.stdlib.Size
 import club.staircrusher.stdlib.di.annotation.Component
@@ -21,7 +20,7 @@ import javax.imageio.ImageIO
 
 @Component
 internal class AwsRekognitionService(
-    private val properties: S3ImageUploadProperties,
+    private val properties: RekognitionProperties,
 ) : DetectFacesService {
     private val rekognitionClient = RekognitionAsyncClient.builder()
         .region(Region.AP_NORTHEAST_2)

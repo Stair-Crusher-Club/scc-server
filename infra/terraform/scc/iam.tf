@@ -40,6 +40,15 @@ data "aws_iam_policy_document" "scc_accessibility_thumbnails_full_access" {
   }
 }
 
+data "aws_iam_policy_document" "scc_rekognition_access" {
+  statement {
+    actions = [
+      "rekognition:DetectFaces",
+    ]
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role" "scc" {
   name               = "scc"
   assume_role_policy = data.aws_iam_policy_document.scc.json
@@ -55,6 +64,11 @@ resource "aws_iam_policy" "scc_accessibility_thumbnails_full_access" {
   policy = data.aws_iam_policy_document.scc_accessibility_thumbnails_full_access.json
 }
 
+resource "aws_iam_policy" "scc_rekognition_access" {
+  name   = "scc-accessibility-thumbnails-full-access"
+  policy = data.aws_iam_policy_document.scc_accessibility_thumbnails_full_access.json
+}
+
 resource "aws_iam_role_policy_attachment" "scc_accessibility_images_full_access" {
   role       = aws_iam_role.scc.name
   policy_arn = aws_iam_policy.scc_accessibility_images_full_access.arn
@@ -63,6 +77,11 @@ resource "aws_iam_role_policy_attachment" "scc_accessibility_images_full_access"
 resource "aws_iam_role_policy_attachment" "scc_accessibility_thumbnails_full_access" {
   role       = aws_iam_role.scc.name
   policy_arn = aws_iam_policy.scc_accessibility_thumbnails_full_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "scc_rekognition_access" {
+  role       = aws_iam_role.scc.name
+  policy_arn = aws_iam_policy.scc_rekognition_access.arn
 }
 
 data "aws_iam_policy_document" "scc_deploy_secret" {
@@ -113,21 +132,4 @@ resource "aws_iam_policy" "scc_deploy_secret_kms_access" {
 resource "aws_iam_role_policy_attachment" "scc_deploy_secret_kms_read_access" {
   role       = aws_iam_role.scc_deploy_secret.name
   policy_arn = aws_iam_policy.scc_deploy_secret_kms_access.arn
-}
-
-data "aws_iam_policy_document" "scc_rekognition_access" {
-  statement {
-    actions = [
-      "rekognition:DetectFaces",
-    ]
-    resources = [
-      aws_s3_bucket.accessibility_images.arn,
-      "${aws_s3_bucket.accessibility_images.arn}/*",
-    ]
-  }
-}
-
-resource "aws_iam_policy" "scc_rekognition_access" {
-  name   = "scc-rekognition-access"
-  policy = data.aws_iam_policy_document.scc_rekognition_access.json
 }

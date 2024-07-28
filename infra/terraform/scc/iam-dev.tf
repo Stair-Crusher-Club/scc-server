@@ -40,6 +40,15 @@ data "aws_iam_policy_document" "scc_dev_accessibility_thumbnails_full_access" {
   }
 }
 
+data "aws_iam_policy_document" "scc_dev_rekognition_access" {
+  statement {
+    actions = [
+      "rekognition:DetectFaces",
+    ]
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role" "scc_dev" {
   name               = "scc-dev"
   assume_role_policy = data.aws_iam_policy_document.scc_dev.json
@@ -55,6 +64,11 @@ resource "aws_iam_policy" "scc_dev_accessibility_thumbnails_full_access" {
   policy = data.aws_iam_policy_document.scc_dev_accessibility_thumbnails_full_access.json
 }
 
+resource "aws_iam_policy" "scc_dev_rekognition_access" {
+  name   = "scc-dev-rekognition-access"
+  policy = data.aws_iam_policy_document.scc_dev_rekognition_access.json
+}
+
 resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_images_full_access" {
   role       = aws_iam_role.scc_dev.name
   policy_arn = aws_iam_policy.scc_dev_accessibility_images_full_access.arn
@@ -63,6 +77,11 @@ resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_images_full_acc
 resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_thumbnails_full_access" {
   role       = aws_iam_role.scc_dev.name
   policy_arn = aws_iam_policy.scc_dev_accessibility_thumbnails_full_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "scc_dev_rekognition_access" {
+  role       = aws_iam_role.scc_dev.name
+  policy_arn = aws_iam_policy.scc_dev_rekognition_access.arn
 }
 
 data "aws_iam_policy_document" "scc_deploy_secret_dev" {
@@ -110,21 +129,4 @@ resource "aws_iam_policy" "scc_deploy_secret_dev_kms_access" {
 resource "aws_iam_role_policy_attachment" "scc_deploy_secret_dev_kms_read_access" {
   role       = aws_iam_role.scc_deploy_secret_dev.name
   policy_arn = aws_iam_policy.scc_deploy_secret_dev_kms_access.arn
-}
-
-data "aws_iam_policy_document" "scc_dev_rekognition_access" {
-  statement {
-    actions = [
-      "rekognition:DetectFaces",
-    ]
-    resources = [
-      aws_s3_bucket.dev_accessibility_images.arn,
-      "${aws_s3_bucket.dev_accessibility_images.arn}/*",
-    ]
-  }
-}
-
-resource "aws_iam_policy" "scc_dev_rekognition_access" {
-  name   = "scc-dev-rekognition-access"
-  policy = data.aws_iam_policy_document.scc_dev_rekognition_access.json
 }
