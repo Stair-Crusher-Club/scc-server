@@ -6,7 +6,6 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsClosedPutRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessiblePutRequest
 import club.staircrusher.admin_api.spec.dto.ClubQuestsCreateDryRunPostRequest
-import club.staircrusher.admin_api.spec.dto.ClubQuestsGet200ResponseInner
 import club.staircrusher.admin_api.spec.dto.CreateAndNotifyDailyClubQuestRequestDTO
 import club.staircrusher.admin_api.spec.dto.CreateAndNotifyDailyClubQuestResponseDTO
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestRequest
@@ -20,7 +19,6 @@ import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlace
 import club.staircrusher.quest.application.port.`in`.DeleteClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetCursoredClubQuestSummariesUseCase
-import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.quest.infra.adapter.`in`.converter.toModel
 import club.staircrusher.stdlib.time.epochMilliToInstant
@@ -41,21 +39,10 @@ class AdminClubQuestController(
     private val clubQuestSetIsClosedUseCase: ClubQuestSetIsClosedUseCase,
     private val clubQuestSetIsNotAccessibleUseCase: ClubQuestSetIsNotAccessibleUseCase,
     private val deleteClubQuestUseCase: DeleteClubQuestUseCase,
-    private val clubQuestRepository: ClubQuestRepository,
     private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
     private val getCursoredClubQuestSummariesUseCase: GetCursoredClubQuestSummariesUseCase,
     private val createAndNotifyDailyClubQuestUseCase: CreateAndNotifyDailyClubQuestUseCase,
 ) {
-    @GetMapping("/admin/clubQuests")
-    fun listClubQuests(): List<ClubQuestsGet200ResponseInner> {
-        return clubQuestRepository.findAllOrderByCreatedAtDesc().map {
-            ClubQuestsGet200ResponseInner(
-                id = it.id,
-                name = it.name,
-            )
-        }
-    }
-
     @GetMapping("/admin/clubQuestSummaries/cursored")
     fun getCursoredClubQuestSummaries(
         @RequestParam(required = false) limit: Int?,
