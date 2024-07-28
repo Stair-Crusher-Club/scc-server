@@ -37,6 +37,10 @@ scc:
       accessKey: test
       secretKey: test
 
+  rekognition:
+    accessKey: test
+    secretKey: test
+
   cloudfront:
     domain: cloudfronttest
 
