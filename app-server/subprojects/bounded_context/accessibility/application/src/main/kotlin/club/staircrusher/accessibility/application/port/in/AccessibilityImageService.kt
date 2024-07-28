@@ -63,23 +63,6 @@ class AccessibilityImageService(
         val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction
         doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(placeId = placeId)
         doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(buildingId = place.building.id)
-        val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
-        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
-
-        if (placeAccessibility?.images?.isEmpty() == true && placeAccessibility.imageUrls.isNotEmpty()) {
-            val placeAccessibilityImages = placeAccessibility.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
-        }
-
-        if (buildingAccessibility?.entranceImages?.isEmpty() == true && buildingAccessibility.entranceImageUrls.isNotEmpty()) {
-            val buildingEntranceImages = buildingAccessibility.entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            buildingAccessibilityRepository.updateEntranceImages(buildingAccessibility.id, buildingEntranceImages)
-        }
-
-        if (buildingAccessibility?.elevatorImages?.isEmpty() == true && buildingAccessibility.elevatorImageUrls.isNotEmpty()) {
-            val buildingElevatorImages = buildingAccessibility.elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, buildingElevatorImages)
-        }
     }
 
     fun doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(
@@ -105,14 +88,12 @@ class AccessibilityImageService(
         val buildingAccessibility = buildingId?.let { buildingAccessibilityRepository.findByBuildingId(it) }
             ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it) } ?: return null
         if (buildingAccessibility.entranceImages.isEmpty() && buildingAccessibility.entranceImageUrls.isNotEmpty()) {
-            val buildingEntranceImages =
-                buildingAccessibility.entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            val buildingEntranceImages = buildingAccessibility.entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
             buildingAccessibilityRepository.updateEntranceImages(buildingAccessibility.id, buildingEntranceImages)
         }
 
         if (buildingAccessibility.elevatorImages.isEmpty() && buildingAccessibility.elevatorImageUrls.isNotEmpty()) {
-            val buildingElevatorImages =
-                buildingAccessibility.elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            val buildingElevatorImages = buildingAccessibility.elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
             buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, buildingElevatorImages)
         }
 
