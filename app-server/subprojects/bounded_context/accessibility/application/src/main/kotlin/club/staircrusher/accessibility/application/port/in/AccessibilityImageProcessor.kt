@@ -13,7 +13,7 @@ import org.bytedeco.opencv.opencv_core.Size
 
 @Component
 class AccessibilityImageProcessor : ImageProcessor {
-    override fun blur(originalImage: ByteArray, positions: List<DetectedFacePosition>): ByteArray {
+    override fun blur(originalImage: ByteArray, imageExtension: String, positions: List<DetectedFacePosition>): ByteArray {
         BytePointer(*originalImage).use { imagePointer ->
             val originalImageMat = imdecode(Mat(imagePointer), IMREAD_COLOR)
             // Blur images
@@ -29,7 +29,7 @@ class AccessibilityImageProcessor : ImageProcessor {
             }
             // Convert the result back to byte array
             val outputPointer = BytePointer()
-            imencode(".jpg", blurredMat, outputPointer)
+            imencode(".$imageExtension", blurredMat, outputPointer)
             return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
         }
     }

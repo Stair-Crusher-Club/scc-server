@@ -40,6 +40,15 @@ open class AccessibilityImageFaceBlurringService(
     private suspend fun detectAndBlurFaces(imageUrls: List<String>): List<BlurResult> {
         return imageUrls.map { imageUrl ->
             try {
+                val (name, extension) = imageUrl.split("/").last().split(".")
+                if (listOf("jpg", "jpeg", "png", "webp").contains(extension).not()) {
+                    logger.info { "Detecting and blurring faces failed. $imageUrl is not image." }
+                    return@map BlurResult(
+                        originalImageUrl = imageUrl,
+                        blurredImageUrl = imageUrl,
+                        detectedPeopleCount = 0
+                    )
+                }
                 val detected = detectFacesService.detect(imageUrl)
                 val imageBytes = detected.imageBytes
                 if (detected.positions.isEmpty()) return@map BlurResult(
@@ -48,8 +57,7 @@ open class AccessibilityImageFaceBlurringService(
                     detectedPeopleCount = 0
                 )
                 val (blurredImageUrl, detectedPositions) = run {
-                    val outputByteArray = imageProcessor.blur(imageBytes, detected.positions)
-                    val (name, extension) = imageUrl.split("/").last().split(".")
+                    val outputByteArray = imageProcessor.blur(imageBytes, extension, detected.positions)
                     val blurredImageUrl = fileManagementService.uploadImage("${name}_b.$extension", outputByteArray)
                     blurredImageUrl to detected.positions
                 }
