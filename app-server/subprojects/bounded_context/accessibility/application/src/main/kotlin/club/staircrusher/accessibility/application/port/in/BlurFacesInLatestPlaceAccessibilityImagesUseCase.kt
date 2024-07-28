@@ -45,11 +45,13 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
             accessibilityImageFaceBlurringHistoryRepository.save(
                 AccessibilityImageFaceBlurringHistory(
                     id = EntityIdGenerator.generateRandom(),
-                    placeAccessibilityId = targetAccessibility.id, buildingAccessibilityId = null,
+                    placeAccessibilityId = targetAccessibility.id,
+                    buildingAccessibilityId = null,
                     originalImageUrls = entranceResults.map { it.originalImageUrl },
                     blurredImageUrls = entranceResults.filter { it.isBlurred() }.map { it.blurredImageUrl },
                     detectedPeopleCounts = entranceResults.map { it.detectedPeopleCount },
-                    createdAt = SccClock.instant(), updatedAt = SccClock.instant()
+                    createdAt = SccClock.instant(),
+                    updatedAt = SccClock.instant()
                 )
             )
         }

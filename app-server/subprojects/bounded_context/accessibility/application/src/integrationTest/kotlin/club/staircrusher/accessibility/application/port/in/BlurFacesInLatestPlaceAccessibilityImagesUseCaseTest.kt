@@ -76,9 +76,14 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCaseTest : BlurFacesITBase() {
         transactionManager.doInTransaction {
             accessibilityImageFaceBlurringHistoryRepository.save(
                 AccessibilityImageFaceBlurringHistory(
-                    id = "", placeAccessibilityId = oldestPlaceAccessibility.id, buildingAccessibilityId = null,
-                    originalImageUrls = listOf("image_url"), blurredImageUrls = listOf("blurred_image_url"),
-                    detectedPeopleCounts = emptyList(), createdAt = clock.instant(), updatedAt = clock.instant()
+                    id = "",
+                    placeAccessibilityId = oldestPlaceAccessibility.id,
+                    buildingAccessibilityId = null,
+                    originalImageUrls = listOf("image_url"),
+                    blurredImageUrls = listOf("blurred_image_url"),
+                    detectedPeopleCounts = emptyList(),
+                    createdAt = clock.instant(),
+                    updatedAt = clock.instant()
                 )
             )
         }
