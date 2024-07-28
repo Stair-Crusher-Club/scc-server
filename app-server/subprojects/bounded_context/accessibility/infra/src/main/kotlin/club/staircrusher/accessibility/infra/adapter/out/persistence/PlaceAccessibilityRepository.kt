@@ -97,9 +97,9 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
-    override fun findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant?): PlaceAccessibility? {
+    override fun findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant): PlaceAccessibility? {
         return queries.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
-            createdAt = (createdAt ?: Instant.EPOCH).toOffsetDateTime(), limit = 1
+            createdAt = createdAt.toOffsetDateTime(), limit = 1
         )
             .executeAsOneOrNull()
             ?.toDomainModel()

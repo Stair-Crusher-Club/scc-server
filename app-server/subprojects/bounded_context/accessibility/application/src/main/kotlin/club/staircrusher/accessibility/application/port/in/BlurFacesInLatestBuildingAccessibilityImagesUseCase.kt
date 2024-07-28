@@ -9,6 +9,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
+import java.time.Instant
 import java.util.concurrent.Executors
 
 @Component
@@ -33,7 +34,9 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCase(
             val lastBlurredBuildingAccessibility = latestHistory?.let { history ->
                 history.buildingAccessibilityId?.let { buildingAccessibilityRepository.findByIdOrNull(it) }
             }
-            buildingAccessibilityRepository.findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt = lastBlurredBuildingAccessibility?.createdAt)
+            buildingAccessibilityRepository.findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+                createdAt = lastBlurredBuildingAccessibility?.createdAt ?: Instant.EPOCH
+            )
         } ?: return
         val result = runBlocking { accessibilityImageFaceBlurringService.blurFacesInBuildingAccessibility(targetAccessibility.id) } ?: return
         transactionManager.doInTransaction {
