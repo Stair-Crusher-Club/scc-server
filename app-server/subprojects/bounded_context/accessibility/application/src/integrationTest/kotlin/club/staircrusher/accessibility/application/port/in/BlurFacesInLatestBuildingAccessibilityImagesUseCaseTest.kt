@@ -1,76 +1,42 @@
 package club.staircrusher.accessibility.application.port.`in`
 
-import club.staircrusher.accessibility.application.port.`in`.image.ImageProcessor
-import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
-import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.application.port.out.persistence.AccessibilityImageFaceBlurringHistoryRepository
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.AccessibilityImageFaceBlurringHistory
-import club.staircrusher.stdlib.Rect
-import club.staircrusher.stdlib.Size
-import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.testing.SccRandom
-import club.staircrusher.testing.spring_it.ITDataGenerator
 import club.staircrusher.testing.spring_it.base.SccSpringITApplication
 import club.staircrusher.testing.spring_it.mock.MockDetectFacesService
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import java.time.Duration
 
 @SpringBootTest(classes = [SccSpringITApplication::class])
-class BlurFacesInLatestBuildingAccessibilityImagesUseCaseTest {
-    @Autowired
-    private lateinit var transactionManager: TransactionManager
-
-    @Autowired
-    private lateinit var dataGenerator: ITDataGenerator
-
-    @Autowired
-    private lateinit var clock: MockSccClock
-
+class BlurFacesInLatestBuildingAccessibilityImagesUseCaseTest : BlurFacesITBase() {
     @Autowired
     private lateinit var accessibilityImageFaceBlurringHistoryRepository: AccessibilityImageFaceBlurringHistoryRepository
 
     @Autowired
-    private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
+    private lateinit var blurFacesInLatestBuildingAccessibilityImagesUseCase: BlurFacesInLatestBuildingAccessibilityImagesUseCase
 
     @Autowired
     private lateinit var buildingAccessibilityRepository: BuildingAccessibilityRepository
 
     @Autowired
-    private lateinit var blurFacesInLatestBuildingAccessibilityImagesUseCase: BlurFacesInLatestBuildingAccessibilityImagesUseCase
-
-    @MockBean
-    private lateinit var imageProcessor: ImageProcessor
-
-    @MockBean
-    private lateinit var detectFacesService: DetectFacesService
-
+    private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
     @BeforeEach
     fun setUp() = runBlocking {
         val imageBytes = ByteArray(10) { it.toByte() }
-        Mockito.`when`(detectFacesService.detect(eq(MockDetectFacesService.URL_WITH_FACES))).thenReturn(
-            DetectFacesResponse(
-                imageBytes = imageBytes, imageSize = Size(100, 100), positions = listOf(Rect(0, 0, 10, 10))
-            )
-        )
-        Mockito.`when`(detectFacesService.detect(eq(MockDetectFacesService.URL_WITHOUT_FACES))).thenReturn(
-            DetectFacesResponse(
-                imageBytes = imageBytes, imageSize = Size(100, 100), positions = emptyList()
-            )
-        )
+        mockDetectFacesWithFaceImage(MockDetectFacesService.URL_WITH_FACES, imageBytes)
+        mockDetectFacesWithNoFaceImage(MockDetectFacesService.URL_WITHOUT_FACES, imageBytes)
         Mockito.`when`(imageProcessor.blur(any(), any())).thenReturn(imageBytes)
 
         placeAccessibilityRepository.removeAll()
@@ -145,7 +111,6 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCaseTest {
         Assertions.assertFalse(elevatorImages.contains(MockDetectFacesService.URL_WITH_FACES))
         Assertions.assertTrue(elevatorImages.contains(MockDetectFacesService.URL_WITHOUT_FACES))
     }
-
 
 
     @Test
