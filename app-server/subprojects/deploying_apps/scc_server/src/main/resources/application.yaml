@@ -16,6 +16,11 @@ spring:
       maximum-pool-size: 32
       minimum-idle: 10
 
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
 # actuator settings
 management:
   endpoint:
