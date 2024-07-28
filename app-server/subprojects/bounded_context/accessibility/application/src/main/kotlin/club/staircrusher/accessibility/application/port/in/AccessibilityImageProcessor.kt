@@ -14,23 +14,24 @@ import org.bytedeco.opencv.opencv_core.Size
 @Component
 class AccessibilityImageProcessor : ImageProcessor {
     override fun blur(originalImage: ByteArray, positions: List<Rect>): ByteArray {
-        val imagePointer = BytePointer(*originalImage)
-        val originalImageMat = imdecode(Mat(imagePointer), IMREAD_COLOR)
-        // Blur images
-        val blurredMat = originalImageMat.clone()
-        for (position in positions) {
-            val faceRegion = blurredMat.apply(position.toMatRect())
-            GaussianBlur(
-                faceRegion,
-                faceRegion,
-                Size(0, 0), // sigmaX, sigmaY 에 의해서 결정 10.0
-                10.0
-            )
+        BytePointer(*originalImage).use { imagePointer ->
+            val originalImageMat = imdecode(Mat(imagePointer), IMREAD_COLOR)
+            // Blur images
+            val blurredMat = originalImageMat.clone()
+            for (position in positions) {
+                val faceRegion = blurredMat.apply(position.toMatRect())
+                GaussianBlur(
+                    faceRegion,
+                    faceRegion,
+                    Size(0, 0), // sigmaX, sigmaY 에 의해서 결정 10.0
+                    10.0
+                )
+            }
+            // Convert the result back to byte array
+            val outputPointer = BytePointer()
+            imencode(".jpg", blurredMat, outputPointer)
+            return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
         }
-        // Convert the result back to byte array
-        val outputPointer = BytePointer()
-        imencode(".jpg", blurredMat, outputPointer)
-        return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
     }
 
     private fun Rect.toMatRect(): org.bytedeco.opencv.opencv_core.Rect {
