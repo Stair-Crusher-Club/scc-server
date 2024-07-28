@@ -10,12 +10,8 @@ import java.nio.file.Path
 
 class MockFileManagementService : FileManagementService {
     override fun getFileUploadUrl(fileExtension: String): UploadUrl {
-        return getFileUploadUrl("example", fileExtension)
-    }
-
-    override fun getFileUploadUrl(fileName: String, fileExtension: String): UploadUrl {
         return UploadUrl(
-            url = "$fileName.$fileExtension",
+            url = "example.$fileExtension",
             expireAt = SccClock.instant().plusSeconds(60L)
         )
     }

@@ -45,14 +45,10 @@ internal class S3FileManagementService(
 
     // TODO: 유저별 rate limit 걸기. 위치는 여기가 아니라 application service여야 할 수도 있을 듯.
     override fun getFileUploadUrl(fileExtension: String): UploadUrl {
-        return getFileUploadUrl(generateObjectKey(), fileExtension)
-    }
-
-    override fun getFileUploadUrl(fileName: String, fileExtension: String): UploadUrl {
         val normalizedFilenameExtension = getNormalizedFileExtension(fileExtension)
         val objectRequest = PutObjectRequest.builder()
             .bucket(properties.bucketName)
-            .key("$fileName.$normalizedFilenameExtension")
+            .key(generateObjectKey(normalizedFilenameExtension))
             .contentType(Files.probeContentType(Path.of("dummy.${normalizedFilenameExtension}")))
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
@@ -111,11 +107,12 @@ internal class S3FileManagementService(
     }
 
     private val objectKeyTimestampPrefixFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
-    private fun generateObjectKey(): String {
+    private fun generateObjectKey(extension: String?): String {
         return buildString {
             append(objectKeyTimestampPrefixFormat.format(SccClock.instant().atOffset(ZoneOffset.UTC)))
             append("_")
             append(generateUUID())
+            extension?.let { append(".$extension") }
         }
     }
 
