@@ -139,5 +139,5 @@ fun ClubQuestSummary.toDTO() = ClubQuestSummaryDTO(
     purposeType = purposeType.toDTO(),
     startAt = startAt.toDTO(),
     endAt = endAt.toDTO(),
-    shortenedUrl = shortenedUrl,
+    shortenedUrl = shortenedAdminUrl,
 )
