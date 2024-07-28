@@ -3,7 +3,7 @@ package club.staircrusher.accessibility.application.port.`in`
 import club.staircrusher.accessibility.application.port.`in`.image.ImageProcessor
 import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
-import club.staircrusher.stdlib.Rect
+import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 import club.staircrusher.stdlib.Size
 import club.staircrusher.testing.spring_it.ITDataGenerator
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
@@ -31,7 +31,7 @@ class BlurFacesITBase : SccSpringITBase() {
     fun mockDetectFacesWithFaceImage(imageUrl: String, imageBytes: ByteArray) = runBlocking {
         Mockito.`when`(detectFacesService.detect(eq(imageUrl))).thenReturn(
             DetectFacesResponse(
-                imageBytes = imageBytes, imageSize = Size(100, 100), positions = listOf(Rect(0, 0, 10, 10))
+                imageBytes = imageBytes, imageSize = Size(100, 100), positions = listOf(DetectedFacePosition(0, 0, 10, 10))
             )
         )
     }

@@ -1,7 +1,7 @@
 package club.staircrusher.accessibility.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.`in`.image.ImageProcessor
-import club.staircrusher.stdlib.Rect
+import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 import club.staircrusher.stdlib.di.annotation.Component
 import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_COLOR
@@ -13,7 +13,7 @@ import org.bytedeco.opencv.opencv_core.Size
 
 @Component
 class AccessibilityImageProcessor : ImageProcessor {
-    override fun blur(originalImage: ByteArray, positions: List<Rect>): ByteArray {
+    override fun blur(originalImage: ByteArray, positions: List<DetectedFacePosition>): ByteArray {
         BytePointer(*originalImage).use { imagePointer ->
             val originalImageMat = imdecode(Mat(imagePointer), IMREAD_COLOR)
             // Blur images
@@ -34,7 +34,7 @@ class AccessibilityImageProcessor : ImageProcessor {
         }
     }
 
-    private fun Rect.toMatRect(): org.bytedeco.opencv.opencv_core.Rect {
+    private fun DetectedFacePosition.toMatRect(): org.bytedeco.opencv.opencv_core.Rect {
         return org.bytedeco.opencv.opencv_core.Rect(this.x, this.y, this.width, this.height)
     }
 }

@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.application.port.out
 
-import club.staircrusher.stdlib.Rect
+import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 import club.staircrusher.stdlib.Size
 
 interface DetectFacesService {
@@ -11,7 +11,7 @@ interface DetectFacesService {
 data class DetectFacesResponse(
     val imageBytes: ByteArray,
     val imageSize: Size,
-    val positions: List<Rect>,
+    val positions: List<DetectedFacePosition>,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

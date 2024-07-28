@@ -2,7 +2,7 @@ package club.staircrusher.testing.spring_it.mock
 
 import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
-import club.staircrusher.stdlib.Rect
+import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 import club.staircrusher.stdlib.Size
 
 class MockDetectFacesService : DetectFacesService {
@@ -10,7 +10,7 @@ class MockDetectFacesService : DetectFacesService {
         return DetectFacesResponse(
             imageBytes = if (imageUrl == URL_WITH_FACES) byteArrayWithFaces else ByteArray(0),
             imageSize = Size(100, 100),
-            positions = if (imageUrl == URL_WITH_FACES) listOf(Rect(30, 30, 10, 10)) else emptyList()
+            positions = if (imageUrl == URL_WITH_FACES) listOf(DetectedFacePosition(30, 30, 10, 10)) else emptyList()
         )
     }
 
@@ -18,7 +18,7 @@ class MockDetectFacesService : DetectFacesService {
         return DetectFacesResponse(
             imageBytes = imageBytes,
             imageSize = Size(100, 100),
-            positions = if (imageBytes.contentEquals(byteArrayWithFaces)) listOf(Rect(0, 0, 100, 100)) else emptyList()
+            positions = if (imageBytes.contentEquals(byteArrayWithFaces)) listOf(DetectedFacePosition(0, 0, 100, 100)) else emptyList()
         )
     }
 

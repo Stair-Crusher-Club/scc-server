@@ -3,7 +3,7 @@ package club.staircrusher.accessibility.infra.adapter.out
 import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.infra.adapter.out.file_management.S3ImageUploadProperties
-import club.staircrusher.stdlib.Rect
+import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 import club.staircrusher.stdlib.Size
 import club.staircrusher.stdlib.di.annotation.Component
 import kotlinx.coroutines.future.await
@@ -58,12 +58,12 @@ internal class AwsRekognitionService(
         return rekognitionClient.detectFaces(request).await()
     }
 
-    private fun calculateFacePosition(imageSize: Size, boundingBox: BoundingBox): Rect {
+    private fun calculateFacePosition(imageSize: Size, boundingBox: BoundingBox): DetectedFacePosition {
         val startX = (boundingBox.left() * imageSize.width).toInt()
         val startY = (boundingBox.top() * imageSize.height).toInt()
         val endX = (startX + boundingBox.width() * imageSize.width).toInt()
         val endY = (startY + boundingBox.height() * imageSize.height).toInt()
-        return Rect(
+        return DetectedFacePosition(
             x = startX,
             y = startY,
             width = endX - startX,
