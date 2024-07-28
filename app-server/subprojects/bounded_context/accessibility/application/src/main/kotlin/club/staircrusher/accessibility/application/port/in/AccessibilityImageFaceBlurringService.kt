@@ -5,6 +5,7 @@ import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
+import mu.KotlinLogging
 
 @Component
 open class AccessibilityImageFaceBlurringService(
@@ -14,6 +15,8 @@ open class AccessibilityImageFaceBlurringService(
     private val fileManagementService: FileManagementService,
     private val transactionManager: TransactionManager,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     suspend fun blurFacesInPlaceAccessibility(placeAccessibilityId: String): PlaceAccessibilityBlurResult? {
         val placeAccessibility = transactionManager.doInTransaction {
             accessibilityImageService.doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(placeAccessibilityId = placeAccessibilityId)
@@ -56,6 +59,7 @@ open class AccessibilityImageFaceBlurringService(
                     detectedPeopleCount = detectedPositions.size
                 )
             } catch (e: Exception) {
+                logger.error(e) { "Detecting and blurring faces in the image($imageUrl) failed." }
                 return@map BlurResult(
                     originalImageUrl = imageUrl,
                     blurredImageUrl = imageUrl,
