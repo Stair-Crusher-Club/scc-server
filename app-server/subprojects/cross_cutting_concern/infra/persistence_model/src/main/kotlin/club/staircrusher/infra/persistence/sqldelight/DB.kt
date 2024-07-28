@@ -5,7 +5,6 @@ import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.domain.server_event.ServerEventPayload
 import club.staircrusher.domain.server_event.ServerEventType
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.AccessibilityImageListStringColumnAdapter
-import club.staircrusher.infra.persistence.sqldelight.column_adapter.ClubQuestPurposeTypeStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoorTypeListStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
@@ -16,7 +15,6 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListT
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
-import club.staircrusher.infra.persistence.sqldelight.migration.Club_quest
 import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Server_event
@@ -68,9 +66,6 @@ class DB(dataSource: DataSource) {
 
             }
         ),
-        club_questAdapter = Club_quest.Adapter(
-            purpose_typeAdapter = ClubQuestPurposeTypeStringColumnAdapter,
-        ),
         server_eventAdapter = Server_event.Adapter(
             typeAdapter = object : ColumnAdapter<ServerEventType, String> {
                 override fun decode(databaseValue: String): ServerEventType {
@@ -103,9 +98,6 @@ class DB(dataSource: DataSource) {
     val placeAccessibilityCommentQueries = scc.placeAccessibilityCommentQueries
     val placeAccessibilityUpvoteQueries = scc.placeAccessibilityUpvoteQueries
     val accessibilityRankQueries = scc.accessibilityRankQueries
-    val clubQuestQueries = scc.clubQuestQueries
-    val clubQuestTargetBuildingQueries = scc.clubQuestTargetBuildingQueries
-    val clubQuestTargetPlaceQueries = scc.clubQuestTargetPlaceQueries
     val accessibilityAllowedRegionQueries = scc.accessibilityAllowedRegionQueries
     val challengeQueries = scc.challengeQueries
     val challengeContributionQueries = scc.challengeContributionQueries

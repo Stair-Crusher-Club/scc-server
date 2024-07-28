@@ -13,6 +13,12 @@ spring:
       maximum-pool-size: 16
       minimum-idle: 10
 
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
 scc:
   environment: test
 

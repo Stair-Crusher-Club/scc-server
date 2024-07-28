@@ -6,6 +6,8 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionManager
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import java.time.Instant
 
 @Component
@@ -25,20 +27,30 @@ class GetCursoredClubQuestSummariesUseCase(
         val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.initial()
         val normalizedLimit = limit ?: DEFAULT_LIMIT
 
-        val summaries = clubQuestRepository.findCursoredSummariesOrderByCreatedAtDesc(
+        val pageRequest = PageRequest.of(
+            0,
+            normalizedLimit,
+            Sort.by(
+                listOf(
+                    Sort.Order.desc("createdAt"),
+                    Sort.Order.desc("id"),
+                ),
+            ),
+        )
+        val result = clubQuestRepository.findCursoredSummaries(
             cursorCreatedAt = cursor.createdAt,
             cursorId = cursor.id,
-            limit = normalizedLimit + 1, // 다음 페이지가 존재하는지 확인하기 위해 한 개를 더 조회한다.
+            pageable = pageRequest,
         )
 
-        val nextCursor = if (summaries.size > normalizedLimit) {
-            Cursor(summaries[normalizedLimit - 1])
+        val nextCursor = if (result.hasNext()) {
+            Cursor(result.content[normalizedLimit - 1])
         } else {
             null
         }
 
         Result(
-            list = summaries,
+            list = result.content,
             nextCursor = nextCursor?.value,
         )
     }

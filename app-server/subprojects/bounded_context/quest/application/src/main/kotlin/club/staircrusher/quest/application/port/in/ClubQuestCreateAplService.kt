@@ -189,7 +189,7 @@ class ClubQuestCreateAplService(
                         return@async quest
                     }
                     transactionManager.doInTransaction {
-                        val reloadedQuest = clubQuestRepository.findById(quest.id)
+                        val reloadedQuest = clubQuestRepository.findById(quest.id).get()
                         reloadedQuest.updateShortenedAdminUrl(shortenedAdminUrl)
                         clubQuestRepository.save(reloadedQuest)
                     }

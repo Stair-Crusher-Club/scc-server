@@ -3,22 +3,33 @@ package club.staircrusher.quest.domain.model
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.geography.Location
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import java.time.Instant
 
+@Entity
 class ClubQuestTargetBuilding(
+    @Id
     val id: String,
     val clubQuestId: String,
     val buildingId: String,
     val name: String,
+    @AttributeOverrides(
+        AttributeOverride(name = "lng", column = Column(name = "location_x")),
+        AttributeOverride(name = "lat", column = Column(name = "location_y")),
+    )
     val location: Location,
+    @OneToMany(mappedBy = "targetBuildingId", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val places: List<ClubQuestTargetPlace>,
-    createdAt: Instant = SccClock.instant(),
-    updatedAt: Instant = SccClock.instant(),
+    val createdAt: Instant = SccClock.instant(),
+    private val updatedAt: Instant = SccClock.instant(),
 ) {
-    val createdAt: Instant = createdAt
-
-    var updatedAt: Instant = updatedAt
-        protected set
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
