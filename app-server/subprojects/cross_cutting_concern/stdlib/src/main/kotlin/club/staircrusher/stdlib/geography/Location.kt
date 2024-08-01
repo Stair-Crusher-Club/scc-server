@@ -2,9 +2,11 @@
 package club.staircrusher.stdlib.geography
 
 import at.kopyk.CopyExtensions
+import jakarta.persistence.Embeddable
 import kotlin.math.abs
 
 @CopyExtensions
+@Embeddable
 data class Location(
     val lng: Double,
     val lat: Double,

@@ -4,6 +4,7 @@ import club.staircrusher.quest.application.port.out.persistence.ClubQuestReposit
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionManager
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class GetClubQuestUseCase(

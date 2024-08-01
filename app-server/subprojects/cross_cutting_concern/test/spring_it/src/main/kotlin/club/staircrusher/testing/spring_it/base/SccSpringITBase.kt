@@ -44,8 +44,6 @@ open class SccSpringITBase {
     @Autowired
     lateinit var adminAuthenticationProperties: AdminAuthenticationProperties
 
-    private val objectMapper = jacksonObjectMapper()
-
     protected fun MockMvc.sccRequest(url: String, requestBody: Any?, user: User? = null): ResultActionsDsl {
         return post(url) {
             contentType = MediaType.APPLICATION_JSON
@@ -85,6 +83,10 @@ open class SccSpringITBase {
         return objectMapper.readValue(andReturn().response.contentAsString, resultClazz.java)
     }
 
+    protected final inline fun <reified T : Any> ResultActionsDsl.getResult(): T {
+        return objectMapper.readValue(andReturn().response.contentAsString, T::class.java)
+    }
+
     protected fun <T : Any> ResultActionsDsl.getResult(typeReference: TypeReference<T>): T {
         return objectMapper.readValue(andReturn().response.contentAsString, typeReference)
     }
@@ -103,5 +105,9 @@ open class SccSpringITBase {
         } else {
             this
         }
+    }
+
+    companion object {
+        val objectMapper = jacksonObjectMapper()
     }
 }

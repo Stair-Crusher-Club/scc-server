@@ -1,9 +1,8 @@
 package club.staircrusher.quest.application.port.out.persistence
 
 import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
-import club.staircrusher.stdlib.domain.repository.EntityRepository
+import org.springframework.data.repository.CrudRepository
 
-interface ClubQuestTargetBuildingRepository : EntityRepository<ClubQuestTargetBuilding, String> {
-    fun removeByClubQuestId(clubQuestId: String)
-    fun findByClubQuestIdAndBuildingId(clubQuestId: String, buildingId: String): ClubQuestTargetBuilding?
+interface ClubQuestTargetBuildingRepository : CrudRepository<ClubQuestTargetBuilding, String> {
+    fun findFirstByClubQuestIdAndBuildingId(clubQuestId: String, buildingId: String): ClubQuestTargetBuilding?
 }

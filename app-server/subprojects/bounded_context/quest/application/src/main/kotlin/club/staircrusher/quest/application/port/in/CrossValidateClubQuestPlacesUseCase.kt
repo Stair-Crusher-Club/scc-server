@@ -35,7 +35,7 @@ class CrossValidateClubQuestPlacesUseCase(
         logger.info("[$questId] Start CrossValidateClubQuestPlaces")
         try {
             val places = transactionManager.doInTransaction {
-                val placeIdsInQuest = clubQuestRepository.findById(questId).targetBuildings.flatMap { it.places }.map { it.placeId }
+                val placeIdsInQuest = clubQuestRepository.findById(questId).get().targetBuildings.flatMap { it.places }.map { it.placeId }
                 logger.info("[$questId] placeIdsInQuest: $placeIdsInQuest")
                 placeApplicationService.findAllByIds(placeIdsInQuest)
             }
@@ -49,7 +49,7 @@ class CrossValidateClubQuestPlacesUseCase(
             logger.info("[$questId] closedExpectedPlaceIds: $closedExpectedPlaceIds")
 
             transactionManager.doInTransaction {
-                val targetPlaces = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceIds(
+                val targetPlaces = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceIdIn(
                     clubQuestId = questId,
                     placeIds = closedExpectedPlaceIds,
                 )
