@@ -37,7 +37,7 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCaseTest : BlurFacesITBase() {
         val imageBytes = ByteArray(10) { it.toByte() }
         mockDetectFacesWithFaceImage(MockDetectFacesService.URL_WITH_FACES, imageBytes)
         mockDetectFacesWithNoFaceImage(MockDetectFacesService.URL_WITHOUT_FACES, imageBytes)
-        Mockito.`when`(imageProcessor.blur(any(), any())).thenReturn(imageBytes)
+        Mockito.`when`(imageProcessor.blur(any(), any(), any())).thenReturn(imageBytes)
 
         placeAccessibilityRepository.removeAll()
         buildingAccessibilityRepository.removeAll()

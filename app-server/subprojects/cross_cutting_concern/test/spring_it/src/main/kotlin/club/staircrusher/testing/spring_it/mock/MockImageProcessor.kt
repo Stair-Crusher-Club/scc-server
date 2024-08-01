@@ -4,7 +4,9 @@ import club.staircrusher.accessibility.application.port.`in`.image.ImageProcesso
 import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 
 class MockImageProcessor : ImageProcessor {
-    override fun blur(originalImage: ByteArray, positions: List<DetectedFacePosition>): ByteArray {
+    override fun blur(
+        originalImage: ByteArray, imageExtension: String, positions: List<DetectedFacePosition>
+    ): ByteArray {
         return originalImage
     }
 }
