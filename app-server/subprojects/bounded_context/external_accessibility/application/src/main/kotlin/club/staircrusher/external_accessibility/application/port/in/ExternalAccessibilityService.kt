@@ -14,4 +14,10 @@ class ExternalAccessibilityService(
         return externalAccessibilityRepository.findByIdOrNull(id)
             ?: throw IllegalArgumentException("External Accessibility with id $id does not exist.")
     }
+
+    fun upsert(
+        list: List<ExternalAccessibility>
+    ) {
+        return externalAccessibilityRepository.saveAll(list)
+    }
 }

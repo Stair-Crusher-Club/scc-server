@@ -1651,21 +1651,29 @@ components:
     ToiletAccessibilityDetails:
       type: object
       properties:
+        image_url:
+          type: string
         gender:
-          type: boolean
+          type: string
         accessDesc:
           type: string
         availableDesc:
           type: string
         entranceDesc:
           type: string
-        stallDesc:
+        stallWidth:
+          type: string
+        stallDepth:
           type: string
         doorDesc:
           type: string
-        washStandDesc:
+        doorSideRoom:
           type: string
-        extra:
+        washStandBelowRoom:
+          type: string
+        washStandHandle:
+          type: string
+        extraDesc:
           type: string
 
     PlaceListItem:

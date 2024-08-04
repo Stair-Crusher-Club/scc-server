@@ -174,7 +174,7 @@ class ITDataGenerator {
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
                 category = category,
-                toiletDetails = ToiletAccessibilityDetails(gender = true, availableDesc = "asdf"),
+                toiletDetails = ToiletAccessibilityDetails(gender = "남자화장실", availableDesc = "asdf"),
             )
         )
     }

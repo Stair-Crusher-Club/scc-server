@@ -7,6 +7,8 @@ import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPost200Respon
 import club.staircrusher.api.spec.dto.ToiletAccessibilityDetails
 import club.staircrusher.external_accessibility.application.port.`in`.ExternalAccessibilitySearchService
 import club.staircrusher.external_accessibility.application.port.`in`.ExternalAccessibilityService
+import club.staircrusher.external_accessibility.application.port.`in`.ToiletAccessibilitySyncUseCase
+import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
@@ -17,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ExternalAccessibilityController(
     private val externalAccessibilitySearchService: ExternalAccessibilitySearchService,
-    private val externalAccessibilityService: ExternalAccessibilityService
+    private val externalAccessibilityService: ExternalAccessibilityService,
+    private val toiletAccessibilitySyncUseCase: ToiletAccessibilitySyncUseCase,
 ) {
     @PostMapping("/searchExternalAccessibilities")
     fun search(
@@ -43,6 +46,18 @@ class ExternalAccessibilityController(
         return externalAccessibilityService.get(request.externalAccessibilityId).toDTO()
     }
 
+    @PostMapping("/syncWithDataSource")
+    fun syncWithDataSource(): String {
+        when (SccEnv.getEnv()) {
+            SccEnv.TEST,
+            SccEnv.LOCAL,
+            SccEnv.DEV -> toiletAccessibilitySyncUseCase.load()
+
+            else -> return "Not accessible"
+        }
+        return "OK"
+    }
+
     private fun club.staircrusher.external_accessibility.domain.model.ExternalAccessibility.toDTO(): ExternalAccessibility {
         return ExternalAccessibility(
             id = this.id,
@@ -56,14 +71,18 @@ class ExternalAccessibilityController(
             category = this.category.name,
             toiletDetails = this.toiletDetails?.run {
                 ToiletAccessibilityDetails(
+                    imageUrl = imageUrl,
                     gender = gender,
                     accessDesc = accessDesc,
                     availableDesc = availableDesc,
                     entranceDesc = entranceDesc,
-                    stallDesc = stallDesc,
+                    stallWidth = stallWidth,
+                    stallDepth = stallDepth,
                     doorDesc = doorDesc,
-                    washStandDesc = washStandDesc,
-                    extra = extra
+                    doorSideRoom = doorSideRoom,
+                    washStandBelowRoom = washStandBelowRoom,
+                    washStandHandle = washStandHandle,
+                    extraDesc = extraDesc,
                 )
             }
         )
