@@ -8,6 +8,9 @@ dependencies {
     api(projects.apiSpecification.domainEvent)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("io.projectreactor.netty:reactor-netty")
+    implementation("org.springframework:spring-webflux")
+    implementation("org.apache.commons:commons-csv:1.11.0")
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 

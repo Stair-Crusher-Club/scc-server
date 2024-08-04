@@ -3,21 +3,17 @@ package club.staircrusher.external_accessibility.infra.adapter.`in`.controller
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.ExternalAccessibility
 import club.staircrusher.api.spec.dto.GetExternalAccessibilityPostRequest
-import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPostRequest
 import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPost200Response
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPostRequest
 import club.staircrusher.external_accessibility.infra.adapter.`in`.controller.base.ExternalAccessibilityITBase
 import club.staircrusher.external_accessibility.infra.adapter.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import kotlin.random.Random
 
 class ExternalAccessibilityControllerTest : ExternalAccessibilityITBase() {
 
