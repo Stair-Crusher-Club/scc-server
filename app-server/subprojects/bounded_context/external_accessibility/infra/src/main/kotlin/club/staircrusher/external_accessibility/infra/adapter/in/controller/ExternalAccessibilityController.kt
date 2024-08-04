@@ -48,7 +48,7 @@ class ExternalAccessibilityController(
 
     @PostMapping("/syncWithDataSource")
     fun syncWithDataSource(): String {
-        val baseUrl = when (SccEnv.getEnv()) {
+        when (SccEnv.getEnv()) {
             SccEnv.TEST,
             SccEnv.LOCAL,
             SccEnv.DEV -> toiletAccessibilitySyncUseCase.load()
