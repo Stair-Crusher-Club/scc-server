@@ -21,6 +21,9 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
+import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
+import club.staircrusher.external_accessibility.domain.model.ExternalAccessibility
+import club.staircrusher.external_accessibility.domain.model.ToiletAccessibilityDetails
 import club.staircrusher.place.application.port.out.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
@@ -30,6 +33,7 @@ import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place.domain.model.PlaceFavorite
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.eupMyeonDongById
 import club.staircrusher.stdlib.geography.siGunGuById
@@ -86,6 +90,9 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var challengeContributionRepository: ChallengeContributionRepository
+
+    @Autowired
+    private lateinit var externalAccessibilityRepository: ExternalAccessibilityRepository
 
     fun createUser(
         nickname: String = SccRandom.string(12),
@@ -148,6 +155,26 @@ class ITDataGenerator {
                 ),
                 siGunGuId = siGunGuId,
                 eupMyeonDongId = eupMyeonDongId,
+            )
+        )
+    }
+
+    fun createExternalAccessibility(
+        name: String = "공공화장실",
+        location: Location = Location(127.5, 37.5),
+        address: String = "임의주소",
+        category: ExternalAccessibilityCategory = ExternalAccessibilityCategory.TOILET,
+    ): ExternalAccessibility {
+        return externalAccessibilityRepository.save(
+            ExternalAccessibility(
+                id = EntityIdGenerator.generateRandom(),
+                name = name,
+                location = location,
+                address = address,
+                createdAt = Instant.now(),
+                updatedAt = Instant.now(),
+                category = category,
+                toiletDetails = ToiletAccessibilityDetails(gender = true, availableDesc = "asdf"),
             )
         )
     }

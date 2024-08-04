@@ -1,0 +1,29 @@
+save:
+INSERT INTO external_accessibility
+VALUES :external_accessibility
+ON CONFLICT(id) DO UPDATE SET
+    name = EXCLUDED.name,
+    location_x = EXCLUDED.location_x,
+    location_y = EXCLUDED.location_y,
+    address = EXCLUDED.address,
+    category = EXCLUDED.category,
+    details = EXCLUDED.details,
+    created_at = EXCLUDED.created_at,
+    updated_at = NULL;
+
+removeAll:
+DELETE FROM external_accessibility;
+
+findById:
+SELECT *
+FROM external_accessibility
+WHERE external_accessibility.id = :id;
+
+findByCategoryIn:
+SELECT *
+FROM external_accessibility
+WHERE external_accessibility.category IN :categories;
+
+findAll:
+SELECT *
+FROM external_accessibility;

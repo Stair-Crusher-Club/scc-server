@@ -645,6 +645,65 @@ paths:
                 required:
                   - placeAccessibilityComment
 
+  /searchExternalAccessibilities:
+    post:
+      summary: 외부 접근성 정보가 등록된 장소를 검색한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searchText:
+                  type: string
+                currentLocation:
+                  $ref: '#/components/schemas/Location'
+                distanceMetersLimit:
+                  type: integer
+                categories:
+                  type: array
+                  description: 조회하고 싶은 접근성 정보 카테고리. 현재 화장실 (TOILET) 만 있음.
+                  items:
+                    type: string
+              required:
+                - distanceMetersLimit
+      responses:
+        '200':
+          description: 응답 리스트
+          content:
+            application/json:
+              schema:
+                properties:
+                  items:
+                    items:
+                      $ref: '#/components/schemas/ExternalAccessibility'
+                    type: array
+                type: object
+
+  /getExternalAccessibility:
+    post:
+      summary: 공공 접근성 정보를 확인한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                externalAccessibilityId:
+                  type: string
+              required:
+                - externalAccessibilityId
+      responses:
+        '200':
+          description: 해당 접근성 정보를 응답으로 내려준다.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccessibility'
+
+
   /searchPlaces:
     post:
       summary: 점포를 검색한다. sort 가 null 인 경우에는 정확도순을 기본으로 한다.
@@ -1564,6 +1623,50 @@ components:
         - ATTRACTION
         - HOSPITAL
         - PHARMACY
+    
+    ExternalAccessibility:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 장소의 human-readable한 이름.
+        address:
+          type: string
+          description: 장소의 human-readable한 주소.
+        location:
+          $ref: '#/components/schemas/Location'
+        category:
+          type: string
+          description: 장소의 종류
+        toilet_details:
+          $ref: '#/components/schemas/ToiletAccessibilityDetails'
+      required:
+        - id
+        - name
+        - location
+        - category
+
+    ToiletAccessibilityDetails:
+      type: object
+      properties:
+        gender:
+          type: boolean
+        accessDesc:
+          type: string
+        availableDesc:
+          type: string
+        entranceDesc:
+          type: string
+        stallDesc:
+          type: string
+        doorDesc:
+          type: string
+        washStandDesc:
+          type: string
+        extra:
+          type: string
 
     PlaceListItem:
       type: object
