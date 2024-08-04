@@ -70,14 +70,3 @@ class ToiletInfoFetcherImpl : ToiletInfoFetcher {
         const val IMAGE_BASE_URL = "https://map.seoul.go.kr"
     }
 }
-
-
-fun main() {
-    val rec = ToiletInfoFetcherImpl().fetchRecords()
-    println(rec.map { it.이용성별 }.toSet())
-    println(rec.map { it.사용가능여부 }.toSet())
-    println(rec.map { it.화장실입구구조 }.toSet())
-    println(rec.map { it.내부가로너비 }.toSet())
-    println(rec.map { it.내부세로너비 }.toSet())
-    println(rec.map { it.대변기출입문 }.toSet())
-}
