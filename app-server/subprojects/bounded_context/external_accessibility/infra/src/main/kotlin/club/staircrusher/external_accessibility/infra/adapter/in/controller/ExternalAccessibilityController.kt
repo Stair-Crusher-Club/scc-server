@@ -8,6 +8,7 @@ import club.staircrusher.api.spec.dto.ToiletAccessibilityDetails
 import club.staircrusher.external_accessibility.application.port.`in`.ExternalAccessibilitySearchService
 import club.staircrusher.external_accessibility.application.port.`in`.ExternalAccessibilityService
 import club.staircrusher.external_accessibility.application.port.`in`.ToiletAccessibilitySyncUseCase
+import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
@@ -46,8 +47,15 @@ class ExternalAccessibilityController(
     }
 
     @PostMapping("/syncWithDataSource")
-    fun syncWithDataSource() {
-        toiletAccessibilitySyncUseCase.load()
+    fun syncWithDataSource(): String {
+        val baseUrl = when (SccEnv.getEnv()) {
+            SccEnv.TEST,
+            SccEnv.LOCAL,
+            SccEnv.DEV -> toiletAccessibilitySyncUseCase.load()
+
+            else -> return "Not accessible"
+        }
+        return "OK"
     }
 
     private fun club.staircrusher.external_accessibility.domain.model.ExternalAccessibility.toDTO(): ExternalAccessibility {
