@@ -10,9 +10,7 @@ import org.springframework.http.HttpMethod
 class CreateClubQuestTest : ClubQuestITBase() {
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        clubQuestRepository.removeAll()
-        clubQuestTargetBuildingRepository.removeAll()
-        clubQuestTargetPlaceRepository.removeAll()
+        clubQuestRepository.deleteAll()
     }
 
     @Test
@@ -23,11 +21,11 @@ class CreateClubQuestTest : ClubQuestITBase() {
             .apply {
                 val result = getResult(CreateClubQuestResponseDTO::class)
                 val clubQuestId = result.clubQuestIds[0]
-                val clubQuest = clubQuestRepository.findById(clubQuestId)
+                val clubQuest = clubQuestRepository.findById(clubQuestId).get()
                 val targetBuildingVO = clubQuest.targetBuildings[0]
                 val targetPlaceVO = targetBuildingVO.places[0]
 
-                val targetBuilding = clubQuestTargetBuildingRepository.findByClubQuestIdAndBuildingId(
+                val targetBuilding = clubQuestTargetBuildingRepository.findFirstByClubQuestIdAndBuildingId(
                     clubQuestId = clubQuestId,
                     buildingId = targetBuildingVO.buildingId,
                 )
@@ -36,7 +34,7 @@ class CreateClubQuestTest : ClubQuestITBase() {
                 assertEquals(targetBuildingVO.name, targetBuilding.name)
                 assertEquals(targetBuildingVO.location, targetBuilding.location)
 
-                val targetPlace = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceId(
+                val targetPlace = clubQuestTargetPlaceRepository.findFirstByClubQuestIdAndPlaceId(
                     clubQuestId = clubQuestId,
                     placeId = targetPlaceVO.placeId,
                 )

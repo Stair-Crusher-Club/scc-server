@@ -1,5 +1,7 @@
 package club.staircrusher.user.application.port.`in`
 
+import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
+import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -16,6 +18,7 @@ import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.runBlocking
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class UserApplicationService(
@@ -25,6 +28,7 @@ class UserApplicationService(
     private val passwordEncryptor: PasswordEncryptor,
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val stibeeSubscriptionService: StibeeSubscriptionService,
+    private val sccServerEventRecorder: SccServerEventRecorder,
 ) {
 
     @Deprecated("닉네임 로그인은 사라질 예정")
@@ -53,7 +57,7 @@ class UserApplicationService(
         if (normalizedNickname.length < 2) {
             throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
         }
-        if (userRepository.findByNickname(normalizedNickname) != null) {
+        if (userRepository.findFirstByNickname(normalizedNickname) != null) {
             throw SccDomainException("${normalizedNickname}은 이미 사용된 닉네임입니다.")
         }
         return userRepository.save(
@@ -74,7 +78,7 @@ class UserApplicationService(
         nickname: String,
         password: String
     ): AuthTokens = transactionManager.doInTransaction {
-        val user = userRepository.findByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
+        val user = userRepository.findFirstByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
         if (user.isDeleted) {
             throw SccDomainException("잘못된 계정입니다.")
         }
@@ -93,7 +97,7 @@ class UserApplicationService(
         mobilityTools: List<UserMobilityTool>,
         isNewsLetterSubscriptionAgreed: Boolean,
     ): User = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val user = userRepository.findById(userId)
+        val user = userRepository.findById(userId).get()
         user.nickname = run {
             val normalizedNickname = nickname.trim()
             if (normalizedNickname.length < 2) {
@@ -102,7 +106,7 @@ class UserApplicationService(
                     SccDomainException.ErrorCode.INVALID_NICKNAME,
                 )
             }
-            if (userRepository.findByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
+            if (userRepository.findFirstByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException(
                     "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
                     SccDomainException.ErrorCode.INVALID_NICKNAME,
@@ -118,7 +122,7 @@ class UserApplicationService(
                     SccDomainException.ErrorCode.INVALID_EMAIL,
                 )
             }
-            if (userRepository.findByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
+            if (userRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException(
                     "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
                     SccDomainException.ErrorCode.INVALID_EMAIL,
@@ -133,7 +137,7 @@ class UserApplicationService(
 
         if (isNewsLetterSubscriptionAgreed) {
             transactionManager.doAfterCommit {
-                user.email?.let { subscribeToNewsLetter(it, user.nickname) }
+                user.email?.let { subscribeToNewsLetter(user.id, it, user.nickname) }
             }
         }
 
@@ -143,7 +147,7 @@ class UserApplicationService(
     fun deleteUser(
         userId: String,
     ) = transactionManager.doInTransaction (TransactionIsolationLevel.REPEATABLE_READ) {
-        val user = userRepository.findById(userId)
+        val user = userRepository.findById(userId).get()
         user.delete(SccClock.instant())
         userRepository.save(user)
 
@@ -155,14 +159,15 @@ class UserApplicationService(
     }
 
     fun getUsers(userIds: List<String>): List<User> = transactionManager.doInTransaction {
-        userRepository.findByIdIn(userIds)
+        userRepository.findAllById(userIds).toList()
     }
 
     fun getAllUsers(): List<User> {
-        return userRepository.findAll()
+        return userRepository.findAll().toList()
     }
 
-    private fun subscribeToNewsLetter(email: String, name: String) {
+    private fun subscribeToNewsLetter(userId: String, email: String, name: String) {
+        sccServerEventRecorder.record(NewsletterSubscribedOnSignupPayload(userId))
         runBlocking {
             stibeeSubscriptionService.registerSubscriber(
                 email = email,

@@ -12,6 +12,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.user.application.port.out.persistence.UserRepository
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Clock
 import java.time.Instant
 

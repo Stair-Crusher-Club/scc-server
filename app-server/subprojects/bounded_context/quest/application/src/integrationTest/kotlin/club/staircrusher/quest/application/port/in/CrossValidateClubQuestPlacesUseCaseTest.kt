@@ -99,7 +99,7 @@ class CrossValidateClubQuestPlacesUseCaseTest {
 
         // then - targetPlace1의 isClosedExpected만 true이고, targetPlace2와 place1, place2는 변한 게 없다.
         transactionManager.doInTransaction {
-            val targetPlaces = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceIds(
+            val targetPlaces = clubQuestTargetPlaceRepository.findByClubQuestIdAndPlaceIdIn(
                 clubQuestId = clubQuest.id,
                 placeIds = listOf(place1.id, place2.id),
             )

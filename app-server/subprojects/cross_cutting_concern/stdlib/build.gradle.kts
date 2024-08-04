@@ -9,6 +9,9 @@ dependencies {
     implementation("com.auth0:java-jwt:3.18.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
+    api("jakarta.persistence:jakarta.persistence-api")
+    api("org.springframework.data:spring-data-commons")
+
     ksp("at.kopyk:kopykat-ksp:$kopyKatVersion")
     compileOnly("at.kopyk:kopykat-annotations:$kopyKatVersion")
 

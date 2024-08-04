@@ -5,6 +5,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.exception.UserAuthenticationException
 import club.staircrusher.user.domain.service.UserAuthService
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class UserAuthApplicationService(

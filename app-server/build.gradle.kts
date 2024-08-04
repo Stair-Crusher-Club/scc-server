@@ -5,6 +5,8 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.spring")
+    kotlin("plugin.jpa")
     id("org.springframework.boot")
     id("io.gitlab.arturbosch.detekt")
     id("io.spring.dependency-management")
@@ -28,6 +30,8 @@ val detektExcludedProjects = listOf(
 )
 subprojects {
     apply(plugin = "kotlin")
+    apply(plugin = "kotlin-spring")
+    apply(plugin = "kotlin-jpa")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17

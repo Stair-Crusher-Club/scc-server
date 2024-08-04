@@ -4,22 +4,40 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.stdlib.geography.Location
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import java.time.Instant
 
+@Entity
 class ClubQuest(
+    @Id
     val id: String,
     val name: String,
+    @Enumerated(EnumType.STRING)
     val purposeType: ClubQuestPurposeType,
     val startAt: Instant,
     val endAt: Instant,
+    @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "lng", column = Column(name = "quest_center_location_x")),
+        AttributeOverride(name = "lat", column = Column(name = "quest_center_location_y")),
+    )
     val questCenterLocation: Location,
-    targetBuildings: List<ClubQuestTargetBuilding>,
+    @OneToMany(mappedBy = "clubQuestId", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    val targetBuildings: List<ClubQuestTargetBuilding>,
     val createdAt: Instant,
     shortenedAdminUrl: String?,
     updatedAt: Instant,
 ) {
-    var targetBuildings: List<ClubQuestTargetBuilding> = targetBuildings
-        private set
 
     var shortenedAdminUrl: String? = shortenedAdminUrl
         private set

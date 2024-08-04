@@ -16,9 +16,7 @@ class ClubQuestSetIsNotAccessibleTest : ClubQuestITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        clubQuestRepository.removeAll()
-        clubQuestTargetBuildingRepository.removeAll()
-        clubQuestTargetPlaceRepository.removeAll()
+        clubQuestRepository.deleteAll()
     }
 
     @Test
@@ -34,7 +32,7 @@ class ClubQuestSetIsNotAccessibleTest : ClubQuestITBase() {
                 val result = getResult(CreateClubQuestResponseDTO::class)
                 val clubQuestId = result.clubQuestIds[0]
                 transactionManager.doInTransaction {
-                    clubQuestRepository.findById(clubQuestId)
+                    clubQuestRepository.findById(clubQuestId).get()
                 }
             }
         val targetPlaceVO = clubQuest.targetBuildings[0].places[0]

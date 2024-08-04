@@ -10,6 +10,7 @@ dependencies {
     implementation(projects.boundedContext.quest.domain)
     implementation(projects.boundedContext.user.domain)
     implementation(projects.boundedContext.externalAccessibility.domain)
+    implementation(projects.crossCuttingConcern.domain.serverEvent)
 
     val sqlDelightVersion: String by project
     api("app.cash.sqldelight:runtime-jvm:$sqlDelightVersion")
@@ -25,6 +26,9 @@ dependencies {
 
     val jacksonModuleKotlinVersion: String by project
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
 }
 
 idea {

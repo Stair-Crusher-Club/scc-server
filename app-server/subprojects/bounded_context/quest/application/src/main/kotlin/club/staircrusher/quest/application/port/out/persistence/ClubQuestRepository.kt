@@ -2,16 +2,25 @@ package club.staircrusher.quest.application.port.out.persistence
 
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestSummary
-import club.staircrusher.stdlib.domain.repository.EntityRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import java.time.Instant
 
-interface ClubQuestRepository : EntityRepository<ClubQuest, String> {
-    fun findAllOrderByCreatedAtDesc(): List<ClubQuest>
-    fun findCursoredSummariesOrderByCreatedAtDesc(
+interface ClubQuestRepository : CrudRepository<ClubQuest, String> {
+    @Query("""
+        SELECT q
+        FROM ClubQuest q
+        WHERE
+            (
+                (q.createdAt = :cursorCreatedAt AND q.id < :cursorId)
+                OR (q.createdAt < :cursorCreatedAt)
+            )
+    """)
+    fun findCursoredSummaries(
         cursorCreatedAt: Instant,
         cursorId: String,
-        limit: Int
-    ): List<ClubQuestSummary>
-
-    fun remove(clubQuestId: String)
+        pageable: Pageable,
+    ): Page<ClubQuestSummary>
 }
