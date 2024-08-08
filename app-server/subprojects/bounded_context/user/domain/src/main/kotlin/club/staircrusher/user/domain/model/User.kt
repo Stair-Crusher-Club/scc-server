@@ -22,7 +22,7 @@ class User(
     val mobilityTools: MutableList<UserMobilityTool>,
     val createdAt: Instant,
 ) {
-    var deletedAt: Instant? = null // private으로 둘 방법이 없을까? 지금은 persistence_model 모듈에서 써야 해서 안 된다.
+    private var deletedAt: Instant? = null
 
     @get:Transient
     val isDeleted: Boolean
