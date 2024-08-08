@@ -1,4 +1,5 @@
 @file:Suppress("MagicNumber")
+
 package club.staircrusher.stdlib.geography
 
 import at.kopyk.CopyExtensions

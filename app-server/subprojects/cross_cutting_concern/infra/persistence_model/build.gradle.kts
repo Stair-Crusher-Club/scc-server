@@ -9,6 +9,7 @@ dependencies {
     implementation(projects.boundedContext.challenge.domain)
     implementation(projects.boundedContext.quest.domain)
     implementation(projects.boundedContext.user.domain)
+    implementation(projects.boundedContext.externalAccessibility.domain)
     implementation(projects.crossCuttingConcern.domain.serverEvent)
 
     val sqlDelightVersion: String by project

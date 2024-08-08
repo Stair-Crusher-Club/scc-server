@@ -14,10 +14,14 @@ style:
     active: true
   MagicNumber:
     active: false
+  ReturnCount:
+    active: false
 naming:
   PackageNaming:
     active: false
   InvalidPackageDeclaration:
+    active: false
+  ConstructorParameterNaming:
     active: false
 performance:
   SpreadOperator:
