@@ -30,35 +30,6 @@ class AccessibilityImageService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun doUpdatePlaceAccessibilityOriginalImages(
-        placeAccessibilityId: String,
-        originalImageUrls: List<String>
-    ): PlaceAccessibility? {
-        val placeAccessibility =
-            placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId) ?: return null
-        val newPlaceAccessibility = placeAccessibility.copy(
-            imageUrls = originalImageUrls,
-            images = originalImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-        )
-        return placeAccessibilityRepository.save(newPlaceAccessibility)
-    }
-
-    fun doUpdateBuildingAccessibilityOriginalImages(
-        buildingAccessibilityId: String,
-        entranceImageUrls: List<String>,
-        elevatorImageUrls: List<String>
-    ): BuildingAccessibility? {
-        val buildingAccessibility =
-            buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId) ?: return null
-        val newBuildingAccessibility = buildingAccessibility.copy(
-            entranceImageUrls = entranceImageUrls,
-            elevatorImageUrls = elevatorImageUrls,
-            entranceImages = entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) },
-            elevatorImages = elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-        )
-        return buildingAccessibilityRepository.save(newBuildingAccessibility)
-    }
-
     fun migrateImageUrlsToImagesIfNeeded(placeId: String) = transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.REPEATABLE_READ) {
         val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction
         doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(placeId = placeId)

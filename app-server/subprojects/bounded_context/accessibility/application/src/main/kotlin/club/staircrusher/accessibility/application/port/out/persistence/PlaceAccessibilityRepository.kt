@@ -31,6 +31,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
     ): List<PlaceAccessibility>
 
     fun updateImages(id: String, images: List<AccessibilityImage>)
+    fun updateImageUrlsAndImages(id: String, imageUrls: List<String>, images: List<AccessibilityImage>)
     fun countAll(): Int
     fun remove(id: String)
 

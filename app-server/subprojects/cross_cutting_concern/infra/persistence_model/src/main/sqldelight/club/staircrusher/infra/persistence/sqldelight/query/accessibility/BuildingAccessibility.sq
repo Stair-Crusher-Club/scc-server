@@ -78,9 +78,23 @@ UPDATE building_accessibility
 SET entrance_images = :entranceImages
 WHERE id = :id;
 
+updateEntranceImageUrlsAndImages:
+UPDATE building_accessibility
+SET
+entrance_image_urls = :entranceImageUrls,
+entrance_images = :entranceImages
+WHERE id = :id;
+
 updateElevatorImages:
 UPDATE building_accessibility
 SET elevator_images = :elevatorImages
+WHERE id = :id;
+
+updateElevatorImageUrlsAndImages:
+UPDATE building_accessibility
+SET
+elevator_image_urls = :elevatorImageUrls,
+elevator_images = :elevatorImages
 WHERE id = :id;
 
 countByUserId:

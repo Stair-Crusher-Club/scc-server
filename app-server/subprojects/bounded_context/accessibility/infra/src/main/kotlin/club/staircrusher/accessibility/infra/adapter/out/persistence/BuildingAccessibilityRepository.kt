@@ -96,10 +96,26 @@ class BuildingAccessibilityRepository(
         )
     }
 
+    override fun updateEntranceImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>) {
+        return queries.updateEntranceImageUrlsAndImages(
+            id = id,
+            entranceImageUrls = urls,
+            entranceImages = images,
+        )
+    }
+
     override fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>) {
         return queries.updateElevatorImages(
             elevatorImages = elevatorImages,
             id = id,
+        )
+    }
+
+    override fun updateElevatorImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>) {
+        return queries.updateElevatorImageUrlsAndImages(
+            id = id,
+            elevatorImageUrls = urls,
+            elevatorImages = images,
         )
     }
 

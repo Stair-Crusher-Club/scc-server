@@ -44,6 +44,7 @@ open class AccessibilityImageFaceBlurringService(
         imageUrls.map { async { detectAndBlurFaces(it) } }.awaitAll()
     }
 
+    @Suppress("ReturnCount")
     private suspend fun detectAndBlurFaces(imageUrl: String): BlurResult {
         try {
             val (name, extension) = imageUrl.split("/").last().split(".")

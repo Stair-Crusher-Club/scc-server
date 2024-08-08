@@ -111,6 +111,11 @@ UPDATE place_accessibility
 SET images = :images
 WHERE id = :id;
 
+updateImageUrlsAndImages:
+UPDATE place_accessibility
+SET image_urls = :imageUrls, images = :images
+WHERE id = :id;
+
 countAll:
 SELECT COUNT(*)
 FROM place_accessibility pa

@@ -19,7 +19,9 @@ interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibili
     fun findAll(): List<BuildingAccessibility>
     fun countByUserIdCreatedAtBetween(userId: String, from: Instant, to: Instant): Int
     fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>)
+    fun updateEntranceImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>)
     fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>)
+    fun updateElevatorImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>)
     fun countByUserId(userId: String): Int
     fun remove(id: String)
 

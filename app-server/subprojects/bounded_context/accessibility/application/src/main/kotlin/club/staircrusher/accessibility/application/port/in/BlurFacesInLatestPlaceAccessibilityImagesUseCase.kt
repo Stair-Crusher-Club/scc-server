@@ -2,6 +2,7 @@ package club.staircrusher.accessibility.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.out.persistence.AccessibilityImageFaceBlurringHistoryRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.AccessibilityImageFaceBlurringHistory
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.stdlib.clock.SccClock
@@ -15,7 +16,6 @@ import java.util.concurrent.Executors
 @Component
 class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
     private val accessibilityImageFaceBlurringService: AccessibilityImageFaceBlurringService,
-    private val accessibilityImageService: AccessibilityImageService,
     private val accessibilityImageFaceBlurringHistoryRepository: AccessibilityImageFaceBlurringHistoryRepository,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val transactionManager: TransactionManager,
@@ -38,10 +38,17 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
                 createdAt = lastBlurredPlaceAccessibility?.createdAt ?: Instant.EPOCH
             )
         } ?: return
-        val result = runBlocking { accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id) } ?: return
+        val result =
+            runBlocking { accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id) }
+                ?: return
         val entranceResults = result.entranceResults
         transactionManager.doInTransaction {
-            accessibilityImageService.doUpdatePlaceAccessibilityOriginalImages(targetAccessibility.id, entranceResults.map { it.blurredImageUrl })
+            val imageUrls = entranceResults.map { it.blurredImageUrl }
+            placeAccessibilityRepository.updateImageUrlsAndImages(
+                targetAccessibility.id,
+                imageUrls,
+                imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
+            )
             accessibilityImageFaceBlurringHistoryRepository.save(
                 AccessibilityImageFaceBlurringHistory(
                     id = EntityIdGenerator.generateRandom(),
