@@ -100,7 +100,7 @@ internal class S3FileManagementService(
         return s3Client
             .utilities()
             .getUrl {
-                it.bucket(properties.bucketName)
+                it.bucket(bucketName)
                 it.key(fileName)
             }
             .toString()
