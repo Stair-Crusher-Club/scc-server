@@ -146,7 +146,7 @@ jobs:
       - name: Upgrade scc-server helm chart
         working-directory: infra/helm/scc-server
         run: |
-          helm upgrade --install --namespace dev -f values-dev.yaml scc-server ./
+          helm upgrade --install --namespace dev --kubeconfig ~/.kube/config -f values-dev.yaml scc-server ./
 
       - name: Restart deploy/scc-server # tag를 latest-rc로 고정해서 사용하기 때문에 helm upgrade --install만 해서는 새 버전의 이미지가 배포되지 않는다. 따라서 강제로 rollout을 해준다.
         run: |
