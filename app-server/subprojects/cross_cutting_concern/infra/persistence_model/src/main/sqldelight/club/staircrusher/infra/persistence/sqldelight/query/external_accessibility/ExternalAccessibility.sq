@@ -9,7 +9,7 @@ ON CONFLICT(id) DO UPDATE SET
     category = EXCLUDED.category,
     details = EXCLUDED.details,
     created_at = EXCLUDED.created_at,
-    updated_at = NULL;
+    updated_at = EXCLUDED.updated_at;
 
 removeAll:
 DELETE FROM external_accessibility;
