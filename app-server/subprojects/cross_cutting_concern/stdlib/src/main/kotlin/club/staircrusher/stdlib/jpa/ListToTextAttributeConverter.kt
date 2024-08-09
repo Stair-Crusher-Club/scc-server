@@ -11,7 +11,10 @@ abstract class ListToTextAttributeConverter<E> : AttributeConverter<List<E>, Str
         return attribute.joinToString(LEGACY_DELIMITER) { convertElementToTextColumn(it) }
     }
 
-    override fun convertToEntityAttribute(column: String): List<E> {
+    override fun convertToEntityAttribute(column: String?): List<E> {
+        if (column == null) {
+            return emptyList()
+        }
         return try {
             convertJsonColumnToEntityAttribute(column)
         } catch (e: JsonProcessingException) {
