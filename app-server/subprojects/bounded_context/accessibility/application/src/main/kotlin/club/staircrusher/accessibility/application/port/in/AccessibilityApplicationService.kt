@@ -31,6 +31,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import mu.KotlinLogging
 import java.time.Instant
+import java.util.concurrent.Executors
 
 @Suppress("TooManyFunctions")
 @Component
@@ -50,6 +51,7 @@ class AccessibilityApplicationService(
     private val accessibilityImageService: AccessibilityImageService,
 ) {
     private val logger = KotlinLogging.logger {}
+    private val taskExecutor = Executors.newCachedThreadPool()
 
     fun isAccessibilityRegistrable(building: Building): Boolean {
         val addressStr = building.address.toString()
@@ -59,14 +61,7 @@ class AccessibilityApplicationService(
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         // TODO: get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
-        try {
-            accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
-            accessibilityImageService.generateThumbnailsIfNeeded(placeId)
-            logger.info { "Thumbnail generation complete" }
-        } catch (e: Throwable) {
-            logger.error(e) { "Failed to generate thumbnail and migrate images for place $placeId" }
-        }
-
+        migrateAndGenerateThumbnailsAsync(placeId)
         return transactionManager.doInTransaction {
             doGetAccessibility(placeId, userId)
         }
@@ -125,6 +120,17 @@ class AccessibilityApplicationService(
     private fun PlaceAccessibility.isLastPlaceAccessibilityInBuilding(buildingId: String): Boolean {
         return placeAccessibilityRepository.findByBuildingId(buildingId).let {
             it.size == 1 && it[0].id == this.id
+        }
+    }
+
+    private fun migrateAndGenerateThumbnailsAsync(placeId: String) {
+        taskExecutor.execute {
+            try {
+                accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
+                accessibilityImageService.generateThumbnailsIfNeeded(placeId)
+            } catch (t: Throwable) {
+                logger.error(t) { "Failed to migrate images or generate thumbnails for $placeId" }
+            }
         }
     }
 
