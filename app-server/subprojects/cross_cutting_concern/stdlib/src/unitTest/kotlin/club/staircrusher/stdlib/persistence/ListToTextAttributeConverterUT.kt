@@ -3,6 +3,7 @@ package club.staircrusher.stdlib.persistence
 import club.staircrusher.stdlib.jpa.ListToTextAttributeConverter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ListToTextAttributeConverterUT {
@@ -30,6 +31,12 @@ class ListToTextAttributeConverterUT {
 
         val serialized = sut.convertToEntityAttribute(deserialized)
         assertEquals(attribute, serialized)
+    }
+
+    @Test
+    fun `db 에 null 이 저장된 케이스도 잘 처리해준다`() {
+        val serialized = sut.convertToEntityAttribute(null)
+        assertTrue(serialized.isEmpty())
     }
 
     // FIXME: json으로 바꾸기
