@@ -9,15 +9,19 @@ import java.io.File
 import java.nio.file.Path
 
 class MockFileManagementService : FileManagementService {
-    override fun getFileUploadUrl(filenameExtension: String): UploadUrl {
+    override fun getFileUploadUrl(fileExtension: String): UploadUrl {
         return UploadUrl(
-            url = "example.com",
+            url = "example.$fileExtension",
             expireAt = SccClock.instant().plusSeconds(60L)
         )
     }
 
     override fun downloadFile(url: String, destination: Path): File {
         return ClassPathResource("example.png").file
+    }
+
+    override suspend fun uploadImage(fileName: String, fileBytes: ByteArray): String {
+        return fileName
     }
 
     override suspend fun uploadThumbnailImage(fileName: String, outputStream: ByteArrayOutputStream): String {

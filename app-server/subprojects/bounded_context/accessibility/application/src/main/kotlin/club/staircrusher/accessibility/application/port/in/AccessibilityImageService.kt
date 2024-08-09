@@ -5,6 +5,8 @@ import club.staircrusher.accessibility.application.port.out.file_management.File
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
+import club.staircrusher.accessibility.domain.model.BuildingAccessibility
+import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
@@ -30,23 +32,42 @@ class AccessibilityImageService(
 
     fun migrateImageUrlsToImagesIfNeeded(placeId: String) = transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.REPEATABLE_READ) {
         val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction
-        val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
-        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
+        doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(placeId = placeId)
+        doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(buildingId = place.building.id)
+    }
 
-        if (placeAccessibility?.images?.isEmpty() == true && placeAccessibility.imageUrls.isNotEmpty()) {
+    fun doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(
+        placeId: String? = null,
+        placeAccessibilityId: String? = null
+    ): PlaceAccessibility? {
+        val placeAccessibility =
+            placeId?.let { placeAccessibilityRepository.findByPlaceId(it) }
+                ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it) }
+                ?: return null
+        if (placeAccessibility.images.isEmpty() && placeAccessibility.imageUrls.isNotEmpty()) {
             val placeAccessibilityImages = placeAccessibility.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
             placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
         }
+        return placeId?.let { placeAccessibilityRepository.findByPlaceId(it) } ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it) }
+    }
 
-        if (buildingAccessibility?.entranceImages?.isEmpty() == true && buildingAccessibility.entranceImageUrls.isNotEmpty()) {
+    fun doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(
+        buildingId: String? = null,
+        buildingAccessibilityId: String? = null,
+    ): BuildingAccessibility? {
+        val buildingAccessibility = buildingId?.let { buildingAccessibilityRepository.findByBuildingId(it) }
+            ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it) } ?: return null
+        if (buildingAccessibility.entranceImages.isEmpty() && buildingAccessibility.entranceImageUrls.isNotEmpty()) {
             val buildingEntranceImages = buildingAccessibility.entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
             buildingAccessibilityRepository.updateEntranceImages(buildingAccessibility.id, buildingEntranceImages)
         }
 
-        if (buildingAccessibility?.elevatorImages?.isEmpty() == true && buildingAccessibility.elevatorImageUrls.isNotEmpty()) {
+        if (buildingAccessibility.elevatorImages.isEmpty() && buildingAccessibility.elevatorImageUrls.isNotEmpty()) {
             val buildingElevatorImages = buildingAccessibility.elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
             buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, buildingElevatorImages)
         }
+
+        return buildingId?.let { buildingAccessibilityRepository.findByBuildingId(it) } ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it) }
     }
 
     fun generateThumbnailsIfNeeded(placeId: String) {

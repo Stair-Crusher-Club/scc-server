@@ -36,7 +36,6 @@ internal class S3FileManagementService(
             region(Region.AP_NORTHEAST_2)
         }
         .build()
-
     private val s3Client = S3AsyncClient.builder()
         .apply {
             properties.getAwsCredentials()?.let { credentialsProvider { it } }
@@ -45,20 +44,18 @@ internal class S3FileManagementService(
         .build()
 
     // TODO: 유저별 rate limit 걸기. 위치는 여기가 아니라 application service여야 할 수도 있을 듯.
-    override fun getFileUploadUrl(filenameExtension: String): UploadUrl {
-        val normalizedFilenameExtension = getNormalizedFileExtension(filenameExtension)
+    override fun getFileUploadUrl(fileExtension: String): UploadUrl {
+        val normalizedFilenameExtension = getNormalizedFileExtension(fileExtension)
         val objectRequest = PutObjectRequest.builder()
             .bucket(properties.bucketName)
             .key(generateObjectKey(normalizedFilenameExtension))
             .contentType(Files.probeContentType(Path.of("dummy.${normalizedFilenameExtension}")))
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
-
         val s3PresignRequest: PutObjectPresignRequest = PutObjectPresignRequest.builder()
             .signatureDuration(presignedUrlExpiryDuration)
             .putObjectRequest(objectRequest)
             .build()
-
         val presignedRequest = s3Presigner.presignPutObject(s3PresignRequest)
         return UploadUrl(
             url = presignedRequest.url().toString(),
@@ -75,26 +72,38 @@ internal class S3FileManagementService(
         return file
     }
 
+    override suspend fun uploadImage(fileName: String, fileBytes: ByteArray): String? {
+        try {
+            return upload(properties.bucketName, fileName, fileBytes)
+        } catch (t: Throwable) {
+            logger.error(t) { "Failed to upload image: $fileName" }
+            return null
+        }
+    }
+
     override suspend fun uploadThumbnailImage(fileName: String, outputStream: ByteArrayOutputStream): String? {
+        try {
+            return upload(properties.thumbnailBucketName, fileName, outputStream.toByteArray())
+        } catch (t: Throwable) {
+            logger.error(t) { "Failed to upload thumbnail image: $fileName" }
+            return null
+        }
+    }
+
+    private suspend fun upload(bucketName: String, fileName: String, fileBytes: ByteArray): String {
         val objectRequest = PutObjectRequest.builder()
-            .bucket(properties.thumbnailBucketName)
+            .bucket(bucketName)
             .key(fileName)
             .acl(ObjectCannedACL.PUBLIC_READ)
             .build()
-
-        try {
-            s3Client.putObject(objectRequest, AsyncRequestBody.fromBytes(outputStream.toByteArray())).await()
-            return s3Client
-                .utilities()
-                .getUrl {
-                    it.bucket(properties.thumbnailBucketName)
-                    it.key(fileName)
-                }
-                .toString()
-        } catch (t: Throwable) {
-            logger.error(t) { "Failed to upload thumbnail image" }
-            return null
-        }
+        s3Client.putObject(objectRequest, AsyncRequestBody.fromBytes(fileBytes)).await()
+        return s3Client
+            .utilities()
+            .getUrl {
+                it.bucket(bucketName)
+                it.key(fileName)
+            }
+            .toString()
     }
 
     private val objectKeyTimestampPrefixFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")

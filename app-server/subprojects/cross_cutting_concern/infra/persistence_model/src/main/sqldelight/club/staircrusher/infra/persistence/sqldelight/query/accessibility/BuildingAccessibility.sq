@@ -5,10 +5,12 @@ ON CONFLICT(id) DO UPDATE SET
     building_id = EXCLUDED.building_id,
     entrance_stair_info = EXCLUDED.entrance_stair_info,
     entrance_image_urls = EXCLUDED.entrance_image_urls,
+    entrance_images = EXCLUDED.entrance_images,
     has_slope = EXCLUDED.has_slope,
     has_elevator = EXCLUDED.has_elevator,
     elevator_stair_info = EXCLUDED.elevator_stair_info,
     elevator_image_urls = EXCLUDED.elevator_image_urls,
+    elevator_images = EXCLUDED.elevator_images,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at,
     deleted_at = NULL;
@@ -58,14 +60,41 @@ FROM building_accessibility
 WHERE building.eup_myeon_dong_id = :eupMyeonDongId
     AND building_accessibility.deleted_at IS NULL;
 
+findByCreatedAtGreaterThanAndOrderByCreatedAtAsc:
+SELECT *
+FROM building_accessibility ba
+WHERE
+    ba.created_at > :createdAt
+    AND ba.deleted_at IS NULL
+ORDER BY ba.created_at ASC, ba.id DESC
+LIMIT :limit;
+
+findAll:
+SELECT *
+FROM building_accessibility;
+
 updateEntranceImages:
 UPDATE building_accessibility
 SET entrance_images = :entranceImages
 WHERE id = :id;
 
+updateEntranceImageUrlsAndImages:
+UPDATE building_accessibility
+SET
+entrance_image_urls = :entranceImageUrls,
+entrance_images = :entranceImages
+WHERE id = :id;
+
 updateElevatorImages:
 UPDATE building_accessibility
 SET elevator_images = :elevatorImages
+WHERE id = :id;
+
+updateElevatorImageUrlsAndImages:
+UPDATE building_accessibility
+SET
+elevator_image_urls = :elevatorImageUrls,
+elevator_images = :elevatorImages
 WHERE id = :id;
 
 countByUserId:

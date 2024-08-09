@@ -11,6 +11,7 @@ ON CONFLICT(id) DO UPDATE SET
     has_slope = EXCLUDED.has_slope,
     entrance_door_types = EXCLUDED.entrance_door_types,
     image_urls = EXCLUDED.image_urls,
+    images = EXCLUDED.images,
     user_id = EXCLUDED.user_id,
     created_at = EXCLUDED.created_at,
     deleted_at = NULL;
@@ -50,6 +51,15 @@ WHERE
     AND pa.created_at >= :from
     AND pa.created_at <=:to
     AND pa.deleted_at IS NULL;
+
+findByCreatedAtGreaterThanAndOrderByCreatedAtAsc:
+SELECT pa.*
+FROM place_accessibility pa
+WHERE
+    pa.created_at > :createdAt
+    AND pa.deleted_at IS NULL
+ORDER BY pa.created_at ASC, pa.id DESC
+LIMIT :limit;
 
 countByEupMyeonDong:
 SELECT COUNT(1)
@@ -99,6 +109,11 @@ LIMIT :limit;
 updateImages:
 UPDATE place_accessibility
 SET images = :images
+WHERE id = :id;
+
+updateImageUrlsAndImages:
+UPDATE place_accessibility
+SET image_urls = :imageUrls, images = :images
 WHERE id = :id;
 
 countAll:

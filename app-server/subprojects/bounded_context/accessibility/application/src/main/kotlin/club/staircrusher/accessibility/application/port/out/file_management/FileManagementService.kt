@@ -5,7 +5,8 @@ import java.io.File
 import java.nio.file.Path
 
 interface FileManagementService {
-    fun getFileUploadUrl(filenameExtension: String): UploadUrl
+    fun getFileUploadUrl(fileExtension: String): UploadUrl
     fun downloadFile(url: String, destination: Path): File
+    suspend fun uploadImage(fileName: String, fileBytes: ByteArray): String?
     suspend fun uploadThumbnailImage(fileName: String, outputStream: ByteArrayOutputStream): String?
 }
