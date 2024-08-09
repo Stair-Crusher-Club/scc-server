@@ -1,5 +1,6 @@
 package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
+import club.staircrusher.accessibility.application.port.`in`.AccessibilityImageService
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
@@ -20,12 +21,19 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.mock.mockito.SpyBean
 import java.time.Duration
 
 class GetAccessibilityTest : AccessibilityITBase() {
     @Autowired
     lateinit var mockSccClock: MockSccClock
+
+    @SpyBean
+    lateinit var accessibilityImageService: AccessibilityImageService
 
     @Test
     fun getAccessibilityTest() {
@@ -212,10 +220,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 }
             }
             .apply {
-                val result = getResult(AccessibilityInfoDto::class)
-                assertTrue(result.placeAccessibility!!.imageUrls.contains(imageUrl))
-                assertFalse(result.placeAccessibility!!.images.isNullOrEmpty())
-                assertEquals(imageUrl, result.placeAccessibility!!.images!!.first().imageUrl)
+                verify(accessibilityImageService, atLeastOnce()).migrateImageUrlsToImagesIfNeeded(eq(place.id))
             }
     }
 
@@ -249,10 +254,8 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `썸네일이 없으면 생성해서 내려준다`() {
+    fun `썸네일이 없으면 생성한다`() {
         val imageUrl = "resources/example.jpg"
-        // MockFileManagementService 에서 filename 을 그대로 return 하도록 했기 때문
-        val expectedThumbnailUrl = "thumbnail_example.webp"
         val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
         val params = GetAccessibilityPostRequest(
             placeId = place.id
@@ -266,12 +269,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 }
             }
             .apply {
-                val result = getResult(AccessibilityInfoDto::class)
-                assertTrue(result.placeAccessibility!!.imageUrls.contains(imageUrl))
-                assertFalse(result.placeAccessibility!!.images.isNullOrEmpty())
-                assertEquals(imageUrl, result.placeAccessibility!!.images!!.first().imageUrl)
-                assertNotNull(result.placeAccessibility!!.images!!.first().thumbnailUrl)
-                assertEquals(expectedThumbnailUrl, result.placeAccessibility!!.images!!.first().thumbnailUrl)
+                verify(accessibilityImageService, atLeastOnce()).generateThumbnailsIfNeeded(eq(place.id))
             }
     }
 

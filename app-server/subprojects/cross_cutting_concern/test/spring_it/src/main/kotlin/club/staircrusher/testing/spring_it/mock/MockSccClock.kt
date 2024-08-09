@@ -7,8 +7,8 @@ import java.time.Instant
 import java.time.ZoneId
 
 class MockSccClock private constructor() : SccClock() {
-    private var zone: ZoneId
-    private var instant: Instant
+    private lateinit var zone: ZoneId
+    private lateinit var instant: Instant
 
     init {
         val clock = systemUTC()
