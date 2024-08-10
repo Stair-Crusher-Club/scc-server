@@ -64,6 +64,7 @@ scc:
     imageUpload:
       bucketName: test
       thumbnailBucketName: test
+  rekognition:
 
   cloudfront:
     domain: test

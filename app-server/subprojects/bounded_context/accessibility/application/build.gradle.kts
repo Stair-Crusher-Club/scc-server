@@ -7,4 +7,10 @@ dependencies {
 
     implementation("net.coobird:thumbnailator:0.4.20")
     implementation("org.sejda.webp-imageio:webp-imageio-sejda:0.1.0")
+    implementation("org.bytedeco:javacv-platform:1.5.10")
+
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+
+    integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
+    integrationTestImplementation("org.springframework.boot:spring-boot-starter-web")
 }
