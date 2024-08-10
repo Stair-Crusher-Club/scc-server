@@ -12,6 +12,7 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.LocationLis
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StairHeightLevelStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
+import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_image_face_blurring_history
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.External_accessibility
@@ -45,7 +46,7 @@ class DB(dataSource: DataSource) {
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_imagesAdapter = AccessibilityImageListStringColumnAdapter,
-            elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
+        elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
             boundary_verticesAdapter = LocationListToTextColumnAdapter,
@@ -91,9 +92,15 @@ class DB(dataSource: DataSource) {
                     return objectMapper.writeValueAsString(value)
                 }
             }
-        )
+        ),
+        accessibility_image_face_blurring_historyAdapter = Accessibility_image_face_blurring_history.Adapter(
+            original_image_urlsAdapter = StringListToTextColumnAdapter,
+            blurred_image_urlsAdapter = StringListToTextColumnAdapter,
+            detected_people_countsAdapter = IntListToTextColumnAdapter,
+        ),
     )
 
+    val accessibilityImageFaceBlurringHistoryQueries = scc.accessibilityImageFaceBlurringHistoryQueries
     val buildingAccessibilityQueries = scc.buildingAccessibilityQueries
     val buildingAccessibilityCommentQueries = scc.buildingAccessibilityCommentQueries
     val buildingAccessibilityUpvoteQueries = scc.buildingAccessibilityUpvoteQueries

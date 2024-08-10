@@ -3,6 +3,7 @@
 package club.staircrusher.accessibility.infra.adapter.out.persistence.sqldelight
 
 import club.staircrusher.accessibility.domain.model.AccessibilityAllowedRegion
+import club.staircrusher.accessibility.domain.model.AccessibilityImageFaceBlurringHistory
 import club.staircrusher.accessibility.domain.model.AccessibilityRank
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
@@ -12,6 +13,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityUpvote
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
+import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_image_face_blurring_history
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_rank
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility_comment
@@ -21,6 +23,8 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibil
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility_upvote
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.BuildingAccessibilityUpvoteFindById
 import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindByUserAndBuildingAccessibilityAndNotDeleted
+import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindLatestBuildingHistory
+import club.staircrusher.infra.persistence.sqldelight.query.accessibility.FindLatestPlaceHistory
 import club.staircrusher.stdlib.time.toOffsetDateTime
 
 fun Building_accessibility.toDomainModel() = BuildingAccessibility(
@@ -247,6 +251,50 @@ fun Accessibility_allowed_region.toDomainModel() = AccessibilityAllowedRegion(
     id = id,
     name = name,
     boundaryVertices = boundary_vertices,
+    createdAt = created_at.toInstant(),
+    updatedAt = updated_at.toInstant(),
+)
+
+fun AccessibilityImageFaceBlurringHistory.toPersistenceModel() = Accessibility_image_face_blurring_history(
+    id = id,
+    place_accessibility_id = placeAccessibilityId,
+    building_accessibility_id = buildingAccessibilityId,
+    original_image_urls = originalImageUrls,
+    blurred_image_urls = blurredImageUrls,
+    detected_people_counts = detectedPeopleCounts,
+    created_at = createdAt.toOffsetDateTime(),
+    updated_at = updatedAt.toOffsetDateTime(),
+)
+
+fun FindLatestPlaceHistory.toDomainModel() = AccessibilityImageFaceBlurringHistory(
+    id = id,
+    placeAccessibilityId = place_accessibility_id,
+    buildingAccessibilityId = building_accessibility_id,
+    originalImageUrls = original_image_urls,
+    blurredImageUrls = blurred_image_urls,
+    detectedPeopleCounts = detected_people_counts,
+    createdAt = created_at.toInstant(),
+    updatedAt = updated_at.toInstant(),
+)
+
+fun FindLatestBuildingHistory.toDomainModel() = AccessibilityImageFaceBlurringHistory(
+    id = id,
+    placeAccessibilityId = place_accessibility_id,
+    buildingAccessibilityId = building_accessibility_id,
+    originalImageUrls = original_image_urls,
+    blurredImageUrls = blurred_image_urls,
+    detectedPeopleCounts = detected_people_counts,
+    createdAt = created_at.toInstant(),
+    updatedAt = updated_at.toInstant(),
+)
+
+fun Accessibility_image_face_blurring_history.toDomainModel() = AccessibilityImageFaceBlurringHistory(
+    id = id,
+    placeAccessibilityId = place_accessibility_id,
+    buildingAccessibilityId = building_accessibility_id,
+    originalImageUrls = original_image_urls,
+    blurredImageUrls = blurred_image_urls,
+    detectedPeopleCounts = detected_people_counts,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant(),
 )

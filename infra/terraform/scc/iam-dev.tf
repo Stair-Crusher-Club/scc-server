@@ -4,14 +4,14 @@ data "aws_iam_policy_document" "scc_dev" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
-      type        = "Federated"
+      type = "Federated"
       identifiers = [data.terraform_remote_state.oidc.outputs.k3s_oidc_arn]
     }
 
     condition {
       test     = "StringEquals"
       variable = "k3s.staircrusher.club:sub"
-      values   = ["system:serviceaccount:dev:scc-server"]
+      values = ["system:serviceaccount:dev:scc-server"]
     }
   }
 }
@@ -40,6 +40,15 @@ data "aws_iam_policy_document" "scc_dev_accessibility_thumbnails_full_access" {
   }
 }
 
+data "aws_iam_policy_document" "scc_dev_rekognition_access" {
+  statement {
+    actions = [
+      "rekognition:DetectFaces",
+    ]
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role" "scc_dev" {
   name               = "scc-dev"
   assume_role_policy = data.aws_iam_policy_document.scc_dev.json
@@ -55,6 +64,11 @@ resource "aws_iam_policy" "scc_dev_accessibility_thumbnails_full_access" {
   policy = data.aws_iam_policy_document.scc_dev_accessibility_thumbnails_full_access.json
 }
 
+resource "aws_iam_policy" "scc_dev_rekognition_access" {
+  name   = "scc-dev-rekognition-access"
+  policy = data.aws_iam_policy_document.scc_dev_rekognition_access.json
+}
+
 resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_images_full_access" {
   role       = aws_iam_role.scc_dev.name
   policy_arn = aws_iam_policy.scc_dev_accessibility_images_full_access.arn
@@ -65,19 +79,24 @@ resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_thumbnails_full
   policy_arn = aws_iam_policy.scc_dev_accessibility_thumbnails_full_access.arn
 }
 
+resource "aws_iam_role_policy_attachment" "scc_dev_rekognition_access" {
+  role       = aws_iam_role.scc_dev.name
+  policy_arn = aws_iam_policy.scc_dev_rekognition_access.arn
+}
+
 data "aws_iam_policy_document" "scc_deploy_secret_dev" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
-      type        = "Federated"
+      type = "Federated"
       identifiers = [data.terraform_remote_state.oidc.outputs.k3s_oidc_arn]
     }
 
     condition {
       test     = "StringEquals"
       variable = "k3s.staircrusher.club:sub"
-      values   = ["system:serviceaccount:dev:scc-server-deploy-secret"]
+      values = ["system:serviceaccount:dev:scc-server-deploy-secret"]
     }
   }
 }
