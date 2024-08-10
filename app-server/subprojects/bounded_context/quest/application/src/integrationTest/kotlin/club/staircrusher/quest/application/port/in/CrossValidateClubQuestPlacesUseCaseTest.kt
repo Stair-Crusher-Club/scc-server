@@ -106,7 +106,7 @@ class CrossValidateClubQuestPlacesUseCaseTest {
             assertTrue(targetPlaces.find { it.placeId == place1.id }!!.isClosedExpected)
             assertFalse(targetPlaces.find { it.placeId == place2.id }!!.isClosedExpected)
 
-            val places = placeRepository.findByIdIn(listOf(place1.id, place2.id))
+            val places = placeRepository.findAllById(listOf(place1.id, place2.id))
             assertFalse(places.find { it.id == place1.id }!!.isClosed)
             assertFalse(places.find { it.id == place2.id }!!.isClosed)
         }

@@ -9,14 +9,12 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoo
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.LocationListToTextColumnAdapter
-import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StairHeightLevelStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.External_accessibility
-import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Server_event
 import club.staircrusher.stdlib.di.annotation.Component
@@ -33,9 +31,6 @@ class DB(dataSource: DataSource) {
     private val driver = SqlDelightJdbcDriver(dataSource)
     private val scc = scc(
         driver = driver,
-        placeAdapter = Place.Adapter(
-            categoryAdapter = PlaceCategoryStringColumnAdapter,
-        ),
         place_accessibilityAdapter = Place_accessibility.Adapter(
             image_urlsAdapter = StringListToTextColumnAdapter,
             imagesAdapter = AccessibilityImageListStringColumnAdapter,
@@ -99,9 +94,6 @@ class DB(dataSource: DataSource) {
         )
     )
 
-    val buildingQueries = scc.buildingQueries
-    val placeQueries = scc.placeQueries
-    val placeFavoriteQueries = scc.placeFavoriteQueries
     val buildingAccessibilityQueries = scc.buildingAccessibilityQueries
     val buildingAccessibilityCommentQueries = scc.buildingAccessibilityCommentQueries
     val buildingAccessibilityUpvoteQueries = scc.buildingAccessibilityUpvoteQueries
