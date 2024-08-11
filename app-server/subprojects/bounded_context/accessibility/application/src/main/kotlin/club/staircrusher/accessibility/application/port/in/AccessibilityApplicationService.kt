@@ -76,6 +76,7 @@ class AccessibilityApplicationService(
         val place = placeApplicationService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
+
         val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
         val placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId)
         val userInfoById = userApplicationService.getUsers(
@@ -128,10 +129,6 @@ class AccessibilityApplicationService(
         }
     }
 
-    fun getPlaceAccessibility(placeId: String): PlaceAccessibility? = transactionManager.doInTransaction {
-        placeAccessibilityRepository.findByPlaceId(placeId)
-    }
-
     fun listPlaceAndBuildingAccessibility(places: List<Place>): List<Pair<PlaceAccessibility?, BuildingAccessibility?>> {
         if (places.isEmpty()) {
             return emptyList()
@@ -143,11 +140,6 @@ class AccessibilityApplicationService(
         return places.map {
             pas[it.id] to bas[it.building.id]
         }
-    }
-
-    fun getBuildingAccessibility(placeId: String): BuildingAccessibility? = transactionManager.doInTransaction {
-        val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction null
-        buildingAccessibilityRepository.findByBuildingId(place.building.id)
     }
 
     data class RegisterAccessibilityResult(

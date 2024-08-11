@@ -507,53 +507,6 @@ paths:
             에러 코드 설명
             - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
 
-  /registerAccessibility:
-    post:
-      summary: 건물 & 점포의 접근성 정보를 등록한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                buildingAccessibilityParams:
-                  $ref: '#/components/schemas/RegisterBuildingAccessibilityRequestDto'
-                  description: 각 건물에 대해 1번만 등록될 수 있다.
-                placeAccessibilityParams:
-                  $ref: '#/components/schemas/RegisterPlaceAccessibilityRequestDto'
-              required:
-                - placeAccessibilityParams
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  buildingAccessibility:
-                    $ref: '#/components/schemas/BuildingAccessibility'
-                    description: 정보가 아직 채워지지 않았으면 null.
-                  buildingAccessibilityComments:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/BuildingAccessibilityComment'
-                    description: 정보가 아직 채워지지 않았으면 empty list.
-                  placeAccessibility:
-                    $ref: '#/components/schemas/PlaceAccessibility'
-                  placeAccessibilityComments:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PlaceAccessibilityComment'
-                  registeredUserOrder:
-                    type: integer
-                    description: "'n번째 정복자'를 표시해주기 위한 값."
-                required:
-                  - buildingAccessibilityComments
-                  - placeAccessibility
-                  - placeAccessibilityComments
-                  - registeredUserOrder
-
   /registerBuildingAccessibility:
     post:
       summary: 건물 접근성 정보를 등록한다.
