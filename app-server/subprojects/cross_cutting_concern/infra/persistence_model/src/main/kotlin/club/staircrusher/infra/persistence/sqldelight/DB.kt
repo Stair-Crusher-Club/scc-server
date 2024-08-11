@@ -2,6 +2,7 @@ package club.staircrusher.infra.persistence.sqldelight
 
 import app.cash.sqldelight.ColumnAdapter
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.domain.server_event.ServerEventPayload
 import club.staircrusher.domain.server_event.ServerEventType
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.AccessibilityImageListStringColumnAdapter
@@ -51,13 +52,22 @@ class DB(dataSource: DataSource) {
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_imagesAdapter = AccessibilityImageListStringColumnAdapter,
-        elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
+            elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
             boundary_verticesAdapter = LocationListToTextColumnAdapter,
         ),
         challengeAdapter = Challenge.Adapter(
             milestonesAdapter = IntListToTextColumnAdapter,
+            crusher_groupAdapter = object : ColumnAdapter<ChallengeCrusherGroup, String> {
+                override fun decode(databaseValue: String): ChallengeCrusherGroup {
+                    return objectMapper.readValue(databaseValue)
+                }
+
+                override fun encode(value: ChallengeCrusherGroup): String {
+                    return objectMapper.writeValueAsString(value)
+                }
+            },
             conditionsAdapter = object : ListToTextColumnAdapter<ChallengeCondition>() {
                 override fun convertElementToTextColumn(element: ChallengeCondition): String {
                     return objectMapper.writeValueAsString(element)

@@ -14,7 +14,8 @@ ON CONFLICT(id) DO UPDATE SET
     conditions = EXCLUDED.conditions,
     created_at = EXCLUDED.created_at,
     updated_at = EXCLUDED.updated_at,
-    description = EXCLUDED.description;
+    description = EXCLUDED.description,
+    crusher_group = EXCLUDED.crusher_group;
 
 findAllOrderByCreatedAtDesc:
 SELECT *

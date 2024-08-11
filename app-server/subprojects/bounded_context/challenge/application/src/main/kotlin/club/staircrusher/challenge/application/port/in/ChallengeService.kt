@@ -7,6 +7,7 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -24,37 +25,6 @@ class ChallengeService(
     private val challengeParticipationRepository: ChallengeParticipationRepository,
     private val clock: Clock,
 ) {
-    sealed class Contribution(val address: ChallengeAddress) {
-        abstract val actionType: ChallengeActionCondition.Type
-        data class PlaceAccessibility(
-            val placeAccessibilityId: String,
-            val placeAccessibilityAddress: ChallengeAddress,
-        ) : Contribution(placeAccessibilityAddress) {
-            override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
-        }
-
-        data class PlaceAccessibilityComment(
-            val placeAccessibilityCommentId: String,
-            val placeAccessibilityAddress: ChallengeAddress,
-        ) : Contribution(placeAccessibilityAddress) {
-            override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
-        }
-
-        data class BuildingAccessibility(
-            val buildingAccessibilityId: String,
-            val buildingAccessibilityAddress: ChallengeAddress,
-        ) : Contribution(buildingAccessibilityAddress) {
-            override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
-        }
-
-        data class BuildingAccessibilityComment(
-            val buildingAccessibilityCommentId: String,
-            val buildingAccessibilityAddress: ChallengeAddress
-        ) : Contribution(buildingAccessibilityAddress) {
-            override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
-        }
-    }
-
     fun getMyInProgressChallenges(userId: String, criteriaTime: Instant = clock.instant()): List<Challenge> {
         return challengeRepository.findByUidAndTime(
             userId = userId,
@@ -95,6 +65,20 @@ class ChallengeService(
         ).isNotEmpty()
     }
 
+    fun getPlaceAccessibilityCrusherGroup(placeAccessibilityId: String): ChallengeCrusherGroup? {
+        val contributions = challengeContributionRepository.findByPlaceAccessibilityId(placeAccessibilityId)
+        if (contributions.isEmpty()) return null
+        val challenges = challengeRepository.findByIds(contributions.map { it.challengeId })
+        return challenges.firstNotNullOfOrNull { it.crusherGroup }
+    }
+
+    fun getBuildingAccessibilityCrusherGroup(buildingAccessibilityId: String): ChallengeCrusherGroup? {
+        val contributions = challengeContributionRepository.findByBuildingAccessibilityId(buildingAccessibilityId)
+        if (contributions.isEmpty()) return null
+        val challenges = challengeRepository.findByIds(contributions.map { it.challengeId })
+        return challenges.firstNotNullOfOrNull { it.crusherGroup }
+    }
+
     fun contributeToSatisfiedChallenges(
         userId: String,
         contribution: Contribution
@@ -110,15 +94,11 @@ class ChallengeService(
                 } != null
             }
         return satisfiedChallenges
-            .mapNotNull {
+            .mapNotNull { challenge ->
                 try {
-                    doContributeToChallenge(
-                        userId,
-                        challenge = it,
-                        contribution
-                    )
+                    doContributeToChallenge(userId, challenge = challenge, contribution)
                 } catch (@Suppress("SwallowedException") t: SccDomainException) {
-                     null
+                    null
                 }
             }
     }
@@ -130,7 +110,9 @@ class ChallengeService(
         contribution: Contribution
     ): ChallengeContribution {
         userRepository.findByIdOrNull(id = userId) ?: throw SccDomainException("해당 유저가 존재하지 않습니다.")
-        if (challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challenge.id).isEmpty()) {
+        if (challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challenge.id)
+                .isEmpty()
+        ) {
             throw SccDomainException("챌린지에 참여 중이 아닙니다.")
         }
         if (clock.instant() < challenge.startsAt) {
@@ -171,19 +153,31 @@ class ChallengeService(
     private fun getExistingContribution(challengeId: String, contribution: Contribution): ChallengeContribution? {
         return when (contribution) {
             is Contribution.PlaceAccessibility -> {
-                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityId(challengeId = challengeId, placeAccessibilityId = contribution.placeAccessibilityId)
+                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityId(
+                    challengeId = challengeId,
+                    placeAccessibilityId = contribution.placeAccessibilityId
+                )
             }
 
             is Contribution.PlaceAccessibilityComment -> {
-                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityCommentId(challengeId = challengeId, placeAccessibilityCommentId = contribution.placeAccessibilityCommentId)
+                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityCommentId(
+                    challengeId = challengeId,
+                    placeAccessibilityCommentId = contribution.placeAccessibilityCommentId
+                )
             }
 
             is Contribution.BuildingAccessibility -> {
-                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityId(challengeId = challengeId, buildingAccessibilityId = contribution.buildingAccessibilityId)
+                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityId(
+                    challengeId = challengeId,
+                    buildingAccessibilityId = contribution.buildingAccessibilityId
+                )
             }
 
             is Contribution.BuildingAccessibilityComment -> {
-                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityCommentId(challengeId = challengeId, buildingAccessibilityCommentId = contribution.buildingAccessibilityCommentId)
+                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityCommentId(
+                    challengeId = challengeId,
+                    buildingAccessibilityCommentId = contribution.buildingAccessibilityCommentId
+                )
             }
         }
     }
@@ -200,5 +194,37 @@ class ChallengeService(
             .forEach {
                 challengeContributionRepository.remove(it.id)
             }
+    }
+
+    sealed class Contribution(val address: ChallengeAddress) {
+        abstract val actionType: ChallengeActionCondition.Type
+
+        data class PlaceAccessibility(
+            val placeAccessibilityId: String,
+            val placeAccessibilityAddress: ChallengeAddress,
+        ) : Contribution(placeAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
+        }
+
+        data class PlaceAccessibilityComment(
+            val placeAccessibilityCommentId: String,
+            val placeAccessibilityAddress: ChallengeAddress,
+        ) : Contribution(placeAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
+        }
+
+        data class BuildingAccessibility(
+            val buildingAccessibilityId: String,
+            val buildingAccessibilityAddress: ChallengeAddress,
+        ) : Contribution(buildingAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
+        }
+
+        data class BuildingAccessibilityComment(
+            val buildingAccessibilityCommentId: String,
+            val buildingAccessibilityAddress: ChallengeAddress,
+        ) : Contribution(buildingAccessibilityAddress) {
+            override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
+        }
     }
 }

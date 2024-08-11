@@ -22,6 +22,8 @@ import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
+import club.staircrusher.challenge.infra.adapter.`in`.controller.toDTO
 import club.staircrusher.spring_web.cdn.SccCdn
 import club.staircrusher.stdlib.auth.AuthUser
 
@@ -38,6 +40,7 @@ fun BuildingAccessibility.toDTO(
     isUpvoted: Boolean,
     totalUpvoteCount: Int,
     registeredUserName: String?,
+    challengeCrusherGroup: ChallengeCrusherGroup?
 ) = club.staircrusher.api.spec.dto.BuildingAccessibility(
     id = id,
     entranceStairInfo = entranceStairInfo.toDTO(),
@@ -55,34 +58,38 @@ fun BuildingAccessibility.toDTO(
     isUpvoted = isUpvoted,
     totalUpvoteCount = totalUpvoteCount,
     registeredUserName = registeredUserName,
+    challengeCrusherGroup = challengeCrusherGroup?.toDTO(),
     createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
 )
 
-fun GetAccessibilityResult.toDTO(authUser: AuthUser?) = AccessibilityInfoDto(
-    buildingAccessibility = buildingAccessibility?.let {
-        it.value.toDTO(
-            isUpvoted = buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
-            totalUpvoteCount = buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0,
-            registeredUserName = it.accessibilityRegisterer?.nickname,
-        )
-    },
-    placeAccessibility = placeAccessibility?.let {
-        it.value.toDTO(
-            registeredAccessibilityRegisterer = it.accessibilityRegisterer,
-            authUser = authUser,
-            isLastInBuilding = isLastPlaceAccessibilityInBuilding,
-        )
-    },
-    buildingAccessibilityComments = buildingAccessibilityComments.map {
-        it.value.toDTO(accessibilityRegisterer = it.accessibilityRegisterer)
-    },
-    placeAccessibilityComments = placeAccessibilityComments.map {
-        it.value.toDTO(accessibilityRegisterer = it.accessibilityRegisterer)
-    },
-    hasOtherPlacesToRegisterInBuilding = hasOtherPlacesToRegisterInSameBuilding,
-    isFavoritePlace = isFavoritePlace,
-    totalFavoriteCount = totalFavoriteCount,
-)
+fun GetAccessibilityResult.toDTO(authUser: AuthUser?) =
+    AccessibilityInfoDto(
+        buildingAccessibility = buildingAccessibility?.let {
+            it.value.toDTO(
+                isUpvoted = buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
+                totalUpvoteCount = buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0,
+                registeredUserName = it.accessibilityRegisterer?.nickname,
+                challengeCrusherGroup = buildingAccessibilityChallengeCrusherGroup
+            )
+        },
+        placeAccessibility = placeAccessibility?.let {
+            it.value.toDTO(
+                registeredAccessibilityRegisterer = it.accessibilityRegisterer,
+                authUser = authUser,
+                isLastInBuilding = isLastPlaceAccessibilityInBuilding,
+                challengeCrusherGroup = placeAccessibilityChallengeCrusherGroup
+            )
+        },
+        buildingAccessibilityComments = buildingAccessibilityComments.map {
+            it.value.toDTO(accessibilityRegisterer = it.accessibilityRegisterer)
+        },
+        placeAccessibilityComments = placeAccessibilityComments.map {
+            it.value.toDTO(accessibilityRegisterer = it.accessibilityRegisterer)
+        },
+        hasOtherPlacesToRegisterInBuilding = hasOtherPlacesToRegisterInSameBuilding,
+        isFavoritePlace = isFavoritePlace,
+        totalFavoriteCount = totalFavoriteCount,
+    )
 
 fun RegisterBuildingAccessibilityRequestDto.toModel(userId: String?) =
     BuildingAccessibilityRepository.CreateParams(
@@ -111,6 +118,7 @@ fun PlaceAccessibilityComment.toDTO(accessibilityRegisterer: AccessibilityRegist
 fun PlaceAccessibility.toDTO(
     registeredAccessibilityRegisterer: AccessibilityRegisterer?,
     authUser: AuthUser?,
+    challengeCrusherGroup: ChallengeCrusherGroup?,
     isLastInBuilding: Boolean,
 ): club.staircrusher.api.spec.dto.PlaceAccessibility {
     val floors = if (this.floors.isNullOrEmpty()) {
@@ -132,6 +140,7 @@ fun PlaceAccessibility.toDTO(
         hasSlope = hasSlope,
         entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
         registeredUserName = registeredAccessibilityRegisterer?.nickname,
+        challengeCrusherGroup = challengeCrusherGroup?.toDTO(),
         deletionInfo = if (isDeletable(authUser?.id)) {
             PlaceAccessibilityDeletionInfo(
                 isLastInBuilding = isLastInBuilding,

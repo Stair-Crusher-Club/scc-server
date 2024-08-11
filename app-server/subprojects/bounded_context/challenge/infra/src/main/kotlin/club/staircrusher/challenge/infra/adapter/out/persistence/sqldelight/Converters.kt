@@ -2,23 +2,15 @@
 
 package club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight
 
-import club.staircrusher.api.spec.dto.ChallengeDto
-import club.staircrusher.api.spec.dto.ChallengeRankDto
-import club.staircrusher.api.spec.dto.ChallengeStatusDto
-import club.staircrusher.api.spec.dto.EpochMillisTimestamp
-import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.challenge.domain.model.ChallengeRank
-import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_contribution
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_participation
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge_rank
 import club.staircrusher.infra.persistence.sqldelight.query.challenge.FindByUidAndTime
 import club.staircrusher.stdlib.time.toOffsetDateTime
-import java.time.Instant
-
 
 fun Challenge.toDomainModel() = club.staircrusher.challenge.domain.model.Challenge(
     id = id,
@@ -26,6 +18,7 @@ fun Challenge.toDomainModel() = club.staircrusher.challenge.domain.model.Challen
     isPublic = is_public,
     invitationCode = invitation_code,
     passcode = passcode,
+    crusherGroup = crusher_group,
     isComplete = is_complete,
     startsAt = starts_at.toInstant(),
     endsAt = ends_at?.toInstant(),
@@ -43,6 +36,7 @@ fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Ch
     is_public = isPublic,
     invitation_code = invitationCode,
     passcode = passcode,
+    crusher_group = crusherGroup,
     is_complete = isComplete,
     starts_at = startsAt.toOffsetDateTime(),
     ends_at = endsAt?.toOffsetDateTime(),
@@ -53,31 +47,6 @@ fun club.staircrusher.challenge.domain.model.Challenge.toPersistenceModel() = Ch
     updated_at = updatedAt.toOffsetDateTime(),
     description = description,
 )
-
-fun club.staircrusher.challenge.domain.model.Challenge.toDto(
-    participationsCount: Int,
-    contributionsCount: Int,
-    criteriaTime: Instant
-) = ChallengeDto(
-    id = id,
-    name = name,
-    status = getStatus(criteriaTime).toDto(),
-    isPublic = isPublic,
-    isComplete = isComplete,
-    startsAt = EpochMillisTimestamp(startsAt.toEpochMilli()),
-    endsAt = endsAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
-    goal = goal,
-    milestones = milestones,
-    participationsCount = participationsCount,
-    contributionsCount = contributionsCount,
-    description = description,
-)
-
-fun ChallengeStatus.toDto(): ChallengeStatusDto = when (this) {
-    ChallengeStatus.UPCOMING -> ChallengeStatusDto.UPCOMING
-    ChallengeStatus.IN_PROGRESS -> ChallengeStatusDto.IN_PROGRESS
-    ChallengeStatus.CLOSED -> ChallengeStatusDto.CLOSED
-}
 
 fun Challenge_contribution.toDomainModel() = ChallengeContribution(
     id = id,
@@ -117,23 +86,13 @@ fun ChallengeParticipation.toPersistenceModel() = Challenge_participation(
     created_at = createdAt.toOffsetDateTime()
 )
 
-fun club.staircrusher.challenge.domain.model.Challenge.toListChallengeDto(hasJoined: Boolean, criteriaTime: Instant) =
-    ListChallengesItemDto(
-        id = id,
-        name = name,
-        status = getStatus(criteriaTime).toDto(),
-        startsAt = EpochMillisTimestamp(startsAt.toEpochMilli()),
-        endsAt = endsAt?.toEpochMilli()?.let { EpochMillisTimestamp(it) },
-        hasJoined = hasJoined,
-        createdAt = EpochMillisTimestamp(createdAt.toEpochMilli()),
-    )
-
 fun FindByUidAndTime.toChallenge() = club.staircrusher.challenge.domain.model.Challenge(
     id = id,
     name = name,
     isPublic = is_public,
     invitationCode = invitation_code,
     passcode = passcode,
+    crusherGroup = crusher_group,
     isComplete = is_complete,
     startsAt = starts_at.toInstant(),
     endsAt = ends_at?.toInstant(),
@@ -163,10 +122,4 @@ fun Challenge_rank.toDomainModel() = ChallengeRank(
     rank = rank,
     createdAt = created_at.toInstant(),
     updatedAt = updated_at.toInstant()
-)
-
-fun ChallengeRank.toDto(nickname: String) = ChallengeRankDto(
-    contributionCount = contributionCount,
-    rank = rank,
-    nickname = nickname,
 )

@@ -932,6 +932,8 @@ components:
         registeredUserName:
           type: string
           description: 익명으로 등록되었으면 null.
+        challengeCrusherGroup:
+          $ref: '#/components/schemas/ChallengeCrusherGroupDto'
         isUpvoted:
           type: boolean
           description: 유저가 이 접근성 정보에 '도움이 돼요'를 표시했는지 여부.
@@ -1022,6 +1024,8 @@ components:
           format: int32
         description:
           type: string
+        crusherGroup:
+          $ref: '#/components/schemas/ChallengeCrusherGroupDto'
       required:
         - id
         - name
@@ -1060,6 +1064,16 @@ components:
         - InProgress # 진행중
         - Upcoming # 오픈 예정
         - Closed # 종료된 챌린지
+
+    ChallengeCrusherGroupDto:
+      type: object
+      properties:
+        icon:
+          $ref: '#/components/schemas/ImageWithMetadataDto'
+        name:
+          type: string
+      required:
+        - name
 
     CreatePlaceFavoriteRequestDto:
       type: object
@@ -1521,6 +1535,8 @@ components:
               description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
           required:
             - isLastInBuilding
+        challengeCrusherGroup:
+          $ref: '#/components/schemas/ChallengeCrusherGroupDto'
         isUpvoted:
           type: boolean
           description: 유저가 이 접근성 정보에 '도움이 돼요'를 표시했는지 여부.
@@ -1871,6 +1887,22 @@ components:
           description: '아직 썸네일이 생성되지 않았다면 null'
       required:
         - imageUrl
+
+    ImageWithMetadataDto:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+          format: int32
+        height:
+          type: integer
+          format: int32
+      required:
+        - url
+        - width
+        - height
 
     DayOfWeek:
       type: string

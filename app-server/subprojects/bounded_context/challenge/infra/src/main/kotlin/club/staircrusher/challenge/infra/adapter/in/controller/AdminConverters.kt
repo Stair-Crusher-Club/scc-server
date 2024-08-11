@@ -10,6 +10,7 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.CreateChallengeRequest
 
 fun Challenge.toAdminDTO() = AdminChallengeDTO(
@@ -34,6 +35,18 @@ fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
     isPublic = isPublic,
     invitationCode = invitationCode,
     passcode = passcode,
+    challengeCrusherGroup = challengeCrusherGroup?.let { group ->
+        ChallengeCrusherGroup(
+            icon = group.icon?.let { icon ->
+                ChallengeCrusherGroup.Icon(
+                    url = icon.url,
+                    width = icon.width,
+                    height = icon.height,
+                )
+            },
+            name = group.name
+        )
+    },
     startsAtMillis = startsAtMillis,
     endsAtMillis = endsAtMillis,
     goal = goal,
