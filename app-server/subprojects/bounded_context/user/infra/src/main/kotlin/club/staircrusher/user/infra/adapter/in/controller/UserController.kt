@@ -26,6 +26,7 @@ class UserController(
         val user = getUserUseCase.handle(authentication.principal)
         return GetUserInfoResponseDto(
             user = user.toDTO(),
+            flags = emptyList(),
         )
     }
 

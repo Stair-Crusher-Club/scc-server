@@ -46,15 +46,9 @@ class ExternalAccessibilityController(
         return externalAccessibilityService.get(request.externalAccessibilityId).toDTO()
     }
 
-    @PostMapping("/syncWithDataSource")
+    @PostMapping("/admin/syncWithDataSource")
     fun syncWithDataSource(): String {
-        when (SccEnv.getEnv()) {
-            SccEnv.TEST,
-            SccEnv.LOCAL,
-            SccEnv.DEV -> toiletAccessibilitySyncUseCase.load()
-
-            else -> return "Not accessible"
-        }
+        toiletAccessibilitySyncUseCase.load()
         return "OK"
     }
 
