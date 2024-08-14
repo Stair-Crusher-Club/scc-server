@@ -24,8 +24,8 @@ class UserController(
         authentication: SccAppAuthentication,
     ): GetUserInfoResponseDto {
         val user = getUserUseCase.handle(authentication.principal)
-        val featureFlags = if (user in
-            listOf(
+        val featureFlags: List<String> = if (user.id in
+            listOf<String>(
                 "1c8a528c-0b5f-4885-a9b3-b81309c364df",
                 "baf04e8e-0597-4926-b3b3-c3ecf9e3544e",
                 "19ef11a0-bc2e-4262-a55f-943aad394004"
