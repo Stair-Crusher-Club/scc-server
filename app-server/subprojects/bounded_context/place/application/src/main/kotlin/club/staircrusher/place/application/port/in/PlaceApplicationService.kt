@@ -11,6 +11,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class PlaceApplicationService(
@@ -61,14 +62,14 @@ class PlaceApplicationService(
     }
 
     private fun List<Place>.filterClosed(): List<Place> {
-        val closedPlaceIds = placeRepository.findByIdIn(this.map { it.id })
+        val closedPlaceIds = placeRepository.findAllById(this.map { it.id })
             .filter { it.isClosed }
             .map { it.id }
         return this.filter { it.id !in closedPlaceIds }
     }
 
     fun findAllByIds(placeIds: Collection<String>): List<Place> {
-        return placeRepository.findByIdIn(placeIds)
+        return placeRepository.findAllById(placeIds).toList()
     }
 
     fun findByBuildingId(buildingId: String): List<Place> {
@@ -105,19 +106,19 @@ class PlaceApplicationService(
     }
 
     fun setIsClosed(placeId: String, isClosed: Boolean) {
-        val place = placeRepository.findById(placeId)
+        val place = placeRepository.findById(placeId).get()
         place.setIsClosed(isClosed)
         placeRepository.save(place)
     }
 
     fun setIsNotAccessible(placeId: String, isNotAccessible: Boolean) {
-        val place = placeRepository.findById(placeId)
+        val place = placeRepository.findById(placeId).get()
         place.setIsNotAccessible(isNotAccessible)
         placeRepository.save(place)
     }
 
     private fun List<Place>.mergeLocalDatabases(): List<Place> {
-        val existingPlaceById = placeRepository.findByIdIn(this.map { it.id })
+        val existingPlaceById = placeRepository.findAllById(this.map { it.id })
             .associateBy { it.id }
         return this.map {
             existingPlaceById[it.id] ?: it

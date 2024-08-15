@@ -169,7 +169,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
 
         // when - isClosed
         transactionManager.doInTransaction {
-            placeRepository.findById(place.id)
+            placeRepository.findById(place.id).get()
                 .apply { setIsClosed(true) }
                 .apply { setIsNotAccessible(false) }
                 .apply { placeRepository.save(this) }
@@ -184,7 +184,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
 
         // when - isNotAccessible
         transactionManager.doInTransaction {
-            placeRepository.findById(place.id)
+            placeRepository.findById(place.id).get()
                 .apply { setIsClosed(false) }
                 .apply { setIsNotAccessible(true) }
                 .apply { placeRepository.save(this) }
@@ -210,12 +210,12 @@ class SearchPlacesTest : PlaceSearchITBase() {
         val placeWithSlope = transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))
             testDataGenerator.registerPlaceAccessibility(place, user = user, hasSlope = true)
-            place 
+            place
         }
         val placeWithoutSlope = transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))
             testDataGenerator.registerPlaceAccessibility(place, user = user, hasSlope = false)
-            place 
+            place
         }
         val placeNotRegistered = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))

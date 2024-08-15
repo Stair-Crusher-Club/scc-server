@@ -7,6 +7,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class CreatePlaceFavoriteUseCase(
@@ -18,10 +19,10 @@ class CreatePlaceFavoriteUseCase(
         placeRepository.findByIdOrNull(request.placeId)
             ?: throw IllegalArgumentException("Place of id ${request.placeId} does not exist.")
         val oldPlaceFavorite =
-            placeFavoriteRepository.findByUserIdAndPlaceId(userId = request.userId, placeId = request.placeId)
+            placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(userId = request.userId, placeId = request.placeId)
         if (oldPlaceFavorite?.deletedAt != null) {
             return@doInTransaction Response(
-                totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId = request.placeId),
+                totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId = request.placeId),
                 placeFavorite = oldPlaceFavorite
             )
         }
@@ -38,7 +39,7 @@ class CreatePlaceFavoriteUseCase(
         )
         placeFavoriteRepository.save(newPlaceFavorite)
         return@doInTransaction Response(
-            totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId = request.placeId),
+            totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId = request.placeId),
             placeFavorite = newPlaceFavorite
         )
     }
