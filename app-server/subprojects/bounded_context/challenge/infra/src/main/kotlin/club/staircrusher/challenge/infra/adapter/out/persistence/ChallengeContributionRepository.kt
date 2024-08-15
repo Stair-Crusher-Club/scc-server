@@ -52,6 +52,12 @@ class ChallengeContributionRepository(
             ?.toDomainModel()
     }
 
+    override fun findByPlaceAccessibilityId(placeAccessibilityId: String): List<ChallengeContribution> {
+        return queries.findByPlaceAccessibilityId(placeAccessibilityId)
+            .executeAsList()
+            .map { it.toDomainModel() }
+    }
+
     override fun findByChallengeIdAndPlaceAccessibilityCommentId(challengeId: String, placeAccessibilityCommentId: String): ChallengeContribution? {
         return queries.findByChallengeIdAndPlaceAccessibilityCommentId(challengeId, placeAccessibilityCommentId)
             .executeAsOneOrNull()
@@ -62,6 +68,12 @@ class ChallengeContributionRepository(
         return queries.findByChallengeIdAndBuildingAccessibilityId(challengeId, buildingAccessibilityId)
             .executeAsOneOrNull()
             ?.toDomainModel()
+    }
+
+    override fun findByBuildingAccessibilityId(buildingAccessibilityId: String): List<ChallengeContribution> {
+        return queries.findByBuildingAccessibilityId(buildingAccessibilityId)
+            .executeAsList()
+            .map { it.toDomainModel() }
     }
 
     override fun findByChallengeIdAndBuildingAccessibilityCommentId(challengeId: String, buildingAccessibilityCommentId: String): ChallengeContribution? {

@@ -22,9 +22,6 @@ class ListChallengesTest : ChallengeITBase() {
     private lateinit var challengeRepository: ChallengeRepository
 
     @Autowired
-    private lateinit var challengeContributionRepository: ChallengeContributionRepository
-
-    @Autowired
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
 
     @Autowired

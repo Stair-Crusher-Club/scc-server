@@ -11,8 +11,6 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetImageUploadUrlsPost200ResponseInner
 import club.staircrusher.api.spec.dto.GetImageUploadUrlsPostRequest
-import club.staircrusher.api.spec.dto.RegisterAccessibilityPost200Response
-import club.staircrusher.api.spec.dto.RegisterAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
@@ -48,51 +46,6 @@ class AccessibilityController(
                 it.expireAt.toDTO(),
             )
         }
-    }
-
-    @PostMapping("/registerAccessibility")
-    fun registerAccessibility(
-        @RequestBody request: RegisterAccessibilityPostRequest,
-        authentication: SccAppAuthentication,
-    ): RegisterAccessibilityPost200Response {
-        val userId = authentication.principal
-        val registerResult = accessibilityApplicationService.register(
-            createBuildingAccessibilityParams = request.buildingAccessibilityParams?.toModel(userId = userId),
-            createBuildingAccessibilityCommentParams = request.buildingAccessibilityParams?.comment?.let {
-                BuildingAccessibilityCommentRepository.CreateParams(
-                    buildingId = request.buildingAccessibilityParams!!.buildingId,
-                    userId = userId,
-                    comment = it,
-                )
-            },
-            createPlaceAccessibilityParams = request.placeAccessibilityParams.toModel(userId = userId),
-            createPlaceAccessibilityCommentParams = request.placeAccessibilityParams.comment?.let {
-                PlaceAccessibilityCommentRepository.CreateParams(
-                    placeId = request.placeAccessibilityParams.placeId,
-                    userId = userId,
-                    comment = it,
-                )
-            },
-        )
-        return RegisterAccessibilityPost200Response(
-            buildingAccessibility = registerResult.buildingAccessibility?.toDTO(
-                isUpvoted = false,
-                totalUpvoteCount = 0,
-                registeredUserName = registerResult.accessibilityRegisterer?.nickname,
-            ),
-            buildingAccessibilityComments = listOfNotNull(registerResult.buildingAccessibilityComment).map {
-                it.toDTO(accessibilityRegisterer = registerResult.accessibilityRegisterer)
-            },
-            placeAccessibility = registerResult.placeAccessibility.toDTO(
-                registeredAccessibilityRegisterer = registerResult.accessibilityRegisterer,
-                authUser = authentication.details,
-                isLastInBuilding = registerResult.isLastPlaceAccessibilityInBuilding,
-            ),
-            placeAccessibilityComments = listOfNotNull(registerResult.placeAccessibilityComment).map {
-                it.toDTO(accessibilityRegisterer = registerResult.accessibilityRegisterer)
-            },
-            registeredUserOrder = registerResult.registrationOrder,
-        )
     }
 
     @PostMapping("/registerPlaceAccessibility")

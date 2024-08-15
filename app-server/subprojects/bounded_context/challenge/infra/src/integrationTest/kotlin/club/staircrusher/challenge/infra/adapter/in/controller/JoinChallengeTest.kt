@@ -3,7 +3,6 @@ package club.staircrusher.challenge.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeResponseDto
-import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
@@ -15,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 class JoinChallengeTest : ChallengeITBase() {
     @Autowired
     private lateinit var challengeRepository: ChallengeRepository
-
-    @Autowired
-    private lateinit var challengeContributionRepository: ChallengeContributionRepository
 
     @Autowired
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
