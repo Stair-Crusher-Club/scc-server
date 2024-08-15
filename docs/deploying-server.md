@@ -11,7 +11,7 @@ CI / CD 트리거는 각 환경별로 아래와 같습니다.
 - PROD - semantic versioning을 따르는 이름의 git tag push (e.g. 0.1.0)
 
 CI / CD가 트리거되면 DEV / PROD 환경 모두 동일하게 아래와 같은 로직이 수행됩니다.
-1. scc-server 레포지토리를 빌드합니다. 이때 app-server 모듈, app-admin-frontend 모듈이 빌드가 되며, 빌드 과정에서 테스트도 실행됩니다.
+1. scc-server 레포지토리를 빌드합니다. 이때 app-server 모듈이 빌드가 되며, 빌드 과정에서 테스트도 실행됩니다.
 2. 빌드된 이미지를 ECR에 푸시합니다.
 3. 서버를 새로운 이미지로 rolling update 합니다.
 
@@ -36,7 +36,3 @@ secret.yaml의 암호화 / 복호화에는 [sops](https://github.com/getsops/sop
 3. `sops secret.yaml` 커맨드를 통해 secret.yaml 파일을 편집하고 커밋에 포함합니다.
 
 이렇게 편집된 secret.yaml 파일은 서버 배포 시 자동으로 반영됩니다(secret 배포 -> 서버 배포 순으로 이루어집니다).
-
-### app-admin-frontend
-app-admin-frontend의 경우, [env-cmd](https://github.com/toddbluhm/env-cmd)를 활용하여 환경별로 달라져야 하는 값을 관리합니다.
-`.env.(dev|prod)` 파일에 `REACT_APP_` prefix가 붙은 환경변수를 선언하면, 이를 ts 파일에서 `process.env.<REACT_APP_ prefix를 포함한 환경변수 이름>`와 같은 방식으로 사용할 수 있습니다.
