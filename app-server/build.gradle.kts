@@ -53,7 +53,7 @@ subprojects {
         val kotlinVersion: String by project
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
-        implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+        runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     }
 
     allOpen {
