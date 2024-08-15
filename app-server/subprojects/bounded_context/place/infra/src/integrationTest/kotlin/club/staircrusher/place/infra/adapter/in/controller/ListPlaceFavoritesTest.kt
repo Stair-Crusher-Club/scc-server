@@ -16,7 +16,7 @@ class ListPlaceFavoritesTest : SccSpringITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        placeFavoriteRepository.removeAll()
+        placeFavoriteRepository.deleteAll()
     }
 
     @Test
