@@ -9,8 +9,10 @@ interface ChallengeContributionRepository : EntityRepository<ChallengeContributi
     fun findByChallengeId(challengeId: String): List<ChallengeContribution>
     fun findByChallengeIds(challengeIds: List<String>): List<ChallengeContribution>
     fun findByChallengeIdAndPlaceAccessibilityId(challengeId: String, placeAccessibilityId: String): ChallengeContribution?
+    fun findByPlaceAccessibilityId(placeAccessibilityId: String): List<ChallengeContribution>
     fun findByChallengeIdAndPlaceAccessibilityCommentId(challengeId: String, placeAccessibilityCommentId: String): ChallengeContribution?
     fun findByChallengeIdAndBuildingAccessibilityId(challengeId: String, buildingAccessibilityId: String): ChallengeContribution?
+    fun findByBuildingAccessibilityId(buildingAccessibilityId: String): List<ChallengeContribution>
     fun findByChallengeIdAndBuildingAccessibilityCommentId(challengeId: String, buildingAccessibilityCommentId: String): ChallengeContribution?
     fun countByChallengeId(challengeId: String): Long
     fun remove(contributionId: String)

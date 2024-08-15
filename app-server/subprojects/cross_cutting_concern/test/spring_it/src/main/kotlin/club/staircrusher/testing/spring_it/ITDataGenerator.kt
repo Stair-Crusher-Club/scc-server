@@ -20,6 +20,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeRep
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.external_accessibility.domain.model.ExternalAccessibility
@@ -227,6 +228,7 @@ class ITDataGenerator {
         milestones: List<Int> = listOf(),
         conditions: List<ChallengeCondition> = listOf(),
         description: String = "",
+        crusherGroup: ChallengeCrusherGroup? = null
     ): Challenge {
         return challengeRepository.save(
             Challenge(
@@ -244,6 +246,7 @@ class ITDataGenerator {
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
                 description = description,
+                crusherGroup = crusherGroup
             )
         )
     }
@@ -348,10 +351,14 @@ class ITDataGenerator {
         building: Building,
         entranceStairInfo: StairInfo = StairInfo.NONE,
         entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.THUMB,
+        entranceImageUrls: List<String> = emptyList(),
+        entranceImages: List<AccessibilityImage> = emptyList(),
+        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         hasSlope: Boolean = true,
         hasElevator: Boolean = true,
-        entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
+        elevatorImageUrls: List<String> = emptyList(),
+        elevatorImages: List<AccessibilityImage> = emptyList(),
         user: User? = null,
         at: Instant = clock.instant(),
     ): BuildingAccessibility {
@@ -361,15 +368,15 @@ class ITDataGenerator {
                 buildingId = building.id,
                 entranceStairInfo = entranceStairInfo,
                 entranceStairHeightLevel = entranceStairHeightLevel,
-                entranceImageUrls = emptyList(),
-                entranceImages = emptyList(),
+                entranceImageUrls = entranceImageUrls,
+                entranceImages = entranceImages,
                 hasSlope = hasSlope,
                 hasElevator = hasElevator,
                 entranceDoorTypes = entranceDoorTypes,
                 elevatorStairInfo = StairInfo.NONE,
                 elevatorStairHeightLevel = elevatorStairHeightLevel,
-                elevatorImageUrls = emptyList(),
-                elevatorImages = emptyList(),
+                elevatorImageUrls = elevatorImageUrls,
+                elevatorImages = elevatorImages,
                 userId = user?.id,
                 createdAt = at,
             ),
@@ -385,7 +392,15 @@ class ITDataGenerator {
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
             registerPlaceAccessibility(place = place, user = user, imageUrls = imageUrls, images = images, at = at),
-            registerBuildingAccessibilityIfNotExists(place.building, user = user, at = at),
+            registerBuildingAccessibilityIfNotExists(
+                place.building,
+                user = user,
+                entranceImageUrls = imageUrls,
+                entranceImages = images,
+                elevatorImageUrls = imageUrls,
+                elevatorImages = images,
+                at = at
+            ),
         )
     }
 

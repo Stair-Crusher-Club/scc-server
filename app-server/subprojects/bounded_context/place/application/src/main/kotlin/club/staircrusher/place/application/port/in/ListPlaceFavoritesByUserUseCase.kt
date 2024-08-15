@@ -11,7 +11,7 @@ class ListPlaceFavoritesByUserUseCase(
     private val transactionManager: TransactionManager
 ) {
     fun handle(request: Request): Response = transactionManager.doInTransaction {
-        val favorites = placeFavoriteRepository.findByUserId(request.userId)
+        val favorites = placeFavoriteRepository.findByUserIdAndDeletedAtIsNull(request.userId)
         // TODO: next token 처리
         return@doInTransaction Response(
             totalCount = favorites.size.toLong(),

@@ -9,7 +9,6 @@ import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserResponseDto
 import club.staircrusher.place.application.port.`in`.CreatePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.DeletePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.ListPlaceFavoritesByUserUseCase
-import club.staircrusher.place.infra.adapter.out.persistence.toDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

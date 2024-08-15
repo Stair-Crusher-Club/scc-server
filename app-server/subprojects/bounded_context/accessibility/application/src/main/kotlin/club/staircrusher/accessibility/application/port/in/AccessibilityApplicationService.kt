@@ -17,6 +17,7 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
 import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.challenge.application.port.`in`.ChallengeService
 import club.staircrusher.place.application.port.`in`.BuildingService
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
@@ -47,6 +48,7 @@ class AccessibilityApplicationService(
     private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,
     // FIXME: do not use other BC's application service directly
     private val userApplicationService: UserApplicationService,
+    private val challengeService: ChallengeService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
     private val accessibilityImageService: AccessibilityImageService,
 ) {
@@ -71,8 +73,10 @@ class AccessibilityApplicationService(
         val place = placeApplicationService.findPlace(placeId) ?: error("Cannot find place with $placeId")
         val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
+        val buildingAccessibilityChallengeCrusherGroup = buildingAccessibility?.id?.let { challengeService.getBuildingAccessibilityCrusherGroup(it) }
         val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
         val placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId)
+        val placeAccessibilityChallengeCrusherGroup = placeAccessibility?.id?.let { challengeService.getPlaceAccessibilityCrusherGroup(it) }
         val userInfoById = userApplicationService.getUsers(
             listOfNotNull(buildingAccessibility?.userId)
                 + buildingAccessibilityComments.mapNotNull { it.userId }
@@ -100,6 +104,7 @@ class AccessibilityApplicationService(
                     accessibilityRegisterer = userInfoById[it.userId],
                 )
             },
+            buildingAccessibilityChallengeCrusherGroup = buildingAccessibilityChallengeCrusherGroup,
             placeAccessibility = placeAccessibility?.let { WithUserInfo(it, userInfoById[it.userId]) },
             placeAccessibilityComments = placeAccessibilityComments.map {
                 WithUserInfo(
@@ -107,13 +112,14 @@ class AccessibilityApplicationService(
                     accessibilityRegisterer = userInfoById[it.userId],
                 )
             },
+            placeAccessibilityChallengeCrusherGroup = placeAccessibilityChallengeCrusherGroup,
             hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(
                 place.building.id
             ),
             isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id)
                 ?: false,
-            isFavoritePlace = userId?.let { placeFavoriteRepository.findByUserIdAndPlaceId(it, placeId) } != null,
-            totalFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId),
+            isFavoritePlace = userId?.let { placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(it, placeId) } != null,
+            totalFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId),
         )
     }
 
@@ -134,10 +140,6 @@ class AccessibilityApplicationService(
         }
     }
 
-    fun getPlaceAccessibility(placeId: String): PlaceAccessibility? = transactionManager.doInTransaction {
-        placeAccessibilityRepository.findByPlaceId(placeId)
-    }
-
     fun listPlaceAndBuildingAccessibility(places: List<Place>): List<Pair<PlaceAccessibility?, BuildingAccessibility?>> {
         if (places.isEmpty()) {
             return emptyList()
@@ -149,11 +151,6 @@ class AccessibilityApplicationService(
         return places.map {
             pas[it.id] to bas[it.building.id]
         }
-    }
-
-    fun getBuildingAccessibility(placeId: String): BuildingAccessibility? = transactionManager.doInTransaction {
-        val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction null
-        buildingAccessibilityRepository.findByBuildingId(place.building.id)
     }
 
     data class RegisterAccessibilityResult(

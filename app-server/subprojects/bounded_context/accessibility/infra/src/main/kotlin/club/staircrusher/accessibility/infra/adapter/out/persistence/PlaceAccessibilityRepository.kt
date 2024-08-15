@@ -97,6 +97,14 @@ class PlaceAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant): PlaceAccessibility? {
+        return queries.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+            createdAt = createdAt.toOffsetDateTime(), limit = 1
+        )
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
     override fun searchForAdmin(
         placeName: String?,
         createdAtFrom: Instant?,
@@ -119,6 +127,10 @@ class PlaceAccessibilityRepository(
 
     override fun updateImages(id: String, images: List<AccessibilityImage>) {
         return queries.updateImages(images, id)
+    }
+
+    override fun updateImageUrlsAndImages(id: String, imageUrls: List<String>, images: List<AccessibilityImage>) {
+        return queries.updateImageUrlsAndImages(id = id, imageUrls = imageUrls, images = images)
     }
 
     override fun countAll(): Int {

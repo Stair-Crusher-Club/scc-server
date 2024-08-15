@@ -77,6 +77,18 @@ class BuildingAccessibilityRepository(
             .map { it.toDomainModel() }
     }
 
+    override fun findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant): BuildingAccessibility? {
+        return queries.findByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+            createdAt = createdAt.toOffsetDateTime(), limit = 1
+        )
+            .executeAsOneOrNull()
+            ?.toDomainModel()
+    }
+
+    override fun findAll(): List<BuildingAccessibility> {
+        return queries.findAll().executeAsList().map { it.toDomainModel() }
+    }
+
     override fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>) {
         return queries.updateEntranceImages(
             entranceImages = entranceImages,
@@ -84,10 +96,26 @@ class BuildingAccessibilityRepository(
         )
     }
 
+    override fun updateEntranceImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>) {
+        return queries.updateEntranceImageUrlsAndImages(
+            id = id,
+            entranceImageUrls = urls,
+            entranceImages = images,
+        )
+    }
+
     override fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>) {
         return queries.updateElevatorImages(
             elevatorImages = elevatorImages,
             id = id,
+        )
+    }
+
+    override fun updateElevatorImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>) {
+        return queries.updateElevatorImageUrlsAndImages(
+            id = id,
+            elevatorImageUrls = urls,
+            elevatorImages = images,
         )
     }
 

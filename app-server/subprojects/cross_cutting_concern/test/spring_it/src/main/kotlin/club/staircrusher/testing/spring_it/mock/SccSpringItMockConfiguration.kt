@@ -1,6 +1,8 @@
 package club.staircrusher.testing.spring_it.mock
 
+import club.staircrusher.accessibility.application.port.`in`.image.ImageProcessor
 import club.staircrusher.accessibility.application.port.`in`.image.ThumbnailGenerator
+import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
@@ -63,5 +65,17 @@ open class SccSpringItMockConfiguration {
     @Primary
     open fun mockUrlShorteningService(): UrlShorteningService {
         return MockUrlShorteningService()
+    }
+
+    @Bean
+    @Primary
+    open fun mockDetectFacesService(): DetectFacesService {
+        return MockDetectFacesService()
+    }
+
+    @Bean
+    @Primary
+    open fun mockImageProcessor(): ImageProcessor {
+        return MockImageProcessor()
     }
 }
