@@ -65,8 +65,8 @@ resource "aws_iam_policy" "scc_accessibility_thumbnails_full_access" {
 }
 
 resource "aws_iam_policy" "scc_rekognition_access" {
-  name   = "scc-accessibility-thumbnails-full-access"
-  policy = data.aws_iam_policy_document.scc_accessibility_thumbnails_full_access.json
+  name   = "scc-rekognition-access"
+  policy = data.aws_iam_policy_document.scc_rekognition_access.json
 }
 
 resource "aws_iam_role_policy_attachment" "scc_accessibility_images_full_access" {

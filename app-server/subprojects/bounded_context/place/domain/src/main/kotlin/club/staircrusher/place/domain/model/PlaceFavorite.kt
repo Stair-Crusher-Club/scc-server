@@ -1,8 +1,12 @@
 package club.staircrusher.place.domain.model
 
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
 import java.time.Instant
 
+@Entity
 class PlaceFavorite(
+    @Id
     val id: String,
     val userId: String,
     val placeId: String,

@@ -2,6 +2,7 @@ package club.staircrusher.infra.persistence.sqldelight
 
 import app.cash.sqldelight.ColumnAdapter
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.domain.server_event.ServerEventPayload
 import club.staircrusher.domain.server_event.ServerEventType
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.AccessibilityImageListStringColumnAdapter
@@ -9,7 +10,6 @@ import club.staircrusher.infra.persistence.sqldelight.column_adapter.EntranceDoo
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.LocationListToTextColumnAdapter
-import club.staircrusher.infra.persistence.sqldelight.column_adapter.PlaceCategoryStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StairHeightLevelStringColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.StringListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_allowed_region
@@ -17,7 +17,6 @@ import club.staircrusher.infra.persistence.sqldelight.migration.Accessibility_im
 import club.staircrusher.infra.persistence.sqldelight.migration.Building_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
 import club.staircrusher.infra.persistence.sqldelight.migration.External_accessibility
-import club.staircrusher.infra.persistence.sqldelight.migration.Place
 import club.staircrusher.infra.persistence.sqldelight.migration.Place_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Server_event
 import club.staircrusher.stdlib.di.annotation.Component
@@ -34,9 +33,6 @@ class DB(dataSource: DataSource) {
     private val driver = SqlDelightJdbcDriver(dataSource)
     private val scc = scc(
         driver = driver,
-        placeAdapter = Place.Adapter(
-            categoryAdapter = PlaceCategoryStringColumnAdapter,
-        ),
         place_accessibilityAdapter = Place_accessibility.Adapter(
             image_urlsAdapter = StringListToTextColumnAdapter,
             imagesAdapter = AccessibilityImageListStringColumnAdapter,
@@ -51,13 +47,22 @@ class DB(dataSource: DataSource) {
             entrance_door_typesAdapter = EntranceDoorTypeListStringColumnAdapter,
             elevator_stair_height_levelAdapter = StairHeightLevelStringColumnAdapter,
             entrance_imagesAdapter = AccessibilityImageListStringColumnAdapter,
-        elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
+            elevator_imagesAdapter = AccessibilityImageListStringColumnAdapter,
         ),
         accessibility_allowed_regionAdapter = Accessibility_allowed_region.Adapter(
             boundary_verticesAdapter = LocationListToTextColumnAdapter,
         ),
         challengeAdapter = Challenge.Adapter(
             milestonesAdapter = IntListToTextColumnAdapter,
+            crusher_groupAdapter = object : ColumnAdapter<ChallengeCrusherGroup, String> {
+                override fun decode(databaseValue: String): ChallengeCrusherGroup {
+                    return objectMapper.readValue(databaseValue)
+                }
+
+                override fun encode(value: ChallengeCrusherGroup): String {
+                    return objectMapper.writeValueAsString(value)
+                }
+            },
             conditionsAdapter = object : ListToTextColumnAdapter<ChallengeCondition>() {
                 override fun convertElementToTextColumn(element: ChallengeCondition): String {
                     return objectMapper.writeValueAsString(element)
@@ -106,9 +111,6 @@ class DB(dataSource: DataSource) {
     )
 
     val accessibilityImageFaceBlurringHistoryQueries = scc.accessibilityImageFaceBlurringHistoryQueries
-    val buildingQueries = scc.buildingQueries
-    val placeQueries = scc.placeQueries
-    val placeFavoriteQueries = scc.placeFavoriteQueries
     val buildingAccessibilityQueries = scc.buildingAccessibilityQueries
     val buildingAccessibilityCommentQueries = scc.buildingAccessibilityCommentQueries
     val buildingAccessibilityUpvoteQueries = scc.buildingAccessibilityUpvoteQueries

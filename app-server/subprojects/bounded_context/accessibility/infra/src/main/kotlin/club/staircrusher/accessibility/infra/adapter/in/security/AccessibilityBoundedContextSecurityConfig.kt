@@ -13,7 +13,6 @@ class AccessibilityBoundedContextSecurityConfig : SccSecurityConfig {
         "/deleteAccessibility",
         "/getAccessibilityRank",
         "/getCountForNextRank",
-        "/registerAccessibility",
         "/registerPlaceAccessibility",
         "/registerBuildingAccessibility",
         "/admin/accessibilityAllowedRegions"

@@ -3,10 +3,10 @@ package club.staircrusher.place.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteResponseDto
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
-import club.staircrusher.place.domain.model.PlaceFavorite
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.testing.spring_it.mock.MockSccClock
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +24,7 @@ class DeletePlaceFavoriteTest : SccSpringITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        placeFavoriteRepository.removeAll()
+        placeFavoriteRepository.deleteAll()
     }
 
     @Test
@@ -42,10 +42,10 @@ class DeletePlaceFavoriteTest : SccSpringITBase() {
             .sccRequest("/deletePlaceFavorite", DeletePlaceFavoriteRequestDto(placeId = place.id), user = user)
             .apply {
                 val result = getResult(DeletePlaceFavoriteResponseDto::class)
-                assertTrue(result.totalPlaceFavoriteCount == 0L)
-                val favorite = placeFavoriteRepository.findByUserIdAndPlaceId(user.id, place.id)
-                assertTrue(favorite?.userId == user.id)
-                assertTrue(favorite?.placeId == place.id)
+                assertEquals(0, result.totalPlaceFavoriteCount)
+                val favorite = placeFavoriteRepository.findFirstByUserIdAndPlaceId(user.id, place.id)
+                assertEquals(user.id, favorite?.userId)
+                assertEquals(place.id, favorite?.placeId)
                 assertNotNull(favorite?.deletedAt)
                 assertTrue(beforeRequestedAt.isBefore(favorite?.deletedAt))
             }

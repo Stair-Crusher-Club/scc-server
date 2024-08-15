@@ -16,8 +16,6 @@ import club.staircrusher.challenge.application.port.`in`.use_case.GetCountForNex
 import club.staircrusher.challenge.application.port.`in`.use_case.JoinChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.ListChallengesUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.UpdateChallengeRanksUseCase
-import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toDto
-import club.staircrusher.challenge.infra.adapter.out.persistence.sqldelight.toListChallengeDto
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.web.util.matcher.IpAddressMatcher
