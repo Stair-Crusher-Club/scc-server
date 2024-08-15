@@ -54,6 +54,10 @@ subprojects {
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
     }
 
+    allOpen {
+        annotation("club.staircrusher.stdlib.di.annotation.Component")
+    }
+
     tasks.test {
         useJUnitPlatform {
             includeEngines("junit-jupiter")

@@ -78,7 +78,6 @@ class AccessibilityImageService(
             .let { uploadThumbnailImages(it) }
 
         if (generatedThumbnailUrls.isNotEmpty()) {
-            logger.info { "Saving generated thumbnail urls to DB" }
             saveThumbnailUrls(placeId, generatedThumbnailUrls)
         }
     }
@@ -127,13 +126,11 @@ class AccessibilityImageService(
 
     private fun generateThumbnail(originalImageUrl: String, placeId: String): Thumbnail? {
         try {
-            logger.info { "Generating thumbnail for place: $placeId, image: $originalImageUrl" }
             val destinationPath = thumbnailPath.resolve(placeId).createDirectory()
             val imageFile = fileManagementService.downloadFile(originalImageUrl, destinationPath)
             val thumbnailFileName = "thumbnail_${imageFile.nameWithoutExtension}.$THUMBNAIL_FORMAT"
             val thumbnailOutputStream = thumbnailGenerator.generate(imageFile, THUMBNAIL_FORMAT)
 
-            logger.info { "Thumbnail thumbnail for place: $placeId, image: $originalImageUrl"}
             return Thumbnail(originalImageUrl, thumbnailFileName, thumbnailOutputStream)
         } catch (t: Throwable) {
             logger.error(t) { "Failed to generate thumbnail for place: $placeId, image: $originalImageUrl" }
