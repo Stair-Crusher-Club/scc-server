@@ -1259,6 +1259,11 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+        flags:
+          type: array
+          items:
+            type: string
+          description: 유저의 플래그들. ex) [ "MAP_VISIBLE" ]
       required:
         - user
 
