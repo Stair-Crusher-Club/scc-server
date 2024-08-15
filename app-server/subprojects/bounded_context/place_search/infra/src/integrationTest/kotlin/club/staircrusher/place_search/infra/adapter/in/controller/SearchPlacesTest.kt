@@ -1,16 +1,15 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
 import club.staircrusher.api.converter.toDTO
+import club.staircrusher.api.spec.dto.PlaceListItem
+import club.staircrusher.api.spec.dto.SearchPlaceFilterDto
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
-import club.staircrusher.api.spec.dto.SearchPlaceFilterDto
-import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place_search.infra.adapter.`in`.controller.base.PlaceSearchITBase
 import club.staircrusher.stdlib.testing.SccRandom
-import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -24,9 +23,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean
 class SearchPlacesTest : PlaceSearchITBase() {
     @Autowired
     private lateinit var placeRepository: PlaceRepository
-
-    @Autowired
-    private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
     @SpyBean
     private lateinit var mapsService: MapsService

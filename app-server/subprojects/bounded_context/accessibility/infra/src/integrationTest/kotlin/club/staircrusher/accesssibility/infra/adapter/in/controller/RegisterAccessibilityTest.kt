@@ -13,6 +13,7 @@ import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -34,7 +35,7 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
 
     @Autowired
-    private lateinit var challengeRepository: BuildingAccessibilityRepository
+    private lateinit var challengeRepository: ChallengeRepository
 
     @Autowired
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
@@ -44,9 +45,9 @@ class RegisterAccessibilityTest : AccessibilityITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        placeAccessibilityRepository.removeAll()
-        buildingAccessibilityUpvoteRepository.removeAll()
-        buildingAccessibilityRepository.removeAll()
+        placeAccessibilityRepository.deleteAll()
+        buildingAccessibilityUpvoteRepository.deleteAll()
+        buildingAccessibilityRepository.deleteAll()
 
         challengeRepository.removeAll()
         challengeParticipationRepository.removeAll()

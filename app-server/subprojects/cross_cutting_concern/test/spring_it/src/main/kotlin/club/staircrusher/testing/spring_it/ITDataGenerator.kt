@@ -359,7 +359,7 @@ class ITDataGenerator {
         user: User? = null,
         at: Instant = clock.instant(),
     ): BuildingAccessibility {
-        return buildingAccessibilityRepository.findByBuildingId(building.id) ?: buildingAccessibilityRepository.save(
+        return buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id) ?: buildingAccessibilityRepository.save(
             BuildingAccessibility(
                 id = EntityIdGenerator.generateRandom(),
                 buildingId = building.id,
@@ -438,7 +438,7 @@ class ITDataGenerator {
             BuildingAccessibilityUpvote(
                 id = EntityIdGenerator.generateRandom(),
                 userId = user.id,
-                buildingAccessibility = buildingAccessibility,
+                buildingAccessibilityId = buildingAccessibility.id,
                 createdAt = clock.instant(),
             ),
         )

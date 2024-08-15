@@ -1,29 +1,28 @@
 package club.staircrusher.accessibility.application.port.out.persistence
 
-import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.StairHeightLevel
 import club.staircrusher.accessibility.domain.model.StairInfo
-import club.staircrusher.stdlib.domain.repository.EntityRepository
-import club.staircrusher.stdlib.geography.EupMyeonDong
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import java.time.Instant
 
-interface BuildingAccessibilityRepository : EntityRepository<BuildingAccessibility, String> {
-    fun findByBuildingIds(buildingIds: Collection<String>): List<BuildingAccessibility>
-    fun findByBuildingId(buildingId: String): BuildingAccessibility?
-    fun findByPlaceIds(placeIds: Collection<String>): List<BuildingAccessibility>
-    fun findByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
-    fun findByEupMyeonDong(eupMyeonDong: EupMyeonDong): List<BuildingAccessibility>
-    fun findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant): BuildingAccessibility?
-    fun findAll(): List<BuildingAccessibility>
-    fun countByUserIdCreatedAtBetween(userId: String, from: Instant, to: Instant): Int
-    fun updateEntranceImages(id: String, entranceImages: List<AccessibilityImage>)
-    fun updateEntranceImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>)
-    fun updateElevatorImages(id: String, elevatorImages: List<AccessibilityImage>)
-    fun updateElevatorImageUrlsAndImages(id: String, urls: List<String>, images: List<AccessibilityImage>)
-    fun countByUserId(userId: String): Int
-    fun remove(id: String)
+interface BuildingAccessibilityRepository : CrudRepository<BuildingAccessibility, String> {
+    fun findByBuildingIdInAndDeletedAtIsNull(buildingIds: Collection<String>): List<BuildingAccessibility>
+    fun findFirstByBuildingIdAndDeletedAtIsNull(buildingId: String): BuildingAccessibility?
+    fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
+    @Query("""
+        SELECT ba
+        FROM BuildingAccessibility ba
+        WHERE
+            ba.createdAt > :createdAt
+            AND ba.deletedAt IS NULL
+        ORDER BY ba.createdAt ASC, ba.id DESC
+        LIMIT 1
+    """)
+    fun findBlurringTargetAccessibility(createdAt: Instant): BuildingAccessibility?
+    fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
 
     data class CreateParams(
         val buildingId: String,

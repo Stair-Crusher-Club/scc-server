@@ -41,33 +41,36 @@ class AccessibilityImageService(
         placeAccessibilityId: String? = null
     ): PlaceAccessibility? {
         val placeAccessibility =
-            placeId?.let { placeAccessibilityRepository.findByPlaceId(it) }
-                ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it) }
+            placeId?.let { placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(it) }
+                ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it).get() }?.takeIf { it.deletedAt == null }
                 ?: return null
         if (placeAccessibility.images.isEmpty() && placeAccessibility.imageUrls.isNotEmpty()) {
             val placeAccessibilityImages = placeAccessibility.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            placeAccessibilityRepository.updateImages(placeAccessibility.id, placeAccessibilityImages)
+            placeAccessibility.updateImages(placeAccessibilityImages)
+            placeAccessibilityRepository.save(placeAccessibility)
         }
-        return placeId?.let { placeAccessibilityRepository.findByPlaceId(it) } ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it) }
+        return placeAccessibility
     }
 
     fun doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(
         buildingId: String? = null,
         buildingAccessibilityId: String? = null,
     ): BuildingAccessibility? {
-        val buildingAccessibility = buildingId?.let { buildingAccessibilityRepository.findByBuildingId(it) }
-            ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it) } ?: return null
+        val buildingAccessibility = buildingId?.let { buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(it) }
+            ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it).get() }?.takeIf { it.deletedAt == null }
+            ?: return null
         if (buildingAccessibility.entranceImages.isEmpty() && buildingAccessibility.entranceImageUrls.isNotEmpty()) {
             val buildingEntranceImages = buildingAccessibility.entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            buildingAccessibilityRepository.updateEntranceImages(buildingAccessibility.id, buildingEntranceImages)
+            buildingAccessibility.updateEntranceImages(buildingEntranceImages)
         }
 
         if (buildingAccessibility.elevatorImages.isEmpty() && buildingAccessibility.elevatorImageUrls.isNotEmpty()) {
             val buildingElevatorImages = buildingAccessibility.elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, buildingElevatorImages)
+            buildingAccessibility.updateElevatorImages(buildingElevatorImages)
         }
 
-        return buildingId?.let { buildingAccessibilityRepository.findByBuildingId(it) } ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it) }
+        buildingAccessibilityRepository.save(buildingAccessibility)
+        return buildingAccessibility
     }
 
     fun generateThumbnailsIfNeeded(placeId: String) {
@@ -86,8 +89,8 @@ class AccessibilityImageService(
     private fun getThumbnailGenerationRequiredImages(placeId: String) = transactionManager.doInTransaction {
         val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction emptyList()
 
-        val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
-        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
+        val placeAccessibility = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(placeId)
+        val buildingAccessibility = buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(place.building.id)
 
         val accessibilityImages = listOfNotNull(placeAccessibility?.images, buildingAccessibility?.entranceImages, buildingAccessibility?.elevatorImages).flatten()
 
@@ -97,8 +100,8 @@ class AccessibilityImageService(
     private fun saveThumbnailUrls(placeId: String, thumbnailUrls: List<String>) {
         transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.REPEATABLE_READ) {
             val place = placeApplicationService.findPlace(placeId)!!
-            val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
-            val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
+            val placeAccessibility = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(placeId)
+            val buildingAccessibility = buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(place.building.id)
 
             if (placeAccessibility != null) {
                 val updatedImages = placeAccessibility.images.map { image ->
@@ -106,7 +109,8 @@ class AccessibilityImageService(
                     image
                 }
 
-                placeAccessibilityRepository.updateImages(placeAccessibility.id, updatedImages)
+                placeAccessibility.updateImages(updatedImages)
+                placeAccessibilityRepository.save(placeAccessibility)
             }
 
             if (buildingAccessibility != null) {
@@ -114,13 +118,15 @@ class AccessibilityImageService(
                     findGeneratedThumbnailUrl(image.imageUrl, thumbnailUrls)?.let { image.thumbnailUrl = it }
                     image
                 }
-                buildingAccessibilityRepository.updateEntranceImages(buildingAccessibility.id, updatedEntranceImages)
+                buildingAccessibility.updateEntranceImages(updatedEntranceImages)
 
                 val updatedElevatorImages = buildingAccessibility.elevatorImages.map { image ->
                     findGeneratedThumbnailUrl(image.imageUrl, thumbnailUrls)?.let { image.thumbnailUrl = it }
                     image
                 }
-                buildingAccessibilityRepository.updateElevatorImages(buildingAccessibility.id, updatedElevatorImages)
+                buildingAccessibility.updateElevatorImages(updatedElevatorImages)
+
+                buildingAccessibilityRepository.save(buildingAccessibility)
             }
         }
     }

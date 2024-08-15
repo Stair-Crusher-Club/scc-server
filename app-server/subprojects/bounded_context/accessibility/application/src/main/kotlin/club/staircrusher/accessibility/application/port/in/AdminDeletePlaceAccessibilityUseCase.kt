@@ -16,7 +16,7 @@ class AdminDeletePlaceAccessibilityUseCase(
     fun handle(
         placeAccessibilityId: String,
     ) : Unit = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
-        val placeAccessibility = placeAccessibilityRepository.findById(placeAccessibilityId)
+        val placeAccessibility = placeAccessibilityRepository.findById(placeAccessibilityId).get()
         val place = placeApplicationService.findPlace(placeAccessibility.placeId)!!
         deleteAccessibilityAplService.deletePlaceAccessibility(placeAccessibility, place)
     }
