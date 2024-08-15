@@ -45,7 +45,12 @@ data "aws_iam_policy_document" "scc_dev_rekognition_access" {
     actions = [
       "rekognition:DetectFaces",
     ]
-    resources = ["*"]
+    resources = [
+      aws_s3_bucket.dev_accessibility_images.arn,
+      "${aws_s3_bucket.dev_accessibility_images.arn}/*",
+      aws_s3_bucket.dev_accessibility_thumbnails.arn,
+      "${aws_s3_bucket.dev_accessibility_thumbnails.arn}/*",
+    ]
   }
 }
 
