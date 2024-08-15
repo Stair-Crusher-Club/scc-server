@@ -1069,7 +1069,7 @@ components:
       type: object
       properties:
         icon:
-          $ref: '#/components/schemas/ImageWithMetadataDto'
+          $ref: '#/components/schemas/ImageDto'
         name:
           type: string
       required:
@@ -1882,27 +1882,19 @@ components:
       properties:
         imageUrl:
           type: string
+        imageWidth:
+          type: integer
+          format: int32
+          description: '원본 이미지의 width'
+        imageHeight:
+          type: integer
+          format: int32
+          description: '원본 이미지의 height'
         thumbnailUrl:
           type: string
           description: '아직 썸네일이 생성되지 않았다면 null'
       required:
         - imageUrl
-
-    ImageWithMetadataDto:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-          format: int32
-        height:
-          type: integer
-          format: int32
-      required:
-        - url
-        - width
-        - height
 
     DayOfWeek:
       type: string

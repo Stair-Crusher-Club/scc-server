@@ -5,7 +5,7 @@ import club.staircrusher.api.spec.dto.ChallengeDto
 import club.staircrusher.api.spec.dto.ChallengeRankDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
-import club.staircrusher.api.spec.dto.ImageWithMetadataDto
+import club.staircrusher.api.spec.dto.ImageDto
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.ChallengeRank
@@ -15,11 +15,7 @@ import java.time.Instant
 fun ChallengeCrusherGroup.toDTO(): ChallengeCrusherGroupDto = ChallengeCrusherGroupDto(
     name = name,
     icon = icon?.let { ic ->
-        ImageWithMetadataDto(
-            url = ic.url,
-            width = ic.width,
-            height = ic.height,
-        )
+        ImageDto(imageUrl = ic.url, imageWidth = ic.width, imageHeight = ic.height)
     }
 )
 

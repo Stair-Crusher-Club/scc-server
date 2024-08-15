@@ -665,8 +665,6 @@ components:
           type: string
         passcode:
           type: string
-        challengeCrusherGroup:
-          $ref: '#/components/schemas/AdminChallengeCrusherGroupDto'
         isComplete:
           type: boolean
         startsAtMillis:
@@ -754,8 +752,6 @@ components:
           type: string
         passcode:
           type: string
-        challengeCrusherGroup:
-          $ref: '#/components/schemas/AdminChallengeCrusherGroupDto'
         startsAtMillis:
           type: integer
           format: int64
@@ -887,29 +883,3 @@ components:
         - ONE
         - TWO_TO_FIVE
         - OVER_SIX
-
-    AdminChallengeCrusherGroupDto:
-      type: object
-      properties:
-        icon:
-          $ref: '#/components/schemas/ImageWithMetadataDto'
-        name:
-          type: string
-      required:
-        - name
-
-    ImageWithMetadataDto:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-          format: int32
-        height:
-          type: integer
-          format: int32
-      required:
-        - url
-        - width
-        - height

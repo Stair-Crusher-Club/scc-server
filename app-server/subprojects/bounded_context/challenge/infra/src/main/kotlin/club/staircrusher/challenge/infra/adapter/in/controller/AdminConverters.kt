@@ -35,18 +35,6 @@ fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
     isPublic = isPublic,
     invitationCode = invitationCode,
     passcode = passcode,
-    challengeCrusherGroup = challengeCrusherGroup?.let { group ->
-        ChallengeCrusherGroup(
-            icon = group.icon?.let { icon ->
-                ChallengeCrusherGroup.Icon(
-                    url = icon.url,
-                    width = icon.width,
-                    height = icon.height,
-                )
-            },
-            name = group.name
-        )
-    },
     startsAtMillis = startsAtMillis,
     endsAtMillis = endsAtMillis,
     goal = goal,

@@ -87,7 +87,7 @@ class Challenge(
                 isPublic = createRequest.isPublic,
                 invitationCode = invitationCode,
                 passcode = passcode,
-                crusherGroup = createRequest.challengeCrusherGroup,
+                crusherGroup = null,
                 isComplete = false,
                 startsAt = startsAt,
                 endsAt = endsAt,

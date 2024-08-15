@@ -486,7 +486,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 val result = getResult(object : TypeReference<RegisterPlaceAccessibilityResponseDto>() {})
                 val challengeCrusherGroup = result.accessibilityInfo?.placeAccessibility?.challengeCrusherGroup
                 assertEquals(challengeCrusherGroup?.name, crusherGroup.name)
-                assertEquals(challengeCrusherGroup?.icon?.url, crusherGroup.icon?.url)
+                assertEquals(challengeCrusherGroup?.icon?.imageUrl, crusherGroup.icon?.url)
             }
     }
 
