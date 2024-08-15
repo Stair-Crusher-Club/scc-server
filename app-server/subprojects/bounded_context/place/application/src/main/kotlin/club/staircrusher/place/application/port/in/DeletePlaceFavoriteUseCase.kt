@@ -11,16 +11,16 @@ class DeletePlaceFavoriteUseCase(
     private val transactionManager: TransactionManager,
 ) {
     fun handle(request: Request): Response = transactionManager.doInTransaction {
-        val oldPlaceFavorite = placeFavoriteRepository.findByUserIdAndPlaceId(
+        val oldPlaceFavorite = placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(
             userId = request.userId, placeId = request.placeId
         )
         if (oldPlaceFavorite == null || oldPlaceFavorite.deletedAt != null) {
-            val totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceId(request.placeId)
+            val totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(request.placeId)
             return@doInTransaction Response(totalPlaceFavoriteCount = totalPlaceFavoriteCount)
         }
         oldPlaceFavorite.deletedAt = SccClock.instant()
         placeFavoriteRepository.save(oldPlaceFavorite)
-        return@doInTransaction Response(totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceId(request.placeId))
+        return@doInTransaction Response(totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(request.placeId))
     }
 
     data class Request(

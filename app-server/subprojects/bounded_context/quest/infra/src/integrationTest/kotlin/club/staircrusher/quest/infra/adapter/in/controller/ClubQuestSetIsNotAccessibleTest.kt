@@ -46,7 +46,7 @@ class ClubQuestSetIsNotAccessibleTest : ClubQuestITBase() {
             .sccAdminRequest("/admin/clubQuests/${clubQuest.id}/isNotAccessible", HttpMethod.PUT, requestBody)
             .apply {
                 transactionManager.doInTransaction {
-                    val place = placeRepository.findById(placeId)
+                    val place = placeRepository.findById(placeId).get()
                     assertTrue(place.isNotAccessible)
                     assertFalse(place.isClosed)
                 }

@@ -1,5 +1,8 @@
 package club.staircrusher.place.domain.model
 
+import jakarta.persistence.Embeddable
+
+@Embeddable
 data class BuildingAddress(
     val siDo: String,
     val siGunGu: String,

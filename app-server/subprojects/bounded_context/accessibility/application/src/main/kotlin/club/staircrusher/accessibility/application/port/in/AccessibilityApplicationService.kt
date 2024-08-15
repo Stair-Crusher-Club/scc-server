@@ -123,8 +123,8 @@ class AccessibilityApplicationService(
             ),
             isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id)
                 ?: false,
-            isFavoritePlace = userId?.let { placeFavoriteRepository.findByUserIdAndPlaceId(it, placeId) } != null,
-            totalFavoriteCount = placeFavoriteRepository.countByPlaceId(placeId),
+            isFavoritePlace = userId?.let { placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(it, placeId) } != null,
+            totalFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId),
         )
     }
 
