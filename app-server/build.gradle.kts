@@ -50,8 +50,10 @@ subprojects {
         }
         val kotlinLoggingVersion: String by project
         val kotlinSerialization: String by project
+        val kotlinVersion: String by project
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
+        runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     }
 
     allOpen {
