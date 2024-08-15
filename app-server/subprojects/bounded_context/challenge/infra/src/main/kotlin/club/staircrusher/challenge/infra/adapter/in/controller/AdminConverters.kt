@@ -10,7 +10,6 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
 import club.staircrusher.challenge.domain.model.ChallengeCondition
-import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.CreateChallengeRequest
 
 fun Challenge.toAdminDTO() = AdminChallengeDTO(
