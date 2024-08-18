@@ -16,6 +16,7 @@ import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Duration
 
 @SpringBootTest(classes = [SccSpringITApplication::class])
@@ -39,9 +40,9 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCaseTest : BlurFacesITBase(
         mockDetectFacesWithNoFaceImage(MockDetectFacesService.URL_WITHOUT_FACES, imageBytes)
         Mockito.`when`(imageProcessor.blur(any(), any(), any())).thenReturn(imageBytes)
 
-        placeAccessibilityRepository.removeAll()
-        buildingAccessibilityRepository.removeAll()
-        accessibilityImageFaceBlurringHistoryRepository.removeAll()
+        placeAccessibilityRepository.deleteAll()
+        buildingAccessibilityRepository.deleteAll()
+        accessibilityImageFaceBlurringHistoryRepository.deleteAll()
     }
 
     @Test

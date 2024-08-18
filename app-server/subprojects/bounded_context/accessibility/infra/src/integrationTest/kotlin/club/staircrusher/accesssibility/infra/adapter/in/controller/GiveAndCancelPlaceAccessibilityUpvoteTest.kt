@@ -28,7 +28,7 @@ class GiveAndCancelPlaceAccessibilityUpvoteTest : AccessibilityITBase() {
             .andExpect {
                 transactionManager.doInTransaction {
                     assertNotNull(
-                        placeAccessibilityUpvoteRepository.findUpvote(user.id, placeAccessibility.id)
+                        placeAccessibilityUpvoteRepository.findExistingUpvote(user.id, placeAccessibility.id)
                     )
                 }
             }
@@ -41,7 +41,7 @@ class GiveAndCancelPlaceAccessibilityUpvoteTest : AccessibilityITBase() {
             .andExpect {
                 transactionManager.doInTransaction {
                     assertNull(
-                        placeAccessibilityUpvoteRepository.findUpvote(user.id, placeAccessibility.id)
+                        placeAccessibilityUpvoteRepository.findExistingUpvote(user.id, placeAccessibility.id)
                     )
                 }
             }

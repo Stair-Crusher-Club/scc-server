@@ -56,7 +56,7 @@ class AdminSearchAccessibilitiesUseCase(
         val placeById = placeApplicationService.findAllByIds(placeAccessibilities.map { it.placeId })
             .associateBy { it.id }
         val buildingAccessibilityByBuildingId = buildingAccessibilityRepository
-            .findByBuildingIds(placeById.values.map { it.building.id })
+            .findByBuildingIdInAndDeletedAtIsNull(placeById.values.map { it.building.id })
             .associateBy { it.buildingId }
         val userById = userAplService.getUsers(
             userIds = placeAccessibilities.mapNotNull { it.userId } +

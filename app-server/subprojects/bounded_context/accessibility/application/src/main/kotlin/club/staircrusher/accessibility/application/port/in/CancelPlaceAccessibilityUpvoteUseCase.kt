@@ -18,7 +18,7 @@ class CancelPlaceAccessibilityUpvoteUseCase(
         placeAccessibilityId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val upvote =
-            placeAccessibilityUpvoteRepository.findUpvote(user.id, placeAccessibilityId) ?: return@doInTransaction
+            placeAccessibilityUpvoteRepository.findExistingUpvote(user.id, placeAccessibilityId) ?: return@doInTransaction
         upvote.cancel(clock.instant())
         placeAccessibilityUpvoteRepository.save(upvote)
     }

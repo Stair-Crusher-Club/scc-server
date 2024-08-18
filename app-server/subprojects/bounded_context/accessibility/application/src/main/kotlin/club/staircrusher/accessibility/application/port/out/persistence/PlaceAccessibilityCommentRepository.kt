@@ -1,9 +1,9 @@
 package club.staircrusher.accessibility.application.port.out.persistence
 
 import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
-import club.staircrusher.stdlib.domain.repository.EntityRepository
+import org.springframework.data.repository.CrudRepository
 
-interface PlaceAccessibilityCommentRepository : EntityRepository<PlaceAccessibilityComment, String> {
+interface PlaceAccessibilityCommentRepository : CrudRepository<PlaceAccessibilityComment, String> {
     fun findByPlaceId(placeId: String): List<PlaceAccessibilityComment>
     fun removeByPlaceId(placeId: String)
     data class CreateParams(

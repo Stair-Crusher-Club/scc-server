@@ -24,12 +24,12 @@ class UpdateRanksUseCase(
         // update accessibility rank with count first
         transactionManager.doInTransaction {
             val users: List<User> = userApplicationService.getAllUsers()
-            val lastRank = accessibilityRankRepository.findByConqueredCount(0)?.rank ?: 1
+            val lastRank = accessibilityRankRepository.findRankByConqueredCount(0) ?: 1
             val now = SccClock.instant()
 
             val ranks = users.map {
-                val conqueredCount = placeAccessibilityRepository.countByUserId(it.id)
-                val accessibilityRank = accessibilityRankRepository.findByUserId(it.id) ?: AccessibilityRank(
+                val conqueredCount = placeAccessibilityRepository.countByUserIdAndDeletedAtIsNull(it.id)
+                val accessibilityRank = accessibilityRankRepository.findFirstByUserId(it.id) ?: AccessibilityRank(
                     id = EntityIdGenerator.generateRandom(),
                     userId = it.id,
                     conqueredCount = conqueredCount,
@@ -37,11 +37,9 @@ class UpdateRanksUseCase(
                     createdAt = now,
                     updatedAt = now,
                 )
+                accessibilityRank.updateConqueredCount(conqueredCount)
 
-                accessibilityRankRepository.save(accessibilityRank.copy(
-                    conqueredCount = conqueredCount,
-                    updatedAt = now,
-                ))
+                accessibilityRankRepository.save(accessibilityRank)
             }
 
             var previousRank = 0L
@@ -53,18 +51,18 @@ class UpdateRanksUseCase(
                 .toSortedMap(compareByDescending { it })
 
             countPerConqueredCount.forEach { (conqueredCount, ranks) ->
-                val updatedRanks = if (conqueredCount != currentConqueredCount) {
+                if (conqueredCount != currentConqueredCount) {
                     previousRank = currentRank
-                    ranks.map { it.copy(rank = currentRank, updatedAt = now) }
+                    ranks.forEach { it.updateRank(rank = currentRank) }
                 } else {
                     // If the last conquest count in the previous batch is the same as the conquest
                     // count in the current batch, then they should have the same rank.
                     currentRank += ranks.size
-                    ranks.map { it.copy(rank = previousRank, updatedAt = now) }
+                    ranks.forEach { it.updateRank(rank = previousRank) }
                 }
                 currentRank += ranks.size
                 currentConqueredCount = conqueredCount
-                accessibilityRankRepository.saveAll(updatedRanks)
+                accessibilityRankRepository.saveAll(ranks)
             }
         }
     }

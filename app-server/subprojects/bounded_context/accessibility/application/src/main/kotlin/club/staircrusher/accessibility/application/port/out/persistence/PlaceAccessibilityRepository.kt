@@ -1,26 +1,47 @@
 package club.staircrusher.accessibility.application.port.out.persistence
 
-import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.accessibility.domain.model.StairHeightLevel
 import club.staircrusher.accessibility.domain.model.StairInfo
-import club.staircrusher.stdlib.domain.repository.EntityRepository
-import club.staircrusher.stdlib.geography.EupMyeonDong
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import java.time.Instant
 
 @Suppress("TooManyFunctions")
-interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, String> {
-    fun findByPlaceIds(placeIds: Collection<String>): List<PlaceAccessibility>
-    fun findByPlaceId(placeId: String): PlaceAccessibility?
-    fun findByUserId(userId: String): List<PlaceAccessibility>
-    fun findByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): List<PlaceAccessibility>
-    fun findByBuildingId(buildingId: String): List<PlaceAccessibility>
-    fun findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(createdAt: Instant): PlaceAccessibility?
-    fun countByEupMyeonDong(eupMyeonDong: EupMyeonDong): Int
-    fun countByUserId(userId: String): Int
-    fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int
-    fun hasAccessibilityNotRegisteredPlaceInBuilding(buildingId: String): Boolean
+interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, String> {
+    fun findByPlaceIdInAndDeletedAtIsNull(placeIds: Collection<String>): List<PlaceAccessibility>
+    fun findFirstByPlaceIdAndDeletedAtIsNull(placeId: String): PlaceAccessibility?
+    fun findByUserIdAndDeletedAtIsNull(userId: String): List<PlaceAccessibility>
+    fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<PlaceAccessibility>
+    @Query("""
+        SELECT pa
+        FROM PlaceAccessibility pa
+        WHERE
+            pa.createdAt > :createdAt
+            AND pa.deletedAt IS NULL
+            ORDER BY pa.createdAt ASC, pa.id DESC
+        LIMIT 1
+    """)
+    fun findBlurringTargetAccessibility(createdAt: Instant): PlaceAccessibility?
+    fun countByUserIdAndDeletedAtIsNull(userId: String): Int
+    fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
+    @Query("""
+        SELECT pa.*
+        FROM place_accessibility pa
+        INNER JOIN place p ON p.id = pa.place_id
+        WHERE
+            (:placeNameLike IS NULL OR p.name LIKE :placeNameLike)
+            AND (:createdAtFrom IS NULL OR pa.created_at >= :createdAtFrom)
+            AND (:createdAtToExclusive IS NULL OR pa.created_at < :createdAtToExclusive)
+            AND (
+                (pa.created_at = :cursorCreatedAt AND pa.id < :cursorId)
+                OR (pa.created_at < :cursorCreatedAt)
+            )
+            AND pa.deleted_at IS NULL
+        ORDER BY pa.created_at DESC, pa.id DESC
+        LIMIT :limit;
+    """, nativeQuery = true)
     fun searchForAdmin(
         placeName: String?,
         createdAtFrom: Instant?,
@@ -30,10 +51,7 @@ interface PlaceAccessibilityRepository : EntityRepository<PlaceAccessibility, St
         limit: Int,
     ): List<PlaceAccessibility>
 
-    fun updateImages(id: String, images: List<AccessibilityImage>)
-    fun updateImageUrlsAndImages(id: String, imageUrls: List<String>, images: List<AccessibilityImage>)
-    fun countAll(): Int
-    fun remove(id: String)
+    fun countBy(): Int
 
     data class CreateParams(
         val placeId: String,

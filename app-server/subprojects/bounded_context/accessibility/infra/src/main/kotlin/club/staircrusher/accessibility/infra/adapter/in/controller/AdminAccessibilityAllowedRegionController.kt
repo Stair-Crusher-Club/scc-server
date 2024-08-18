@@ -30,11 +30,11 @@ class AdminAccessibilityAllowedRegionController(
 
     @GetMapping("/admin/accessibilityAllowedRegions/{regionId}")
     fun getAccessibilityAllowedRegion(@PathVariable regionId: String): AccessibilityAllowedRegionDTO {
-        return accessibilityAllowedRegionRepository.findById(regionId).toDTO()
+        return accessibilityAllowedRegionRepository.findById(regionId).get().toDTO()
     }
 
     @DeleteMapping("/admin/accessibilityAllowedRegions/{regionId}")
     fun deleteAccessibilityAllowedRegion(@PathVariable regionId: String) {
-        return accessibilityAllowedRegionRepository.remove(regionId)
+        return accessibilityAllowedRegionRepository.deleteById(regionId)
     }
 }

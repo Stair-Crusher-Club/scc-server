@@ -8,6 +8,7 @@ import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.Acces
 import club.staircrusher.api.spec.dto.GetAccessibilityLeaderboardPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityRankPost200Response
 import club.staircrusher.api.spec.dto.GetCountForNextRankPost200Response
+import club.staircrusher.user.application.port.out.persistence.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -28,12 +29,16 @@ class AccessibilityRankTest : AccessibilityITBase() {
     @Autowired
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
 
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        accessibilityRankRepository.removeAll()
-        placeAccessibilityRepository.removeAll()
-        buildingAccessibilityUpvoteRepository.removeAll()
-        buildingAccessibilityRepository.removeAll()
+//        userRepository.deleteAll()
+        accessibilityRankRepository.deleteAll()
+        placeAccessibilityRepository.deleteAll()
+        buildingAccessibilityUpvoteRepository.deleteAll()
+        buildingAccessibilityRepository.deleteAll()
 
         repeat(10) {
             val (user, _, _, _) = registerAccessibility()

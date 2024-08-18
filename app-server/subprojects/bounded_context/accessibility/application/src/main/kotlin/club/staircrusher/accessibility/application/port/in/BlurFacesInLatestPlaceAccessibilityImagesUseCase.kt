@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -30,11 +31,11 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
 
     fun handle() {
         val targetAccessibility: PlaceAccessibility = transactionManager.doInTransaction {
-            val latestHistory = accessibilityImageFaceBlurringHistoryRepository.findLatestPlaceHistoryOrNull()
+            val latestHistory = accessibilityImageFaceBlurringHistoryRepository.findFirstByPlaceAccessibilityIdIsNotNullOrderByCreatedAtDesc()
             val lastBlurredPlaceAccessibility = latestHistory?.let { history ->
                 history.placeAccessibilityId?.let { placeAccessibilityRepository.findByIdOrNull(it) }
             }
-            placeAccessibilityRepository.findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+            placeAccessibilityRepository.findBlurringTargetAccessibility(
                 createdAt = lastBlurredPlaceAccessibility?.createdAt ?: Instant.EPOCH
             )
         } ?: return
@@ -44,11 +45,8 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
         val entranceResults = result.entranceResults
         transactionManager.doInTransaction {
             val imageUrls = entranceResults.map { it.blurredImageUrl }
-            placeAccessibilityRepository.updateImageUrlsAndImages(
-                targetAccessibility.id,
-                imageUrls,
-                imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            )
+            targetAccessibility.updateImages(imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) })
+            placeAccessibilityRepository.save(targetAccessibility)
             accessibilityImageFaceBlurringHistoryRepository.save(
                 AccessibilityImageFaceBlurringHistory(
                     id = EntityIdGenerator.generateRandom(),

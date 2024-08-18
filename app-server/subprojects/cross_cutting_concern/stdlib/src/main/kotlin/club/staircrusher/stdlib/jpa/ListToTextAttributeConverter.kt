@@ -6,9 +6,9 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.persistence.AttributeConverter
 
 abstract class ListToTextAttributeConverter<E> : AttributeConverter<List<E>, String> {
-    override fun convertToDatabaseColumn(attribute: List<E>): String {
+    override fun convertToDatabaseColumn(attribute: List<E>?): String? {
 //        return objectMapper.writeValueAsString(attribute) // FIXME: json으로 바꾸기
-        return attribute.joinToString(LEGACY_DELIMITER) { convertElementToTextColumn(it) }
+        return attribute?.joinToString(LEGACY_DELIMITER) { convertElementToTextColumn(it) }
     }
 
     override fun convertToEntityAttribute(column: String?): List<E> {
