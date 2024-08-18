@@ -1,6 +1,5 @@
 package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toDTO
@@ -8,7 +7,6 @@ import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.EntranceDoorType
-import club.staircrusher.api.spec.dto.ListConqueredPlacesResponseDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
 import club.staircrusher.api.spec.dto.StairHeightLevel
@@ -52,9 +50,9 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     fun setUp() = transactionManager.doInTransaction {
         placeAccessibilityRepository.deleteAll()
 
-        challengeRepository.removeAll()
-        challengeParticipationRepository.removeAll()
-        challengeContributionRepository.removeAll()
+        challengeRepository.deleteAll()
+        challengeParticipationRepository.deleteAll()
+        challengeContributionRepository.deleteAll()
     }
 
     @Test

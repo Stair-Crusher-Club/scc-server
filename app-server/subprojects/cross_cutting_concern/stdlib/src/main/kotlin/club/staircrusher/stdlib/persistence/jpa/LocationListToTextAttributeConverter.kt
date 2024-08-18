@@ -1,4 +1,4 @@
-package club.staircrusher.stdlib.jpa
+package club.staircrusher.stdlib.persistence.jpa
 
 import club.staircrusher.stdlib.geography.Location
 import jakarta.persistence.Converter

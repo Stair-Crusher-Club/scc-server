@@ -1,6 +1,6 @@
 package club.staircrusher.stdlib.persistence
 
-import club.staircrusher.stdlib.jpa.ListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.ListToTextAttributeConverter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -1,4 +1,4 @@
-package club.staircrusher.stdlib.jpa
+package club.staircrusher.stdlib.persistence.jpa
 
 import jakarta.persistence.Converter
 

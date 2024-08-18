@@ -1,4 +1,4 @@
-package club.staircrusher.stdlib.persistence
+package club.staircrusher.stdlib.persistence.jpa
 
 import org.springframework.data.repository.CrudRepository
 import java.util.Optional

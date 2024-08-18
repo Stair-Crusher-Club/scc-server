@@ -1,7 +1,7 @@
 package club.staircrusher.spring_web.mock
 
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.persistence.InMemoryCrudRepositoryMixin
+import club.staircrusher.stdlib.persistence.jpa.InMemoryCrudRepositoryMixin
 import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.domain.model.User
 import org.springframework.context.annotation.Primary

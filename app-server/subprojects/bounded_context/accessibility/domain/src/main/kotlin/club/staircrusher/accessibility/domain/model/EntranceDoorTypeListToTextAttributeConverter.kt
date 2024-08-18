@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.domain.model
 
-import club.staircrusher.stdlib.jpa.ListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.ListToTextAttributeConverter
 import jakarta.persistence.Converter
 
 @Converter

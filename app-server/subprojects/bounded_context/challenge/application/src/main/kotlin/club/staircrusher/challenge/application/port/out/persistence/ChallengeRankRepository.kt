@@ -1,15 +1,28 @@
 package club.staircrusher.challenge.application.port.out.persistence
 
 import club.staircrusher.challenge.domain.model.ChallengeRank
-import club.staircrusher.stdlib.domain.repository.EntityRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 
-interface ChallengeRankRepository : EntityRepository<ChallengeRank, String> {
+interface ChallengeRankRepository : CrudRepository<ChallengeRank, String> {
+    @Query("""
+        SELECT r
+        FROM ChallengeRank r
+        WHERE r.challengeId = :challengeId
+        ORDER BY r.rank ASC
+        LIMIT :n
+    """)
     fun findTopNUsers(challengeId: String, n: Int): List<ChallengeRank>
-    fun findByUserId(challengeId: String, userId: String): ChallengeRank?
-    fun findByRank(challengeId: String, rank: Long): ChallengeRank?
+    fun findFirstByChallengeIdAndUserId(challengeId: String, userId: String): ChallengeRank?
+    @Query("""
+        SELECT r
+        FROM ChallengeRank r
+        WHERE
+            r.challengeId = :challengeId AND
+            r.rank < :rank
+        ORDER BY r.rank DESC
+        LIMIT 1
+    """)
     fun findNextRank(challengeId: String, rank: Long): ChallengeRank?
-    fun findByContributionCount(challengeId: String, contributionCount: Long): ChallengeRank?
-    fun findLastRank(challengeId: String): Long?
-    fun findAll(challengeId: String): List<ChallengeRank>
-    fun removeAll(challengeId: String)
+    fun deleteByChallengeId(challengeId: String)
 }

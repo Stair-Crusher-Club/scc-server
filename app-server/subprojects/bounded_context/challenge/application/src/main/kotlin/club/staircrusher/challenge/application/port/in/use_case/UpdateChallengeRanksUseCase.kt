@@ -26,7 +26,7 @@ class UpdateChallengeRanksUseCase(
     private val challengeParticipationRepository: ChallengeParticipationRepository,
 ) {
     fun handle() {
-        val challenges = challengeRepository.findAllOrderByCreatedAtDesc()
+        val challenges = challengeRepository.findAllByOrderByCreatedAtDesc()
             .filter { (it.endsAt ?: Instant.MAX) > SccClock.instant() - Duration.ofDays(1) }
         challenges.forEach { challenge ->
             val now = SccClock.instant()
@@ -41,7 +41,7 @@ class UpdateChallengeRanksUseCase(
 
                 val ranks = (contributions.groupBy { it.userId } + userWithNoContribution)
                     .map { (userId, contributions) ->
-                        val challengeRank = challengeRankRepository.findByUserId(challenge.id, userId) ?: ChallengeRank(
+                        val challengeRank = challengeRankRepository.findFirstByChallengeIdAndUserId(challenge.id, userId) ?: ChallengeRank(
                             id = EntityIdGenerator.generateRandom(),
                             challengeId = challenge.id,
                             userId = userId,
@@ -67,7 +67,7 @@ class UpdateChallengeRanksUseCase(
                             it.apply { rank = currentRank; updatedAt = now }
                         }
                     }
-                challengeRankRepository.removeAll(challenge.id)
+                challengeRankRepository.deleteByChallengeId(challenge.id)
                 challengeRankRepository.saveAll(updatedRanks)
             }
         }

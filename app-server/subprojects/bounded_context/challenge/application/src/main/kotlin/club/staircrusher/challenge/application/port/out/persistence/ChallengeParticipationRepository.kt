@@ -1,13 +1,11 @@
 package club.staircrusher.challenge.application.port.out.persistence
 
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
-import club.staircrusher.stdlib.domain.repository.EntityRepository
+import org.springframework.data.repository.CrudRepository
 
-interface ChallengeParticipationRepository : EntityRepository<ChallengeParticipation, String> {
+interface ChallengeParticipationRepository : CrudRepository<ChallengeParticipation, String> {
     fun findByUserId(userId: String): List<ChallengeParticipation>
     fun findByChallengeId(challengeId: String): List<ChallengeParticipation>
     fun findByChallengeIdAndUserId(challengeId: String, userId: String): List<ChallengeParticipation>
-    fun challengeCountByUserId(userId: String): Long
-    fun userCountByChallengeId(challengeId: String): Long
-    fun remove(userId: String, challengeId: String)
+    fun countByChallengeId(challengeId: String): Long
 }

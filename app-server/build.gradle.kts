@@ -1,5 +1,4 @@
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
@@ -32,6 +31,10 @@ subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "kotlin-spring")
     apply(plugin = "kotlin-jpa")
+
+    noArg {
+        annotation("club.staircrusher.stdlib.persistence.jpa.NoArgsConstructor")
+    }
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17
