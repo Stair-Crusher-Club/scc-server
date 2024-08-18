@@ -10,7 +10,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import mu.KotlinLogging
 
 @Component
-class SccServerPersistentEventRecorder(
+internal class SccServerPersistentEventRecorder(
     private val transactionManager: TransactionManager,
     private val serverEventRepository: ServerEventRepository,
 ) : SccServerEventRecorder {
