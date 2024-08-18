@@ -8,6 +8,7 @@ import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.EntranceDoorType
+import club.staircrusher.api.spec.dto.ListConqueredPlacesResponseDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
 import club.staircrusher.api.spec.dto.StairHeightLevel
@@ -18,8 +19,10 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
+import com.fasterxml.jackson.core.type.TypeReference
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -29,7 +32,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
 
-class registerPlaceAccessibilityTest : AccessibilityITBase() {
+class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     @Autowired
     private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
@@ -432,6 +435,60 @@ class registerPlaceAccessibilityTest : AccessibilityITBase() {
         assertTrue(participations.isEmpty())
         val contributions = challengeContributionRepository.findByUserId(user.id)
         assertTrue(contributions.isEmpty())
+    }
+
+    @Test
+    fun `특정 기업과의 협업 챌린지에 참여하면 장소 등록 시 해당 그룹의 이미지와 이름을 보여준다`() {
+        val crusherGroup = ChallengeCrusherGroup(
+            name = "VCNC 봉사활동단",
+            icon = ChallengeCrusherGroup.Icon(
+                url = "https://example.png", width = 100, height = 100
+            )
+        )
+        val (user, place, challenge) = transactionManager.doInTransaction {
+            return@doInTransaction Triple(
+                testDataGenerator.createUser(),
+                testDataGenerator.createBuildingAndPlace(
+                    placeName = "성수동간판없는집",
+                    buildingAddress = BuildingAddress(
+                        siDo = "서울특별시",
+                        siGunGu = "성동구",
+                        eupMyeonDong = "성수동1가",
+                        li = "",
+                        roadName = "성수일로4길",
+                        mainBuildingNumber = "4",
+                        subBuildingNumber = ""
+                    ),
+                ),
+                testDataGenerator.createChallenge(
+                    name = "기업 협업 챌린지",
+                    isComplete = false,
+                    startsAt = Challenge.MIN_TIME.plusSeconds(60),
+                    endsAt = Challenge.MAX_TIME.minusSeconds(60),
+                    goal = 1,
+                    conditions = listOf(
+                        ChallengeCondition(
+                            addressCondition = ChallengeAddressCondition(rawEupMyeonDongs = listOf("성수동", "테스트동")),
+                            actionCondition = ChallengeActionCondition(types = listOf(ChallengeActionCondition.Type.PLACE_ACCESSIBILITY))
+                        )
+                    ),
+                    crusherGroup = crusherGroup
+                )
+            )
+        }
+        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user, challenge, clock.instant()) }
+        mvc
+            .sccRequest(
+                "/registerPlaceAccessibility",
+                getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place),
+                user = user
+            )
+            .apply {
+                val result = getResult(object : TypeReference<RegisterPlaceAccessibilityResponseDto>() {})
+                val challengeCrusherGroup = result.accessibilityInfo?.placeAccessibility?.challengeCrusherGroup
+                assertEquals(challengeCrusherGroup?.name, crusherGroup.name)
+                assertEquals(challengeCrusherGroup?.icon?.imageUrl, crusherGroup.icon?.url)
+            }
     }
 
     // 240401 이후 버전부터 몇층인지, 계단 높이 단위, 출입문 유형을 추가로 등록할 수 있다.

@@ -8,6 +8,7 @@ dependencies {
     implementation(projects.boundedContext.place.domain)
     implementation(projects.boundedContext.challenge.domain)
     implementation(projects.boundedContext.challenge.application)
+    implementation(projects.boundedContext.challenge.infra)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")

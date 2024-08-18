@@ -20,6 +20,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeRep
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.external_accessibility.domain.model.ExternalAccessibility
@@ -227,6 +228,7 @@ class ITDataGenerator {
         milestones: List<Int> = listOf(),
         conditions: List<ChallengeCondition> = listOf(),
         description: String = "",
+        crusherGroup: ChallengeCrusherGroup? = null
     ): Challenge {
         return challengeRepository.save(
             Challenge(
@@ -244,6 +246,7 @@ class ITDataGenerator {
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
                 description = description,
+                crusherGroup = crusherGroup
             )
         )
     }

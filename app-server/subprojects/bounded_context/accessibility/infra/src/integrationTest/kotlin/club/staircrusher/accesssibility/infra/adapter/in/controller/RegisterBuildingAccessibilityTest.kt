@@ -198,24 +198,12 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
             testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
         }
 
-        val params1 = getDefaultRequestParams(place.building).copy(
+        val params = getDefaultRequestParams(place.building).copy(
             hasElevator = false,
             elevatorStairInfo = StairInfo.TWO_TO_FIVE.toDTO(), // 엘리베이터가 없는데 계단 정보가 UNDEFINED가 아니다.
         )
         mvc
-            .sccRequest("/registerBuildingAccessibility", params1, user = user)
-            .andExpect {
-                status {
-                    isBadRequest()
-                }
-            }
-
-        val params2 = getDefaultRequestParams(place.building).copy(
-            hasElevator = true,
-            elevatorStairInfo = StairInfo.UNDEFINED.toDTO(), // 엘리베이터가 있는데 계단 정보가 UNDEFINED이다.
-        )
-        mvc
-            .sccRequest("/registerAccessibility", params2, user = user)
+            .sccRequest("/registerBuildingAccessibility", params, user = user)
             .andExpect {
                 status {
                     isBadRequest()

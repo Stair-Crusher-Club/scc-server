@@ -36,8 +36,6 @@ class RegisterPlaceAccessibilityUseCase(
                 createPlaceAccessibilityParams,
                 createPlaceAccessibilityCommentParams
             )
-            val getAccessibilityResult =
-                accessibilityApplicationService.doGetAccessibility(createPlaceAccessibilityParams.placeId, userId)
             val challengeContributions = challengeService.contributeToSatisfiedChallenges(
                 userId = userId,
                 contribution = ChallengeService.Contribution.PlaceAccessibility(
@@ -45,6 +43,8 @@ class RegisterPlaceAccessibilityUseCase(
                     placeAccessibilityAddress = ChallengeAddress(registerResult.place),
                 )
             )
+            val getAccessibilityResult =
+                accessibilityApplicationService.doGetAccessibility(createPlaceAccessibilityParams.placeId, userId)
 
             return@doInTransaction RegisterPlaceAccessibilityUseCaseResult(
                 registerPlaceAccessibilityResult = registerResult,

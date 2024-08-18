@@ -42,6 +42,11 @@ FROM challenge_contribution
 WHERE challenge_contribution.challenge_id = :challengeId
     AND challenge_contribution.place_accessibility_id = :placeAccessibilityId;
 
+findByPlaceAccessibilityId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.place_accessibility_id = :placeAccessibilityId;
+
 findByChallengeIdAndPlaceAccessibilityCommentId:
 SELECT *
 FROM challenge_contribution
@@ -53,6 +58,11 @@ SELECT *
 FROM challenge_contribution
 WHERE challenge_contribution.challenge_id = :challengeId
     AND challenge_contribution.building_accessibility_id = :buildingAccessibilityId;
+
+findByBuildingAccessibilityId:
+SELECT *
+FROM challenge_contribution
+WHERE challenge_contribution.building_accessibility_id = :buildingAccessibilityId;
 
 findByChallengeIdAndBuildingAccessibilityCommentId:
 SELECT *

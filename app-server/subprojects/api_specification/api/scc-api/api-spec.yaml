@@ -507,53 +507,6 @@ paths:
             에러 코드 설명
             - INVALID_AUTHENTICATION : kakaoTokens 중 일부가 잘못된 경우.
 
-  /registerAccessibility:
-    post:
-      summary: 건물 & 점포의 접근성 정보를 등록한다.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                buildingAccessibilityParams:
-                  $ref: '#/components/schemas/RegisterBuildingAccessibilityRequestDto'
-                  description: 각 건물에 대해 1번만 등록될 수 있다.
-                placeAccessibilityParams:
-                  $ref: '#/components/schemas/RegisterPlaceAccessibilityRequestDto'
-              required:
-                - placeAccessibilityParams
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  buildingAccessibility:
-                    $ref: '#/components/schemas/BuildingAccessibility'
-                    description: 정보가 아직 채워지지 않았으면 null.
-                  buildingAccessibilityComments:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/BuildingAccessibilityComment'
-                    description: 정보가 아직 채워지지 않았으면 empty list.
-                  placeAccessibility:
-                    $ref: '#/components/schemas/PlaceAccessibility'
-                  placeAccessibilityComments:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PlaceAccessibilityComment'
-                  registeredUserOrder:
-                    type: integer
-                    description: "'n번째 정복자'를 표시해주기 위한 값."
-                required:
-                  - buildingAccessibilityComments
-                  - placeAccessibility
-                  - placeAccessibilityComments
-                  - registeredUserOrder
-
   /registerBuildingAccessibility:
     post:
       summary: 건물 접근성 정보를 등록한다.
@@ -979,6 +932,8 @@ components:
         registeredUserName:
           type: string
           description: 익명으로 등록되었으면 null.
+        challengeCrusherGroup:
+          $ref: '#/components/schemas/ChallengeCrusherGroupDto'
         isUpvoted:
           type: boolean
           description: 유저가 이 접근성 정보에 '도움이 돼요'를 표시했는지 여부.
@@ -1069,6 +1024,8 @@ components:
           format: int32
         description:
           type: string
+        crusherGroup:
+          $ref: '#/components/schemas/ChallengeCrusherGroupDto'
       required:
         - id
         - name
@@ -1107,6 +1064,16 @@ components:
         - InProgress # 진행중
         - Upcoming # 오픈 예정
         - Closed # 종료된 챌린지
+
+    ChallengeCrusherGroupDto:
+      type: object
+      properties:
+        icon:
+          $ref: '#/components/schemas/ImageDto'
+        name:
+          type: string
+      required:
+        - name
 
     CreatePlaceFavoriteRequestDto:
       type: object
@@ -1292,6 +1259,11 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+        flags:
+          type: array
+          items:
+            type: string
+          description: 유저의 플래그들. ex) [ "MAP_VISIBLE" ]
       required:
         - user
 
@@ -1568,6 +1540,8 @@ components:
               description: 장소가 포함된 건물 중 마지막으로 남은 장소 정보인지 여부.
           required:
             - isLastInBuilding
+        challengeCrusherGroup:
+          $ref: '#/components/schemas/ChallengeCrusherGroupDto'
         isUpvoted:
           type: boolean
           description: 유저가 이 접근성 정보에 '도움이 돼요'를 표시했는지 여부.
@@ -1913,6 +1887,14 @@ components:
       properties:
         imageUrl:
           type: string
+        imageWidth:
+          type: integer
+          format: int32
+          description: '원본 이미지의 width'
+        imageHeight:
+          type: integer
+          format: int32
+          description: '원본 이미지의 height'
         thumbnailUrl:
           type: string
           description: '아직 썸네일이 생성되지 않았다면 null'
