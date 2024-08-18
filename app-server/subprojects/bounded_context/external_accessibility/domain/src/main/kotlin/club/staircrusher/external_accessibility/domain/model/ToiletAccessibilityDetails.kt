@@ -1,8 +1,5 @@
 package club.staircrusher.external_accessibility.domain.model
 
-import jakarta.persistence.Embeddable
-
-@Embeddable
 data class ToiletAccessibilityDetails(
     val imageUrl: String? = null,
     val gender: String? = null,

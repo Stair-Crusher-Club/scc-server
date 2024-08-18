@@ -3,7 +3,7 @@ package club.staircrusher.accessibility.domain.model
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.geography.Location
-import club.staircrusher.stdlib.jpa.LocationListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.LocationListToTextAttributeConverter
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.Id

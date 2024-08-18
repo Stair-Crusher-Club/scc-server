@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.domain.model
 
-import club.staircrusher.stdlib.jpa.StringListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

@@ -32,7 +32,7 @@ interface ChallengeRepository : CrudRepository<Challenge, String> {
     ): List<Challenge>
 
     @Query("""
-        SELECT *
+        SELECT challenge.*
         FROM challenge
             JOIN (
                 SELECT *

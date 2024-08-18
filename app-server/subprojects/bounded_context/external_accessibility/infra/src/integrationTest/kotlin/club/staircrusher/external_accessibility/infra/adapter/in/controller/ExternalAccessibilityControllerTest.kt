@@ -5,8 +5,8 @@ import club.staircrusher.api.spec.dto.ExternalAccessibility
 import club.staircrusher.api.spec.dto.GetExternalAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPost200Response
 import club.staircrusher.api.spec.dto.SearchExternalAccessibilitiesPostRequest
+import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.external_accessibility.infra.adapter.`in`.controller.base.ExternalAccessibilityITBase
-import club.staircrusher.external_accessibility.infra.adapter.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,7 +23,7 @@ class ExternalAccessibilityControllerTest : ExternalAccessibilityITBase() {
     @BeforeEach
     fun setUp() {
         transactionManager.doInTransaction {
-            externalAccessibilityRepository.removeAll()
+            externalAccessibilityRepository.deleteAll()
         }
     }
 

@@ -31,7 +31,7 @@ class ExternalAccessibility(
     @Enumerated(EnumType.STRING)
     val category: ExternalAccessibilityCategory,
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "details", columnDefinition = "TEXT")
     val toiletDetails: ToiletAccessibilityDetails?,
 ) {
     override fun equals(other: Any?): Boolean {

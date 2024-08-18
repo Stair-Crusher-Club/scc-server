@@ -1,6 +1,6 @@
 package club.staircrusher.challenge.domain.model
 
-import club.staircrusher.stdlib.jpa.ListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.ListToTextAttributeConverter
 
 class ChallengeConditionListToTextAttributeConverter : ListToTextAttributeConverter<ChallengeCondition>() {
     override fun convertElementToTextColumn(element: ChallengeCondition): String {

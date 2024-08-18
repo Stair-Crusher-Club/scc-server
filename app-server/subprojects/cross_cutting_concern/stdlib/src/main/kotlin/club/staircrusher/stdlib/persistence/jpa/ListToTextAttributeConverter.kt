@@ -1,4 +1,4 @@
-package club.staircrusher.stdlib.jpa
+package club.staircrusher.stdlib.persistence.jpa
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonProcessingException

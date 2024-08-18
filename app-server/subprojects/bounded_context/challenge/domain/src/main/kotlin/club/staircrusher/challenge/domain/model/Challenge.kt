@@ -2,7 +2,8 @@ package club.staircrusher.challenge.domain.model
 
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
-import club.staircrusher.stdlib.jpa.IntListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
+import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -20,6 +21,7 @@ class Challenge(
     val invitationCode: String?,
     val passcode: String?,
     @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "TEXT")
     val crusherGroup: ChallengeCrusherGroup?,
     var isComplete: Boolean,
     val startsAt: Instant,

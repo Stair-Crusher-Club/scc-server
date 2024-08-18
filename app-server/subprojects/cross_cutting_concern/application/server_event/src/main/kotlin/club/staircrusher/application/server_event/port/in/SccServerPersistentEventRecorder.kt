@@ -17,19 +17,17 @@ internal class SccServerPersistentEventRecorder(
     private val logger = KotlinLogging.logger { }
 
     override fun record(payload: ServerEventPayload) = transactionManager.doInTransaction {
-        val serverEvent = try {
-            ServerEvent(
+        try {
+            val serverEvent = ServerEvent(
                 id = EntityIdGenerator.generateRandom(),
                 type = payload.type,
                 payload = payload,
                 createdAt = SccClock.instant(),
             )
+            serverEventRepository.save(serverEvent)
         } catch (e: Exception){
             logger.error(e) { "Failed to create server event of payload: $payload" }
-            null
         }
-
-        serverEvent?.let { serverEventRepository.save(it) }
         Unit
     }
 }

@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.domain.model
 
-import club.staircrusher.stdlib.jpa.ListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.ListToTextAttributeConverter
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
