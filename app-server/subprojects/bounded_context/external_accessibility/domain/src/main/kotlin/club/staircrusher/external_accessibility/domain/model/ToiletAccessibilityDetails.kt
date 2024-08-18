@@ -1,8 +1,8 @@
 package club.staircrusher.external_accessibility.domain.model
 
-import kotlinx.serialization.Serializable
+import jakarta.persistence.Embeddable
 
-@Serializable
+@Embeddable
 data class ToiletAccessibilityDetails(
     val imageUrl: String? = null,
     val gender: String? = null,

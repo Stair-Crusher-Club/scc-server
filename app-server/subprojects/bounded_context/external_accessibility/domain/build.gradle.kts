@@ -1,6 +1,3 @@
-plugins {
-    kotlin("plugin.serialization")
-}
-
 dependencies {
+    implementation("org.hibernate.orm:hibernate-core")
 }

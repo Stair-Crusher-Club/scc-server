@@ -8,10 +8,8 @@ import club.staircrusher.domain.server_event.ServerEventType
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.IntListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.column_adapter.ListToTextColumnAdapter
 import club.staircrusher.infra.persistence.sqldelight.migration.Challenge
-import club.staircrusher.infra.persistence.sqldelight.migration.External_accessibility
 import club.staircrusher.infra.persistence.sqldelight.migration.Server_event
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -45,15 +43,6 @@ class DB(dataSource: DataSource) {
                 }
 
             }
-        ),
-        external_accessibilityAdapter = External_accessibility.Adapter(
-            categoryAdapter = object : ColumnAdapter<ExternalAccessibilityCategory, String> {
-                override fun decode(databaseValue: String): ExternalAccessibilityCategory {
-                    return ExternalAccessibilityCategory.valueOf(databaseValue)
-                }
-
-                override fun encode(value: ExternalAccessibilityCategory): String = value.name
-            },
         ),
         server_eventAdapter = Server_event.Adapter(
             typeAdapter = object : ColumnAdapter<ServerEventType, String> {
