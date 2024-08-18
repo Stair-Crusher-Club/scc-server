@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.infra.adapter.out
 
-import club.staircrusher.accessibility.application.port.out.NotificationService
+import club.staircrusher.accessibility.application.port.out.SlackService
 import club.staircrusher.infra.network.createExternalApiService
 import club.staircrusher.stdlib.di.annotation.Component
 import mu.KotlinLogging
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.service.annotation.PostExchange
 
 @Component
-class SlackNotificationService(
-    properties: SlackNotificationProperties
-) : NotificationService {
+class SlackServiceImpl(
+    properties: SlackProperties
+) : SlackService {
     private val logger = KotlinLogging.logger {}
     private val slackService = createExternalApiService<SlackService>(
         baseUrl = "https://slack.com",
@@ -24,10 +24,10 @@ class SlackNotificationService(
         },
     )
 
-    override fun send(recipient: String, content: String) {
+    override fun send(channel: String, content: String) {
         val response = slackService.postMessage(
             SlackService.PostMessageRequest(
-                channel = recipient,
+                channel = channel,
                 text = content,
                 attachments = emptyList(),
             )

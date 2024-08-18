@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.application.port.`in`
 
-import club.staircrusher.accessibility.application.port.out.NotificationService
+import club.staircrusher.accessibility.application.port.out.SlackService
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 @Component
 class ReportAccessibilityUseCase(
     private val transactionManager: TransactionManager,
-    private val notificationService: NotificationService,
+    private val slackService: SlackService,
     private val placeApplicationService: PlaceApplicationService,
     @Value("\${scc.slack.channel.reportAccessibility:#scc-accessibility-report}") val accessibilityReportChannel: String,
 ) {
@@ -26,7 +26,7 @@ class ReportAccessibilityUseCase(
             |신고 사유: ${reason ?: "사유 없음"}
         """.trimIndent()
 
-        notificationService.send(
+        slackService.send(
             accessibilityReportChannel,
             content
         )

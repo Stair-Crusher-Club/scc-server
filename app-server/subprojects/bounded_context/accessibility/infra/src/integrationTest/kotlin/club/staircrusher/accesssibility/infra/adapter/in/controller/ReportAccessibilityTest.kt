@@ -1,6 +1,6 @@
 package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.port.out.NotificationService
+import club.staircrusher.accessibility.application.port.out.SlackService
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.ReportAccessibilityPostRequest
 import org.junit.jupiter.api.Test
@@ -12,7 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 
 class ReportAccessibilityTest : AccessibilityITBase() {
     @MockBean
-    lateinit var notificationService: NotificationService
+    lateinit var slackService: SlackService
 
     @Test
     fun `신고하기를 누를 경우 메세지가 전송된다`() {
@@ -27,8 +27,8 @@ class ReportAccessibilityTest : AccessibilityITBase() {
                 status { isNoContent() }
             }
             .apply {
-                verify(notificationService, times(1)).send(
-                    recipient = eq("#scc-accessibility-report-test"),
+                verify(slackService, times(1)).send(
+                    channel = eq("#scc-accessibility-report-test"),
                     any(),
                 )
             }
