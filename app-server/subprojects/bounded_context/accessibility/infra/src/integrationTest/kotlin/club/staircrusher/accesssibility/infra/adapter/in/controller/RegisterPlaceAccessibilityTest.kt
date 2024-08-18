@@ -1,6 +1,5 @@
 package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
-import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.accessibility.infra.adapter.`in`.controller.toDTO
@@ -8,12 +7,12 @@ import club.staircrusher.accessibility.infra.adapter.`in`.controller.toModel
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.EntranceDoorType
-import club.staircrusher.api.spec.dto.ListConqueredPlacesResponseDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
 import club.staircrusher.api.spec.dto.StairHeightLevel
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
@@ -36,7 +35,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
     @Autowired
-    private lateinit var challengeRepository: BuildingAccessibilityRepository
+    private lateinit var challengeRepository: ChallengeRepository
 
     @Autowired
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
@@ -49,11 +48,11 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        placeAccessibilityRepository.removeAll()
+        placeAccessibilityRepository.deleteAll()
 
-        challengeRepository.removeAll()
-        challengeParticipationRepository.removeAll()
-        challengeContributionRepository.removeAll()
+        challengeRepository.deleteAll()
+        challengeParticipationRepository.deleteAll()
+        challengeContributionRepository.deleteAll()
     }
 
     @Test

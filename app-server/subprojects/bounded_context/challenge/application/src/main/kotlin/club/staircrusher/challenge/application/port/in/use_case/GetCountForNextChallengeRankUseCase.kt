@@ -7,6 +7,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import org.springframework.data.repository.findByIdOrNull
 
 /**
  * Get the number of contributions needed to reach the next rank.
@@ -28,7 +29,7 @@ class GetCountForNextChallengeRankUseCase(
         }
 
         // if the user does not have rank yet, return null and let the user know that the rank will be updated soon
-        val challengeRank = challengeRankRepository.findByUserId(challenge.id, userId)
+        val challengeRank = challengeRankRepository.findFirstByChallengeIdAndUserId(challenge.id, userId)
         val rank =  challengeRank?.rank ?: return@doInTransaction null
 
         if (rank == 1L) {

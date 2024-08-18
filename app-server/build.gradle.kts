@@ -1,5 +1,4 @@
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
@@ -33,6 +32,10 @@ subprojects {
     apply(plugin = "kotlin-spring")
     apply(plugin = "kotlin-jpa")
 
+    noArg {
+        annotation("club.staircrusher.stdlib.persistence.jpa.NoArgsConstructor")
+    }
+
     java {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -50,8 +53,10 @@ subprojects {
         }
         val kotlinLoggingVersion: String by project
         val kotlinSerialization: String by project
+        val kotlinVersion: String by project
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     }
 
     allOpen {

@@ -8,6 +8,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Clock
 
 @Component
@@ -30,7 +31,7 @@ class BuildingAccessibilityUpvoteApplicationService(
                 BuildingAccessibilityUpvote(
                     id = EntityIdGenerator.generateRandom(),
                     userId = user.id,
-                    buildingAccessibility = it,
+                    buildingAccessibilityId = it.id,
                     createdAt = clock.instant(),
                 )
             )

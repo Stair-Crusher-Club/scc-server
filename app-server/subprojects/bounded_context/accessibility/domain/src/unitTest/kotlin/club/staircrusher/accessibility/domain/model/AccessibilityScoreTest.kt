@@ -1,7 +1,7 @@
 package club.staircrusher.accessibility.domain.model
 
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class AccessibilityScoreTest {
@@ -11,57 +11,57 @@ class AccessibilityScoreTest {
     fun test() {
         assertEquals(
             1.0, AccessibilityScore.get(
-                mockPa.copy(
+                createPa(
                     isFirstFloor = true,
                     hasSlope = false,
                     stairInfo = StairInfo.ONE,
                     stairHeightLevel = StairHeightLevel.HALF_THUMB
                 ),
-                mockBa,
+                createBa(),
             )
         )
         assertEquals(
             1.0, AccessibilityScore.get(
-                mockPa.copy(
+                createPa(
                     isFirstFloor = true,
                     hasSlope = true,
                     stairInfo = StairInfo.ONE,
                     stairHeightLevel = StairHeightLevel.THUMB
                 ),
-                mockBa,
+                createBa(),
             )
         )
         assertEquals(
             4.0, AccessibilityScore.get(
-                mockPa.copy(
+                createPa(
                     isFirstFloor = true,
                     hasSlope = false,
                     stairInfo = StairInfo.TWO_TO_FIVE,
                     stairHeightLevel = StairHeightLevel.HALF_THUMB
                 ),
-                mockBa,
+                createBa(),
             )
         )
         assertEquals(
             3.0, AccessibilityScore.get(
-                mockPa.copy(
+                createPa(
                     isFirstFloor = true,
                     hasSlope = true,
                     stairInfo = StairInfo.OVER_SIX,
                     stairHeightLevel = StairHeightLevel.HALF_THUMB
                 ),
-                mockBa,
+                createBa(),
             )
         )
         assertEquals(
             0.5 + 1.0 + 5.0, AccessibilityScore.get(
-                mockPa.copy(
+                createPa(
                     isFirstFloor = false,
                     hasSlope = true,
                     stairInfo = StairInfo.ONE,
                     stairHeightLevel = StairHeightLevel.HALF_THUMB
                 ),
-                mockBa.copy(
+                createBa(
                     hasElevator = false,
                     entranceStairInfo = StairInfo.ONE,
                     entranceStairHeightLevel = StairHeightLevel.THUMB,
@@ -71,13 +71,13 @@ class AccessibilityScoreTest {
         )
         assertEquals(
             0.5 + 1.0 + 1.0, AccessibilityScore.get(
-                mockPa.copy(
+                createPa(
                     isFirstFloor = false,
                     hasSlope = true,
                     stairInfo = StairInfo.ONE,
                     stairHeightLevel = StairHeightLevel.HALF_THUMB
                 ),
-                mockBa.copy(
+                createBa(
                     hasElevator = true,
                     entranceStairInfo = StairInfo.ONE,
                     entranceStairHeightLevel = StairHeightLevel.THUMB,
@@ -89,39 +89,71 @@ class AccessibilityScoreTest {
         )
     }
 
-    private val mockPa = PlaceAccessibility(
-        id = "",
-        placeId = "",
-        floors = emptyList(),
-        isFirstFloor = false,
-        isStairOnlyOption = false,
-        stairInfo = StairInfo.ONE,
-        stairHeightLevel = StairHeightLevel.THUMB,
-        hasSlope = false,
-        entranceDoorTypes = emptyList(),
-        imageUrls = emptyList(),
-        images = emptyList(),
-        userId = null,
-        createdAt = Instant.now(),
-        deletedAt = null
+    private fun createPa(
+        id: String = "",
+        placeId: String = "",
+        floors: List<Int>? = emptyList(),
+        isFirstFloor: Boolean = false,
+        isStairOnlyOption: Boolean? = false,
+        stairInfo: StairInfo = StairInfo.ONE,
+        stairHeightLevel: StairHeightLevel? = StairHeightLevel.THUMB,
+        hasSlope: Boolean = false,
+        entranceDoorTypes: List<EntranceDoorType>? = emptyList(),
+        imageUrls: List<String> = emptyList(),
+        images: List<AccessibilityImage> = emptyList(),
+        userId: String? = null,
+        createdAt: Instant = Instant.now(),
+        deletedAt: Instant? = null
+    ) = PlaceAccessibility(
+        id = id,
+        placeId = placeId,
+        floors = floors,
+        isFirstFloor = isFirstFloor,
+        isStairOnlyOption = isStairOnlyOption,
+        stairInfo = stairInfo,
+        stairHeightLevel = stairHeightLevel,
+        hasSlope = hasSlope,
+        entranceDoorTypes = entranceDoorTypes,
+        imageUrls = imageUrls,
+        images = images,
+        userId = userId,
+        createdAt = createdAt,
+        deletedAt = deletedAt,
     )
 
-    private val mockBa = BuildingAccessibility(
-        id = "",
-        buildingId = "",
-        entranceStairInfo = StairInfo.ONE,
-        entranceStairHeightLevel = null,
-        entranceImageUrls = emptyList(),
-        entranceImages = emptyList(),
-        hasSlope = false,
-        hasElevator = false,
-        entranceDoorTypes = emptyList(),
-        elevatorImageUrls = emptyList(),
-        elevatorImages = emptyList(),
-        elevatorStairInfo = StairInfo.ONE,
-        elevatorStairHeightLevel = StairHeightLevel.THUMB,
-        userId = null,
-        createdAt = Instant.now(),
-        deletedAt = null
+    private fun createBa(
+        id: String = "",
+        buildingId: String = "",
+        entranceStairInfo: StairInfo = StairInfo.ONE,
+        entranceStairHeightLevel: StairHeightLevel? = null,
+        entranceImageUrls: List<String> = emptyList(),
+        entranceImages: List<AccessibilityImage> = emptyList(),
+        hasSlope: Boolean = false,
+        hasElevator: Boolean = false,
+        entranceDoorTypes: List<EntranceDoorType>? = emptyList(),
+        elevatorStairInfo: StairInfo = StairInfo.ONE,
+        elevatorStairHeightLevel: StairHeightLevel? = StairHeightLevel.THUMB,
+        elevatorImageUrls: List<String> = emptyList(),
+        elevatorImages: List<AccessibilityImage> = emptyList(),
+        userId: String? = null,
+        createdAt: Instant = Instant.now(),
+        deletedAt: Instant? = null,
+    ) = BuildingAccessibility(
+        id = id,
+        buildingId = buildingId,
+        entranceStairInfo = entranceStairInfo,
+        entranceStairHeightLevel = entranceStairHeightLevel,
+        entranceImageUrls = entranceImageUrls,
+        entranceImages = entranceImages,
+        hasSlope = hasSlope,
+        hasElevator = hasElevator,
+        entranceDoorTypes = entranceDoorTypes,
+        elevatorStairInfo = elevatorStairInfo,
+        elevatorStairHeightLevel = elevatorStairHeightLevel,
+        elevatorImageUrls = elevatorImageUrls,
+        elevatorImages = elevatorImages,
+        userId = userId,
+        createdAt = createdAt,
+        deletedAt = deletedAt,
     )
 }

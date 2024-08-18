@@ -9,6 +9,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import org.springframework.data.repository.findByIdOrNull
 
 /**
  * Get the leaderboard of a challenge which shows only the top 10 users.

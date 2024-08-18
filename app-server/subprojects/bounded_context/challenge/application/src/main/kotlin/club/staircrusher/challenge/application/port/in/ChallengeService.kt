@@ -28,32 +28,40 @@ class ChallengeService(
     fun getMyInProgressChallenges(userId: String, criteriaTime: Instant = clock.instant()): List<Challenge> {
         return challengeRepository.findByUidAndTime(
             userId = userId,
-            startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
-            endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
+            startsAtFrom = Challenge.MIN_TIME,
+            startsAtTo = criteriaTime,
+            endsAtFrom = criteriaTime,
+            endsAtTo = Challenge.MAX_TIME,
         )
             .filter { it.getStatus(criteriaTime) == ChallengeStatus.IN_PROGRESS }
     }
 
     fun getInProgressChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
         return challengeRepository.findByTime(
-            startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
-            endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
+            startsAtFrom = Challenge.MIN_TIME,
+            startsAtTo = criteriaTime,
+            endsAtFrom = criteriaTime,
+            endsAtTo = Challenge.MAX_TIME,
         )
             .filter { it.getStatus(criteriaTime) == ChallengeStatus.IN_PROGRESS }
     }
 
     fun getUpcomingChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
         return challengeRepository.findByTime(
-            startsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
-            endsAtRange = criteriaTime.rangeTo(Challenge.MAX_TIME),
+            startsAtFrom = criteriaTime,
+            startsAtTo = Challenge.MAX_TIME,
+            endsAtFrom = criteriaTime,
+            endsAtTo = Challenge.MAX_TIME,
         )
             .filter { it.getStatus(criteriaTime) == ChallengeStatus.UPCOMING }
     }
 
     fun getClosedChallenges(criteriaTime: Instant = clock.instant()): List<Challenge> {
         return challengeRepository.findByTime(
-            startsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
-            endsAtRange = Challenge.MIN_TIME.rangeTo(criteriaTime),
+            startsAtFrom = Challenge.MIN_TIME,
+            startsAtTo = criteriaTime,
+            endsAtFrom = Challenge.MIN_TIME,
+            endsAtTo = criteriaTime,
         )
             .filter { it.getStatus(criteriaTime) == ChallengeStatus.CLOSED }
     }
@@ -68,14 +76,14 @@ class ChallengeService(
     fun getPlaceAccessibilityCrusherGroup(placeAccessibilityId: String): ChallengeCrusherGroup? {
         val contributions = challengeContributionRepository.findByPlaceAccessibilityId(placeAccessibilityId)
         if (contributions.isEmpty()) return null
-        val challenges = challengeRepository.findByIds(contributions.map { it.challengeId })
+        val challenges = challengeRepository.findAllById(contributions.map { it.challengeId })
         return challenges.firstNotNullOfOrNull { it.crusherGroup }
     }
 
     fun getBuildingAccessibilityCrusherGroup(buildingAccessibilityId: String): ChallengeCrusherGroup? {
         val contributions = challengeContributionRepository.findByBuildingAccessibilityId(buildingAccessibilityId)
         if (contributions.isEmpty()) return null
-        val challenges = challengeRepository.findByIds(contributions.map { it.challengeId })
+        val challenges = challengeRepository.findAllById(contributions.map { it.challengeId })
         return challenges.firstNotNullOfOrNull { it.crusherGroup }
     }
 
@@ -153,28 +161,28 @@ class ChallengeService(
     private fun getExistingContribution(challengeId: String, contribution: Contribution): ChallengeContribution? {
         return when (contribution) {
             is Contribution.PlaceAccessibility -> {
-                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityId(
+                challengeContributionRepository.findFirstByChallengeIdAndPlaceAccessibilityId(
                     challengeId = challengeId,
                     placeAccessibilityId = contribution.placeAccessibilityId
                 )
             }
 
             is Contribution.PlaceAccessibilityComment -> {
-                challengeContributionRepository.findByChallengeIdAndPlaceAccessibilityCommentId(
+                challengeContributionRepository.findFirstByChallengeIdAndPlaceAccessibilityCommentId(
                     challengeId = challengeId,
                     placeAccessibilityCommentId = contribution.placeAccessibilityCommentId
                 )
             }
 
             is Contribution.BuildingAccessibility -> {
-                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityId(
+                challengeContributionRepository.findFirstByChallengeIdAndBuildingAccessibilityId(
                     challengeId = challengeId,
                     buildingAccessibilityId = contribution.buildingAccessibilityId
                 )
             }
 
             is Contribution.BuildingAccessibilityComment -> {
-                challengeContributionRepository.findByChallengeIdAndBuildingAccessibilityCommentId(
+                challengeContributionRepository.findFirstByChallengeIdAndBuildingAccessibilityCommentId(
                     challengeId = challengeId,
                     buildingAccessibilityCommentId = contribution.buildingAccessibilityCommentId
                 )
@@ -192,7 +200,7 @@ class ChallengeService(
                 getExistingContribution(myInProgressChallenge.id, contribution)
             }
             .forEach {
-                challengeContributionRepository.remove(it.id)
+                challengeContributionRepository.deleteById(it.id)
             }
     }
 

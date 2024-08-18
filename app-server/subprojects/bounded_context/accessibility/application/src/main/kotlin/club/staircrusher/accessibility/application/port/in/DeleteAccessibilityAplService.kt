@@ -50,7 +50,7 @@ class DeleteAccessibilityAplService(
         placeAccessibility: PlaceAccessibility,
         place: Place,
     ) {
-        placeAccessibilityRepository.remove(placeAccessibility.id)
+        placeAccessibilityRepository.deleteById(placeAccessibility.id)
         transactionManager.doAfterCommit {
             runBlocking {
                 domainEventPublisher.publishEvent(PlaceAccessibilityDeletedEvent(
@@ -86,7 +86,7 @@ class DeleteAccessibilityAplService(
         buildingAccessibility: BuildingAccessibility,
         building: Building,
     ) {
-        buildingAccessibilityRepository.remove(buildingAccessibility.id)
+        buildingAccessibilityRepository.deleteById(buildingAccessibility.id)
         transactionManager.doAfterCommit {
             runBlocking {
                 domainEventPublisher.publishEvent(BuildingAccessibilityDeletedEvent(

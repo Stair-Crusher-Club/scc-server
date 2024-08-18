@@ -28,8 +28,8 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        buildingAccessibilityUpvoteRepository.removeAll()
-        buildingAccessibilityRepository.removeAll()
+        buildingAccessibilityUpvoteRepository.deleteAll()
+        buildingAccessibilityRepository.deleteAll()
     }
 
     @Test

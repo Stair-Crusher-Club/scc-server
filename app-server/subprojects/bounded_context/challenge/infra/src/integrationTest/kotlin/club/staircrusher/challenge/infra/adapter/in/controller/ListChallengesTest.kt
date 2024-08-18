@@ -4,7 +4,6 @@ import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.api.spec.dto.ListChallengesRequestDto
 import club.staircrusher.api.spec.dto.ListChallengesResponseDto
-import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.ChallengeStatus
@@ -29,8 +28,8 @@ class ListChallengesTest : ChallengeITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        challengeRepository.removeAll()
-        challengeParticipationRepository.removeAll()
+        challengeRepository.deleteAll()
+        challengeParticipationRepository.deleteAll()
     }
 
     @Test
@@ -222,12 +221,12 @@ class ListChallengesTest : ChallengeITBase() {
         val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
         participate(
             user = user,
-            challenge = challengeRepository.findById(lastChallengeBeforeParticipation.id),
+            challenge = challengeRepository.findById(lastChallengeBeforeParticipation.id).get(),
         )
         clock.advanceTime(Duration.ofMinutes(1))
         participate(
             user = user,
-            challenge = challengeRepository.findById(firstChallengeBeforeParticipation.id),
+            challenge = challengeRepository.findById(firstChallengeBeforeParticipation.id).get(),
         )
         val challengesAfterParticipation = mvc
             .sccRequest(

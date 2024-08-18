@@ -14,13 +14,6 @@ class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager 
     private val transactionTemplate: TransactionTemplate,
 ) : TransactionManager {
     override fun <T> doInTransaction(block: () -> T): T {
-        /**
-         * 전체 엔티티에 대해 한 번에 jpa로 변환하는 게 아닌 이상, sqldelight와 jpa를 동시에 사용하는 기간이 반드시 발생한다.
-         *
-         * sqldelight는 어차피 ORM이 아니라 SQL을 kotlin API로 type-safe하게 쓰는 역할만 하므로,
-         * JPA의 트랜잭션 라이프사이클에 의존해도 괜찮다.
-         * 따라서 여기서는 JPA 트랜잭션을 사용한다.
-         */
         return transactionTemplate.execute {
             block()
         } as T

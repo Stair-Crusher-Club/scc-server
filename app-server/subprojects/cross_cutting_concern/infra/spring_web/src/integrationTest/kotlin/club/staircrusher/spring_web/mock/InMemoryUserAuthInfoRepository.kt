@@ -1,7 +1,7 @@
 package club.staircrusher.spring_web.mock
 
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.persistence.InMemoryCrudRepositoryMixin
+import club.staircrusher.stdlib.persistence.jpa.InMemoryCrudRepositoryMixin
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType

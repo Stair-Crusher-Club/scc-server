@@ -25,11 +25,11 @@ class GetChallengeWithInvitationCodeUseCase(
     )
 
     fun handle(userId: String, invitationCode: String): GetChallengeResult = transactionManager.doInTransaction {
-        val challenge = challengeRepository.findByInvitationCode(invitationCode) ?: throw SccDomainException(
+        val challenge = challengeRepository.findFirstByInvitationCode(invitationCode) ?: throw SccDomainException(
             "참여코드가 잘못됐습니다.",
             errorCode = SccDomainException.ErrorCode.INVALID_ARGUMENTS
         )
-        val participationsCount = challengeParticipationRepository.userCountByChallengeId(challengeId = challenge.id)
+        val participationsCount = challengeParticipationRepository.countByChallengeId(challengeId = challenge.id)
         val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
         return@doInTransaction GetChallengeResult(
             challenge = challenge,

@@ -21,6 +21,6 @@ class DeleteChallengeUseCase(
         if (challengeContributionRepository.findByChallengeId(challengeId).isNotEmpty()) {
             throw SccDomainException("이미 기여가 있는 챌린지는 삭제할 수 없습니다.")
         }
-        challengeRepository.remove(challengeId)
+        challengeRepository.deleteById(challengeId)
     }
 }

@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class GetChallengeRankUseCase(
@@ -27,6 +28,6 @@ class GetChallengeRankUseCase(
         }
 
         // if the user does not have rank yet, return null and let the user know that the rank will be updated soon
-        challengeRankRepository.findByUserId(challenge.id, userId)?.let { WithUserInfo(it, user.toDomainModel()) }
+        challengeRankRepository.findFirstByChallengeIdAndUserId(challenge.id, userId)?.let { WithUserInfo(it, user.toDomainModel()) }
     }
 }

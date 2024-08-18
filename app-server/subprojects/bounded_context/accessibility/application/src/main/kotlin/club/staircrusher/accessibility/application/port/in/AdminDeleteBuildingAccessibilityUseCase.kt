@@ -16,7 +16,7 @@ class AdminDeleteBuildingAccessibilityUseCase(
     fun handle(
         buildingAccessibilityId: String,
     ) : Unit = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
-        val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId)
+        val buildingAccessibility = buildingAccessibilityRepository.findById(buildingAccessibilityId).get()
         val building = buildingService.getById(buildingAccessibility.buildingId)!!
         deleteAccessibilityAplService.deleteBuildingAccessibility(buildingAccessibility, building)
     }

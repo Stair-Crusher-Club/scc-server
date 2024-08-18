@@ -20,7 +20,7 @@ class DeleteAccessibilityUseCase(
         userId: String,
         placeAccessibilityId: String,
     ) : Unit = transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
-        val placeAccessibility = placeAccessibilityRepository.findById(placeAccessibilityId)
+        val placeAccessibility = placeAccessibilityRepository.findById(placeAccessibilityId).get()
         if (!placeAccessibility.isDeletable(userId)) {
             throw SccDomainException("삭제 가능한 장소 정보가 아닙니다.")
         }
@@ -29,8 +29,11 @@ class DeleteAccessibilityUseCase(
         deleteAccessibilityAplService.deletePlaceAccessibility(placeAccessibility, place)
 
         val building = place.building
-        if (placeAccessibilityRepository.findByBuildingId(building.id).isEmpty()) {
-            val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(building.id) ?: return@doInTransaction
+        val placeIds = placeApplicationService.findByBuildingId(building.id)
+            .map { it.id }
+            .toSet()
+        if (placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placeIds).isEmpty()) {
+            val buildingAccessibility = buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id) ?: return@doInTransaction
             deleteAccessibilityAplService.deleteBuildingAccessibility(buildingAccessibility, building)
         }
     }

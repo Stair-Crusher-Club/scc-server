@@ -14,7 +14,7 @@ class CreateChallengeUseCase(
 ) {
     fun handle(createRequest: CreateChallengeRequest): Challenge = transactionManager.doInTransaction {
         val challengeFromInvitationCode = createRequest.invitationCode?.let {
-            challengeRepository.findByInvitationCode(it)
+            challengeRepository.findFirstByInvitationCode(it)
         }
         if (challengeFromInvitationCode != null) {
             throw SccDomainException(

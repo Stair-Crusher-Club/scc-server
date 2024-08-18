@@ -1,8 +1,12 @@
 package club.staircrusher.challenge.domain.model
 
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
 import java.time.Instant
 
+@Entity
 class ChallengeContribution(
+    @Id
     val id: String,
     val userId: String,
     val challengeId: String,
@@ -23,5 +27,13 @@ class ChallengeContribution(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    override fun toString(): String {
+        return "ChallengeContribution(id='$id', userId='$userId', challengeId='$challengeId', " +
+            "placeAccessibilityId=$placeAccessibilityId, placeAccessibilityCommentId=$placeAccessibilityCommentId, " +
+            "buildingAccessibilityId=$buildingAccessibilityId, " +
+            "buildingAccessibilityCommentId=$buildingAccessibilityCommentId, createdAt=$createdAt, " +
+            "updatedAt=$updatedAt)"
     }
 }

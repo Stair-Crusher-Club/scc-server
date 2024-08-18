@@ -3,8 +3,10 @@ package club.staircrusher.spring_web.mock
 import club.staircrusher.application.server_event.port.out.persistence.ServerEventRepository
 import club.staircrusher.domain.server_event.ServerEvent
 import club.staircrusher.stdlib.di.annotation.Component
+import org.springframework.context.annotation.Primary
 
 @Component
+@Primary
 class MockServerEventRepository : ServerEventRepository {
     override fun save(entity: ServerEvent): ServerEvent {
         return ServerEvent(

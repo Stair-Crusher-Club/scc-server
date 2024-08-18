@@ -8,6 +8,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Clock
 
 @Component
@@ -23,7 +24,7 @@ class GivePlaceAccessibilityUpvoteUseCase(
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)
             ?: throw IllegalArgumentException("PlaceAccessibility of id $placeAccessibilityId does not exist.")
-        val existingUpvote = placeAccessibilityUpvoteRepository.findUpvote(user.id, placeAccessibilityId)
+        val existingUpvote = placeAccessibilityUpvoteRepository.findExistingUpvote(user.id, placeAccessibilityId)
         existingUpvote ?: placeAccessibilityUpvoteRepository.save(
             PlaceAccessibilityUpvote(
                 id = EntityIdGenerator.generateRandom(),

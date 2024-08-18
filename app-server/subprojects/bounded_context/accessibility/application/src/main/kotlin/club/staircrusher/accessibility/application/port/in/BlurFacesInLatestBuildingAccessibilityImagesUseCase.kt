@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -30,11 +31,11 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCase(
 
     fun handle() {
         val targetAccessibility: BuildingAccessibility = transactionManager.doInTransaction {
-            val latestHistory = accessibilityImageFaceBlurringHistoryRepository.findLatestBuildingHistoryOrNull()
+            val latestHistory = accessibilityImageFaceBlurringHistoryRepository.findFirstByBuildingAccessibilityIdIsNotNullOrderByCreatedAtDesc()
             val lastBlurredBuildingAccessibility = latestHistory?.let { history ->
                 history.buildingAccessibilityId?.let { buildingAccessibilityRepository.findByIdOrNull(it) }
             }
-            buildingAccessibilityRepository.findOneOrNullByCreatedAtGreaterThanAndOrderByCreatedAtAsc(
+            buildingAccessibilityRepository.findBlurringTargetAccessibility(
                 createdAt = lastBlurredBuildingAccessibility?.createdAt ?: Instant.EPOCH
             )
         } ?: return
@@ -44,17 +45,12 @@ class BlurFacesInLatestBuildingAccessibilityImagesUseCase(
             val elevatorResults = result.elevatorResults
 
             val entranceImageUrls = entranceResults.map { it.blurredImageUrl }
-            buildingAccessibilityRepository.updateEntranceImageUrlsAndImages(
-                targetAccessibility.id,
-                entranceImageUrls,
-                entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            )
+            targetAccessibility.updateEntranceImages(entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) })
+
             val elevatorImageUrls = elevatorResults.map { it.blurredImageUrl }
-            buildingAccessibilityRepository.updateElevatorImageUrlsAndImages(
-                targetAccessibility.id,
-                elevatorImageUrls,
-                elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            )
+            targetAccessibility.updateElevatorImages(elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) })
+
+            buildingAccessibilityRepository.save(targetAccessibility)
 
             val originalImageUrls = (entranceResults + elevatorResults).map { it.originalImageUrl }
             val blurredImageUrls = (entranceResults + elevatorResults).filter { it.isBlurred() }.map { it.blurredImageUrl }

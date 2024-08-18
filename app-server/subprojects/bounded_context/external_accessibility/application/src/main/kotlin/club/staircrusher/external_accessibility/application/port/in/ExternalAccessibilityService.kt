@@ -3,6 +3,7 @@ package club.staircrusher.external_accessibility.application.port.`in`
 import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.external_accessibility.domain.model.ExternalAccessibility
 import club.staircrusher.stdlib.di.annotation.Component
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class ExternalAccessibilityService(
@@ -18,6 +19,6 @@ class ExternalAccessibilityService(
     fun upsert(
         list: List<ExternalAccessibility>
     ) {
-        return externalAccessibilityRepository.saveAll(list)
+        externalAccessibilityRepository.saveAll(list)
     }
 }

@@ -1,19 +1,21 @@
-package club.staircrusher.infra.persistence.sqldelight.column_adapter
+package club.staircrusher.accessibility.domain.model
 
-import club.staircrusher.accessibility.domain.model.AccessibilityImage
+import club.staircrusher.stdlib.persistence.jpa.ListToTextAttributeConverter
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import jakarta.persistence.Converter
 
-object AccessibilityImageListStringColumnAdapter : ListToTextColumnAdapter<AccessibilityImage>() {
+@Converter
+object AccessibilityImageListToTextAttributeConverter : ListToTextAttributeConverter<AccessibilityImage>() {
     override fun convertElementToTextColumn(element: AccessibilityImage): String {
         return objectMapper.writeValueAsString(element)
     }
 
     override fun convertElementFromTextColumn(text: String): AccessibilityImage {
-        return objectMapper.readValue(text)
+        return objectMapper.readValue<AccessibilityImage>(text)
     }
 
     private val objectMapper = jacksonObjectMapper()

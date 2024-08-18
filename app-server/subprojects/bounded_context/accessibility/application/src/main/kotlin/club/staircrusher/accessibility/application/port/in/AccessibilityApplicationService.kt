@@ -71,10 +71,10 @@ class AccessibilityApplicationService(
 
     internal fun doGetAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         val place = placeApplicationService.findPlace(placeId) ?: error("Cannot find place with $placeId")
-        val buildingAccessibility = buildingAccessibilityRepository.findByBuildingId(place.building.id)
+        val buildingAccessibility = buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(place.building.id)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
         val buildingAccessibilityChallengeCrusherGroup = buildingAccessibility?.id?.let { challengeService.getBuildingAccessibilityCrusherGroup(it) }
-        val placeAccessibility = placeAccessibilityRepository.findByPlaceId(placeId)
+        val placeAccessibility = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(placeId)
         val placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId)
         val placeAccessibilityChallengeCrusherGroup = placeAccessibility?.id?.let { challengeService.getPlaceAccessibilityCrusherGroup(it) }
         val userInfoById = userApplicationService.getUsers(
@@ -91,7 +91,7 @@ class AccessibilityApplicationService(
                         buildingAccessibility.id,
                     )
                 } != null,
-                totalUpvoteCount = buildingAccessibilityUpvoteRepository.countUpvotes(buildingAccessibility.id),
+                totalUpvoteCount = buildingAccessibilityUpvoteRepository.countByBuildingAccessibilityId(buildingAccessibility.id),
             )
         }
 
@@ -113,9 +113,7 @@ class AccessibilityApplicationService(
                 )
             },
             placeAccessibilityChallengeCrusherGroup = placeAccessibilityChallengeCrusherGroup,
-            hasOtherPlacesToRegisterInSameBuilding = placeAccessibilityRepository.hasAccessibilityNotRegisteredPlaceInBuilding(
-                place.building.id
-            ),
+            hasOtherPlacesToRegisterInSameBuilding = hasOtherPlacesToRegisterInSameBuilding(place.building),
             isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id)
                 ?: false,
             isFavoritePlace = userId?.let { placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(it, placeId) } != null,
@@ -123,8 +121,18 @@ class AccessibilityApplicationService(
         )
     }
 
+    private fun hasOtherPlacesToRegisterInSameBuilding(building: Building): Boolean {
+        val placesInBuilding = placeApplicationService.findByBuildingId(building.id)
+        val placeAccessibilityExistingPlaceIds = placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placesInBuilding.map { it.id })
+            .map { it.placeId }
+        return placesInBuilding.any { it.id !in placeAccessibilityExistingPlaceIds }
+    }
+
     private fun PlaceAccessibility.isLastPlaceAccessibilityInBuilding(buildingId: String): Boolean {
-        return placeAccessibilityRepository.findByBuildingId(buildingId).let {
+        val placeIds = placeApplicationService.findByBuildingId(buildingId)
+            .map { it.id }
+            .toSet()
+        return placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placeIds).let {
             it.size == 1 && it[0].id == this.id
         }
     }
@@ -146,8 +154,9 @@ class AccessibilityApplicationService(
         }
         val placeIds = places.map { it.id }
         // 현재 place 당 pa, ba 는 정책상 1개 이므로 단순 associateBy 해준다.
-        val pas = placeAccessibilityRepository.findByPlaceIds(placeIds).associateBy { it.placeId }
-        val bas = buildingAccessibilityRepository.findByPlaceIds(placeIds).associateBy { it.buildingId }
+        val pas = placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placeIds).associateBy { it.placeId }
+        val buildingIds = places.map { it.building.id }.toSet()
+        val bas = buildingAccessibilityRepository.findByBuildingIdInAndDeletedAtIsNull(buildingIds).associateBy { it.buildingId }
         return places.map {
             pas[it.id] to bas[it.building.id]
         }
@@ -210,7 +219,7 @@ class AccessibilityApplicationService(
             )
         }
         val buildingId = createBuildingAccessibilityParams.buildingId
-        if (buildingAccessibilityRepository.findByBuildingId(buildingId) != null) {
+        if (buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(buildingId) != null) {
             throw SccDomainException("이미 접근성 정보가 등록된 건물입니다.")
         }
         val building = buildingService.getById(buildingId)!!
@@ -267,7 +276,7 @@ class AccessibilityApplicationService(
         createPlaceAccessibilityParams: PlaceAccessibilityRepository.CreateParams,
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
     ): RegisterPlaceAccessibilityResult {
-        if (placeAccessibilityRepository.findByPlaceId(createPlaceAccessibilityParams.placeId) != null) {
+        if (placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(createPlaceAccessibilityParams.placeId) != null) {
             throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
         }
         val place = placeApplicationService.findPlace(createPlaceAccessibilityParams.placeId)!!
@@ -311,7 +320,7 @@ class AccessibilityApplicationService(
             placeAccessibility = result,
             placeAccessibilityComment = placeAccessibilityComment,
             accessibilityRegisterer = userInfo,
-            registrationOrder = placeAccessibilityRepository.countAll(),
+            registrationOrder = placeAccessibilityRepository.countBy(),
             isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId) ?: false,
         )
     }
@@ -378,25 +387,26 @@ class AccessibilityApplicationService(
         if (placeIds.isEmpty()) return emptyList()
 
         return transactionManager.doInTransaction {
-            placeAccessibilityRepository.findByPlaceIds(placeIds).map { it.placeId }
+            placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placeIds).map { it.placeId }
         }
     }
 
     fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
-        val placeAccessibilities = placeAccessibilityRepository.findByUserId(userId)
+        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndDeletedAtIsNull(userId)
         if (placeAccessibilities.isEmpty()) return Pair(emptyList(), emptyList())
 
-        val buildingAccessibilities =
-            buildingAccessibilityRepository.findByPlaceIds(placeAccessibilities.map { it.placeId })
+        val buildingIds = placeApplicationService.findAllByIds(placeAccessibilities.map { it.placeId })
+            .map { it.building.id }
+        val buildingAccessibilities = buildingAccessibilityRepository.findByBuildingIdInAndDeletedAtIsNull(buildingIds)
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 
     fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int =
-        placeAccessibilityRepository.countByUserIdAndCreatedAtBetween(
+        placeAccessibilityRepository.countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(
             userId,
             from,
             to
-        ) + buildingAccessibilityRepository.countByUserIdCreatedAtBetween(
+        ) + buildingAccessibilityRepository.countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(
             userId,
             from,
             to
@@ -407,8 +417,8 @@ class AccessibilityApplicationService(
         from: Instant,
         to: Instant
     ): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
-        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
-        val buildingAccessibilities = buildingAccessibilityRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
+        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId, from, to)
+        val buildingAccessibilities = buildingAccessibilityRepository.findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId, from, to)
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 }

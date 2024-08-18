@@ -24,8 +24,8 @@ class GetChallengeUseCase(
     )
 
     fun handle(userId: String? = null, challengeId: String): GetChallengeResult = transactionManager.doInTransaction {
-        val challenge = challengeRepository.findById(challengeId)
-        val participationsCount = challengeParticipationRepository.userCountByChallengeId(challengeId = challenge.id)
+        val challenge = challengeRepository.findById(challengeId).get()
+        val participationsCount = challengeParticipationRepository.countByChallengeId(challengeId = challenge.id)
         val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
         return@doInTransaction GetChallengeResult(
             challenge = challenge,
