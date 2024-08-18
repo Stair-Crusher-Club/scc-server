@@ -32,9 +32,9 @@ class ChallengeContributionDeletionTest : ChallengeITBase() {
     @BeforeEach
     fun setUp() {
         transactionManager.doInTransaction {
-            challengeRepository.removeAll()
-            challengeParticipationRepository.removeAll()
-            challengeContributionRepository.removeAll()
+            challengeRepository.deleteAll()
+            challengeParticipationRepository.deleteAll()
+            challengeContributionRepository.deleteAll()
 
             registerChallenges()
         }

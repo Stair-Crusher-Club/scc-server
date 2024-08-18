@@ -31,12 +31,12 @@ class JoinChallengeUseCase(
 
     fun handle(userId: String, challengeId: String, passcode: String?): JoinChallengeResult =
         transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-            val challenge = challengeRepository.findById(challengeId)
+            val challenge = challengeRepository.findById(challengeId).get()
             if (challengeService.hasJoined(userId = userId, challengeId = challengeId)) {
                 return@doInTransaction JoinChallengeResult(
                     challenge = challenge,
                     contributionsCount = challengeContributionRepository.countByChallengeId(challengeId).toInt(),
-                    participationsCount = challengeParticipationRepository.userCountByChallengeId(challengeId).toInt()
+                    participationsCount = challengeParticipationRepository.countByChallengeId(challengeId).toInt()
                 )
             }
             if (challenge.passcode != null && challenge.passcode != passcode) {
@@ -66,7 +66,7 @@ class JoinChallengeUseCase(
             return@doInTransaction JoinChallengeResult(
                 challenge = challenge,
                 contributionsCount = challengeContributionRepository.countByChallengeId(challengeId).toInt(),
-                participationsCount = challengeParticipationRepository.userCountByChallengeId(challengeId).toInt()
+                participationsCount = challengeParticipationRepository.countByChallengeId(challengeId).toInt()
             )
         }
 }

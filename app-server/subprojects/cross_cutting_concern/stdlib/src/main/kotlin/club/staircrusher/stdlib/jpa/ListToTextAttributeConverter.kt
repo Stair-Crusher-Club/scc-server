@@ -1,6 +1,9 @@
 package club.staircrusher.stdlib.jpa
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.persistence.AttributeConverter
@@ -37,7 +40,12 @@ abstract class ListToTextAttributeConverter<E> : AttributeConverter<List<E>, Str
     abstract fun convertElementFromTextColumn(text: String): E
 
     companion object {
-        private val objectMapper = jacksonObjectMapper()
+        @JvmStatic
+        protected val objectMapper = jacksonObjectMapper()
+            .findAndRegisterModules()
+            .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         const val LEGACY_DELIMITER = ",,"
     }
 }

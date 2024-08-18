@@ -20,7 +20,7 @@ class JoinChallengeTest : ChallengeITBase() {
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-        challengeRepository.removeAll()
+        challengeRepository.deleteAll()
     }
 
     @Test

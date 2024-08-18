@@ -11,6 +11,6 @@ class ListAllChallengesUseCase(
     private val challengeRepository: ChallengeRepository,
 ) {
     fun handle(): List<Challenge> = transactionManager.doInTransaction {
-        challengeRepository.findAllOrderByCreatedAtDesc()
+        challengeRepository.findAllByOrderByCreatedAtDesc()
     }
 }

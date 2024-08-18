@@ -2,21 +2,32 @@ package club.staircrusher.challenge.domain.model
 
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.jpa.IntListToTextAttributeConverter
+import jakarta.persistence.Convert
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import java.time.Duration
 import java.time.Instant
 
+@Entity
 class Challenge(
+    @Id
     val id: String,
     val name: String,
     val isPublic: Boolean,
     val invitationCode: String?,
     val passcode: String?,
+    @JdbcTypeCode(SqlTypes.JSON)
     val crusherGroup: ChallengeCrusherGroup?,
     var isComplete: Boolean,
     val startsAt: Instant,
     val endsAt: Instant?,
     val goal: Int,
+    @Convert(converter = IntListToTextAttributeConverter::class)
     val milestones: List<Int>,
+    @Convert(converter = ChallengeConditionListToTextAttributeConverter::class)
     val conditions: List<ChallengeCondition>,
     val createdAt: Instant,
     val updatedAt: Instant,
@@ -30,12 +41,24 @@ class Challenge(
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Challenge
+
+        return id == other.id
+    }
+
     override fun hashCode(): Int {
         return id.hashCode()
     }
 
-    override fun equals(other: Any?): Boolean {
-        return other is Challenge && other.id == id
+    override fun toString(): String {
+        return "Challenge(id='$id', name='$name', isPublic=$isPublic, invitationCode=$invitationCode, " +
+            "passcode=$passcode, crusherGroup=$crusherGroup, isComplete=$isComplete, startsAt=$startsAt, " +
+            "endsAt=$endsAt, goal=$goal, milestones=$milestones, conditions=$conditions, createdAt=$createdAt, " +
+            "updatedAt=$updatedAt, description='$description')"
     }
 
     companion object {
