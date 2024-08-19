@@ -11,19 +11,24 @@ class ReportAccessibilityUseCase(
     private val transactionManager: TransactionManager,
     private val slackService: SlackService,
     private val placeApplicationService: PlaceApplicationService,
+    private val accessibilityApplicationService: AccessibilityApplicationService,
     @Value("\${scc.slack.channel.reportAccessibility:#scc-accessibility-report}") val accessibilityReportChannel: String,
 ) {
     fun handle(placeId: String, userId: String, reason: String?) {
-        val place = transactionManager.doInTransaction {
-            placeApplicationService.findPlace(placeId)
+        val (place, placeAccessibility) = transactionManager.doInTransaction {
+            val place = placeApplicationService.findPlace(placeId)
+            val placeAccessibility = accessibilityApplicationService.doGetAccessibility(placeId, userId).placeAccessibility
+
+            return@doInTransaction place to placeAccessibility
         }
 
         val content = """
             접근성 정보에 대한 신고가 접수되었습니다.
-            |신고자: $userId
-            |장소명: ${place?.name}
-            |주소: ${place?.address}
-            |신고 사유: ${reason ?: "사유 없음"}
+            - 접근성 정보 Id: ${placeAccessibility?.value?.id}
+            - 장소명: ${place?.name}
+            - 주소: ${place?.address}
+            - 신고 사유: ${reason ?: "사유 없음"}
+            - 신고자: $userId
         """.trimIndent()
 
         slackService.send(
