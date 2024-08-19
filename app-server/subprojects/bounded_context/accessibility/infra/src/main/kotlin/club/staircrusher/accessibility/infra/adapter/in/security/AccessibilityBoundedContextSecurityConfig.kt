@@ -15,6 +15,7 @@ class AccessibilityBoundedContextSecurityConfig : SccSecurityConfig {
         "/getCountForNextRank",
         "/registerPlaceAccessibility",
         "/registerBuildingAccessibility",
+        "/reportAccessibility",
         "/admin/accessibilityAllowedRegions"
     ).map { AntPathRequestMatcher(it) }
 }
