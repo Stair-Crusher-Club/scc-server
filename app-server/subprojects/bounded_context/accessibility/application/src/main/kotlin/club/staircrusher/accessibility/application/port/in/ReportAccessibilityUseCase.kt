@@ -2,6 +2,7 @@ package club.staircrusher.accessibility.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.out.SlackService
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
+import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.springframework.beans.factory.annotation.Value
@@ -14,10 +15,10 @@ class ReportAccessibilityUseCase(
     private val accessibilityApplicationService: AccessibilityApplicationService,
     @Value("\${scc.slack.channel.reportAccessibility:#scc-accessibility-report}") val accessibilityReportChannel: String,
 ) {
-    fun handle(placeId: String, userId: String, reason: String?) {
+    fun handle(placeId: String, authUser: AuthUser, reason: String?) {
         val (place, placeAccessibility) = transactionManager.doInTransaction {
             val place = placeApplicationService.findPlace(placeId)
-            val placeAccessibility = accessibilityApplicationService.doGetAccessibility(placeId, userId).placeAccessibility
+            val placeAccessibility = accessibilityApplicationService.doGetAccessibility(placeId, null).placeAccessibility
 
             return@doInTransaction place to placeAccessibility
         }
@@ -28,7 +29,7 @@ class ReportAccessibilityUseCase(
             - 장소명: ${place?.name}
             - 주소: ${place?.address}
             - 신고 사유: ${reason ?: "사유 없음"}
-            - 신고자: $userId
+            - 신고자: ${authUser.nickname}
         """.trimIndent()
 
         slackService.send(
