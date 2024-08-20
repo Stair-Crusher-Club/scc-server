@@ -82,7 +82,7 @@ open class SccSpringItMockConfiguration {
 
     @Bean
     @Primary
-    open fun mockNotificationService(): SlackService {
+    open fun mockSlackService(): SlackService {
         return MockSlackService()
     }
 }
