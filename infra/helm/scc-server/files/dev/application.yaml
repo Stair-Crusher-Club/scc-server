@@ -57,3 +57,6 @@ scc:
       thumbnailBucketName: scc-dev-accessibility-thumbnails
   cloudfront:
     domain: d3vmj65l82owxs.cloudfront.net
+  slack:
+    channel:
+      reportAccessibility: "#scc-accessibility-report-test"

@@ -598,6 +598,27 @@ paths:
                 required:
                   - placeAccessibilityComment
 
+  /reportAccessibility:
+    post:
+      summary: 등록된 접근성 정보가 올바르지 않은 경우 신고한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placeId:
+                  type: string
+                  description: 신고할 장소의 아이디
+                reason:
+                  type: string
+                  description: 신고 사유
+              required:
+                - placeId
+      responses:
+        '204': { }
+
   /searchExternalAccessibilities:
     post:
       summary: 외부 접근성 정보가 등록된 장소를 검색한다.

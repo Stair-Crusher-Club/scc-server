@@ -9,8 +9,10 @@ dependencies {
     implementation(projects.boundedContext.challenge.domain)
     implementation(projects.boundedContext.challenge.application)
     implementation(projects.boundedContext.challenge.infra)
+    implementation(projects.crossCuttingConcern.infra.network)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework:spring-webflux")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)

@@ -79,3 +79,8 @@ scc:
   nhn-cloud:
     url-shortening:
       app-key: test
+
+  slack:
+    token: test
+    channel:
+      reportAccessibility: "#scc-accessibility-report-test"
