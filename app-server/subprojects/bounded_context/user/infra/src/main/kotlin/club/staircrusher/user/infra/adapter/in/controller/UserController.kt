@@ -4,6 +4,7 @@ import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
+import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.use_case.GetUserUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
@@ -24,13 +25,17 @@ class UserController(
         authentication: SccAppAuthentication,
     ): GetUserInfoResponseDto {
         val user = getUserUseCase.handle(authentication.principal)
-        val featureFlags: List<String> = if (user.id in
-            listOf<String>(
+        val isTargetUser = user.id in
+            listOf(
                 "1c8a528c-0b5f-4885-a9b3-b81309c364df",
                 "baf04e8e-0597-4926-b3b3-c3ecf9e3544e",
-                "19ef11a0-bc2e-4262-a55f-943aad394004"
+                "19ef11a0-bc2e-4262-a55f-943aad394004",
+                "21468ced-cc68-44be-936e-a50d40ff5481",
+                "b68b714e-40a3-4e52-aff4-c8734181e1bb"
             )
-        ) listOf("MAP_VISIBLE", "TOILET_VISIBLE") else emptyList()
+        val isNotProd = SccEnv.getEnv() != SccEnv.PROD
+        val featureFlags: List<String> =
+            if (isTargetUser || isNotProd) listOf("MAP_VISIBLE", "TOILET_VISIBLE") else emptyList()
         return GetUserInfoResponseDto(
             user = user.toDTO(),
             flags = featureFlags,
