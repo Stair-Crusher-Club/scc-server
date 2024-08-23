@@ -1504,6 +1504,9 @@ components:
         address:
           type: string
           description: 점포의 human-readable한 주소.
+        category:
+          type: PlaceCategoryDto
+          description: 점포의 카테고리
         isFavorite:
           type: boolean
           description: 내가 즐겨찾기한 점포인지 여부.
@@ -1808,9 +1811,9 @@ components:
         registeredUserOrder:
           type: integer
           description: "'n번째 정복자'를 표시해주기 위한 값."
-        required:
-          - accessibilityInfo
-          - registeredUserOrder
+      required:
+        - accessibilityInfo
+        - registeredUserOrder
 
     SearchKeywordOfPlaceCategoryDto:
       type: object
