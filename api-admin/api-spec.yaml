@@ -85,6 +85,11 @@ paths:
                   type: integer
                 maxPlaceCountPerQuest:
                   type: integer
+                useAlreadyCrawledPlace:
+                  type: boolean
+                  description: |
+                    지도 API 기반이 아닌, 이미 크롤링하여 계단정복지도 서버 DB에 캐싱해둔 장소를 기반으로 퀘스트를 생성할지 여부.
+                    지정되지 않은 경우, default는 false.
               required:
                 - clusterCount
                 - maxPlaceCountPerQuest
@@ -408,6 +413,19 @@ paths:
       responses:
         204:
           description: 삭제 성공
+
+  /places/startCrawling:
+    post:
+      operationId: startPlaceCrawling
+      summary: 지정된 지역 내의 장소를 지도 API를 통해 크롤링해서 계단정복지도 서버 DB에 캐싱한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartPlaceCrawlingRequestDTO'
+      responses:
+        '204': {}
 
 components:
   # Reusable schemas (data models)
@@ -883,3 +901,15 @@ components:
         - ONE
         - TWO_TO_FIVE
         - OVER_SIX
+
+    StartPlaceCrawlingRequestDTO:
+      properties:
+        name:
+          type: string
+        boundaryVertices:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationDTO'
+      required:
+        - name
+        - boundaryVertices
