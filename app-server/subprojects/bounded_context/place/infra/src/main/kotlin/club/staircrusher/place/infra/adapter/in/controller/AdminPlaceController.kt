@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 class AdminPlaceController(
     private val startPlaceCrawlingUseCase: StartPlaceCrawlingUseCase,
 ) {
-    @PostMapping("/places/startCrawling")
+    @PostMapping("/admin/places/startCrawling")
     fun startPlaceCrawling(@RequestBody request: StartPlaceCrawlingRequestDTO) {
         startPlaceCrawlingUseCase.handle(request.boundaryVertices.map { it.toModel() })
     }

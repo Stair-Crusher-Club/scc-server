@@ -11,9 +11,12 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Point
 
 @Entity
-class Place(
+class Place private constructor(
     @Id
     val id: String,
     val name: String,
@@ -22,6 +25,10 @@ class Place(
         AttributeOverride(name = "lat", column = Column(name = "location_y")),
     )
     val location: Location,
+    /**
+     * geospatial query를 위해 location을 역정규화한 컬럼.
+     */
+    val locationForQuery: Point,
     @ManyToOne(fetch = FetchType.EAGER)
     val building: Building,
     val siGunGuId: String?,
@@ -64,5 +71,33 @@ class Place(
     override fun toString(): String {
         return "Place(id='$id', name='$name', location=$location, building=$building, siGunGuId=$siGunGuId, " +
             "eupMyeonDongId=$eupMyeonDongId, category=$category, isClosed=$isClosed, isNotAccessible=$isNotAccessible)"
+    }
+
+    companion object {
+        private val geometryFactory = GeometryFactory()
+        fun of(
+            id: String,
+            name: String,
+            location: Location,
+            building: Building,
+            siGunGuId: String?,
+            eupMyeonDongId: String?,
+            category: PlaceCategory? = null,
+            isClosed: Boolean,
+            isNotAccessible: Boolean,
+        ): Place {
+            return Place(
+                id = id,
+                name = name,
+                location = location,
+                locationForQuery = geometryFactory.createPoint(Coordinate(location.lng, location.lat)),
+                building = building,
+                siGunGuId = siGunGuId,
+                eupMyeonDongId = eupMyeonDongId,
+                category = category,
+                isClosed = isClosed,
+                isNotAccessible = isNotAccessible,
+            )
+        }
     }
 }

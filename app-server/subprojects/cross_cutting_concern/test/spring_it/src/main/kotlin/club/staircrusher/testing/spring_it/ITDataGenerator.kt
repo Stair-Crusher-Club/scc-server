@@ -122,7 +122,7 @@ class ITDataGenerator {
         isNotAccessible: Boolean = false,
     ): Place {
         return placeRepository.save(
-            Place(
+            Place.of(
                 id = EntityIdGenerator.generateRandom(),
                 name = placeName,
                 location = building.location,
