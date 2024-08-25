@@ -1,3 +1,0 @@
-import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup;
-
-ALTER TABLE challenge ADD COLUMN crusher_group TEXT AS ChallengeCrusherGroup NULL;

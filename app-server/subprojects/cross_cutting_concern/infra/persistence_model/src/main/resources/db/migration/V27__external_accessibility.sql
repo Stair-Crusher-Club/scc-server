@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS external_accessibility (
+    id VARCHAR(36) NOT NULL,
+    name VARCHAR(64) NOT NULL,
+    location_x FLOAT8 NOT NULL,
+    location_y FLOAT8 NOT NULL,
+
+    address VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    category VARCHAR(32) NOT NULL,
+    details TEXT,
+    PRIMARY KEY (id)
+);

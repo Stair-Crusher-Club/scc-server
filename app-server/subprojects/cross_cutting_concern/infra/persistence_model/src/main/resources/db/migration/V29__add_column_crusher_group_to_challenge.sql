@@ -1,0 +1,1 @@
+ALTER TABLE challenge ADD COLUMN crusher_group TEXT NULL;
