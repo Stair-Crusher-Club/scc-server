@@ -1,9 +1,9 @@
 package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
+import club.staircrusher.place.application.port.`in`.PlaceCrawler
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
-import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
@@ -14,7 +14,7 @@ import java.util.concurrent.Executors
 class CrossValidateClubQuestPlacesUseCase(
     private val transactionManager: TransactionManager,
     private val clubQuestRepository: ClubQuestRepository,
-    private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
+    private val placeCrawler: PlaceCrawler,
     private val placeApplicationService: PlaceApplicationService,
     private val clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository,
 ) {
@@ -41,7 +41,7 @@ class CrossValidateClubQuestPlacesUseCase(
             }
 
             val closedExpectedPlaceIds = runBlocking {
-                val isNotClosedList = clubQuestTargetPlacesSearcher.crossValidatePlaces(places)
+                val isNotClosedList = placeCrawler.crossValidatePlaces(places)
                 places.zip(isNotClosedList)
                     .filter { (_, isNotClosed) -> !isNotClosed }
                     .map { (place, _) -> place.id }

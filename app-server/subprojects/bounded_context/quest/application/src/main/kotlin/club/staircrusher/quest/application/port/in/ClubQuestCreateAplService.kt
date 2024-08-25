@@ -1,11 +1,11 @@
 package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
+import club.staircrusher.place.application.port.`in`.PlaceCrawler
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
-import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
@@ -29,7 +29,7 @@ import java.time.Instant
 @Component
 class ClubQuestCreateAplService(
     private val clock: Clock,
-    private val clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher,
+    private val placeCrawler: PlaceCrawler,
     private val clubQuestRepository: ClubQuestRepository,
     private val clubQuestTargetBuildingClusterer: ClubQuestTargetBuildingClusterer,
     private val transactionManager: TransactionManager,
@@ -48,12 +48,12 @@ class ClubQuestCreateAplService(
             null, ClubQuestCreateRegionType.CIRCLE -> {
                 check(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
                 check(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
-                clubQuestTargetPlacesSearcher.searchPlacesInCircle(centerLocation, radiusMeters)
+                placeCrawler.crawlPlacesInCircle(centerLocation, radiusMeters)
             }
             ClubQuestCreateRegionType.POLYGON -> {
                 check(points != null) { "`points` should not be null if regionType is `POLYGON`." }
                 check(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
-                clubQuestTargetPlacesSearcher.searchPlacesInPolygon(points)
+                placeCrawler.crawlPlacesInPolygon(points)
             }
         }
         val accessibilityExistingPlaceIds = transactionManager.doInTransaction {

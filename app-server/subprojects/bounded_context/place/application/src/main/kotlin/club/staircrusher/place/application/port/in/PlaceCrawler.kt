@@ -1,10 +1,8 @@
-package club.staircrusher.quest.infra.adapter.out.service
+package club.staircrusher.place.application.port.`in`
 
-import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
@@ -16,9 +14,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlin.math.ceil
 
 @Component
-class InProcessClubQuestTargetPlaceSearcher(
+class PlaceCrawler(
     private val placeApplicationService: PlaceApplicationService,
-) : ClubQuestTargetPlacesSearcher {
+) {
     private val targetPlaceCategories = listOf(
         PlaceCategory.RESTAURANT,
         PlaceCategory.CAFE,
@@ -35,43 +33,43 @@ class InProcessClubQuestTargetPlaceSearcher(
      * 2. 1에서 획득한 장소들의 건물 주소로 키워드 검색 -> 장소 목록을 2차 획득
      * 3. 1과 2에서 획득한 장소들을 merge & remove duplicate
      */
-    override suspend fun searchPlacesInCircle(centerLocation: Location, radiusMeters: Int): List<Place> {
+    suspend fun crawlPlacesInCircle(centerLocation: Location, radiusMeters: Int): List<Place> {
         val radius = Length.ofMeters(radiusMeters)
-        val placesByCategorySearch = searchPlacesInCircleByCategorySearch(centerLocation, radius)
+        val placesByCategorySearch = crawlPlacesInCircleByCategorySearch(centerLocation, radius)
 
         val buildingsInRegion = placesByCategorySearch.map { it.building }.removeDuplicates { it.id }
-        val placesByBuildingAddressSearch = searchPlacesByBuildingAddressKeywordSearch(buildingsInRegion)
+        val placesByBuildingAddressSearch = crawlPlacesByBuildingAddressKeywordSearch(buildingsInRegion)
             .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
 
         return (placesByCategorySearch + placesByBuildingAddressSearch)
             .removeDuplicates { it.id }
     }
 
-    override suspend fun searchPlacesInPolygon(points: List<Location>): List<Place> {
-        val placesByCategorySearch = searchPlacesInPolygonByCategorySearch(points)
+    suspend fun crawlPlacesInPolygon(points: List<Location>): List<Place> {
+        val placesByCategorySearch = crawlPlacesInPolygonByCategorySearch(points)
 
         val buildingsInRegion = placesByCategorySearch.map { it.building }.removeDuplicates { it.id }
-        val placesByBuildingAddressSearch = searchPlacesByBuildingAddressKeywordSearch(buildingsInRegion)
+        val placesByBuildingAddressSearch = crawlPlacesByBuildingAddressKeywordSearch(buildingsInRegion)
             .filter { LocationUtils.isInPolygon(points, it.location) }
 
         return (placesByCategorySearch + placesByBuildingAddressSearch)
             .removeDuplicates { it.id }
     }
 
-    override suspend fun crossValidatePlaces(places: List<Place>): List<Boolean> = coroutineScope {
+    suspend fun crossValidatePlaces(places: List<Place>): List<Boolean> = coroutineScope {
         places
             .map { async { placeApplicationService.crossValidate(it, MapsService.SearchByKeywordOption()) } }
             .awaitAll()
     }
 
-    private suspend fun searchPlacesInCircleByCategorySearch(centerLocation: Location, radius: Length): List<Place> {
+    private suspend fun crawlPlacesInCircleByCategorySearch(centerLocation: Location, radius: Length): List<Place> {
         val leftBottomLocation = centerLocation.minusLng(radius).minusLat(radius)
         val rightTopLocation = centerLocation.plusLng(radius).plusLat(radius)
-        return searchPlacesInRectangleByCategorySearch(leftBottomLocation, rightTopLocation)
+        return crawlPlacesInRectangleByCategorySearch(leftBottomLocation, rightTopLocation)
             .filter { LocationUtils.calculateDistance(it.location, centerLocation) <= radius }
     }
 
-    private suspend fun searchPlacesInPolygonByCategorySearch(points: List<Location>): List<Place> {
+    private suspend fun crawlPlacesInPolygonByCategorySearch(points: List<Location>): List<Place> {
         val leftBottomLocation = Location(
             lng = points.minOf { it.lng },
             lat = points.minOf { it.lat },
@@ -80,11 +78,11 @@ class InProcessClubQuestTargetPlaceSearcher(
             lng = points.maxOf { it.lng },
             lat = points.maxOf { it.lat },
         )
-        return searchPlacesInRectangleByCategorySearch(leftBottomLocation, rightTopLocation)
+        return crawlPlacesInRectangleByCategorySearch(leftBottomLocation, rightTopLocation)
             .filter { LocationUtils.isInPolygon(points, it.location) }
     }
 
-    private suspend fun searchPlacesInRectangleByCategorySearch(leftBottomLocation: Location, rightTopLocation: Location): List<Place> {
+    private suspend fun crawlPlacesInRectangleByCategorySearch(leftBottomLocation: Location, rightTopLocation: Location): List<Place> {
         val chunkCount = determineChunkCount(leftBottomLocation, rightTopLocation)
         val chunkedRectangles = (1..chunkCount).flatMap { lngIdx ->
             (1..chunkCount).map { latIdx ->
@@ -127,7 +125,7 @@ class InProcessClubQuestTargetPlaceSearcher(
             .removeDuplicates { it.id }
     }
 
-    private suspend fun searchPlacesByBuildingAddressKeywordSearch(buildings: List<Building>): List<Place> {
+    private suspend fun crawlPlacesByBuildingAddressKeywordSearch(buildings: List<Building>): List<Place> {
         return coroutineScope {
             buildings
                 .map { building ->

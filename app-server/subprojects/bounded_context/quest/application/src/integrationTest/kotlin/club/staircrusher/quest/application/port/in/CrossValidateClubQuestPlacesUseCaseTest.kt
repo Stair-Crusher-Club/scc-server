@@ -3,7 +3,7 @@ package club.staircrusher.quest.application.port.`in`
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
-import club.staircrusher.quest.application.port.out.web.ClubQuestTargetPlacesSearcher
+import club.staircrusher.place.application.port.`in`.PlaceCrawler
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestPurposeType
@@ -37,7 +37,7 @@ class CrossValidateClubQuestPlacesUseCaseTest {
     private lateinit var clubQuestRepository: ClubQuestRepository
 
     @MockBean
-    private lateinit var clubQuestTargetPlacesSearcher: ClubQuestTargetPlacesSearcher
+    private lateinit var placeCrawler: PlaceCrawler
 
     @Autowired
     private lateinit var clubQuestTargetPlaceRepository: ClubQuestTargetPlaceRepository
@@ -90,7 +90,7 @@ class CrossValidateClubQuestPlacesUseCaseTest {
 
         // given - place1은 invalid, place2는 valid
         // how to mock suspend function: https://github.com/mockito/mockito-kotlin/issues/311#issuecomment-454183020
-        clubQuestTargetPlacesSearcher.stub {
+        placeCrawler.stub {
             onBlocking { crossValidatePlaces(listOf(place1, place2)) }.thenReturn(listOf(false, true))
         }
 
