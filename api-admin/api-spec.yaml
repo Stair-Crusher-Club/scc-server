@@ -904,12 +904,9 @@ components:
 
     StartPlaceCrawlingRequestDTO:
       properties:
-        name:
-          type: string
         boundaryVertices:
           type: array
           items:
             $ref: '#/components/schemas/LocationDTO'
       required:
-        - name
         - boundaryVertices
