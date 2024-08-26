@@ -33,6 +33,7 @@ dependencies {
 }
 
 jib {
+    containerizingMode = "packaged"
     extraDirectories {
         paths {
             path {
@@ -56,18 +57,16 @@ jib {
         }
     }
     to {
-        image = "public.ecr.aws/i6n1n6v2/scc-server"
         credHelper.helper = "ecr-login"
         val version = property("version") as? String ?: throw IllegalArgumentException("No property `version` exists!")
-        tags = setOf(version)
+        image = "public.ecr.aws/i6n1n6v2/scc-server:$version"
     }
     container {
-        entrypoint = listOf("./app/run-java.sh")
+        entrypoint = listOf("/app/run-java.sh")
         environment = mapOf(
-            "JAVA_MAIN_CLASS" to "club.staircrusher.scc_server.SccServerApplicationKt",
-            "JAVA_LIB_DIR" to "/app/libs/*:/app/classes:/app/resources",
+            "JAVA_MAIN_CLASS" to "@/app/jib-main-class-file",
+            "JAVA_CLASSPATH" to "@/app/jib-classpath-file",
         )
-        mainClass = "club.staircrusher.scc_server.SccServerApplicationKt"
         ports = listOf("8080", "18080")
         format = Docker
     }
