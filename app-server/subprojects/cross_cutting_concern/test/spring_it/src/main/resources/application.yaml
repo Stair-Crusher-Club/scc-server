@@ -22,6 +22,10 @@ spring:
 scc:
   environment: test
 
+  notification:
+    push:
+      credential: test
+
   kakao:
     apiKey: test
 
