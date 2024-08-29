@@ -1,6 +1,7 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
+import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
@@ -57,6 +58,17 @@ class UserController(
         )
         return UpdateUserInfoPost200Response(
             user = updatedUser.toDTO(),
+        )
+    }
+
+    @PostMapping("/updatePushToken")
+    fun updatePushToken(
+        @RequestBody request: UpdatePushTokenPostRequest,
+        authentication: SccAppAuthentication,
+    ) {
+        userApplicationService.updatePushToken(
+            userId = authentication.principal,
+            pushToken = request.pushToken,
         )
     }
 
