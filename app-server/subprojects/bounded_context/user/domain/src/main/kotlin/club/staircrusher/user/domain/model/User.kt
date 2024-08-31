@@ -20,6 +20,7 @@ class User(
     @Column(columnDefinition = "TEXT")
     @Convert(converter = UserMobilityToolListToTextAttributeConverter::class)
     val mobilityTools: MutableList<UserMobilityTool>,
+    var pushToken: String? = null,
     val createdAt: Instant,
 ) {
     private var deletedAt: Instant? = null

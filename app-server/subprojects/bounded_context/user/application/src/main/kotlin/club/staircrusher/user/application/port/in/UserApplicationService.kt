@@ -89,6 +89,15 @@ class UserApplicationService(
         AuthTokens(accessToken)
     }
 
+    fun updatePushToken(
+        userId: String,
+        pushToken: String,
+    ): User = transactionManager.doInTransaction {
+        val user = userRepository.findById(userId).get()
+        user.pushToken = pushToken
+        userRepository.save(user)
+    }
+
     fun updateUserInfo(
         userId: String,
         nickname: String,
