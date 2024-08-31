@@ -5,7 +5,7 @@ spring:
   datasource:
     username: test
     password: test
-    url: jdbc:postgresql://localhost:15432/scc
+    url: jdbc:postgresql://localhost:15433/scc
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 2000

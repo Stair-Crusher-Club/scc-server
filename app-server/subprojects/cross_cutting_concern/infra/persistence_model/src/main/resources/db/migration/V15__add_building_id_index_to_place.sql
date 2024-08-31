@@ -1,0 +1,1 @@
+CREATE INDEX idx_place_1 ON place(building_id);

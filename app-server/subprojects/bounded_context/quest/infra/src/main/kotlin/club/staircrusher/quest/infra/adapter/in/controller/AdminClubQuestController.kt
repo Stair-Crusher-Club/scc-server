@@ -68,6 +68,7 @@ class AdminClubQuestController(
             points = request.points?.map { it.toModel() },
             clusterCount = request.clusterCount,
             maxPlaceCountPerQuest = request.maxPlaceCountPerQuest,
+            useAlreadyCrawledPlace = request.useAlreadyCrawledPlace ?: false,
         )
         return result.map { it.toDTO(conqueredPlaceIds = emptySet()) }
     }

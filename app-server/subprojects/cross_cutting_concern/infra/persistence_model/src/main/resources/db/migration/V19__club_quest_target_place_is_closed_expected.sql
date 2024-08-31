@@ -1,0 +1,1 @@
+ALTER TABLE club_quest_target_place ADD COLUMN is_closed_expected BOOLEAN NOT NULL DEFAULT FALSE;

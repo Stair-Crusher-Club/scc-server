@@ -1,0 +1,1 @@
+ALTER TABLE club_quest ALTER COLUMN purpose_type SET DEFAULT 'CRUSHER_CLUB';

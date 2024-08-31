@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:14.5-alpine
+    image: postgis/postgis:14-3.4-alpine
     restart: always
     ports:
       - "15432:5432"
@@ -8,3 +8,12 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: scc_test
+  postgres-local:
+    image: postgis/postgis:14-3.4-alpine
+    restart: always
+    ports:
+      - "15433:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: scc

@@ -239,7 +239,7 @@ class KakaoMapsService(
             .mapNotNull {
                 @Suppress("TooGenericExceptionCaught", "SwallowedException")
                 try {
-                    Place(
+                    Place.of(
                         id = it.id,
                         name = it.placeName,
                         location = it.location,

@@ -32,7 +32,7 @@ fun BuildingDTO.toBuilding(): Building {
 }
 
 fun PlaceDTO.toPlace(): Place {
-    return Place(
+    return Place.of(
         id = this.id,
         name = this.name,
         location = this.location,
