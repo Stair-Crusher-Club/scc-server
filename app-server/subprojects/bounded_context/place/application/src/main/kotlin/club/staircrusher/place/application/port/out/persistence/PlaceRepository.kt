@@ -11,9 +11,10 @@ interface PlaceRepository : CrudRepository<Place, String> {
         FROM place p
         WHERE
             ST_Dwithin(
-                ST_Transform(location_for_query, 3857),
-                ST_Transform(ST_SetSRID(ST_MakePoint(:centerLng, :centerLat), 4326), 3857),
-                :radiusMeters
+                location_for_query,
+                ST_SetSRID(ST_MakePoint(:centerLng, :centerLat), 4326),
+                :radiusMeters,
+                false
             ) IS TRUE
     """, nativeQuery = true)
     fun findByPlacesInCircle(centerLng: Double, centerLat: Double, radiusMeters: Double): List<Place>
