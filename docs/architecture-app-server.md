@@ -82,7 +82,7 @@ Domain event의 발행과 구독은 아래의 workflow로 작업할 수 있습�
 - `domain` - 아직 없습니다.
 - `application` - 아직 없습니다.
 - `infra`
-  - `persistence_model` - SqlDelight 기반으로 데이터베이스와 통신하기 위한 여러 구현체를 제공했습니다만, 2024.08월 기준 JPA로 전환 완료함에 따라 DB migration script만 남아 있는 상황입니다. 
+  - `persistence_model` - DB migration script를 선언합니다. 
   - `spring_message` - Domain event의 발행 / 구독 시스템을 실제로 구현합니다.
   - `spring_web` - Spring MVC 환경에서 필요한 기능을 제공합니다. e.g. 보안 및 에러 핸들링에 필요한 util 등. 
 - `test`

@@ -209,7 +209,7 @@ class NaverMapsService(
             return items.mapNotNull {
                 @Suppress("TooGenericExceptionCaught", "SwallowedException")
                 try {
-                    Place(
+                    Place.of(
                         id = "temp", // TODO: 제대로 채우기
                         // remove all html tags with regex
                         name = it.title.replace("<[^>]*>".toRegex(), ""),

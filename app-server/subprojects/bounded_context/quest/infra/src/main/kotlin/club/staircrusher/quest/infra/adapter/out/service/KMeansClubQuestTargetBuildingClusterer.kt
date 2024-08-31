@@ -21,6 +21,13 @@ class KMeansClubQuestTargetBuildingClusterer : ClubQuestTargetBuildingClusterer 
         if (clusterCount <= 0) {
             return emptyMap()
         }
+
+        if (buildings.size <= clusterCount) {
+            return buildings.associate {
+                it.location to listOf(it)
+            }
+        }
+
         val buildingById = buildings.associateBy { it.id }
         val records = buildings.map {
             Record(

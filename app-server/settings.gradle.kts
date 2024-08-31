@@ -21,7 +21,6 @@ fileTree("subprojects").filter { it.name == "build.gradle.kts" }.forEach {
 pluginManagement {
     val kotlinVersion: String by settings
     val springBootVersion: String by settings
-    val sqlDelightVersion: String by settings
     val springDependencyManagementVersion: String by settings
     val wireVersion: String by settings
     val kspVersion: String by settings
@@ -36,7 +35,6 @@ pluginManagement {
 
         id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
         id("org.springframework.boot") version springBootVersion
-        id("app.cash.sqldelight") version sqlDelightVersion
         id("com.squareup.wire") version wireVersion
         id("com.google.devtools.ksp") version kspVersion
         id("io.gitlab.arturbosch.detekt") version detektVersion

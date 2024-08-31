@@ -787,6 +787,23 @@ paths:
             - INVALID_NICKNAME : 닉네임이 유효하지 않을 때. e.g. 중복, 2글자 미만 등.
             - INVALID_EMAIL : 이메일이 유효하지 않을 때. e.g. 중복, 이상한 형태 등.
 
+  /updatePushToken:
+    post:
+      summary: 유저의 push token 정보를 수정한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pushToken:
+                  type: string
+              required:
+                - pushToken
+      responses:
+        '200': {}
+
 components:
   # Reusable schemas (data models)
   schemas:

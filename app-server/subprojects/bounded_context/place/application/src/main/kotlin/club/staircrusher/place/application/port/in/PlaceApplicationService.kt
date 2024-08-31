@@ -6,6 +6,8 @@ import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
+import club.staircrusher.stdlib.geography.Location
+import club.staircrusher.stdlib.geography.WellKnownTextUtils
 import club.staircrusher.stdlib.place.PlaceCategory
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -115,6 +117,15 @@ class PlaceApplicationService(
         val place = placeRepository.findById(placeId).get()
         place.setIsNotAccessible(isNotAccessible)
         placeRepository.save(place)
+    }
+
+    fun searchPlacesInCircle(centerLocation: Location, radiusMeters: Int): List<Place> {
+        return placeRepository.findByPlacesInCircle(centerLocation.lng, centerLocation.lat, radiusMeters.toDouble())
+    }
+
+    fun searchPlacesInPolygon(points: List<Location>): List<Place> {
+        val polygonWkt = WellKnownTextUtils.convertToPolygonWkt(points)
+        return placeRepository.findByPlacesInPolygon(polygonWkt)
     }
 
     private fun List<Place>.mergeLocalDatabases(): List<Place> {
