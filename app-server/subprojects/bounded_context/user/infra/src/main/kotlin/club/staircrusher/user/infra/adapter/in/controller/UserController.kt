@@ -36,6 +36,23 @@ class UserController(
                 "740289a3-7c16-4673-b204-58a8aef0e242",
                 "5cd204fe-57fa-42ff-8f77-d4b558c6761f",
                 "b23d1425-508b-4d18-b6e3-67bb9b5361cb",
+                "7e4f56ce-d115-4395-86c8-827280635208",
+                "5493241a-5f55-4205-bfa7-d156d980cb30",
+                "5ff9557f-218a-4da7-9980-924b0cae143e",
+                "545c7208-5156-4803-8b0b-9049290b1071",
+                "329c87d7-9d88-48c6-89cb-a8b3cec6cc2d",
+                "6e020626-3b0d-43ab-88cc-ded8a682c404",
+                "f1e7adf9-2d89-4c51-a180-38794789716b",
+                "db01ba4f-53a1-413f-b03d-d453e276e082",
+                "6eb17fda-b2d0-4aa7-8195-211861676abf",
+                "b96b00ee-778a-4929-a5aa-3a2f1f957bfd",
+                "cdf0667c-c094-4f97-85f5-c8349e4d0642",
+                "3f313fb9-227e-45ea-b654-214e477e62d8",
+                "0baf586f-6ab5-4979-9d4a-0952c02995fe",
+                "34754cc1-423f-4120-98b3-2ac60f65fb05",
+                "ef9b03d6-6516-4718-8f3c-f7c68e60418e",
+                "42e97c7f-9c81-4065-b2cf-3a14935b85b5",
+                "bf7c68c8-3092-4d4c-8a64-61df33c1ac29",
             )
         val isNotProd = SccEnv.getEnv() != SccEnv.PROD
         val featureFlags: List<String> =
