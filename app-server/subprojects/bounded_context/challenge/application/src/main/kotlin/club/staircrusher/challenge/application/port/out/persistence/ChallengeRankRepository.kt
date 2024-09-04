@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.application.port.out.persistence
 
 import club.staircrusher.challenge.domain.model.ChallengeRank
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
@@ -24,5 +25,12 @@ interface ChallengeRankRepository : CrudRepository<ChallengeRank, String> {
         LIMIT 1
     """)
     fun findNextRank(challengeId: String, rank: Long): ChallengeRank?
+
+    @Query("""
+        DELETE
+        FROM ChallengeRank r
+        WHERE r.challengeId = :challengeId
+    """)
+    @Modifying
     fun deleteByChallengeId(challengeId: String)
 }
