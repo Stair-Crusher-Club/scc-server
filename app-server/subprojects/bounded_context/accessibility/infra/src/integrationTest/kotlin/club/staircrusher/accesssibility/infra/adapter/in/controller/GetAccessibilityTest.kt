@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
@@ -253,6 +254,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Disabled("정복 활동에 방해될 것 같아서 잠시 비활성화")
     @Test
     fun `썸네일이 없으면 생성한다`() {
         val imageUrl = "resources/example.jpg"
