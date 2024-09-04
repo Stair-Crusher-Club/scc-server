@@ -1,5 +1,6 @@
 services:
   postgres:
+    platform: linux/amd64
     image: postgis/postgis:14-3.4-alpine
     restart: always
     ports:
@@ -9,6 +10,7 @@ services:
       POSTGRES_PASSWORD: test
       POSTGRES_DB: scc_test
   postgres-local:
+    platform: linux/amd64
     image: postgis/postgis:14-3.4-alpine
     restart: always
     ports:
