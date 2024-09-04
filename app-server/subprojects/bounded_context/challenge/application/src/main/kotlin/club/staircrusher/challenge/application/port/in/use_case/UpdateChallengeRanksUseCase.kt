@@ -41,7 +41,7 @@ class UpdateChallengeRanksUseCase(
 
                 val ranks = (contributions.groupBy { it.userId } + userWithNoContribution)
                     .map { (userId, contributions) ->
-                        val challengeRank = challengeRankRepository.findFirstByChallengeIdAndUserId(challenge.id, userId) ?: ChallengeRank(
+                        ChallengeRank(
                             id = EntityIdGenerator.generateRandom(),
                             challengeId = challenge.id,
                             userId = userId,
@@ -50,11 +50,6 @@ class UpdateChallengeRanksUseCase(
                             createdAt = now,
                             updatedAt = now,
                         )
-
-                        challengeRank.apply {
-                            contributionCount = contributions.size.toLong()
-                            updatedAt = now
-                        }
                     }
 
                 var nextRank = 1L
