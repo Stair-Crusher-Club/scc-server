@@ -38,7 +38,7 @@ class Challenge(
     fun getStatus(criteriaTime: Instant): ChallengeStatus {
         return when {
             criteriaTime < startsAt -> ChallengeStatus.UPCOMING
-            endsAt != null && endsAt < criteriaTime -> ChallengeStatus.CLOSED
+            endsAt != null && endsAt!! < criteriaTime -> ChallengeStatus.CLOSED
             else -> ChallengeStatus.IN_PROGRESS
         }
     }

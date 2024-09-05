@@ -30,7 +30,7 @@ class AccessibilityAllowedRegion(
     )
 
     var updatedAt: Instant = updatedAt
-        private set
+        protected set
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

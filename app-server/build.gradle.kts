@@ -36,6 +36,13 @@ subprojects {
         annotation("club.staircrusher.stdlib.persistence.jpa.NoArgsConstructor")
     }
 
+    allOpen {
+        annotation("jakarta.persistence.Entity")
+        annotation("jakarta.persistence.Embeddable")
+        annotation("jakarta.persistence.MappedSuperclass")
+        annotation("club.staircrusher.stdlib.di.annotation.Component")
+    }
+
     java {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -57,10 +64,6 @@ subprojects {
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
         implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    }
-
-    allOpen {
-        annotation("club.staircrusher.stdlib.di.annotation.Component")
     }
 
     tasks.test {

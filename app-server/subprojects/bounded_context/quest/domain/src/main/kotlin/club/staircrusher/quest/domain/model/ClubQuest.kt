@@ -40,10 +40,10 @@ class ClubQuest(
 ) {
 
     var shortenedAdminUrl: String? = shortenedAdminUrl
-        private set
+        protected set
 
     var updatedAt: Instant = updatedAt
-        private set
+        protected set
 
     val originalAdminUrl: String
         get() {
