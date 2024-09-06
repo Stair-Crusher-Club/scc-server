@@ -31,6 +31,6 @@ interface PlaceRepository : CrudRepository<Place, String> {
     """, nativeQuery = true)
     fun findIdsByPlacesInPolygon(polygonWkt: String): List<String>
 
-    @EntityGraph("building")
+    @EntityGraph(attributePaths = ["building"])
     fun findAllByIdIn(ids: List<String>): List<Place>
 }
