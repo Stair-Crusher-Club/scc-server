@@ -40,7 +40,7 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
             )
             AND pa.deleted_at IS NULL
         ORDER BY pa.created_at DESC, pa.id DESC
-        LIMIT :limit;
+        LIMIT :limit
     """, nativeQuery = true)
     fun searchForAdmin(
         placeName: String?,
