@@ -32,8 +32,8 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
         INNER JOIN place p ON p.id = pa.place_id
         WHERE
             (:placeName IS NULL OR p.name LIKE :placeName)
-            AND (:createdAtFrom IS NULL OR pa.created_at >= :createdAtFrom)
-            AND (:createdAtToExclusive IS NULL OR pa.created_at < :createdAtToExclusive)
+            AND (cast(:createdAtFrom as timestamp) IS NULL OR pa.created_at >= :createdAtFrom)
+            AND (cast(:createdAtToExclusive as timestamp) IS NULL OR pa.created_at < :createdAtToExclusive)
             AND (
                 (pa.created_at = :cursorCreatedAt AND pa.id < :cursorId)
                 OR (pa.created_at < :cursorCreatedAt)
