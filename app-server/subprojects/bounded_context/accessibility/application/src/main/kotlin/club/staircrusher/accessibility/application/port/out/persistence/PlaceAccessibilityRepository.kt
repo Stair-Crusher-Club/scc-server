@@ -31,7 +31,7 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
         FROM place_accessibility pa
         INNER JOIN place p ON p.id = pa.place_id
         WHERE
-            (:placeNameLike IS NULL OR p.name LIKE :placeNameLike)
+            (:placeName IS NULL OR p.name LIKE :placeName)
             AND (:createdAtFrom IS NULL OR pa.created_at >= :createdAtFrom)
             AND (:createdAtToExclusive IS NULL OR pa.created_at < :createdAtToExclusive)
             AND (
