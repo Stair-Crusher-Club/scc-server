@@ -1,13 +1,14 @@
 package club.staircrusher.place.application.port.out.persistence
 
 import club.staircrusher.place.domain.model.Place
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
 interface PlaceRepository : CrudRepository<Place, String> {
     fun findByBuildingId(buildingId: String): List<Place>
     @Query("""
-        SELECT *
+        SELECT p.id
         FROM place p
         WHERE
             ST_Dwithin(
@@ -17,10 +18,10 @@ interface PlaceRepository : CrudRepository<Place, String> {
                 false
             ) IS TRUE
     """, nativeQuery = true)
-    fun findByPlacesInCircle(centerLng: Double, centerLat: Double, radiusMeters: Double): List<Place>
+    fun findIdsByPlacesInCircle(centerLng: Double, centerLat: Double, radiusMeters: Double): List<String>
 
     @Query("""
-        SELECT *
+        SELECT p.id
         FROM place p
         WHERE
             ST_Within(
@@ -28,5 +29,8 @@ interface PlaceRepository : CrudRepository<Place, String> {
                 ST_GeomFromText(:polygonWkt, 4326)
             ) IS TRUE
     """, nativeQuery = true)
-    fun findByPlacesInPolygon(polygonWkt: String): List<Place>
+    fun findIdsByPlacesInPolygon(polygonWkt: String): List<String>
+
+    @EntityGraph("building")
+    fun findAllByIdIn(ids: List<String>): List<Place>
 }

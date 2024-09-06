@@ -120,12 +120,18 @@ class PlaceApplicationService(
     }
 
     fun searchPlacesInCircle(centerLocation: Location, radiusMeters: Int): List<Place> {
-        return placeRepository.findByPlacesInCircle(centerLocation.lng, centerLocation.lat, radiusMeters.toDouble())
+        // 현재 hibernate 6.2.0 미만 버전에서 native query 실행 시 eager loading이 안 되는 문제가 있다.
+        // 따라서 native query로는 place id 목록만 얻어오고, place 자체는 별도로 조회해온다.
+        val placeIds = placeRepository.findIdsByPlacesInCircle(centerLocation.lng, centerLocation.lat, radiusMeters.toDouble())
+        return placeRepository.findAllByIdIn(placeIds)
     }
 
     fun searchPlacesInPolygon(points: List<Location>): List<Place> {
         val polygonWkt = WellKnownTextUtils.convertToPolygonWkt(points)
-        return placeRepository.findByPlacesInPolygon(polygonWkt)
+        // 현재 hibernate 6.2.0 미만 버전에서 native query 실행 시 eager loading이 안 되는 문제가 있다.
+        // 따라서 native query로는 place id 목록만 얻어오고, place 자체는 별도로 조회해온다.
+        val placeIds = placeRepository.findIdsByPlacesInPolygon(polygonWkt)
+        return placeRepository.findAllByIdIn(placeIds)
     }
 
     private fun List<Place>.mergeLocalDatabases(): List<Place> {
