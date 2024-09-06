@@ -59,10 +59,10 @@ subprojects {
             implementation(rootProject.projects.crossCuttingConcern.infra.springWeb)
         }
         val kotlinLoggingVersion: String by project
-        val kotlinSerialization: String by project
+        val kotlinxSerializationVersion: String by project
         val kotlinVersion: String by project
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
         implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     }
 
