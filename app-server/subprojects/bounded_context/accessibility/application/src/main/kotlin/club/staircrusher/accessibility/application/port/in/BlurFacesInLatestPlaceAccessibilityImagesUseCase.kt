@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import java.time.Instant
 import java.util.concurrent.Executors
@@ -21,6 +22,7 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val transactionManager: TransactionManager,
 ) {
+    private val logger = KotlinLogging.logger {}
     private val taskExecutor = Executors.newCachedThreadPool()
 
     fun handleAsync() {
@@ -31,7 +33,8 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
 
     fun handle() {
         val targetAccessibility: PlaceAccessibility = transactionManager.doInTransaction {
-            val latestHistory = accessibilityImageFaceBlurringHistoryRepository.findFirstByPlaceAccessibilityIdIsNotNullOrderByCreatedAtDesc()
+            val latestHistory =
+                accessibilityImageFaceBlurringHistoryRepository.findFirstByPlaceAccessibilityIdIsNotNullOrderByCreatedAtDesc()
             val lastBlurredPlaceAccessibility = latestHistory?.let { history ->
                 history.placeAccessibilityId?.let { placeAccessibilityRepository.findByIdOrNull(it) }
             }
@@ -42,6 +45,12 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
         val result =
             runBlocking { accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id) }
                 ?: return
+        logger.info {
+            "Blurred faces in the latest place accessibility images. ${
+                result.entranceResults.joinToString(",") { "${it.originalImageUrl} -> ${it.blurredImageUrl}" }
+            }"
+        }
+
         val entranceResults = result.entranceResults
         transactionManager.doInTransaction {
             val imageUrls = entranceResults.map { it.blurredImageUrl }

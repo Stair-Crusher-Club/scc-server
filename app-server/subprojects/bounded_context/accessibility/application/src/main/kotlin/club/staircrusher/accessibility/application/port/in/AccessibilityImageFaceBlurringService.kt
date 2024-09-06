@@ -24,7 +24,10 @@ open class AccessibilityImageFaceBlurringService(
         val placeAccessibility = transactionManager.doInTransaction {
             accessibilityImageService.doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(placeAccessibilityId = placeAccessibilityId)
         }
-        if (placeAccessibility == null) return null
+        if (placeAccessibility == null) {
+            logger.error("PlaceAccessibility(${placeAccessibilityId}) not found.")
+            return null
+        }
         val imageUrls = placeAccessibility.images.map { it.imageUrl }
         val result = detectAndBlurFaces(imageUrls)
         return PlaceAccessibilityBlurResult(result)
@@ -64,6 +67,7 @@ open class AccessibilityImageFaceBlurringService(
                 detectedPeopleCount = 0
             )
             val (blurredImageUrl, detectedPositions) = run {
+                logger.info { "Detected ${detected.positions.size} faces in the image($imageUrl) from bytes(${detected.imageBytes.size}) | width = ${detected.imageSize.width}, height = ${detected.imageSize.height}" }
                 val outputByteArray = imageProcessor.blur(imageBytes, extension, detected.positions)
                 val blurredImageUrl = fileManagementService.uploadImage("${name}_b.$extension", outputByteArray)
                 blurredImageUrl to detected.positions
