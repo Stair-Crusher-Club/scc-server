@@ -8,6 +8,7 @@ dependencies {
     implementation("org.geotools:gt-referencing:$geoToolsVersion")
     implementation("com.auth0:java-jwt:3.18.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     api("jakarta.persistence:jakarta.persistence-api")
     api("org.springframework.data:spring-data-commons")

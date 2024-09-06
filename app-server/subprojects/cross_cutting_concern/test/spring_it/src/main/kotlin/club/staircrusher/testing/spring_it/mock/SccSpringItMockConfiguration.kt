@@ -5,6 +5,7 @@ import club.staircrusher.accessibility.application.port.`in`.image.ThumbnailGene
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.application.port.out.SlackService
 import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
+import club.staircrusher.notification.port.out.PushSender
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
 import club.staircrusher.stdlib.clock.SccClock
@@ -30,6 +31,12 @@ open class SccSpringItMockConfiguration {
     @Priority(1)
     open fun mockMapsService(): MapsService {
         return MockMapsService()
+    }
+
+    @Bean
+    @Primary
+    open fun mockPushSender(): PushSender {
+        return MockPushSender()
     }
 
     @Bean
