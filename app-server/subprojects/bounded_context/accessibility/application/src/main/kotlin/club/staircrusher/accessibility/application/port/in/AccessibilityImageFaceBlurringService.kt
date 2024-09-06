@@ -77,7 +77,7 @@ open class AccessibilityImageFaceBlurringService(
                 blurredImageUrl = blurredImageUrl ?: imageUrl,
                 detectedPeopleCount = detectedPositions.size
             )
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             logger.error(e) { "Detecting and blurring faces in the image($imageUrl) failed." }
             return BlurResult(
                 originalImageUrl = imageUrl,
