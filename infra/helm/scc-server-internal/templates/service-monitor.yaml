@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "scc-server-internal.fullname" . }}
+  labels:
+    {{- include "scc-server-internal.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "scc-server-internal.name" . }}
+  endpoints:
+    - port: metrics

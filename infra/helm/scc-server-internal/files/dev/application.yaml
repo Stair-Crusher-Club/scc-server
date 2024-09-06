@@ -1,0 +1,62 @@
+server:
+  servlet:
+    encoding:
+      charset: "UTF-8"
+      enabled: true
+      force: true
+
+spring:
+  profiles:
+    active: dev
+
+  datasource:
+    username: scc
+    url: jdbc:postgresql://ls-2053b3957420935f6eb1e3f396c8dd1407c7e38e.cmc9lkaaidnz.ap-northeast-2.rds.amazonaws.com:5432/scc_dev
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 2000
+      data-source-properties.cachePrepStmts: true
+      data-source-properties.prepStmtCacheSize: 250
+      data-source-properties.prepStmtCacheSqlLimit: 2048
+      pool-name: writer
+      maximum-pool-size: 32
+      minimum-idle: 10
+
+# logging:
+#   config: /app/conf/logback.xml
+
+# actuator settings
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+        show-details: always
+        add-additional-paths: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: info,health,prometheus
+  metrics:
+    web:
+      server:
+        auto-time-requests: true
+        max-uri-tags: 1024
+
+sentry:
+  logging:
+    enabled: true
+  environment: dev
+
+scc:
+  environment: dev
+  s3:
+    imageUpload:
+      bucketName: scc-dev-accessibility-images-2
+      thumbnailBucketName: scc-dev-accessibility-thumbnails
+  cloudfront:
+    domain: d3vmj65l82owxs.cloudfront.net
+  slack:
+    channel:
+      reportAccessibility: "#scc-accessibility-report-test"

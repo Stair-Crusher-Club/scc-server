@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "scc-server-internal.fullname" . }}
+  labels:
+    {{- include "scc-server-internal.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "10"
+data:
+  application.yaml: |-
+{{ printf "%s/application.yaml" .Values.filesDir | .Files.Get | indent 4 }}
+  secret-raw.yaml: |-
+{{ printf "%s/secret.yaml" .Values.filesDir | .Files.Get | indent 4 }}
