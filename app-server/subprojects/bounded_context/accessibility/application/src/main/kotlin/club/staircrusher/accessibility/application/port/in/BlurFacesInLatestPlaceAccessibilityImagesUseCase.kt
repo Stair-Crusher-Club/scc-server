@@ -8,6 +8,7 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
@@ -26,6 +27,10 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
     private val taskExecutor = Executors.newCachedThreadPool()
 
     fun handleAsync() {
+        if (SccEnv.isProduction().not()) {
+            logger.info { "Skip blurring faces in the latest place accessibility images because it's not a production environment." }
+            return
+        }
         taskExecutor.execute {
             handle()
         }
@@ -45,12 +50,6 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
         val result =
             runBlocking { accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id) }
                 ?: return
-        logger.info {
-            "Blurred faces in the latest place accessibility images. ${
-                result.entranceResults.joinToString(",") { "${it.originalImageUrl} -> ${it.blurredImageUrl}" }
-            }"
-        }
-
         val entranceResults = result.entranceResults
         transactionManager.doInTransaction {
             val imageUrls = entranceResults.map { it.blurredImageUrl }

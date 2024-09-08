@@ -33,5 +33,9 @@ enum class SccEnv {
         fun getEnv(): SccEnv {
             return checkNotNull(value) { "SccEnv has not been set." }
         }
+
+        fun isProduction(): Boolean {
+            return getEnv() == SccEnv.PROD
+        }
     }
 }
