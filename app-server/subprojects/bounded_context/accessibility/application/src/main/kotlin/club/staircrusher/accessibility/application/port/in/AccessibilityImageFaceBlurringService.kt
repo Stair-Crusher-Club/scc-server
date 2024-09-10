@@ -67,7 +67,6 @@ open class AccessibilityImageFaceBlurringService(
                 detectedPeopleCount = 0
             )
             val (blurredImageUrl, detectedPositions) = run {
-                logger.info { "Detected ${detected.positions.size} faces in the image($imageUrl) from bytes(${detected.imageBytes.size}) | width = ${detected.imageSize.width}, height = ${detected.imageSize.height}" }
                 val outputByteArray = imageProcessor.blur(imageBytes, extension, detected.positions)
                 val blurredImageUrl = fileManagementService.uploadImage("${name}_b.$extension", outputByteArray)
                 blurredImageUrl to detected.positions
