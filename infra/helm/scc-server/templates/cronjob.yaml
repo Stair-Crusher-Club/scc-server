@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: scc-update-ranking
+  name: scc-blur-faces-in-latest-place-accessibility-images
   labels:
     {{- include "scc-server.labels" . | nindent 4 }}
 spec:
