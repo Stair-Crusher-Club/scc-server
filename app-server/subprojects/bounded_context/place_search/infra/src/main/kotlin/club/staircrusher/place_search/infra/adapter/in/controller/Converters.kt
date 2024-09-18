@@ -8,11 +8,12 @@ import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
 
-fun Place.toDTO() = club.staircrusher.api.spec.dto.Place(
+fun Place.toDTO(isFavorite: Boolean) = club.staircrusher.api.spec.dto.Place(
     id = id,
     name = name,
     address = address.toString(),
     category = category?.toDto(),
+    isFavorite = isFavorite
 )
 
 fun Building.toDTO() = club.staircrusher.api.spec.dto.Building(
@@ -22,7 +23,7 @@ fun Building.toDTO() = club.staircrusher.api.spec.dto.Building(
 )
 
 fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
-    place = place.toDTO(),
+    place = place.toDTO(isFavorite = isFavoritePlace),
     building = place.building.toDTO(),
     hasBuildingAccessibility = buildingAccessibility != null,
     hasPlaceAccessibility = placeAccessibility != null,

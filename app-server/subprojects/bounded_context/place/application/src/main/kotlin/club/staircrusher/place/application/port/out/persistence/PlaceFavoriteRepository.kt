@@ -7,5 +7,6 @@ interface PlaceFavoriteRepository : CrudRepository<PlaceFavorite, String> {
     fun findByUserIdAndDeletedAtIsNull(userId: String): List<PlaceFavorite>
     fun findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(userId: String, placeId: String): PlaceFavorite?
     fun findFirstByUserIdAndPlaceId(userId: String, placeId: String): PlaceFavorite?
+    fun findAllByUserIdAndPlaceIdIsInAndDeletedAtIsNull(userId: String, placeIds: Collection<String>): List<PlaceFavorite>
     fun countByPlaceIdAndDeletedAtIsNull(placeId: String): Long
 }

@@ -268,4 +268,36 @@ class SearchPlacesTest : PlaceSearchITBase() {
             }
         Unit
     }
+
+    @Test
+    fun `즐겨찾기 정보를 내려준다`() = runBlocking {
+        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val favoritePlace = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32)) }
+        transactionManager.doInTransaction { testDataGenerator.createPlaceFavorite(userId = user.id, placeId = favoritePlace.id) }
+        val notFavoritePlace = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32)) }
+        val searchText = notFavoritePlace.name.substring(2, 5)
+        val radiusMeters = 500
+
+        Mockito.`when`(
+            mapsService.findAllByKeyword(
+                searchText,
+                MapsService.SearchByKeywordOption(
+                    MapsService.SearchByKeywordOption.CircleRegion(centerLocation = favoritePlace.location, radiusMeters = radiusMeters,),
+                ),
+            )
+        ).thenReturn(listOf(favoritePlace, notFavoritePlace))
+
+        val params = SearchPlacesPostRequest(searchText = searchText, distanceMetersLimit = radiusMeters, currentLocation = favoritePlace.location.toDTO(),)
+        mvc.sccRequest("/searchPlaces", params, user = user)
+            .apply {
+                val result = getResult(SearchPlacesPost200Response::class)
+                assertEquals(2, result.items!!.size)
+                assertEquals(favoritePlace.id, result.items!![0].place.id)
+                assertNotNull(result.items!![0].distanceMeters)
+                assertTrue(result.items!![0].isAccessibilityRegistrable)
+                assertEquals(result.items!![0].place.isFavorite, true)
+                assertEquals(result.items!![1].place.isFavorite, false)
+            }
+        Unit
+    }
 }
