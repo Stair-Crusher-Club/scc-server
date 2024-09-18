@@ -42,6 +42,22 @@ paths:
         '204': { }
       summary: '''이 정보가 도움이 돼요''를 취소한다.'
 
+  /createPlaceFavorite:
+    post:
+      summary: 장소를 즐겨찾기에 추가한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePlaceFavoriteRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePlaceFavoriteResponseDto'
+
   /deleteAccessibility:
     post:
       summary: |
@@ -63,6 +79,22 @@ paths:
         '204': { }
         '400':
           $ref: '#/components/responses/ApiFailure'
+
+  /deletePlaceFavorite:
+    post:
+      summary: 장소를 즐겨찾기에서 삭제한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeletePlaceFavoriteRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePlaceFavoriteResponseDto'
 
   /deleteUser:
     post:

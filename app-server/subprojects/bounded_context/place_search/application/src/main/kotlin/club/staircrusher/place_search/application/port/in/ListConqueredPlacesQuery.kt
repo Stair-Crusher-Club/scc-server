@@ -18,6 +18,8 @@ class ListConqueredPlacesQuery(
         val buildingAccessibilityByBuildingId = buildingAccessibilities.associateBy { it.buildingId }
         val placeById = placeApplicationService.findAllByIds(placeAccessibilityByPlaceId.keys)
             .associateBy { it.id }
+        val placeIdToIsFavoriteMap = placeApplicationService.isFavoritePlaces(userId = userId, placeIds = placeAccessibilityByPlaceId.keys)
+
         placeAccessibilityByPlaceId.map { (placeId, placeAccessibility) ->
             val place = placeById[placeId]!!
             val ba = buildingAccessibilityByBuildingId[place.building.id]
@@ -28,6 +30,7 @@ class ListConqueredPlacesQuery(
                 distance = null,
                 accessibilityScore = AccessibilityScore.get(placeAccessibility, ba),
                 isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(place.building),
+                isFavoritePlace = placeIdToIsFavoriteMap[placeId] ?: false
             )
         }
             .sortedByDescending { it.placeAccessibility?.createdAt }

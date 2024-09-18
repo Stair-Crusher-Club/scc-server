@@ -1,6 +1,7 @@
 package club.staircrusher.place.application.port.`in`
 
 import club.staircrusher.domain_event.PlaceSearchEvent
+import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.domain.model.Place
@@ -18,6 +19,7 @@ import org.springframework.data.repository.findByIdOrNull
 @Component
 class PlaceApplicationService(
     private val placeRepository: PlaceRepository,
+    private val placeFavoriteRepository: PlaceFavoriteRepository,
     private val eventPublisher: DomainEventPublisher,
     private val mapsServices: List<MapsService>,
 ) {
@@ -132,6 +134,23 @@ class PlaceApplicationService(
         // 따라서 native query로는 place id 목록만 얻어오고, place 자체는 별도로 조회해온다.
         val placeIds = placeRepository.findIdsByPlacesInPolygon(polygonWkt)
         return placeRepository.findAllByIdIn(placeIds)
+    }
+
+    fun isFavoritePlace(placeId: String, userId: String): Boolean {
+        return placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(
+            placeId = placeId,
+            userId = userId
+        ) != null
+    }
+
+    fun isFavoritePlaces(placeIds: Collection<String>, userId: String): Map<String, Boolean> {
+        val favorites = placeFavoriteRepository.findAllByUserIdAndPlaceIdIsInAndDeletedAtIsNull(userId, placeIds)
+            .associateBy { it.placeId }
+        return placeIds.associateWith { placeId -> (favorites[placeId] != null) }
+    }
+
+    fun getTotalFavoriteCount(placeId: String): Long {
+        return placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId)
     }
 
     private fun List<Place>.mergeLocalDatabases(): List<Place> {

@@ -18,6 +18,7 @@ class PlaceSearchService(
     private val placeApplicationService: PlaceApplicationService,
     private val buildingService: BuildingService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
+
 ) {
     data class SearchPlacesResult(
         val place: Place,
@@ -26,6 +27,7 @@ class PlaceSearchService(
         val distance: Length? = null,
         val accessibilityScore: Double? = null,
         val isAccessibilityRegistrable: Boolean,
+        val isFavoritePlace: Boolean
     )
 
     @Suppress("UnusedPrivateMember", "MagicNumber")
@@ -38,6 +40,7 @@ class PlaceSearchService(
         hasSlope: Boolean?,
         isAccessibilityRegistered: Boolean?,
         limit: Int?,
+        userId: String? = null,
     ): List<SearchPlacesResult> {
         val places = placeApplicationService.findAllByKeyword(
             searchText,
@@ -65,28 +68,35 @@ class PlaceSearchService(
                 it
             }
         }
-        return places.toSearchPlacesResult(currentLocation)
+
+        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(places.map { it.id }, uid) } ?: emptyMap()
+
+        return places.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
             .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
     }
 
-    suspend fun listPlacesInBuilding(buildingId: String): List<SearchPlacesResult> {
+    suspend fun listPlacesInBuilding(buildingId: String, userId: String? = null): List<SearchPlacesResult> {
         val buildingAddress = buildingService.getById(buildingId)?.address?.toString()
             ?: throw IllegalArgumentException("Building of id $buildingId does not exist.")
         val placesBySearch = placeApplicationService.findAllByKeyword(buildingAddress, MapsService.SearchByKeywordOption())
         val placesInPersistence = placeApplicationService.findByBuildingId(buildingId)
-        return (placesBySearch + placesInPersistence)
-            .removeDuplicates()
-            .toSearchPlacesResult(currentLocation = null)
+        val places = (placesBySearch + placesInPersistence).removeDuplicates()
+
+        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(places.map { it.id }, uid) } ?: emptyMap()
+
+        return places
+            .toSearchPlacesResult(currentLocation = null, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
     }
 
-    suspend fun getPlace(placeId: String): SearchPlacesResult {
+    suspend fun getPlace(placeId: String, userId: String? = null): SearchPlacesResult {
         val place = placeApplicationService.findPlace(placeId) ?: throw IllegalArgumentException("Place with id $placeId does not exist.")
+        val isFavorite = userId?.let { uid -> placeApplicationService.isFavoritePlace(placeId, uid) } ?: false
         return listOf(place)
-            .toSearchPlacesResult(currentLocation = null)
+            .toSearchPlacesResult(currentLocation = null, mapOf(placeId to isFavorite))
             .first()
     }
 
-    private fun List<Place>.toSearchPlacesResult(currentLocation: Location?): List<SearchPlacesResult> {
+    private fun List<Place>.toSearchPlacesResult(currentLocation: Location?, placeIdToIsFavoriteMap: Map<String, Boolean>): List<SearchPlacesResult> {
         if (this.isEmpty()) {
             return emptyList()
         }
@@ -100,6 +110,7 @@ class PlaceSearchService(
                     distance = currentLocation?.let { LocationUtils.calculateDistance(it, p.location) },
                     accessibilityScore = pa?.let { AccessibilityScore.get(pa, ba)?.coerceIn(0.0..5.0) },
                     isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p.building),
+                    isFavoritePlace = placeIdToIsFavoriteMap[p.id] ?: false
                 )
             }
     }
