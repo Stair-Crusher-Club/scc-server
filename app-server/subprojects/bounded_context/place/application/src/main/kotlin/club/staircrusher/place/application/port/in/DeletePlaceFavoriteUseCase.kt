@@ -11,7 +11,7 @@ class DeletePlaceFavoriteUseCase(
     private val transactionManager: TransactionManager,
 ) {
     fun handle(request: Request): Response = transactionManager.doInTransaction {
-        val oldPlaceFavorite = placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(
+        val oldPlaceFavorite = placeFavoriteRepository.findFirstByUserIdAndPlaceId(
             userId = request.userId, placeId = request.placeId
         )
         if (oldPlaceFavorite == null || oldPlaceFavorite.deletedAt != null) {

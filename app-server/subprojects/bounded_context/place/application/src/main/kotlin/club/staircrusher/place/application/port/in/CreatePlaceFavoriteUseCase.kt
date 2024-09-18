@@ -19,8 +19,8 @@ class CreatePlaceFavoriteUseCase(
         placeRepository.findByIdOrNull(request.placeId)
             ?: throw IllegalArgumentException("Place of id ${request.placeId} does not exist.")
         val oldPlaceFavorite =
-            placeFavoriteRepository.findFirstByUserIdAndPlaceIdAndDeletedAtIsNull(userId = request.userId, placeId = request.placeId)
-        if (oldPlaceFavorite?.deletedAt != null) {
+            placeFavoriteRepository.findFirstByUserIdAndPlaceId(userId = request.userId, placeId = request.placeId)
+        if (oldPlaceFavorite != null && oldPlaceFavorite.deletedAt == null) {
             return@doInTransaction Response(
                 totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId = request.placeId),
                 placeFavorite = oldPlaceFavorite
