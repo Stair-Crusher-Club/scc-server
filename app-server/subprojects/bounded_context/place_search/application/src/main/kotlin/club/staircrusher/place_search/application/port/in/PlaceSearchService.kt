@@ -98,7 +98,7 @@ class PlaceSearchService(
                     buildingAccessibility = ba,
                     placeAccessibility = pa,
                     distance = currentLocation?.let { LocationUtils.calculateDistance(it, p.location) },
-                    accessibilityScore = pa?.let { AccessibilityScore.get(pa, ba) },
+                    accessibilityScore = pa?.let { AccessibilityScore.get(pa, ba)?.coerceIn(0.0..5.0) },
                     isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p.building),
                 )
             }
@@ -111,7 +111,7 @@ class PlaceSearchService(
         limit: Int?,
     ): List<SearchPlacesResult> {
         return this.filter { result ->
-            val scoreChecked = maxAccessibilityScore?.let { result.accessibilityScore ?: Double.MAX_VALUE <= it } ?: true
+            val scoreChecked = maxAccessibilityScore?.let { (result.accessibilityScore ?: Double.MAX_VALUE) <= it } ?: true
             val slopeChecked = hasSlope?.let { result.placeAccessibility?.hasSlope == it } ?: true
             val accessibilityRegisteredChecked = isAccessibilityRegistered?.let { (result.placeAccessibility !== null) == it } ?: true
             scoreChecked && slopeChecked && accessibilityRegisteredChecked
