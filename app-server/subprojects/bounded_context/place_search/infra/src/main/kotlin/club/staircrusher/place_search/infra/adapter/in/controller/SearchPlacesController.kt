@@ -25,9 +25,9 @@ class SearchPlacesController(
     @PostMapping("/searchPlaces")
     suspend fun searchPlaces(
         @RequestBody request: SearchPlacesPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): SearchPlacesPost200Response {
-        val userId = authentication.principal
+        val userId = authentication?.principal
         val searchResults = placeSearchService.searchPlaces(
             searchText = request.searchText,
             currentLocation = request.currentLocation?.toModel(),
@@ -47,9 +47,9 @@ class SearchPlacesController(
     @PostMapping("/listPlacesInBuilding")
     suspend fun listPlacesInBuilding(
         @RequestBody request: ListPlacesInBuildingPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): List<PlaceListItem> {
-        val userId = authentication.principal
+        val userId = authentication?.principal
         return placeSearchService.listPlacesInBuilding(
             buildingId = request.buildingId,
             userId = userId
@@ -60,9 +60,9 @@ class SearchPlacesController(
     @PostMapping("/getPlaceWithBuilding")
     suspend fun getPlace(
         @RequestBody request: GetAccessibilityPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): PlaceListItem {
-        val userId = authentication.principal
+        val userId = authentication?.principal
         return placeSearchService.getPlace(
             placeId = request.placeId,
             userId = userId
