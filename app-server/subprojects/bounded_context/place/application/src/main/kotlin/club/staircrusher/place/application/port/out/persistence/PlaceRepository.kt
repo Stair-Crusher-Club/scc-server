@@ -1,12 +1,9 @@
 package club.staircrusher.place.application.port.out.persistence
 
 import club.staircrusher.place.domain.model.Place
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import java.time.Instant
 
 interface PlaceRepository : CrudRepository<Place, String> {
     fun findByBuildingId(buildingId: String): List<Place>
