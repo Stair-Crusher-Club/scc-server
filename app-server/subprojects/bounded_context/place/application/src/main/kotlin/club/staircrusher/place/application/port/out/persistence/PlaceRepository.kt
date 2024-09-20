@@ -36,19 +36,4 @@ interface PlaceRepository : CrudRepository<Place, String> {
 
     @EntityGraph(attributePaths = ["building"])
     fun findAllByIdIn(ids: List<String>): List<Place>
-
-    @Query("""
-        SELECT p
-        FROM Place p
-        WHERE
-            (
-                (p.createdAt = :cursorCreatedAt AND p.id < :cursorId)
-                OR (p.createdAt < :cursorCreatedAt)
-            )
-    """)
-    fun findCursored(
-        cursorCreatedAt: Instant,
-        cursorId: String,
-        pageable: Pageable,
-    ): Page<Place>
 }
