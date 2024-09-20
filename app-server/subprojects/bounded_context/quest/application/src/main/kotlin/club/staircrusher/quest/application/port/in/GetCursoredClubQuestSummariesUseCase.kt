@@ -2,9 +2,8 @@ package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.domain.model.ClubQuestSummary
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.domain.SccDomainException
+import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -38,7 +37,7 @@ class GetCursoredClubQuestSummariesUseCase(
             ),
         )
         val result = clubQuestRepository.findCursoredSummaries(
-            cursorCreatedAt = cursor.createdAt,
+            cursorCreatedAt = cursor.timestamp,
             cursorId = cursor.id,
             pageable = pageRequest,
         )
@@ -56,29 +55,18 @@ class GetCursoredClubQuestSummariesUseCase(
     }
 
     private data class Cursor(
-        val id: String,
+        val questId: String,
         val createdAt: Instant,
-    ) {
-        val value: String = "$id$DELIMITER${createdAt.toEpochMilli()}"
-
+    ) : TimestampCursor(questId, createdAt) {
         constructor(summary: ClubQuestSummary) : this(
-            id = summary.id,
+            questId = summary.id,
             createdAt = summary.createdAt,
         )
 
         companion object {
-            private const val DELIMITER = "__"
+            fun parse(cursorValue: String) = TimestampCursor.parse(cursorValue)
 
-            fun parse(cursorValue: String): Cursor {
-                return try {
-                    val (id, createdAtMillis) = cursorValue.split(DELIMITER)
-                    Cursor(id = id, createdAt = Instant.ofEpochMilli(createdAtMillis.toLong()))
-                } catch (t: Throwable) {
-                    throw SccDomainException("Invalid cursor value: $cursorValue", cause = t)
-                }
-            }
-
-            fun initial() = Cursor(id = "", createdAt = SccClock.instant())
+            fun initial() = TimestampCursor.initial()
         }
     }
 
