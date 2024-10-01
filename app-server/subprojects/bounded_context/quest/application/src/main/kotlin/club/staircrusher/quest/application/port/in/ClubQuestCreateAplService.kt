@@ -61,6 +61,7 @@ class ClubQuestCreateAplService(
                     placeApplicationService.searchPlacesInPolygon(points)
                 }
             }
+                .filter { it.category in questTargetPlaceCategories }
         } else {
             when (regionType) {
                 null, ClubQuestCreateRegionType.CIRCLE -> {
@@ -228,5 +229,6 @@ class ClubQuestCreateAplService(
 
     companion object {
         private val logger = KotlinLogging.logger {  }
+        private val questTargetPlaceCategories = PlaceCrawler.targetPlaceCategories
     }
 }
