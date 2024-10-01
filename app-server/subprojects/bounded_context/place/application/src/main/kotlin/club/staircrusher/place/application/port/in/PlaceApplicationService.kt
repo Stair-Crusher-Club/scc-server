@@ -156,8 +156,20 @@ class PlaceApplicationService(
     private fun List<Place>.mergeLocalDatabases(): List<Place> {
         val existingPlaceById = placeRepository.findAllById(this.map { it.id })
             .associateBy { it.id }
-        return this.map {
-            existingPlaceById[it.id] ?: it
+        return this.map { searchedPlace ->
+            existingPlaceById[searchedPlace.id]?.also { existingPlace ->
+                Place.of(
+                    id = searchedPlace.id,
+                    name = searchedPlace.name,
+                    location = searchedPlace.location,
+                    building = searchedPlace.building,
+                    siGunGuId = searchedPlace.siGunGuId,
+                    eupMyeonDongId = searchedPlace.eupMyeonDongId,
+                    category = searchedPlace.category,
+                    isClosed = existingPlace.isClosed,
+                    isNotAccessible = existingPlace.isNotAccessible,
+                )
+            } ?: searchedPlace
         }
     }
 }
