@@ -28,7 +28,7 @@ class Place private constructor(
     /**
      * geospatial query를 위해 location을 역정규화한 컬럼.
      */
-    val locationForQuery: Point,
+    val locationForQuery: Point?,
     @ManyToOne(fetch = FetchType.EAGER)
     val building: Building,
     val siGunGuId: String?,
@@ -53,6 +53,11 @@ class Place private constructor(
 
     fun setIsNotAccessible(value: Boolean) {
         isNotAccessible = value
+    }
+
+    fun isUpdated(maybeUpdated: Place): Boolean {
+        check(this.id == maybeUpdated.id)
+        return this.locationForQuery == null && maybeUpdated.locationForQuery != null
     }
 
     override fun equals(other: Any?): Boolean {
