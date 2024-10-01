@@ -169,7 +169,6 @@ class ClubQuestCreateAplService(
             .flatMap { (building, places) ->
                 places.map { building to it }
             }
-            .shuffled()
             .chunked(maxPlaceCountPerQuest)
             .map { chunk -> chunk.groupBy({ (building, ) -> building }, { (_, place) -> place }) }
     }
