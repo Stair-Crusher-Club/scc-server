@@ -41,6 +41,7 @@ class CreateAndNotifyDailyClubQuestUseCase(
                 clusterCount = 1,
                 maxPlaceCountPerQuest = maxPlaceCountPerQuest,
                 useAlreadyCrawledPlace = false,
+                questTargetPlaceCategories = null,
             )
                 .also { check(it.size == 1) }
         }

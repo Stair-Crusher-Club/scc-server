@@ -90,6 +90,10 @@ paths:
                   description: |
                     지도 API 기반이 아닌, 이미 크롤링하여 계단정복지도 서버 DB에 캐싱해둔 장소를 기반으로 퀘스트를 생성할지 여부.
                     지정되지 않은 경우, default는 false.
+                questTargetPlaceCategories:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/QuestTargetPlaceCategoryEnumDTO'
               required:
                 - clusterCount
                 - maxPlaceCountPerQuest
@@ -459,6 +463,16 @@ components:
       enum:
         - CIRCLE
         - POLYGON
+
+    QuestTargetPlaceCategoryEnumDTO:
+      type: string
+      enum:
+        - RESTAURANT
+        - CAFE
+        - MARKET
+        - HOSPITAL
+        - PHARMACY
+        - CONVENIENCE_STORE
 
     ClubQuestCreateDryRunResultItemDTO:
       description: 퀘스트 생성 시뮬레이션 결과. 각 퀘스트마다 1개의 아이템이 반환된다.
