@@ -17,6 +17,7 @@ import club.staircrusher.quest.util.HumanReadablePrefixGenerator
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.stdlib.place.PlaceCategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -61,7 +62,6 @@ class ClubQuestCreateAplService(
                     placeApplicationService.searchPlacesInPolygon(points)
                 }
             }
-                .filter { it.category in questTargetPlaceCategories }
         } else {
             when (regionType) {
                 null, ClubQuestCreateRegionType.CIRCLE -> {
@@ -77,6 +77,7 @@ class ClubQuestCreateAplService(
                 }
             }
         }
+            .filter { it.category in questTargetPlaceCategories }
         val accessibilityExistingPlaceIds = transactionManager.doInTransaction {
             accessibilityApplicationService.filterAccessibilityExistingPlaceIds(
                 places.map { it.id }
@@ -241,6 +242,13 @@ class ClubQuestCreateAplService(
 
     companion object {
         private val logger = KotlinLogging.logger {  }
-        private val questTargetPlaceCategories = PlaceCrawler.targetPlaceCategories
+        private val questTargetPlaceCategories = listOf(
+            PlaceCategory.RESTAURANT,
+            PlaceCategory.CAFE,
+            PlaceCategory.MARKET,
+            PlaceCategory.HOSPITAL,
+            PlaceCategory.PHARMACY,
+            PlaceCategory.CONVENIENCE_STORE
+        )
     }
 }

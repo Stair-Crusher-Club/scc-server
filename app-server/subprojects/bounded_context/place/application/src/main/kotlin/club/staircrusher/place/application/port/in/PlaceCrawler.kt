@@ -95,7 +95,7 @@ class PlaceCrawler(
         return chunkedRectangles
             .flatMap { (leftBottomLocation, rightTopLocation) ->
                 coroutineScope {
-                    targetPlaceCategories
+                    crawlingTargetPlaceCategories
                         .map {
                             async {
                                 placeApplicationService.findAllByCategory(
@@ -130,7 +130,7 @@ class PlaceCrawler(
                 .let { awaitAll(*it.toTypedArray()) }
                 .flatten()
         }
-            .filter { it.category in targetPlaceCategories }
+            .filter { it.category in crawlingTargetPlaceCategories }
     }
 
     @Suppress("MagicNumber") private val chunkTargetLength = Length.ofMeters(150)
@@ -152,7 +152,7 @@ class PlaceCrawler(
     }
 
     companion object {
-        val targetPlaceCategories = listOf(
+        val crawlingTargetPlaceCategories = listOf(
             PlaceCategory.RESTAURANT,
             PlaceCategory.CAFE,
             PlaceCategory.MARKET,
