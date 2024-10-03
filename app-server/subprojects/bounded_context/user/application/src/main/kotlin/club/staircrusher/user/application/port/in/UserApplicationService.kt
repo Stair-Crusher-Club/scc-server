@@ -18,6 +18,7 @@ import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 
 @Component
@@ -30,6 +31,7 @@ class UserApplicationService(
     private val stibeeSubscriptionService: StibeeSubscriptionService,
     private val sccServerEventRecorder: SccServerEventRecorder,
 ) {
+    private val logger = KotlinLogging.logger {}
 
     @Deprecated("닉네임 로그인은 사라질 예정")
     fun signUpWithNicknameAndPassword(
@@ -144,9 +146,13 @@ class UserApplicationService(
         user.mobilityTools.addAll(mobilityTools)
         userRepository.save(user)
 
+        logger.info("isNewsLetterSubscriptionAgreed value $isNewsLetterSubscriptionAgreed for user id ${user.id}")
         if (isNewsLetterSubscriptionAgreed) {
             transactionManager.doAfterCommit {
-                user.email?.let { subscribeToNewsLetter(user.id, it, user.nickname) }
+                user.email?.let {
+                    logger.info("subscribe to news letter called for user id ${user.id}")
+                    subscribeToNewsLetter(user.id, it, user.nickname)
+                }
             }
         }
 
