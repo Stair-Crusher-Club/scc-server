@@ -47,6 +47,7 @@ class ClubQuestCreateAplService(
         clusterCount: Int,
         maxPlaceCountPerQuest: Int,
         useAlreadyCrawledPlace: Boolean,
+        questTargetPlaceCategories: List<PlaceCategory>?,
     ): List<ClubQuestCreateDryRunResultItem> = withContext(Dispatchers.IO) {
         val places = if (useAlreadyCrawledPlace) {
             when (regionType) {
@@ -77,7 +78,7 @@ class ClubQuestCreateAplService(
                 }
             }
         }
-            .filter { it.category in questTargetPlaceCategories }
+            .filter { it.category in (questTargetPlaceCategories ?: defaultQuestTargetPlaceCategories) }
         val accessibilityExistingPlaceIds = transactionManager.doInTransaction {
             accessibilityApplicationService.filterAccessibilityExistingPlaceIds(
                 places.map { it.id }
@@ -242,7 +243,7 @@ class ClubQuestCreateAplService(
 
     companion object {
         private val logger = KotlinLogging.logger {  }
-        private val questTargetPlaceCategories = listOf(
+        private val defaultQuestTargetPlaceCategories = listOf(
             PlaceCategory.RESTAURANT,
             PlaceCategory.CAFE,
             PlaceCategory.MARKET,
