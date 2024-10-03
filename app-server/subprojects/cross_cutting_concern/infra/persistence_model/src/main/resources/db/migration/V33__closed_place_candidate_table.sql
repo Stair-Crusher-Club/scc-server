@@ -7,3 +7,5 @@ CREATE TABLE IF NOT EXISTS closed_place_candidate (
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_closed_place_candidate_1 ON closed_place_candidate(place_id);
