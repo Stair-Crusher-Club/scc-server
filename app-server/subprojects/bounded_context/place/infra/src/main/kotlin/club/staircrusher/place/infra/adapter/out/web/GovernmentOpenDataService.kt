@@ -161,6 +161,10 @@ class GovernmentOpenDataService(
                             // 전화번호
                             val siteTel: String?,
                         ) {
+                            // pk 3 개를 조합하라고 하지만 opnSfTeamCode 가 mgtNo 의 시작부분과 동일하기에 하나만 사용한다
+                            val externalId: String
+                                get() = "${mgtNo};${opnSvcId}"
+
                             val location: Location?
                                 get() = x?.let { locationConverter.toLocation(it.toDouble(), y!!.toDouble()) }
                         }
@@ -172,6 +176,7 @@ class GovernmentOpenDataService(
 
     private fun LocalDataApiClient.GetPlaceStatusResponse.Result.Body.Row.Data.toDTO(): ClosedPlaceResult? {
         return ClosedPlaceResult(
+            externalId = externalId,
             name = bplcNm ?: return null,
             postalCode = rdnPostNo ?: return null,
             location = location ?: return null,

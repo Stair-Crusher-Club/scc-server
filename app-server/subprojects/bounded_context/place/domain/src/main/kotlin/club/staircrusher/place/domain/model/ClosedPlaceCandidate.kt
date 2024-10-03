@@ -14,6 +14,9 @@ class ClosedPlaceCandidate(
     @Column(nullable = false)
     val placeId: String,
 
+    @Column(nullable = false)
+    val externalId: String,
+
     @Column(nullable = true)
     var acceptedAt: Instant? = null,
 
@@ -34,6 +37,7 @@ class ClosedPlaceCandidate(
     }
 
     override fun toString(): String {
-        return "ClosedPlaceCandidate(id='$id', placeId='$placeId', createdAt=$createdAt, updatedAt=$updatedAt)"
+        return "ClosedPlaceCandidate(id='$id', placeId='$placeId', externalId='$externalId', " +
+            "acceptedAt='$acceptedAt', ignoredAt='$ignoredAt' createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }
