@@ -55,12 +55,12 @@ class GetCursoredClubQuestSummariesUseCase(
     }
 
     private data class Cursor(
-        val questId: String,
         val createdAt: Instant,
-    ) : TimestampCursor(questId, createdAt) {
+        val questId: String,
+    ) : TimestampCursor(createdAt, questId) {
         constructor(summary: ClubQuestSummary) : this(
-            questId = summary.id,
             createdAt = summary.createdAt,
+            questId = summary.id,
         )
 
         companion object {
