@@ -42,6 +42,6 @@ class CreateClosedPlaceCandidatesUseCase(
     }
 
     companion object {
-        private const val SEARCH_RADIUS = 10
+        private const val SEARCH_RADIUS = 30
     }
 }
