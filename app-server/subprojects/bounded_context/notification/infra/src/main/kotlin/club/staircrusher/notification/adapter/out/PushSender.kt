@@ -74,6 +74,7 @@ class PushSender(
         return AndroidConfig.builder().apply {
             notification.collapseKey?.let { setCollapseKey(it) }
             putAllData(customData)
+            putData(DEEPLINK_CUSTOM_DATA_KEY, notification.link)
             setPriority(AndroidConfig.Priority.HIGH)
         }.build()
     }
@@ -90,8 +91,13 @@ class PushSender(
 
         return ApnsConfig.builder().apply {
             putAllCustomData(customData)
+            putCustomData(DEEPLINK_CUSTOM_DATA_KEY, notification.link)
             setAps(aps)
             notification.collapseKey?.let { putHeader("apns-collapse-id", it) }
         }.build()
+    }
+
+    companion object {
+        private const val DEEPLINK_CUSTOM_DATA_KEY = "_d"
     }
 }

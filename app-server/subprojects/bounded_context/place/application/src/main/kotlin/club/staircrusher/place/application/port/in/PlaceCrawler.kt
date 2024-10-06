@@ -17,15 +17,6 @@ import kotlin.math.ceil
 class PlaceCrawler(
     private val placeApplicationService: PlaceApplicationService,
 ) {
-    private val targetPlaceCategories = listOf(
-        PlaceCategory.RESTAURANT,
-        PlaceCategory.CAFE,
-        PlaceCategory.MARKET,
-        PlaceCategory.HOSPITAL,
-        PlaceCategory.PHARMACY,
-        PlaceCategory.CONVENIENCE_STORE
-    )
-
     /**
      * 지정된 지역으로 그냥 검색하면 너무 많은 장소가 누락되는 것으로 확인되었다.
      * 장소 누락을 최대한 방지하기 위해, 다음과 같은 로직을 태운다.
@@ -104,7 +95,7 @@ class PlaceCrawler(
         return chunkedRectangles
             .flatMap { (leftBottomLocation, rightTopLocation) ->
                 coroutineScope {
-                    targetPlaceCategories
+                    crawlingTargetPlaceCategories
                         .map {
                             async {
                                 placeApplicationService.findAllByCategory(
@@ -139,7 +130,7 @@ class PlaceCrawler(
                 .let { awaitAll(*it.toTypedArray()) }
                 .flatten()
         }
-            .filter { it.category in targetPlaceCategories }
+            .filter { it.category in crawlingTargetPlaceCategories }
     }
 
     @Suppress("MagicNumber") private val chunkTargetLength = Length.ofMeters(150)
@@ -158,5 +149,16 @@ class PlaceCrawler(
 
     private fun <T, ID> List<T>.removeDuplicates(idGetter: (T) -> ID): List<T> {
         return associateBy { idGetter(it) }.values.toList()
+    }
+
+    companion object {
+        val crawlingTargetPlaceCategories = listOf(
+            PlaceCategory.RESTAURANT,
+            PlaceCategory.CAFE,
+            PlaceCategory.MARKET,
+            PlaceCategory.HOSPITAL,
+            PlaceCategory.PHARMACY,
+            PlaceCategory.CONVENIENCE_STORE
+        )
     }
 }

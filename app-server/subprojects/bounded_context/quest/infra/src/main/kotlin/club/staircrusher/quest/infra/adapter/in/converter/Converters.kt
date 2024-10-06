@@ -9,6 +9,7 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestPurposeTypeEnumDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestSummaryDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
+import club.staircrusher.admin_api.spec.dto.QuestTargetPlaceCategoryEnumDTO
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateRegionType
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
@@ -19,6 +20,7 @@ import club.staircrusher.quest.domain.model.ClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.ClubQuestTargetPlace
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
+import club.staircrusher.stdlib.place.PlaceCategory
 
 fun ClubQuestCreateRegionTypeDTO.toModel() = when (this) {
     ClubQuestCreateRegionTypeDTO.CIRCLE -> ClubQuestCreateRegionType.CIRCLE
@@ -141,3 +143,12 @@ fun ClubQuestSummary.toDTO() = ClubQuestSummaryDTO(
     endAt = endAt.toDTO(),
     shortenedUrl = shortenedAdminUrl,
 )
+
+fun QuestTargetPlaceCategoryEnumDTO.toModel() = when (this) {
+    QuestTargetPlaceCategoryEnumDTO.RESTAURANT -> PlaceCategory.RESTAURANT
+    QuestTargetPlaceCategoryEnumDTO.CAFE -> PlaceCategory.CAFE
+    QuestTargetPlaceCategoryEnumDTO.MARKET -> PlaceCategory.MARKET
+    QuestTargetPlaceCategoryEnumDTO.HOSPITAL -> PlaceCategory.HOSPITAL
+    QuestTargetPlaceCategoryEnumDTO.PHARMACY -> PlaceCategory.PHARMACY
+    QuestTargetPlaceCategoryEnumDTO.CONVENIENCE_STORE -> PlaceCategory.CONVENIENCE_STORE
+}

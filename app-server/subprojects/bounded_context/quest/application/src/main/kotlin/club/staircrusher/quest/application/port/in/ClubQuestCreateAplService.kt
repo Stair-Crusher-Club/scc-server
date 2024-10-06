@@ -17,6 +17,7 @@ import club.staircrusher.quest.util.HumanReadablePrefixGenerator
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.stdlib.place.PlaceCategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -46,6 +47,7 @@ class ClubQuestCreateAplService(
         clusterCount: Int,
         maxPlaceCountPerQuest: Int,
         useAlreadyCrawledPlace: Boolean,
+        questTargetPlaceCategories: List<PlaceCategory>?,
     ): List<ClubQuestCreateDryRunResultItem> = withContext(Dispatchers.IO) {
         val places = if (useAlreadyCrawledPlace) {
             when (regionType) {
@@ -76,6 +78,7 @@ class ClubQuestCreateAplService(
                 }
             }
         }
+            .filter { it.category in (questTargetPlaceCategories ?: defaultQuestTargetPlaceCategories) }
         val accessibilityExistingPlaceIds = transactionManager.doInTransaction {
             accessibilityApplicationService.filterAccessibilityExistingPlaceIds(
                 places.map { it.id }
@@ -89,25 +92,38 @@ class ClubQuestCreateAplService(
         val buildings = buildingToPlaces.keys.toList()
         val clusteredBuildings = clubQuestTargetBuildingClusterer.clusterBuildings(buildings, clusterCount)
 
-        val quests = clusteredBuildings.flatMap { (questCenterLocation, targetBuildings) ->
-            // take 2 * maxPlaceCountPerQuest places first and then cross validate them
-            val targets = buildingToPlaces.filter { it.key in targetBuildings }
-            val chunkedBuildings = chunkByMaxPlaceCountPerQuest(targets, maxPlaceCountPerQuest * 2)
-            chunkedBuildings.map { chunk -> questCenterLocation to chunk }
+        val questCandidates = clusteredBuildings
+            .flatMap { (questCenterLocation, targetBuildings) ->
+                val targets = buildingToPlaces.filter { it.key in targetBuildings }
+                val chunkedBuildings = chunkByMaxPlaceCountPerQuest(targets, maxPlaceCountPerQuest)
+
+                chunkedBuildings.map { chunk -> questCenterLocation to chunk }
+            }
+            .sortedByDescending { (_, targetBuildings) -> targetBuildings.values.sumOf { it.size } }
+
+        val quests = questCandidates.take(clusterCount)
+        val remainingPlaces = questCandidates
+            .subList(quests.size, questCandidates.size)
+            .flatMap { (_, placesByBuilding) -> placesByBuilding.values.flatten() }
+            .toMutableList()
+        val placeCountAdjustedQuests = quests.map { quest ->
+            val placesInQuest = quest.second.values.flatten()
+            if (remainingPlaces.isNotEmpty() && placesInQuest.size < maxPlaceCountPerQuest) {
+                val countToSupply = minOf(maxPlaceCountPerQuest - placesInQuest.size, remainingPlaces.size)
+                val placesToSupply = mutableListOf<Place>()
+                repeat(countToSupply) {
+                    placesToSupply += remainingPlaces.removeFirst()
+                }
+                Pair(quest.first, (placesInQuest + placesToSupply).groupBy { it.building })
+            } else {
+                quest
+            }
         }
 
-        quests
-            .sortedByDescending { (_, targetBuildings) -> targetBuildings.values.sumOf { it.size } }
-            .take(clusterCount) // clusterCount 개의 퀘스트만 만든다.
+        placeCountAdjustedQuests
             .map { (location, targetBuildings) ->
                 val b = targetBuildings
-                    // 네이버 지도 api의 rate limit이 너무 낮아서 임시로 비활성화한다.
                     .flatMap { it.value }
-//                    .flatMap { (_, places) ->
-//                        val validationResults = clubQuestTargetPlacesSearcher.crossValidatePlaces(places)
-//                        places.filterIndexed { index, _ -> validationResults[index] }
-//                    }
-                    .take(maxPlaceCountPerQuest)
                     .groupToClubQuestTargetBuildings()
 
                 location to b
@@ -168,7 +184,6 @@ class ClubQuestCreateAplService(
             .flatMap { (building, places) ->
                 places.map { building to it }
             }
-            .shuffled()
             .chunked(maxPlaceCountPerQuest)
             .map { chunk -> chunk.groupBy({ (building, ) -> building }, { (_, place) -> place }) }
     }
@@ -228,5 +243,13 @@ class ClubQuestCreateAplService(
 
     companion object {
         private val logger = KotlinLogging.logger {  }
+        private val defaultQuestTargetPlaceCategories = listOf(
+            PlaceCategory.RESTAURANT,
+            PlaceCategory.CAFE,
+            PlaceCategory.MARKET,
+            PlaceCategory.HOSPITAL,
+            PlaceCategory.PHARMACY,
+            PlaceCategory.CONVENIENCE_STORE
+        )
     }
 }

@@ -6,7 +6,6 @@ import club.staircrusher.accessibility.application.port.out.persistence.PlaceAcc
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.AccessibilityImageFaceBlurringHistory
 import club.staircrusher.stdlib.testing.SccRandom
-import club.staircrusher.testing.spring_it.base.SccSpringITApplication
 import club.staircrusher.testing.spring_it.mock.MockDetectFacesService
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -15,11 +14,9 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import java.time.Duration
 
-@SpringBootTest(classes = [SccSpringITApplication::class])
 class BlurFacesInLatestBuildingAccessibilityImagesUseCaseTest : BlurFacesITBase() {
     @Autowired
     private lateinit var accessibilityImageFaceBlurringHistoryRepository: AccessibilityImageFaceBlurringHistoryRepository

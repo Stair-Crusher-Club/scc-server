@@ -15,8 +15,15 @@ class CacheAllBuildingsAndPlacesUseCase(
 ) {
     fun handle(buildings: Collection<Building>, places: Collection<Place>) = transactionManager.doInTransaction {
         val existingBuildingIds = buildingRepository.findAllById(buildings.map { it.id }).map { it.id }.toSet()
-        val existingPlaceIds = placeRepository.findAllById(places.map { it.id }).map { it.id }.toSet()
         buildingRepository.saveAll(buildings.filter { it.id !in existingBuildingIds })
-        placeRepository.saveAll(places.filter { it.id !in existingPlaceIds })
+
+        val existingPlaceById  = placeRepository.findAllById(places.map { it.id })
+            .associateBy { it.id }
+        val existingPlaceIds = existingPlaceById.values.map { it.id }.toSet()
+        val newOrUpdatedPlaces = places.filter {
+            val existingPlace = existingPlaceById[it.id]
+            it.id !in existingPlaceIds || existingPlace?.isUpdated(it) == true
+        }
+        placeRepository.saveAll(newOrUpdatedPlaces)
     }
 }
