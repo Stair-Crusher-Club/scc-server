@@ -6,7 +6,6 @@ fun String.emptyToNull() = this.ifBlank { null }
 // string similarity by levenshtein distance considering korean
 fun String.isSimilarWith(other: String, maxThreshold: Int = 3): Boolean {
     val similarity = jamoLevenshtein(this, other)
-    println(similarity)
     return similarity <= maxThreshold
 }
 
