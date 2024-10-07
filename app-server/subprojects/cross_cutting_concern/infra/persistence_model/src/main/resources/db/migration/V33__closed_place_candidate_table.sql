@@ -11,3 +11,4 @@ CREATE TABLE IF NOT EXISTS closed_place_candidate (
 
 CREATE INDEX idx_closed_place_candidate_1 ON closed_place_candidate(place_id);
 CREATE INDEX idx_closed_place_candidate_2 ON closed_place_candidate(external_id);
+CREATE INDEX idx_closed_place_candidate_3 ON closed_place_candidate(created_at);

@@ -1,5 +1,6 @@
 package club.staircrusher.place.domain.model
 
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -23,6 +24,14 @@ class ClosedPlaceCandidate(
     @Column(nullable = true)
     var ignoredAt: Instant? = null,
 ) : TimeAuditingBaseEntity() {
+    fun accept() {
+        acceptedAt = SccClock.instant()
+    }
+
+    fun ignore() {
+        ignoredAt = SccClock.instant()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
