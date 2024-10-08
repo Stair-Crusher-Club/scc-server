@@ -64,3 +64,27 @@ spec:
                 - "-XPOST"
                 - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/updateChallengeRanks"
           restartPolicy: OnFailure
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scc-create-closed-place-candidates
+  labels:
+    {{- include "scc-server.labels" . | nindent 4 }}
+spec:
+  # At 11:00 pm (KST) every day
+  schedule: "0 14 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: curl-container
+              image: appropriate/curl
+              args:
+                - "--fail"
+                - "-XPOST"
+                - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/createClosedPlaceCandidates"
+          restartPolicy: OnFailure

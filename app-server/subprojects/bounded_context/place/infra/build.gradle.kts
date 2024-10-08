@@ -9,6 +9,7 @@ dependencies {
 
     implementation(projects.crossCuttingConcern.stdlib)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
+    implementation(projects.crossCuttingConcern.infra.network)
     implementation(projects.apiSpecification.domainEvent)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
