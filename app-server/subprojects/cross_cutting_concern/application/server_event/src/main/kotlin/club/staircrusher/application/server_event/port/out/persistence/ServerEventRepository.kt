@@ -1,7 +1,6 @@
 package club.staircrusher.application.server_event.port.out.persistence
 
-import club.staircrusher.domain.server_event.ServerEvent
+import club.staircrusher.domain.server_event.RdbServerEvent
+import org.springframework.data.repository.CrudRepository
 
-interface ServerEventRepository {
-    fun save(entity: ServerEvent): ServerEvent
-}
+interface ServerEventRepository : CrudRepository<RdbServerEvent, String>
