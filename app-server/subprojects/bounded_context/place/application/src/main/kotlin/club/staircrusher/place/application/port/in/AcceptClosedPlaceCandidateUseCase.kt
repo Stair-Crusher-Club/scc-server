@@ -16,11 +16,13 @@ class AcceptClosedPlaceCandidateUseCase(
     fun handle(candidateId: String) = transactionManager.doInTransaction {
         val candidate = closedPlaceCandidateRepository.findByIdOrNull(candidateId)
             ?: throw IllegalArgumentException("closed place candidate with id($candidateId) not found")
+        val place = placeRepository.findByIdOrNull(candidate.placeId)!!
 
         candidate.accept()
         closedPlaceCandidateRepository.save(candidate)
+        place.setIsClosed(true)
+        placeRepository.save(place)
 
-        val place = placeRepository.findByIdOrNull(candidate.placeId)!!
         return@doInTransaction NamedClosedPlaceCandidate(
             candidateId = candidate.id,
             placeId = place.id,
