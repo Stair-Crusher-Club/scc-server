@@ -30,7 +30,7 @@ class AdminPlaceController(
         startPlaceCrawlingUseCase.handle(request.boundaryVertices.map { it.toModel() })
     }
 
-    @GetMapping("/admin/closedPlaceCandidates")
+    @GetMapping("/admin/closed-place-candidates")
     fun listClosedPlaceCandidates(
         @RequestParam(required = false) limit: Int?,
         @RequestParam(required = false) cursor: String?,
@@ -46,18 +46,18 @@ class AdminPlaceController(
         }
     }
 
-    @GetMapping("/admin/closedPlaceCandidates/{candidateId}")
+    @GetMapping("/admin/closed-place-candidates/{candidateId}")
     fun getClosedPlaceCandidate(@PathVariable candidateId: String): AdminClosedPlaceCandidateDTO {
         return getClosedPlaceCandidateUseCase.handle(candidateId)?.toAdminDTO()
             ?: throw IllegalArgumentException("closed place candidate with id($candidateId) not found")
     }
 
-    @PutMapping("/admin/closedPlaceCandidates/{candidateId}/accept")
+    @PutMapping("/admin/closed-place-candidates/{candidateId}/accept")
     fun acceptClosedPlaceCandidate(@PathVariable candidateId: String): AdminClosedPlaceCandidateDTO {
         return acceptClosedPlaceCandidateUseCase.handle(candidateId).toAdminDTO()
     }
 
-    @PutMapping("/admin/closedPlaceCandidates/{candidateId}/ignore")
+    @PutMapping("/admin/closed-place-candidates/{candidateId}/ignore")
     fun ignoreClosedPlaceCandidate(@PathVariable candidateId: String): AdminClosedPlaceCandidateDTO {
         return ignoreClosedPlaceCandidateUseCase.handle(candidateId).toAdminDTO()
     }

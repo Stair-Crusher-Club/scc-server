@@ -985,7 +985,7 @@ components:
     AdminListClosedPlaceCandidatesResponseDTO:
       type: object
       properties:
-        list:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/AdminClosedPlaceCandidateDTO'
