@@ -40,7 +40,7 @@ class AdminPlaceController(
             cursorValue = cursor,
         ).run {
             AdminListClosedPlaceCandidatesResponseDTO(
-                list = candidates.map { it.toAdminDTO() },
+                items = candidates.map { it.toAdminDTO() },
                 cursor = nextCursor,
             )
         }
