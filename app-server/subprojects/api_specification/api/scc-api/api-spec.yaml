@@ -836,6 +836,17 @@ paths:
       responses:
         '200': {}
 
+  /getHomeBanners:
+    post:
+      summary: 홈에서 보여줄 배너 정보 목록을 가져온다.
+      operationId: getHomeBanners
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHomeBannersResponseDto'
+
 components:
   # Reusable schemas (data models)
   schemas:
@@ -1670,7 +1681,7 @@ components:
         - ATTRACTION
         - HOSPITAL
         - PHARMACY
-    
+
     ExternalAccessibility:
       type: object
       properties:
@@ -1984,6 +1995,36 @@ components:
         - THURSDAY
         - FRIDAY
         - SATURDAY
+
+    GetHomeBannersResponseDto:
+      type: object
+      properties:
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/HomeBannerDto'
+      required:
+        - banners
+
+    HomeBannerDto:
+      type: object
+      properties:
+        id:
+          type: string
+        loggingKey:
+          type: string
+        imageUrl:
+          type: string
+        clickPageUrl:
+          type: string
+        clickPageTitle:
+          type: string
+      required:
+        - id
+        - loggingKey
+        - imageSource
+        - clickPageUrl
+        - clickPageTitle
 
   responses:
     ApiFailure:
