@@ -2022,7 +2022,7 @@ components:
       required:
         - id
         - loggingKey
-        - imageSource
+        - imageUrl
         - clickPageUrl
         - clickPageTitle
 
