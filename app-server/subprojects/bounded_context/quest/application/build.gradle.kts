@@ -5,7 +5,6 @@ dependencies {
 
     val coroutineVersion: String by project
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
