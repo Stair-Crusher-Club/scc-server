@@ -1892,6 +1892,7 @@ components:
       enum:
         - ACCURACY
         - DISTANCE
+        - ACCESSIBILITY_SCORE
 
     SearchPlaceFilterDto:
       type: object
