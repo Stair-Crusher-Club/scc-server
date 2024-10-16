@@ -20,6 +20,7 @@ import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.place.domain.model.BuildingAddress
 import club.staircrusher.place.domain.model.Place
+import club.staircrusher.stdlib.clock.SccClock
 import com.fasterxml.jackson.core.type.TypeReference
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Clock
 
 class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     @Autowired
@@ -42,9 +42,6 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
     @Autowired
     private lateinit var challengeContributionRepository: ChallengeContributionRepository
-
-    @Autowired
-    private lateinit var clock: Clock
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
@@ -299,7 +296,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 )
             )
         }
-        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user, challenge, clock.instant()) }
+        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user, challenge, SccClock.instant()) }
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
