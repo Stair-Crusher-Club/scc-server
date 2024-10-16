@@ -3,6 +3,7 @@ package club.staircrusher.place.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteResponseDto
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
+import club.staircrusher.place.infra.adapter.`in`.controller.base.PlaceITBase
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.testing.spring_it.mock.MockSccClock
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class DeletePlaceFavoriteTest : SccSpringITBase() {
+class DeletePlaceFavoriteTest : PlaceITBase() {
 
     @Autowired
     private lateinit var clock: MockSccClock

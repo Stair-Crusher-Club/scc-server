@@ -23,5 +23,8 @@ interface ClosedPlaceCandidateRepository : CrudRepository<ClosedPlaceCandidate, 
         cursorId: String,
         pageable: Pageable,
     ): Page<ClosedPlaceCandidate>
+
     fun findByExternalIdIn(externalIds: List<String>): List<ClosedPlaceCandidate>
+
+    fun findByPlaceId(placeId: String): ClosedPlaceCandidate?
 }
