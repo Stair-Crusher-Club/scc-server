@@ -17,9 +17,6 @@ import kotlin.random.nextLong
 
 open class ChallengeITBase : SccSpringITBase() {
 
-    @Autowired
-    private lateinit var clock: Clock
-
     /**
      * @return 생성된 챌린지
      */

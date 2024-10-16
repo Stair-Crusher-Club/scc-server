@@ -3,7 +3,6 @@ package club.staircrusher.quest.infra.adapter.`in`.controller
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.admin_api.spec.dto.GetCursoredClubQuestSummariesResultDTO
 import club.staircrusher.quest.domain.model.ClubQuest
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -19,16 +18,13 @@ class GetCursoredClubQuestSummariesTest : ClubQuestITBase() {
         clubQuestRepository.deleteAll()
     }
 
-    @Autowired
-    private lateinit var mockSccClock: MockSccClock
-
     @Test
     fun `정상적인 경우`() {
         // given - 퀘스트 2개
         val clubQuest1 = createClubQuest()
-        mockSccClock.advanceTime(Duration.ofSeconds(1))
+        clock.advanceTime(Duration.ofSeconds(1))
         val clubQuest2 = createClubQuest()
-        mockSccClock.advanceTime(Duration.ofSeconds(1))
+        clock.advanceTime(Duration.ofSeconds(1))
 
         val cursor = mvc
             .sccAdminRequest("/admin/clubQuestSummaries/cursored?limit=1", HttpMethod.GET, requestBody = null)
