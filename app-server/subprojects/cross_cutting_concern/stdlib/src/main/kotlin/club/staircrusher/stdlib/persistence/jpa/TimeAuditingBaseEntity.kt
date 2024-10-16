@@ -1,10 +1,7 @@
 package club.staircrusher.stdlib.persistence.jpa
 
-import club.staircrusher.stdlib.clock.SccClock
 import jakarta.persistence.Column
 import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
