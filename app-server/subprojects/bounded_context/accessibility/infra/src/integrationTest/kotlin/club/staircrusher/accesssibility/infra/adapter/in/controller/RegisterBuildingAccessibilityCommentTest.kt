@@ -3,7 +3,6 @@ package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPostRequest
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -11,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
 class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
-    @Autowired
-    private lateinit var clock: MockSccClock
 
     @Autowired
     private lateinit var buildingAccessibilityCommentRepository: BuildingAccessibilityCommentRepository

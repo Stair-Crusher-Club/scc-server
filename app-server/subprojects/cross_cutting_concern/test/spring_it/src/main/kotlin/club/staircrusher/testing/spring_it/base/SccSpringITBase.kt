@@ -4,10 +4,12 @@ import club.staircrusher.spring_web.security.admin.AdminAuthenticationProperties
 import club.staircrusher.spring_web.security.admin.AdminAuthenticationService
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.testing.spring_it.ITDataGenerator
+import club.staircrusher.testing.spring_it.mock.MockSccClock
 import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.service.UserAuthService
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,6 +35,9 @@ open class SccSpringITBase {
     lateinit var mvc: MockMvc
 
     @Autowired
+    lateinit var clock: MockSccClock
+
+    @Autowired
     lateinit var testDataGenerator: ITDataGenerator
 
     @Autowired
@@ -43,6 +48,11 @@ open class SccSpringITBase {
 
     @Autowired
     lateinit var adminAuthenticationProperties: AdminAuthenticationProperties
+
+    @BeforeEach
+    fun resetClock() {
+        clock.reset()
+    }
 
     protected fun MockMvc.sccRequest(url: String, requestBody: Any?, user: User? = null): ResultActionsDsl {
         return post(url) {

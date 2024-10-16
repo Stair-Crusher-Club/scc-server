@@ -6,9 +6,6 @@ import club.staircrusher.place.application.port.out.persistence.ClosedPlaceCandi
 import club.staircrusher.place.domain.model.ClosedPlaceCandidate
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place.infra.adapter.`in`.controller.base.PlaceITBase
-import club.staircrusher.stdlib.clock.SccClock
-import club.staircrusher.testing.spring_it.ITDataGenerator
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,9 +16,6 @@ import java.time.Duration
 import java.util.UUID
 
 class AdminPlaceControllerTest : PlaceITBase() {
-
-    @Autowired
-    lateinit var mockSccClock: MockSccClock
 
     @Autowired
     private lateinit var closedPlaceCandidateRepository: ClosedPlaceCandidateRepository
@@ -37,7 +31,8 @@ class AdminPlaceControllerTest : PlaceITBase() {
 
         // register 를 먼저 하는데도 closedPlaceCandidate 의 createdAt 이 request 를 날렸을 때 생성되는
         // initial TimestampCursor 의 value 보다 미래라서 item 이 empty 로 나온다. 따라서 advanceTIme 을 해준다
-        mockSccClock.advanceTime(Duration.ofMinutes(2L))
+        // annotation 으로 처리되는 createdAt 과 SccClock.instant 로 가져오는 시각의 차이가 조금 있는 듯
+        clock.advanceTime(Duration.ofSeconds(1L))
 
         mvc
             .sccAdminRequest("/admin/closed-place-candidates", HttpMethod.GET, null)
@@ -48,7 +43,6 @@ class AdminPlaceControllerTest : PlaceITBase() {
                 Assertions.assertTrue { result.items!!.isNotEmpty() }
 
                 val candidate = result.items!!.find { it.id == closedPlaceCandidate.id }
-                println(candidate)
                 Assertions.assertNotNull(candidate)
                 Assertions.assertEquals(closedPlaceCandidate.placeId, candidate!!.placeId)
             }

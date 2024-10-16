@@ -5,21 +5,13 @@ import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.domain.model.DetectedFacePosition
 import club.staircrusher.stdlib.Size
-import club.staircrusher.testing.spring_it.ITDataGenerator
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.kotlin.eq
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 
 class BlurFacesITBase : SccSpringITBase() {
-    @Autowired
-    lateinit var dataGenerator: ITDataGenerator
-
-    @Autowired
-    lateinit var clock: MockSccClock
 
     @MockBean
     lateinit var imageProcessor: ImageProcessor

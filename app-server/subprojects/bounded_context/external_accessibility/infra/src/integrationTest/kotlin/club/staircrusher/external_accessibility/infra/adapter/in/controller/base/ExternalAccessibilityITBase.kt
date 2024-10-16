@@ -4,6 +4,4 @@ import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import java.time.Clock
 import org.springframework.beans.factory.annotation.Autowired
 
-open class ExternalAccessibilityITBase : SccSpringITBase() {
-    @Autowired private lateinit var clock: Clock
-}
+class ExternalAccessibilityITBase : SccSpringITBase()

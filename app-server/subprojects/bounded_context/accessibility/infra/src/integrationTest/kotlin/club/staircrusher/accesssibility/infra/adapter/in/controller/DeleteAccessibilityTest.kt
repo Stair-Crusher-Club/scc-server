@@ -12,7 +12,6 @@ import club.staircrusher.domain_event.PlaceAccessibilityCommentDeletedEvent
 import club.staircrusher.domain_event.BuildingAccessibilityDeletedEvent
 import club.staircrusher.domain_event.BuildingAccessibilityCommentDeletedEvent
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -28,8 +27,6 @@ import org.springframework.data.repository.findByIdOrNull
 import java.time.Duration
 
 class DeleteAccessibilityTest : AccessibilityITBase() {
-    @Autowired
-    lateinit var mockSccClock: MockSccClock
 
     @Autowired
     lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
@@ -131,7 +128,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
     @Test
     fun `등록한지 6시간이 지난 장소 정보는 삭제할 수 없다`() {
         val (user, _, placeAccessibility) = registerAccessibility()
-        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
+        clock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
 
         val params = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
         mvc

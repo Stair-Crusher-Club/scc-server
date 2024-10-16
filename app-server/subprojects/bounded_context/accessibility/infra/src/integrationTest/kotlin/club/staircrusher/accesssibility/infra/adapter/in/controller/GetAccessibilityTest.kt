@@ -12,7 +12,6 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import club.staircrusher.user.domain.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -25,13 +24,10 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.SpyBean
 import java.time.Duration
 
 class GetAccessibilityTest : AccessibilityITBase() {
-    @Autowired
-    lateinit var mockSccClock: MockSccClock
 
     @SpyBean
     lateinit var accessibilityImageService: AccessibilityImageService
@@ -191,7 +187,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
             }
 
-        mockSccClock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
+        clock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
 
         mvc
             .sccRequest("/getAccessibility", params, user = user)
