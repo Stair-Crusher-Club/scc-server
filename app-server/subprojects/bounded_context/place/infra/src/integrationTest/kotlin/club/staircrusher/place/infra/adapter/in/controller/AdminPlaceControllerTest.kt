@@ -110,7 +110,6 @@ class AdminPlaceControllerTest : PlaceITBase() {
             }
     }
 
-
     private fun registerPlaceAndClosedPlaceCandidate(): Pair<Place, ClosedPlaceCandidate> = transactionManager.doInTransaction {
         val building = testDataGenerator.createBuilding()
         val place = testDataGenerator.createPlace(building = building)
