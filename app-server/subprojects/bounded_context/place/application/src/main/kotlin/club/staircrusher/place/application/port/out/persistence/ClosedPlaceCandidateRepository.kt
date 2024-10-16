@@ -16,6 +16,7 @@ interface ClosedPlaceCandidateRepository : CrudRepository<ClosedPlaceCandidate, 
                 (c.createdAt = :cursorCreatedAt AND c.id < :cursorId)
                 OR (c.createdAt < :cursorCreatedAt)
             )
+        ORDER BY c.createdAt DESC, c.id DESC
     """)
     fun findCursored(
         cursorCreatedAt: Instant,

@@ -6,7 +6,6 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import java.time.Instant
 
 @Component
@@ -29,12 +28,6 @@ class GetCursoredClubQuestSummariesUseCase(
         val pageRequest = PageRequest.of(
             0,
             normalizedLimit,
-            Sort.by(
-                listOf(
-                    Sort.Order.desc("createdAt"),
-                    Sort.Order.desc("id"),
-                ),
-            ),
         )
         val result = clubQuestRepository.findCursoredSummaries(
             cursorCreatedAt = cursor.timestamp,
