@@ -10,7 +10,7 @@ class AccessibilityScoreTest {
     @Test
     fun test() {
         assertEquals(
-            1.0, AccessibilityScore.get(
+            2.0, AccessibilityScore.get(
                 createPa(
                     isFirstFloor = true,
                     hasSlope = false,
@@ -32,7 +32,7 @@ class AccessibilityScoreTest {
             )
         )
         assertEquals(
-            4.0, AccessibilityScore.get(
+            3.0, AccessibilityScore.get(
                 createPa(
                     isFirstFloor = true,
                     hasSlope = false,
@@ -43,7 +43,7 @@ class AccessibilityScoreTest {
             )
         )
         assertEquals(
-            3.0, AccessibilityScore.get(
+            1.0, AccessibilityScore.get(
                 createPa(
                     isFirstFloor = true,
                     hasSlope = true,
@@ -54,7 +54,7 @@ class AccessibilityScoreTest {
             )
         )
         assertEquals(
-            0.5 + 1.0 + 5.0, AccessibilityScore.get(
+            5.0, AccessibilityScore.get(
                 createPa(
                     isFirstFloor = false,
                     hasSlope = true,
@@ -70,7 +70,7 @@ class AccessibilityScoreTest {
             )
         )
         assertEquals(
-            0.5 + 1.0 + 1.0, AccessibilityScore.get(
+            2.0, AccessibilityScore.get(
                 createPa(
                     isFirstFloor = false,
                     hasSlope = true,
