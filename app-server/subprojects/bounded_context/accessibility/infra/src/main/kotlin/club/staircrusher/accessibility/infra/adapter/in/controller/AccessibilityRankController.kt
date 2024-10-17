@@ -7,10 +7,10 @@ import club.staircrusher.accessibility.application.port.`in`.UpdateRanksUseCase
 import club.staircrusher.api.spec.dto.GetAccessibilityLeaderboardPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityRankPost200Response
 import club.staircrusher.api.spec.dto.GetCountForNextRankPost200Response
+import club.staircrusher.spring_web.security.InternalIpAddressChecker
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.di.annotation.Component
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.security.web.util.matcher.IpAddressMatcher
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -53,14 +53,7 @@ class AccessibilityRankController(
 
     @PostMapping("/updateAccessibilityRanks")
     fun updateAccessibilityRanks(request: HttpServletRequest) {
-        val clusterIpAddressMatcher = IpAddressMatcher("10.42.0.0/16")
-        val localIpAddressMatcher = IpAddressMatcher("127.0.0.1/32")
-        if (
-            !clusterIpAddressMatcher.matches(request)
-            && !localIpAddressMatcher.matches(request)
-        ) {
-            throw IllegalArgumentException("Unauthorized")
-        }
+        InternalIpAddressChecker.check(request)
         updateRanksUseCase.handle()
     }
 }

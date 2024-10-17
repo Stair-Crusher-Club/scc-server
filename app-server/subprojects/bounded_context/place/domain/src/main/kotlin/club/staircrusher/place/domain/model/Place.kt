@@ -1,6 +1,7 @@
 package club.staircrusher.place.domain.model
 
 import club.staircrusher.stdlib.geography.Location
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import club.staircrusher.stdlib.place.PlaceCategory
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
@@ -37,7 +38,7 @@ class Place private constructor(
     val category: PlaceCategory? = null,
     isClosed: Boolean,
     isNotAccessible: Boolean,
-) {
+) : TimeAuditingBaseEntity() {
     val address: BuildingAddress
         // FIXME
         get() = building.address

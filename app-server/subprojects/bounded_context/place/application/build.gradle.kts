@@ -3,5 +3,6 @@ dependencies {
     implementation(projects.apiSpecification.domainEvent)
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
-    implementation("org.locationtech.jts:jts-core:1.19.0")
+    val jtsVersion: String by project
+    implementation("org.locationtech.jts:jts-core:$jtsVersion")
 }
