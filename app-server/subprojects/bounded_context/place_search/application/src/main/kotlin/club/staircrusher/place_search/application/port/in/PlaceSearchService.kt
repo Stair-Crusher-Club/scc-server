@@ -73,6 +73,7 @@ class PlaceSearchService(
 
         return places.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
             .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
+            .let { if (sort == "ACCESSIBILITY_SCORE") it.sortedBy { it.accessibilityScore } else it }
     }
 
     suspend fun listPlacesInBuilding(buildingId: String, userId: String? = null): List<SearchPlacesResult> {
