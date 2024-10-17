@@ -7,7 +7,7 @@ import club.staircrusher.place.domain.model.Place
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.user.domain.model.User
 
-open class AccessibilityITBase : SccSpringITBase() {
+class AccessibilityITBase : SccSpringITBase() {
     fun registerAccessibility(overridingUser: User? = null, overridingBuilding: Building? = null): RegisterAccessibilityResult {
         val user = overridingUser ?: transactionManager.doInTransaction {
             testDataGenerator.createUser()

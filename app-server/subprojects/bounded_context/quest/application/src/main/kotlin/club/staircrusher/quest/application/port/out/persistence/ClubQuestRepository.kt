@@ -17,6 +17,7 @@ interface ClubQuestRepository : CrudRepository<ClubQuest, String> {
                 (q.createdAt = :cursorCreatedAt AND q.id < :cursorId)
                 OR (q.createdAt < :cursorCreatedAt)
             )
+        ORDER BY q.createdAt DESC, q.id DESC
     """)
     fun findCursoredSummaries(
         cursorCreatedAt: Instant,

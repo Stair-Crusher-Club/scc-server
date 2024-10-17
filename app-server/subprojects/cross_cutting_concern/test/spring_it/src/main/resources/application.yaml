@@ -70,3 +70,6 @@ scc:
     token: test
     channel:
       reportAccessibility: "#scc-accessibility-report-test"
+
+  open-data:
+    api-key: test
