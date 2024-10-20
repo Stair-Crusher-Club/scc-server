@@ -22,6 +22,7 @@ class GetClosedPlaceCandidateUseCase(
             placeId = place.id,
             name = place.name,
             address = place.address.toString(),
+            createdAt = candidate.createdAt,
             acceptedAt = candidate.acceptedAt,
             ignoredAt = candidate.ignoredAt,
         )

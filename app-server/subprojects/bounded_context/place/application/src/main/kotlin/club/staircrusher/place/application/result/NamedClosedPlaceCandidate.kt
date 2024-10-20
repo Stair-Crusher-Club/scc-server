@@ -7,6 +7,7 @@ data class NamedClosedPlaceCandidate(
     val placeId: String,
     val name: String,
     val address: String,
+    val createdAt: Instant,
     val acceptedAt: Instant?,
     val ignoredAt: Instant?,
 )
