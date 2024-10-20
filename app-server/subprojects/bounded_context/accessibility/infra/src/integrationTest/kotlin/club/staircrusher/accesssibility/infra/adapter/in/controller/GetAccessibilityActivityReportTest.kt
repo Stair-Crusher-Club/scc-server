@@ -5,22 +5,12 @@ import club.staircrusher.api.spec.dto.GetAccessibilityActivityReportResponseDto
 import club.staircrusher.stdlib.time.getDayOfMonth
 import club.staircrusher.stdlib.time.toStartOfWeek
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
-import club.staircrusher.testing.spring_it.mock.MockSccClock
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 class GetAccessibilityActivityReportTest : SccSpringITBase() {
-    @Autowired
-    lateinit var clock: MockSccClock
-
-    @AfterEach
-    fun cleanUp() {
-        clock.reset()
-    }
 
     @Test
     fun `오늘, 이번달, 이번주 정복량을 내려준다`() {
