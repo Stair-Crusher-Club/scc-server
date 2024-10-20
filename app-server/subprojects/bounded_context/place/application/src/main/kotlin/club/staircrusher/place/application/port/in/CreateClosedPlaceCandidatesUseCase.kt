@@ -33,9 +33,12 @@ class CreateClosedPlaceCandidatesUseCase(
         }
 
         transactionManager.doInTransaction {
-            val externalIds = closedPlaceCandidates.map { it.externalId }
+            val (placeIds ,externalIds) = closedPlaceCandidates.map { it.placeId to it.externalId }.unzip()
+
+            val alreadyExistingPlaceIds = closedPlaceCandidateRepository.findByExternalIdIn(placeIds).map { it.placeId}
             val alreadyExistingExternalIds = closedPlaceCandidateRepository.findByExternalIdIn(externalIds).map { it.externalId }
-            val filteredCandidates = closedPlaceCandidates.filter { it.externalId !in alreadyExistingExternalIds }
+            val filteredCandidates = closedPlaceCandidates
+                .filter { it.externalId !in alreadyExistingExternalIds && it.placeId !in alreadyExistingPlaceIds }
 
             closedPlaceCandidateRepository.saveAll(filteredCandidates)
         }
