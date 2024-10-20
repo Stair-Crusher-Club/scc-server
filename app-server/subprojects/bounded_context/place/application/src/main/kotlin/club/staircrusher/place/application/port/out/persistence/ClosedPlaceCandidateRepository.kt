@@ -25,6 +25,6 @@ interface ClosedPlaceCandidateRepository : CrudRepository<ClosedPlaceCandidate, 
     ): Page<ClosedPlaceCandidate>
 
     fun findByExternalIdIn(externalIds: List<String>): List<ClosedPlaceCandidate>
-
+    fun findByPlaceIdIn(placeIds: List<String>): List<ClosedPlaceCandidate>
     fun findByPlaceId(placeId: String): ClosedPlaceCandidate?
 }
