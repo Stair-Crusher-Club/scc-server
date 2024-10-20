@@ -1,6 +1,7 @@
 package club.staircrusher.application.server_event.port.`in`
 
 import club.staircrusher.application.server_event.port.out.persistence.ServerEventRepository
+import club.staircrusher.domain.server_event.RdbServerEvent
 import club.staircrusher.domain.server_event.ServerEvent
 import club.staircrusher.domain.server_event.ServerEventPayload
 import club.staircrusher.stdlib.clock.SccClock
@@ -25,7 +26,7 @@ internal class SccServerPersistentEventRecorder(
                 payload = payload,
                 createdAt = SccClock.instant(),
             )
-            serverEventRepository.save(serverEvent)
+            serverEventRepository.save(RdbServerEvent(serverEvent))
         } catch (e: Exception){
             logger.error(e) { "Failed to create server event of payload: $payload" }
         }

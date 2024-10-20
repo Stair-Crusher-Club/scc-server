@@ -3,13 +3,14 @@ package club.staircrusher.place.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserRequestDto
 import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserResponseDto
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
+import club.staircrusher.place.infra.adapter.`in`.controller.base.PlaceITBase
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class ListPlaceFavoritesTest : SccSpringITBase() {
+class ListPlaceFavoritesTest : PlaceITBase() {
 
     @Autowired
     private lateinit var placeFavoriteRepository: PlaceFavoriteRepository

@@ -10,9 +10,8 @@ dependencies {
 
     api(projects.apiSpecification.api)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
-    implementation(projects.crossCuttingConcern.infra.serverEvent)
+    implementation(projects.crossCuttingConcern.application.serverEvent)
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework:spring-webflux")
     implementation("io.projectreactor.netty:reactor-netty")

@@ -8,7 +8,6 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengePar
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -22,9 +21,6 @@ class ListChallengesTest : ChallengeITBase() {
 
     @Autowired
     private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
-
-    @Autowired
-    private lateinit var clock: MockSccClock
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {

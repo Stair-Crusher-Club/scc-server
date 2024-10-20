@@ -57,6 +57,9 @@ subprojects {
     dependencies {
         if (project.name == "infra") {
             implementation(rootProject.projects.crossCuttingConcern.infra.springWeb)
+            implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        } else if (project.name == "application") {
+            implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         }
         val kotlinLoggingVersion: String by project
         val kotlinSerialization: String by project

@@ -3,15 +3,12 @@ package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.AccessibilityITBase
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityCommentPostRequest
-import club.staircrusher.testing.spring_it.mock.MockSccClock
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
 class RegisterPlaceAccessibilityCommentTest : AccessibilityITBase() {
-    @Autowired
-    private lateinit var clock: MockSccClock
 
     @Autowired
     private lateinit var placeAccessibilityCommentRepository: PlaceAccessibilityCommentRepository
