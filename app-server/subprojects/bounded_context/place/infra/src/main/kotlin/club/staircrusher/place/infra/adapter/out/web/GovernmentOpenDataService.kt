@@ -7,6 +7,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.CrsConverter
 import club.staircrusher.stdlib.geography.CrsType
 import club.staircrusher.stdlib.geography.Location
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.service.annotation.GetExchange
 import java.time.LocalDate
@@ -15,6 +16,7 @@ import java.time.LocalDate
 class GovernmentOpenDataService(
     private val properties: GovernmentOpenDataProperties,
 ) : OpenDataService {
+    private val logger = KotlinLogging.logger {}
     private val localDataService = createExternalApiService<LocalDataApiClient>(
         baseUrl = "http://www.localdata.go.kr/platform/rest/TO0",
         defaultHeadersBlock = {},
@@ -43,6 +45,8 @@ class GovernmentOpenDataService(
         val closedCafe = cafeResponse.result.body?.rows?.get(0)?.row?.mapNotNull {
             it.toDTO()
         } ?: emptyList()
+
+        logger.info { "Closed place candidates from external place: ${closedRestaurants + closedCafe}" }
 
         return closedRestaurants + closedCafe
     }
