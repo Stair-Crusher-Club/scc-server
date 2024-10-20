@@ -118,6 +118,10 @@ jobs:
         run: |
           helm upgrade --install --namespace scc -f values-prod.yaml scc-server ./
 
+      - name: Wait for scc-server rollout
+        run: |
+          kubectl rollout status deployment scc-server -n scc
+
       - name: Notify CD failure to slack
         if: failure()
         run: |
