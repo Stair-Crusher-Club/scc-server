@@ -1006,6 +1006,8 @@ components:
           type: string
         address:
           type: string
+        createdAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
         acceptedAt:
           $ref: '#/components/schemas/EpochMillisTimestamp'
         ignoredAt:

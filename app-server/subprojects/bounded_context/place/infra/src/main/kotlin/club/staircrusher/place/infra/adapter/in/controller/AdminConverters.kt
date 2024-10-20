@@ -8,6 +8,7 @@ fun NamedClosedPlaceCandidate.toAdminDTO() = club.staircrusher.admin_api.spec.dt
     placeId = placeId,
     name = name,
     address = address,
+    createdAt = createdAt.toDTO(),
     acceptedAt = acceptedAt?.toDTO(),
     ignoredAt = ignoredAt?.toDTO(),
 )
