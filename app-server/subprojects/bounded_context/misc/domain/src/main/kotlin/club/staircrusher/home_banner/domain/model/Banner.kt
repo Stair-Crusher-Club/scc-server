@@ -6,7 +6,7 @@ import jakarta.persistence.Id
 import java.time.Instant
 
 @Entity
-class HomeBanner(
+class Banner(
     @Id val id: String,
     val loggingKey: String,
     val imageUrl: String,

@@ -1,8 +1,8 @@
 package club.staircrusher.misc.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.GetHomeBannersResponseDto
-import club.staircrusher.home_banner.application.port.out.persistence.HomeBannerRepository
-import club.staircrusher.home_banner.domain.model.HomeBanner
+import club.staircrusher.home_banner.application.port.out.persistence.BannerRepository
+import club.staircrusher.home_banner.domain.model.Banner
 import club.staircrusher.misc.infra.adapter.`in`.controller.base.MiscITBase
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class GetHomeBannersTest : MiscITBase() {
+class GetBannersTest : MiscITBase() {
     @Autowired
-    private lateinit var homeBannerRepository: HomeBannerRepository
+    private lateinit var bannerRepository: BannerRepository
 
     @BeforeEach
     fun setUp() {
         transactionManager.doInTransaction {
-            homeBannerRepository.deleteAll()
+            bannerRepository.deleteAll()
         }
     }
 
@@ -27,7 +27,7 @@ class GetHomeBannersTest : MiscITBase() {
     fun `active 배너가 displayOrder 순으로 내려온다`() {
         val now = SccClock.instant()
         val activeBanners = listOf(
-            HomeBanner(
+            Banner(
                 id = EntityIdGenerator.generateRandom(),
                 loggingKey = "",
                 imageUrl = "",
@@ -37,7 +37,7 @@ class GetHomeBannersTest : MiscITBase() {
                 endAt = null,
                 displayOrder = 3,
             ),
-            HomeBanner(
+            Banner(
                 id = EntityIdGenerator.generateRandom(),
                 loggingKey = "",
                 imageUrl = "",
@@ -47,7 +47,7 @@ class GetHomeBannersTest : MiscITBase() {
                 endAt = now + Duration.ofHours(1),
                 displayOrder = 1,
             ),
-            HomeBanner(
+            Banner(
                 id = EntityIdGenerator.generateRandom(),
                 loggingKey = "",
                 imageUrl = "",
@@ -59,7 +59,7 @@ class GetHomeBannersTest : MiscITBase() {
             ),
         )
         val inactiveBanners = listOf(
-            HomeBanner(
+            Banner(
                 id = EntityIdGenerator.generateRandom(),
                 loggingKey = "",
                 imageUrl = "",
@@ -72,7 +72,7 @@ class GetHomeBannersTest : MiscITBase() {
         )
 
         transactionManager.doInTransaction {
-            homeBannerRepository.saveAll(activeBanners + inactiveBanners)
+            bannerRepository.saveAll(activeBanners + inactiveBanners)
         }
 
         val user = transactionManager.doInTransaction {
