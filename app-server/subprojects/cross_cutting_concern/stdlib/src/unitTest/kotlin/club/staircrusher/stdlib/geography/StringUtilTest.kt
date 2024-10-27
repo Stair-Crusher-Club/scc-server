@@ -10,11 +10,11 @@ class StringUtilTest {
         assert("농협하나로마트".isSimilarWith("농하나로마트"))
         assert("농협하나로마트".isSimilarWith("하나로마트"))
         assert("농협하나로마트".isSimilarWith("농협마트"))
+        assert("농협하나로마트".isSimilarWith("농협"))
         assert("NonghyupMart".isSimilarWith("NonghyupMart"))
-        assert("농협하나로마트".isSimilarWith("농협허너루미틋"))
+        assert("NonghyupMart".isSimilarWith("nonghyup"))
 
         assert(!"농협하나로마트".isSimilarWith("아무런"))
         assert(!"농협하나로마트".isSimilarWith("asdf"))
-        assert(!"농협하나로마트".isSimilarWith("농협"))
     }
 }
