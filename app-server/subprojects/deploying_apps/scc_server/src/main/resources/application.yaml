@@ -87,3 +87,7 @@ scc:
 
   open-data:
     api-key: test
+
+  notification:
+    push:
+      credential: test
