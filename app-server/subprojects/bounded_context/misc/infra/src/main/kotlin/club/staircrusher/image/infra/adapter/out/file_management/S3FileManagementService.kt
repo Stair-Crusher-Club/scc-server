@@ -1,7 +1,8 @@
-package club.staircrusher.accessibility.infra.adapter.out.file_management
+package club.staircrusher.image.infra.adapter.out.file_management
 
-import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
-import club.staircrusher.accessibility.application.port.out.file_management.UploadUrl
+import club.staircrusher.image.application.port.out.file_management.FileManagementService
+import club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType
+import club.staircrusher.image.application.port.out.file_management.UploadUrl
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import kotlinx.coroutines.future.await
@@ -44,10 +45,10 @@ internal class S3FileManagementService(
         .build()
 
     // TODO: 유저별 rate limit 걸기. 위치는 여기가 아니라 application service여야 할 수도 있을 듯.
-    override fun getFileUploadUrl(fileExtension: String): UploadUrl {
+    override fun getFileUploadUrl(fileExtension: String, purposeType: ImageUploadPurposeType): UploadUrl {
         val normalizedFilenameExtension = getNormalizedFileExtension(fileExtension)
         val objectRequest = PutObjectRequest.builder()
-            .bucket(properties.bucketName)
+            .bucket(purposeType.bucketName)
             .key(generateObjectKey(normalizedFilenameExtension))
             .contentType(Files.probeContentType(Path.of("dummy.${normalizedFilenameExtension}")))
             .acl(ObjectCannedACL.PUBLIC_READ)
@@ -72,7 +73,7 @@ internal class S3FileManagementService(
         return file
     }
 
-    override suspend fun uploadImage(fileName: String, fileBytes: ByteArray): String? {
+    override suspend fun uploadAccessibilityImage(fileName: String, fileBytes: ByteArray): String? {
         try {
             return upload(properties.bucketName, fileName, fileBytes)
         } catch (t: Throwable) {
@@ -127,6 +128,13 @@ internal class S3FileManagementService(
     private fun getNormalizedFileExtension(filenameExtension: String): String {
         return filenameExtension.replace(Regex("^\\."), "")
     }
+
+    private val ImageUploadPurposeType.bucketName: String
+        get() = when (this) {
+            ImageUploadPurposeType.ACCESSIBILITY -> properties.bucketName
+            ImageUploadPurposeType.ACCESSIBILITY_THUMBNAIL -> TODO()
+            ImageUploadPurposeType.BANNER -> TODO()
+        }
 
     companion object {
         private val presignedUrlExpiryDuration = Duration.ofMinutes(5)

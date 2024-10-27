@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.infra.adapter.out.file_management
+package club.staircrusher.image.infra.adapter.out.file_management
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

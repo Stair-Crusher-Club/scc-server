@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.application.port.out.file_management
+package club.staircrusher.image.application.port.out.file_management
 
 import java.time.Instant
 

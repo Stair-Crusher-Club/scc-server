@@ -2,6 +2,7 @@ dependencies {
     api(projects.boundedContext.user.application)
     implementation(projects.boundedContext.place.application)
     implementation(projects.boundedContext.challenge.application)
+    implementation(projects.boundedContext.misc.application)
 
     implementation(projects.apiSpecification.domainEvent)
 
