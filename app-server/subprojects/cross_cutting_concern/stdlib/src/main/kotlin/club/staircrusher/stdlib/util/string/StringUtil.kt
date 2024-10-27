@@ -5,7 +5,10 @@ import java.util.*
 fun String.emptyToNull() = this.ifBlank { null }
 
 fun String.isSimilarWith(pattern: String): Boolean {
-    return simpleMatch(this.lowercase(Locale.US), pattern.lowercase(Locale.US))
+    return simpleMatch(
+        this.lowercase(Locale.US),
+        pattern.lowercase(Locale.US).filter { it.isWhitespace().not() }
+    )
 }
 
 private fun simpleMatch(text: String, pattern: String): Boolean {
