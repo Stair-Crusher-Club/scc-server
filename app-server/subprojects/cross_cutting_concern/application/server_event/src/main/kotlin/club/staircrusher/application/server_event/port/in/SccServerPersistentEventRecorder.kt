@@ -7,17 +7,15 @@ import club.staircrusher.domain.server_event.ServerEventPayload
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
-import club.staircrusher.stdlib.persistence.TransactionManager
 import mu.KotlinLogging
 
 @Component
-internal class SccServerPersistentEventRecorder(
-    private val transactionManager: TransactionManager,
+class SccServerPersistentEventRecorder(
     private val serverEventRepository: ServerEventRepository,
 ) : SccServerEventRecorder {
     private val logger = KotlinLogging.logger { }
 
-    override fun record(payload: ServerEventPayload) = transactionManager.doInTransaction {
+    override fun record(payload: ServerEventPayload) {
         try {
             logger.info("save server event: $payload")
             val serverEvent = ServerEvent(
@@ -27,9 +25,8 @@ internal class SccServerPersistentEventRecorder(
                 createdAt = SccClock.instant(),
             )
             serverEventRepository.save(RdbServerEvent(serverEvent))
-        } catch (e: Exception){
-            logger.error(e) { "Failed to create server event of payload: $payload" }
+        } catch (t: Throwable){
+            logger.error(t) { "Failed to save server event of payload: $payload" }
         }
-        Unit
     }
 }
