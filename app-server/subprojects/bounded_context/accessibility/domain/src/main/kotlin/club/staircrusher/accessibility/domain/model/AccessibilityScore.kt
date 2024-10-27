@@ -15,9 +15,11 @@ object AccessibilityScore {
     private fun getTotalScore(scores: List<Double>): Double? =
         if (scores.isEmpty()) null
         else when {
+            scores.max() == 0.0 -> 0.0
+            scores.max() <= 1.0 -> 1.0
             scores.max() <= 2.0 -> 2.0
-            scores.max() == 3.0 && scores.count { score -> score == 3.0 } == 1 -> 3.0
-            scores.max() == 3.0 -> 4.0
+            scores.max() <= 3.0 && scores.count { score -> score == 3.0 } == 1 -> 3.0
+            scores.max() <= 3.0 -> 4.0
             else -> 5.0
         }
 
