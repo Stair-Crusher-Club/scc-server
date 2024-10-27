@@ -148,11 +148,9 @@ class UserApplicationService(
 
         logger.info("isNewsLetterSubscriptionAgreed value $isNewsLetterSubscriptionAgreed for user id ${user.id}")
         if (isNewsLetterSubscriptionAgreed) {
-            transactionManager.doAfterCommit {
-                user.email?.let {
-                    logger.info("subscribe to news letter called for user id ${user.id}")
-                    subscribeToNewsLetter(user.id, it, user.nickname)
-                }
+            user.email?.let {
+                logger.info("subscribe to news letter called for user id ${user.id}")
+                subscribeToNewsLetter(user.id, it, user.nickname)
             }
         }
 
