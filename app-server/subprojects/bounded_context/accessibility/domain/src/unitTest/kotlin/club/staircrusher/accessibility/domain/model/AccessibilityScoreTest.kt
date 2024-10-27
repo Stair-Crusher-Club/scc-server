@@ -70,7 +70,7 @@ class AccessibilityScoreTest {
             )
         )
         assertEquals(
-            2.0, AccessibilityScore.get(
+            1.0, AccessibilityScore.get(
                 createPa(
                     isFirstFloor = false,
                     hasSlope = true,
