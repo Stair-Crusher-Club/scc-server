@@ -10,7 +10,6 @@ import org.springframework.orm.jpa.JpaTransactionManager
 @Configuration
 class TransactionManagerConfiguration {
     @Bean
-    @Primary
     fun sccJpaTransactionManager(
         entityManagerFactory: EntityManagerFactory,
     ): TransactionManager {
