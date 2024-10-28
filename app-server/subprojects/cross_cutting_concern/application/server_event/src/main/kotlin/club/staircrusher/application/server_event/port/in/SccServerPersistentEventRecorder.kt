@@ -7,15 +7,17 @@ import club.staircrusher.domain.server_event.ServerEventPayload
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.persistence.TransactionManager
 import mu.KotlinLogging
 
 @Component
 class SccServerPersistentEventRecorder(
+    private val transactionManager: TransactionManager,
     private val serverEventRepository: ServerEventRepository,
 ) : SccServerEventRecorder {
     private val logger = KotlinLogging.logger { }
 
-    override fun record(payload: ServerEventPayload) {
+    override fun record(payload: ServerEventPayload): Unit = transactionManager.doInTransaction {
         try {
             logger.info("save server event: $payload")
             val serverEvent = ServerEvent(

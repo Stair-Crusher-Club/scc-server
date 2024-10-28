@@ -149,8 +149,10 @@ class UserApplicationService(
         logger.info("isNewsLetterSubscriptionAgreed value $isNewsLetterSubscriptionAgreed for user id ${user.id}")
         if (isNewsLetterSubscriptionAgreed) {
             user.email?.let {
-                logger.info("subscribe to news letter called for user id ${user.id}")
-                subscribeToNewsLetter(user.id, it, user.nickname)
+                transactionManager.doAfterCommit {
+                    logger.info("subscribe to news letter called for user id ${user.id}")
+                    subscribeToNewsLetter(user.id, it, user.nickname)
+                }
             }
         }
 
@@ -159,7 +161,7 @@ class UserApplicationService(
 
     fun deleteUser(
         userId: String,
-    ) = transactionManager.doInTransaction (TransactionIsolationLevel.REPEATABLE_READ) {
+    ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val user = userRepository.findById(userId).get()
         user.delete(SccClock.instant())
         userRepository.save(user)
