@@ -19,7 +19,6 @@ class SccServerPersistentEventRecorder(
 
     override fun record(payload: ServerEventPayload): Unit = transactionManager.doInTransaction {
         try {
-            logger.info("save server event: $payload")
             val serverEvent = ServerEvent(
                 id = EntityIdGenerator.generateRandom(),
                 type = payload.type,
