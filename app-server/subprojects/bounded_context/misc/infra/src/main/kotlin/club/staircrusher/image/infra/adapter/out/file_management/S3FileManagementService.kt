@@ -132,8 +132,8 @@ internal class S3FileManagementService(
     private val ImageUploadPurposeType.bucketName: String
         get() = when (this) {
             ImageUploadPurposeType.ACCESSIBILITY -> properties.bucketName
-            ImageUploadPurposeType.ACCESSIBILITY_THUMBNAIL -> TODO()
-            ImageUploadPurposeType.BANNER -> TODO()
+            ImageUploadPurposeType.ACCESSIBILITY_THUMBNAIL -> properties.thumbnailBucketName
+            ImageUploadPurposeType.BANNER -> properties.bannerBucketName
         }
 
     companion object {
