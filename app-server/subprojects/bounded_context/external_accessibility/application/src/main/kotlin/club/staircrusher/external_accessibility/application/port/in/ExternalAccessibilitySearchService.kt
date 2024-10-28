@@ -31,7 +31,7 @@ class ExternalAccessibilitySearchService(
             }
             .filter {
                 searchText ?: return@filter true
-                searchText.isSimilarWith(it.name)
+                it.name.isSimilarWith(pattern = searchText)
             }
     }
 }
