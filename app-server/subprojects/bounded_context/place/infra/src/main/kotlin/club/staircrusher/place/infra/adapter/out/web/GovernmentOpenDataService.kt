@@ -38,6 +38,9 @@ class GovernmentOpenDataService(
             opnSvcId = CAFE_CODE,
         )
 
+        logger.info("Closed restaurant response: $restaurantResponse")
+        logger.info("Closed cafe response: $cafeResponse")
+
         val closedRestaurants = restaurantResponse.result.body?.rows?.get(0)?.row?.mapNotNull {
             it.toDTO()
         } ?: emptyList()
@@ -170,7 +173,9 @@ class GovernmentOpenDataService(
                                 get() = "${mgtNo};${opnSvcId}"
 
                             val location: Location?
-                                get() = x?.let { locationConverter.toLocation(it.toDouble(), y!!.toDouble()) }
+                                get() = x
+                                    ?.takeIf { it.isNotBlank() }
+                                    ?.let { locationConverter.toLocation(it.toDouble(), y!!.toDouble()) }
                         }
                     }
                 }

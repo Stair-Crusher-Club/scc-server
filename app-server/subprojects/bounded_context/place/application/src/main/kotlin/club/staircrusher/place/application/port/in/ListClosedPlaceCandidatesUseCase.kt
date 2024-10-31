@@ -49,7 +49,7 @@ class ListClosedPlaceCandidatesUseCase(
                     placeId = place.id,
                     name = place.name,
                     address = place.address.toString(),
-                    createdAt = candidate.createdAt,
+                    closedAt = candidate.closedAt,
                     acceptedAt = candidate.acceptedAt,
                     ignoredAt = candidate.ignoredAt,
                 )

@@ -18,6 +18,13 @@ class ClosedPlaceCandidate(
     @Column(nullable = false)
     val externalId: String,
 
+    @Column(nullable = false)
+    // 정보 제공자에서 제공하는 이름
+    val originalName: String,
+
+    @Column(nullable = false)
+    val closedAt: Instant,
+
     @Column(nullable = true)
     var acceptedAt: Instant? = null,
 

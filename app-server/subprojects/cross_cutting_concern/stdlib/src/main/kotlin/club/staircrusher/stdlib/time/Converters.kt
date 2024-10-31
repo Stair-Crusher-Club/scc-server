@@ -2,6 +2,7 @@ package club.staircrusher.stdlib.time
 
 import java.time.DayOfWeek
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -46,3 +47,6 @@ fun Instant.getDayOfWeek(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): DayOfWeek =
     atZone(zoneId).dayOfWeek
 
 fun Long.epochMilliToInstant() = Instant.ofEpochMilli(this)
+
+fun LocalDate.toInstant(zoneId: ZoneId = ZoneId.of("Asia/Seoul")): Instant =
+    this.atStartOfDay(zoneId).toInstant()
