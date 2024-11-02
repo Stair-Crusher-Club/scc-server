@@ -1,7 +1,6 @@
 package club.staircrusher.place.infra.adapter.`in`.controller
 
 import club.staircrusher.place.application.port.`in`.CreateClosedPlaceCandidatesUseCase
-import club.staircrusher.place.application.port.`in`.StringSimilarityComparator
 import club.staircrusher.place.application.port.out.persistence.ClosedPlaceCandidateRepository
 import club.staircrusher.place.application.port.out.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.web.OpenDataService
