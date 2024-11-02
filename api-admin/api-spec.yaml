@@ -10,6 +10,7 @@ defaultContentType: application/json
 tags:
   - name: challenge
   - name: accessibility
+  - name: banner
 
 paths:
   /login:
@@ -487,6 +488,82 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminClosedPlaceCandidateDTO'
 
+  /banners:
+    get:
+      operationId: adminAllListBanners
+      summary: 전체 배너 목록을 조회한다.
+      tags:
+        - banner
+      responses:
+        '200':
+          description: 검색 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminListAllBannersResponseDTO'
+
+    post:
+      operationId: adminCreateBanner
+      summary: 배너를 생성한다.
+      tags:
+        - banner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateBannerRequestDTO'
+      responses:
+        '204':
+          description: 생성 성공
+
+  /banners/home-banner:
+    get:
+      operationId: adminListHomeBanners
+      summary: 앱의 홈에 노출되는 것과 동일한 목록 & 순서의 배너를 보여준다.
+      tags:
+        - banner
+      responses:
+        '200':
+          description: 검색 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminListHomeBannersResponseDTO'
+
+  /banners/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+
+    delete:
+      operationId: adminDeleteBanner
+      summary: 배너를 삭제한다.
+      tags:
+        - banner
+      responses:
+        204:
+          description: 삭제 성공
+
+  /image-upload-urls:
+    post:
+      summary: 배너 생성 등의 상황에서 이미지를 업로드하기 위한 URL을 받아 온다.
+      operationId: adminCreateImageUploadUrls
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateImageUploadUrlsRequestDTO'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCreateImageUploadUrlsResponseDTO'
 
 components:
   # Reusable schemas (data models)
@@ -1015,3 +1092,117 @@ components:
       required:
         - id
         - placeId
+
+    AdminListAllBannersResponseDTO:
+      type: object
+      properties:
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminBannerDTO'
+      required:
+        - banners
+
+    AdminBannerDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        loggingKey:
+          type: string
+        imageUrl:
+          type: string
+        clickPageUrl:
+          type: string
+        clickPageTitle:
+          type: string
+        startAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        endAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        displayOrder:
+          type: integer
+          format: int32
+      required:
+        - id
+        - loggingKey
+        - imageUrl
+        - clickPageUrl
+        - clickPageTitle
+        - displayOrder
+
+    AdminListHomeBannersResponseDTO:
+      type: object
+      properties:
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminBannerDTO'
+      required:
+        - banners
+
+    AdminCreateBannerRequestDTO:
+      type: object
+      properties:
+        loggingKey:
+          type: string
+        imageUrl:
+          type: string
+        clickPageUrl:
+          type: string
+        clickPageTitle:
+          type: string
+        startAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        endAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        displayOrder:
+          type: integer
+          format: int32
+      required:
+        - loggingKey
+        - imageUrl
+        - clickPageUrl
+        - clickPageTitle
+        - displayOrder
+
+    AdminCreateImageUploadUrlsRequestDTO:
+      properties:
+        purposeType:
+          $ref: '#/components/schemas/AdminImageUploadPurposeTypeDTO'
+        count:
+          type: integer
+          description: 업로드할 이미지 수.
+        filenameExtension:
+          type: string
+          description: 업로드할 이미지의 확장자. '.'을 붙이지 말아야 한다. e.g. png, jpeg 등.
+      required:
+        - purposeType
+        - count
+        - filenameExtension
+
+    AdminImageUploadPurposeTypeDTO:
+      type: string
+      enum:
+        - BANNER
+
+    AdminCreateImageUploadUrlsResponseDTO:
+      type: object
+      properties:
+        urls:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminImageUploadUrlDTO'
+      required:
+        - urls
+
+    AdminImageUploadUrlDTO:
+      type: object
+      properties:
+        url:
+          type: string
+        expireAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+      required:
+        - url
+        - expireAt

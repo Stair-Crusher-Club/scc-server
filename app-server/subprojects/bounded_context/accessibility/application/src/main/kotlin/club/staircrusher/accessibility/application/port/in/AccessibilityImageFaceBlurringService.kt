@@ -2,7 +2,7 @@ package club.staircrusher.accessibility.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.`in`.image.ImageProcessor
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
-import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
+import club.staircrusher.image.application.port.out.file_management.FileManagementService
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.async
@@ -11,7 +11,7 @@ import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
 
 @Component
-open class AccessibilityImageFaceBlurringService(
+class AccessibilityImageFaceBlurringService(
     private val accessibilityImageService: AccessibilityImageService,
     private val imageProcessor: ImageProcessor,
     private val detectFacesService: DetectFacesService,
@@ -68,7 +68,7 @@ open class AccessibilityImageFaceBlurringService(
             )
             val (blurredImageUrl, detectedPositions) = run {
                 val outputByteArray = imageProcessor.blur(imageBytes, extension, detected.positions)
-                val blurredImageUrl = fileManagementService.uploadImage("${name}_b.$extension", outputByteArray)
+                val blurredImageUrl = fileManagementService.uploadAccessibilityImage("${name}_b.$extension", outputByteArray)
                 blurredImageUrl to detected.positions
             }
             return BlurResult(

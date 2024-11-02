@@ -4,7 +4,7 @@ import club.staircrusher.accessibility.application.port.`in`.image.ImageProcesso
 import club.staircrusher.accessibility.application.port.`in`.image.ThumbnailGenerator
 import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.application.port.out.SlackService
-import club.staircrusher.accessibility.application.port.out.file_management.FileManagementService
+import club.staircrusher.image.application.port.out.file_management.FileManagementService
 import club.staircrusher.notification.port.out.PushSender
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
