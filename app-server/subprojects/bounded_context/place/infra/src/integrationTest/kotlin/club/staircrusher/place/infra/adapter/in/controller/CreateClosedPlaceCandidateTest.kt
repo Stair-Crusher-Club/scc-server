@@ -53,7 +53,7 @@ class CreateClosedPlaceCandidateTest : PlaceITBase() {
     @Test
     fun `이름이 달라도 충분히 비슷하고 장소가 일치하면 폐업 장소 후보를 생성한다`() {
         val building = testDataGenerator.createBuilding()
-        val placeNameFromApiResponse = "루나아시아 - 삼성점"
+        val placeNameFromApiResponse = "루나아시아 삼성점"
         val targetPlace = testDataGenerator.createPlace("루나 아시아 삼성점", building)
         testDataGenerator.createPlace("전혀 다른 이름", building)
         val mockExternalId = UUID.randomUUID().toString()
