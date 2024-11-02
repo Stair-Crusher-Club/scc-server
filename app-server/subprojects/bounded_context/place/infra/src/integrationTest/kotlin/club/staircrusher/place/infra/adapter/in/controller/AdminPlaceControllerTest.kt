@@ -6,6 +6,7 @@ import club.staircrusher.place.application.port.out.persistence.ClosedPlaceCandi
 import club.staircrusher.place.domain.model.ClosedPlaceCandidate
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place.infra.adapter.`in`.controller.base.PlaceITBase
+import club.staircrusher.stdlib.clock.SccClock
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -112,6 +113,9 @@ class AdminPlaceControllerTest : PlaceITBase() {
                 id = UUID.randomUUID().toString(),
                 placeId = place.id,
                 externalId = UUID.randomUUID().toString(),
+                originalName = place.name,
+                originalAddress = place.address.toString(),
+                closedAt = SccClock.instant(),
             )
         )
 
