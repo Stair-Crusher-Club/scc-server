@@ -27,7 +27,9 @@ class CreateClosedPlaceCandidatesUseCase(
 
             val placeToSimilarity = nearbyPlaces
                 .associateWith { StringSimilarityComparator.getSimilarity(it.name, closedPlace.name) }
-            val similarPlace = placeToSimilarity.minByOrNull { it.value }
+            val similarPlace = placeToSimilarity
+                .filter { it.value < SIMILARITY_THRESHOLD }
+                .minByOrNull { it.value }
                 ?.also {
                     logger.info("[CreateClosedPlaceCandidates] most similar place for ${closedPlace.name} is ${it.key.name} with similarity of ${it.value}")
                 }
@@ -45,10 +47,7 @@ class CreateClosedPlaceCandidatesUseCase(
         }
 
         transactionManager.doInTransaction {
-            val (placeIds ,externalIds) = closedPlaceCandidates.map { it.placeId to it.externalId }.unzip()
-
-            // 혹시 다른 externalId 지만 similarity 알고리즘의 부정확성 때문에 같은 장소로 판단되는지 확인하지 못해서 일단 보류합니다
-            // val alreadyExistingPlaceIds = closedPlaceCandidateRepository.findByPlaceIdIn(placeIds).map { it.placeId }
+            val externalIds = closedPlaceCandidates.map { it.externalId }
             val alreadyExistingExternalIds = closedPlaceCandidateRepository.findByExternalIdIn(externalIds).map { it.externalId }
             val filteredCandidates = closedPlaceCandidates
                 .filter { it.externalId !in alreadyExistingExternalIds }
@@ -59,5 +58,6 @@ class CreateClosedPlaceCandidatesUseCase(
 
     companion object {
         private const val SEARCH_RADIUS = 30
+        private const val SIMILARITY_THRESHOLD = 0.2
     }
 }
