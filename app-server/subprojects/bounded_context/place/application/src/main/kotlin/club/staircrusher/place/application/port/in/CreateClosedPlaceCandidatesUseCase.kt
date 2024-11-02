@@ -58,6 +58,6 @@ class CreateClosedPlaceCandidatesUseCase(
 
     companion object {
         private const val SEARCH_RADIUS = 30
-        private const val SIMILARITY_THRESHOLD = 0.2
+        private const val SIMILARITY_THRESHOLD = 0.3
     }
 }
