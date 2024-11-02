@@ -176,6 +176,9 @@ class GovernmentOpenDataService(
                                 get() = x
                                     ?.takeIf { it.isNotBlank() }
                                     ?.let { locationConverter.toLocation(it.toDouble(), y!!.toDouble()) }
+
+                            val address: String?
+                                get() = rdnWhlAddr?.takeIf { it.isNotBlank() } ?: siteWhlAddr?.takeIf { it.isNotBlank() }
                         }
                     }
                 }
@@ -187,6 +190,7 @@ class GovernmentOpenDataService(
         return ClosedPlaceResult(
             externalId = externalId,
             name = bplcNm ?: return null,
+            address = address ?: return null,
             postalCode = rdnPostNo ?: return null,
             location = location ?: return null,
             phoneNumber = siteTel,

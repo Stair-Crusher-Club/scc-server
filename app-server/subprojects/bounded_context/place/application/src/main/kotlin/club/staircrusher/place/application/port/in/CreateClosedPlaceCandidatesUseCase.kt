@@ -39,6 +39,7 @@ class CreateClosedPlaceCandidatesUseCase(
                 placeId = similarPlace.id,
                 externalId = closedPlace.externalId,
                 originalName = closedPlace.name,
+                originalAddress = closedPlace.address,
                 closedAt = closedPlace.closedDate.toStartOfDay(),
             )
         }

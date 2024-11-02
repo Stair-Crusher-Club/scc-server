@@ -114,6 +114,7 @@ class AdminPlaceControllerTest : PlaceITBase() {
                 placeId = place.id,
                 externalId = UUID.randomUUID().toString(),
                 originalName = place.name,
+                originalAddress = place.address.toString(),
                 closedAt = SccClock.instant(),
             )
         )
