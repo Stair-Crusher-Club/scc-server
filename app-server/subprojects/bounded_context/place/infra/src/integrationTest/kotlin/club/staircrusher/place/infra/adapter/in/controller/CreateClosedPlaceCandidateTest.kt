@@ -90,6 +90,7 @@ class CreateClosedPlaceCandidateTest : PlaceITBase() {
             ClosedPlaceResult(
                 externalId = externalId,
                 name = name,
+                address = "가짜",
                 postalCode = "21213",
                 location = location,
                 phoneNumber = null,
