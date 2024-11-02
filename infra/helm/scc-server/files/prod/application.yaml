@@ -55,6 +55,7 @@ scc:
     imageUpload:
       bucketName: scc-prod-accessibility-images
       thumbnailBucketName: scc-prod-accessibility-thumbnails
+      bannerBucketName: scc-prod-home-banners
   cloudfront:
     domain: d1whorck6z6h62.cloudfront.net
   slack:

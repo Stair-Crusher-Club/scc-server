@@ -1,7 +1,6 @@
 package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
-import club.staircrusher.accessibility.application.port.`in`.GetImageUploadUrlsUseCase
 import club.staircrusher.accessibility.application.port.`in`.RegisterBuildingAccessibilityUseCase
 import club.staircrusher.accessibility.application.port.`in`.RegisterPlaceAccessibilityUseCase
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
@@ -14,6 +13,8 @@ import club.staircrusher.api.spec.dto.GetImageUploadUrlsPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityResponseDto
+import club.staircrusher.image.application.port.`in`.use_case.GetImageUploadUrlsUseCase
+import club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -40,6 +41,7 @@ class AccessibilityController(
         return getImageUploadUrlsUseCase.handle(
             urlCount = request.count,
             filenameExtension = request.filenameExtension,
+            imageUploadPurposeType = ImageUploadPurposeType.ACCESSIBILITY,
         ).map {
             GetImageUploadUrlsPost200ResponseInner(
                 it.url,

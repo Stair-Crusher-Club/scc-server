@@ -32,6 +32,7 @@ scc:
     imageUpload:
       bucketName: test
       thumbnailBucketName: test
+      bannerBucketName: test
       accessKey: test
       secretKey: test
 
