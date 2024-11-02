@@ -4,7 +4,7 @@ import club.staircrusher.place.application.port.out.persistence.ClosedPlaceCandi
 import club.staircrusher.place.application.port.out.web.OpenDataService
 import club.staircrusher.place.domain.model.ClosedPlaceCandidate
 import club.staircrusher.stdlib.persistence.TransactionManager
-import club.staircrusher.stdlib.time.toInstant
+import club.staircrusher.stdlib.time.toStartOfDay
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -39,7 +39,7 @@ class CreateClosedPlaceCandidatesUseCase(
                 placeId = similarPlace.id,
                 externalId = closedPlace.externalId,
                 originalName = closedPlace.name,
-                closedAt = closedPlace.closedDate.toInstant(),
+                closedAt = closedPlace.closedDate.toStartOfDay(),
             )
         }
 
