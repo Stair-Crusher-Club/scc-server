@@ -29,6 +29,7 @@ class AdminPlaceControllerTest : PlaceITBase() {
     @Test
     fun `폐업 추정 장소 리스트 조회`() {
         val (_, closedPlaceCandidate) = registerPlaceAndClosedPlaceCandidate()
+        val (_, ignoredPlaceCandidate) = registerPlaceAndIgnoreClosedPlaceCandidate()
 
         // register 를 먼저 하는데도 closedPlaceCandidate 의 createdAt 이 request 를 날렸을 때 생성되는
         // initial TimestampCursor 의 value 보다 미래라서 item 이 empty 로 나온다. 따라서 advanceTIme 을 해준다
@@ -46,6 +47,9 @@ class AdminPlaceControllerTest : PlaceITBase() {
                 val candidate = result.items!!.find { it.id == closedPlaceCandidate.id }
                 Assertions.assertNotNull(candidate)
                 Assertions.assertEquals(closedPlaceCandidate.placeId, candidate!!.placeId)
+
+                val ignoredCandidate = result.items!!.find { it.id == ignoredPlaceCandidate.id }
+                Assertions.assertNull(ignoredCandidate)
             }
     }
 
@@ -116,6 +120,24 @@ class AdminPlaceControllerTest : PlaceITBase() {
                 originalName = place.name,
                 originalAddress = place.address.toString(),
                 closedAt = SccClock.instant(),
+            )
+        )
+
+        place to closedPlaceCandidate
+    }
+
+    private fun registerPlaceAndIgnoreClosedPlaceCandidate(): Pair<Place, ClosedPlaceCandidate> = transactionManager.doInTransaction {
+        val building = testDataGenerator.createBuilding()
+        val place = testDataGenerator.createPlace(building = building)
+        val closedPlaceCandidate = closedPlaceCandidateRepository.save(
+            ClosedPlaceCandidate(
+                id = UUID.randomUUID().toString(),
+                placeId = place.id,
+                externalId = UUID.randomUUID().toString(),
+                originalName = place.name,
+                originalAddress = place.address.toString(),
+                closedAt = SccClock.instant(),
+                ignoredAt = SccClock.instant(),
             )
         )
 

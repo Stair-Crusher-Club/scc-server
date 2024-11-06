@@ -16,9 +16,10 @@ interface ClosedPlaceCandidateRepository : CrudRepository<ClosedPlaceCandidate, 
                 (c.createdAt = :cursorCreatedAt AND c.id < :cursorId)
                 OR (c.createdAt < :cursorCreatedAt)
             )
+            AND c.ignoredAt IS NULL
         ORDER BY c.createdAt DESC, c.id DESC
     """)
-    fun findCursored(
+    fun findNotIgnoredWithCursor(
         cursorCreatedAt: Instant,
         cursorId: String,
         pageable: Pageable,
