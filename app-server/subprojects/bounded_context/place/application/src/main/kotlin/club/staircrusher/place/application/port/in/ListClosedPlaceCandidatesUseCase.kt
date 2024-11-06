@@ -27,7 +27,7 @@ class ListClosedPlaceCandidatesUseCase(
             0,
             normalizedLimit,
         )
-        val result = closedPlaceCandidateRepository.findCursored(
+        val result = closedPlaceCandidateRepository.findNotIgnoredWithCursor(
             cursorCreatedAt = cursor.timestamp,
             cursorId = cursor.id,
             pageable = pageRequest,
