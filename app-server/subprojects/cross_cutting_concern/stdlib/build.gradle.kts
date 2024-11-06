@@ -7,6 +7,7 @@ dependencies {
     val jtsVersion: String by project
     val proj4jVersion: String by project
     val kopyKatVersion: String by project
+    val apacheCommonsVersion: String by project
     implementation("org.geotools:gt-referencing:$geoToolsVersion")
     implementation("org.locationtech.jts:jts-core:$jtsVersion")
     implementation("org.locationtech.proj4j:proj4j:$proj4jVersion")
@@ -14,6 +15,7 @@ dependencies {
     implementation("com.auth0:java-jwt:3.18.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.apache.commons:commons-text:$apacheCommonsVersion")
 
     api("jakarta.persistence:jakarta.persistence-api")
     api("org.springframework.data:spring-data-commons")

@@ -5,6 +5,7 @@ import club.staircrusher.place.application.port.out.web.OpenDataService
 import club.staircrusher.place.domain.model.ClosedPlaceCandidate
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.time.toStartOfDay
+import club.staircrusher.stdlib.util.string.getSimilarityWith
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -26,7 +27,7 @@ class CreateClosedPlaceCandidatesUseCase(
             if (nearbyPlaces.isEmpty()) return@mapNotNull null
 
             val placeToSimilarity = nearbyPlaces
-                .associateWith { StringSimilarityComparator.getSimilarity(it.name, closedPlace.name) }
+                .associateWith { it.name.getSimilarityWith(closedPlace.name) }
             val similarPlace = placeToSimilarity
                 .filter { it.value < SIMILARITY_THRESHOLD }
                 .minByOrNull { it.value }
@@ -58,6 +59,6 @@ class CreateClosedPlaceCandidatesUseCase(
 
     companion object {
         private const val SEARCH_RADIUS = 30
-        private const val SIMILARITY_THRESHOLD = 0.3
+        private const val SIMILARITY_THRESHOLD = 0.2
     }
 }
