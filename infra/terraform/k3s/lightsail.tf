@@ -80,14 +80,14 @@ resource "aws_lightsail_instance_public_ports" "k3s_control_plane" {
 locals {
   data_plane_userdata = <<USERDATA
 #!/bin/bash
-curl -sfL https://get.k3s.io | sh -s - agent \
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.27.3+k3s1" sh -s - agent \
   --server https://${aws_lightsail_instance.k3s_control_plane.private_ip_address} \
   --token ${data.sops_file.secret_data.data["k3s.token"]}
 USERDATA
 }
 
 resource "aws_lightsail_instance" "k3s_data_planes" {
-  for_each = { for i in range(3) : i => i }
+  for_each = { for i in range(5) : i => i }
 
   name              = "k3s_data_plane_${each.value}"
   availability_zone = element(["ap-northeast-2a", "ap-northeast-2c"], each.value % 2)
