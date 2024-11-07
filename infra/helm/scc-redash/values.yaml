@@ -447,7 +447,7 @@ redash:
         memory: 512Mi
       requests:
         cpu: 200m
-        memory: 384Mi
+        memory: 512Mi
 
     # scheduledWorker.podSecurityContext -- Security contexts for scheduled worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
