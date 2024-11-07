@@ -2,6 +2,7 @@ package club.staircrusher.user.application.port.`in`
 
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
 import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
+import club.staircrusher.notification.port.`in`.PushService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -17,6 +18,11 @@ import club.staircrusher.user.domain.model.User
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -30,6 +36,7 @@ class UserApplicationService(
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val stibeeSubscriptionService: StibeeSubscriptionService,
     private val sccServerEventRecorder: SccServerEventRecorder,
+    private val pushService: PushService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -98,6 +105,33 @@ class UserApplicationService(
         val user = userRepository.findById(userId).get()
         user.pushToken = pushToken
         userRepository.save(user)
+    }
+
+    fun sendPushNotification(
+        userIds: List<String>,
+        title: String?,
+        body: String,
+        deepLink: String?,
+    ) = transactionManager.doInTransaction {
+        val users = userRepository.findAllById(userIds)
+        val notifications = users.mapNotNull { user ->
+            user.pushToken ?: return@mapNotNull null
+            user.pushToken!! to PushService.Notification(
+                // just poc for now, but not sure this substitution needs to be placed here
+                title = title?.replace("{{nickname}}", user.nickname),
+                body = body.replace("{{nickname}}", user.nickname),
+                link = deepLink,
+                collapseKey = null,
+            )
+        }
+
+        transactionManager.doAfterCommit {
+            CoroutineScope(Dispatchers.IO).launch {
+                notifications.map { (t, n) ->
+                    async { pushService.send(t, emptyMap(), n) }
+                }.joinAll()
+            }
+        }
     }
 
     fun updateUserInfo(
