@@ -1,25 +1,25 @@
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: scc-blur-faces-in-latest-place-accessibility-images
-  labels:
-    {{- include "scc-server.labels" . | nindent 4 }}
-spec:
-  # Run every minute from 17:00PM to 08:00AM in KST
-  schedule: "* 8-23 * * *"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            - name: curl-container
-              image: appropriate/curl
-              args:
-                - "--fail"
-                - "-XPOST"
-                - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/blurFacesInLatestPlaceAccessibilityImages"
-          restartPolicy: OnFailure
----
+#apiVersion: batch/v1
+#kind: CronJob
+#metadata:
+#  name: scc-blur-faces-in-latest-place-accessibility-images
+#  labels:
+#    {{- include "scc-server.labels" . | nindent 4 }}
+#spec:
+#  # Run every minute from 17:00PM to 08:00AM in KST
+#  schedule: "* 8-23 * * *"
+#  jobTemplate:
+#    spec:
+#      template:
+#        spec:
+#          containers:
+#            - name: curl-container
+#              image: appropriate/curl
+#              args:
+#                - "--fail"
+#                - "-XPOST"
+#                - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/blurFacesInLatestPlaceAccessibilityImages"
+#          restartPolicy: OnFailure
+#---
 
 apiVersion: batch/v1
 kind: CronJob
