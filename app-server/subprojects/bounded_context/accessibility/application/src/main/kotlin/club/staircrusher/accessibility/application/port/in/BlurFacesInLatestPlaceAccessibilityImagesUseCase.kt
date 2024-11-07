@@ -38,15 +38,22 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
 
     fun handle() {
         val targetAccessibility: PlaceAccessibility = transactionManager.doInTransaction {
+            // 가장 최근에 블러 처리한 accessibility 보다 이후에 생성된 accessibility 를 찾는다
             val latestHistory =
                 accessibilityImageFaceBlurringHistoryRepository.findFirstByPlaceAccessibilityIdIsNotNullOrderByCreatedAtDesc()
             val lastBlurredPlaceAccessibility = latestHistory?.let { history ->
                 history.placeAccessibilityId?.let { placeAccessibilityRepository.findByIdOrNull(it) }
             }
-            placeAccessibilityRepository.findBlurringTargetAccessibility(
+            placeAccessibilityRepository.findFirstByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(
                 createdAt = lastBlurredPlaceAccessibility?.createdAt ?: Instant.EPOCH
             )
         } ?: return
+
+        // 최신 데이터까지 블러 처리된 상황
+        val alreadyBlurred =
+            accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(targetAccessibility.id).isNotEmpty()
+        if (alreadyBlurred) return
+
         val result =
             runBlocking { accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id) }
                 ?: return

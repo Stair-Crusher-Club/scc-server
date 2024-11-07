@@ -14,16 +14,7 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
     fun findFirstByPlaceIdAndDeletedAtIsNull(placeId: String): PlaceAccessibility?
     fun findByUserIdAndDeletedAtIsNull(userId: String): List<PlaceAccessibility>
     fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<PlaceAccessibility>
-    @Query("""
-        SELECT pa
-        FROM PlaceAccessibility pa
-        WHERE
-            pa.createdAt > :createdAt
-            AND pa.deletedAt IS NULL
-            ORDER BY pa.createdAt ASC, pa.id DESC
-        LIMIT 1
-    """)
-    fun findBlurringTargetAccessibility(createdAt: Instant): PlaceAccessibility?
+    fun findFirstByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): PlaceAccessibility?
     fun countByUserIdAndDeletedAtIsNull(userId: String): Int
     fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
     @Query("""
