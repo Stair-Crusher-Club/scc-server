@@ -125,6 +125,24 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCaseTest : BlurFacesITBase() {
         Assertions.assertTrue(images.mapNotNull { it.thumbnailUrl }.isEmpty())
     }
 
+    @Test
+    fun `모든 데이터를 처리한 상황이면 블러링을 하지 않는다`() = runBlocking {
+        val (_, placeAccessibility1, _) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES, MockDetectFacesService.URL_WITHOUT_FACES)
+        )
+        clock.advanceTime(Duration.ofMillis(1))
+        val (_, placeAccessibility2, _) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES, MockDetectFacesService.URL_WITHOUT_FACES)
+        )
+
+        blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
+        blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
+        blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
+
+        Assertions.assertTrue(accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(placeAccessibility1.id).count() == 1)
+        Assertions.assertTrue(accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(placeAccessibility2.id).count() == 1)
+    }
+
     private fun registerPlaceAccessibilityAndBuildingAccessibility(imageUrls: List<String>) =
         transactionManager.doInTransaction {
             val user = testDataGenerator.createUser()
