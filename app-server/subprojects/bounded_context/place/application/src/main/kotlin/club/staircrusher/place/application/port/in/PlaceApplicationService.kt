@@ -51,7 +51,6 @@ class PlaceApplicationService(
                 }
             }
 
-        logger.info("Publishing place search event")
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         places
     }
@@ -155,7 +154,6 @@ class PlaceApplicationService(
     }
 
     private fun List<Place>.mergeLocalDatabases(): List<Place> {
-        logger.info("Merging local databases")
         val existingPlaceById = placeRepository.findAllById(this.map { it.id })
             .associateBy { it.id }
         return this.map { searchedPlace ->
