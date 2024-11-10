@@ -335,7 +335,11 @@ redash:
     nodeSelector: { }
 
     # server.tolerations -- Tolerations for server pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
-    tolerations: [ ]
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "redash"
+        effect: "NoSchedule"
 
     # server.affinity -- Affinity for server pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
     affinity: { }
@@ -413,7 +417,11 @@ redash:
     nodeSelector: { }
 
     # adhocWorker.tolerations -- Tolerations for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
-    tolerations: [ ]
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "redash"
+        effect: "NoSchedule"
 
     # adhocWorker.affinity -- Affinity for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
     affinity: { }
@@ -457,7 +465,11 @@ redash:
     nodeSelector: { }
 
     # scheduledWorker.tolerations -- Tolerations for scheduled worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
-    tolerations: [ ]
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "redash"
+        effect: "NoSchedule"
 
     # scheduledWorker.affinity -- Affinity for scheduled worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
     affinity: { }
@@ -499,7 +511,11 @@ redash:
     nodeSelector: { }
 
     # scheduler.tolerations -- Tolerations for scheduler pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
-    tolerations: [ ]
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "redash"
+        effect: "NoSchedule"
 
     # scheduler.affinity -- Affinity for scheduler pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
     affinity: { }
@@ -543,7 +559,11 @@ redash:
     nodeSelector: { }
 
     # genericWorker.tolerations -- Tolerations for generic worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
-    tolerations: [ ]
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "redash"
+        effect: "NoSchedule"
 
     # genericWorker.affinity -- Affinity for generic worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
     affinity: { }
