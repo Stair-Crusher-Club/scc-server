@@ -115,9 +115,9 @@ openobserve-collector:
   agent:
     enabled: true
     tolerations:
-      - key: "exampleKey1"
+      - key: "dedicated"
         operator: "Equal"
-        value: "true"
+        value: "monitoring"
         effect: "NoSchedule"
     resources:
       limits:
@@ -410,7 +410,11 @@ openobserve-collector:
       enabled: true
     affinity: {}
     nodeSelector: {}
-    tolerations: []
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "monitoring"
+        effect: "NoSchedule"
     resources:
       # We usually recommend not to specify default resources and to leave this as a conscious
       # choice for the user. This also increases chances charts run on environments with little
