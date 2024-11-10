@@ -42,7 +42,7 @@ jobs:
           MONITORING_ENDPOINT: ${{ secrets.MONITORING_ENDPOINT }}
           MONITORING_AUTHORIZATION_HEADER: ${{ secrets.MONITORING_AUTHORIZATION_HEADER }}
         run: |
-          helm dependency build && \
+          helm dependency update && \
           helm upgrade --install monitoring ./ \
             --namespace monitoring \
             -f values.yaml \
