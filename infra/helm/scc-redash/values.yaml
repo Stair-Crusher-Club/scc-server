@@ -332,7 +332,8 @@ redash:
     securityContext: { }
 
     # server.nodeSelector -- Node labels for server pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
-    nodeSelector: { }
+    nodeSelector:
+      dedicated: redash
 
     # server.tolerations -- Tolerations for server pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
@@ -414,7 +415,8 @@ redash:
     securityContext: { }
 
     # adhocWorker.nodeSelector -- Node labels for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
-    nodeSelector: { }
+    nodeSelector:
+      dedicated: redash
 
     # adhocWorker.tolerations -- Tolerations for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
@@ -462,7 +464,8 @@ redash:
     securityContext: { }
 
     # scheduledWorker.nodeSelector -- Node labels for scheduled worker pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
-    nodeSelector: { }
+    nodeSelector:
+      dedicated: redash
 
     # scheduledWorker.tolerations -- Tolerations for scheduled worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
@@ -508,7 +511,8 @@ redash:
     securityContext: { }
 
     # scheduler.nodeSelector -- Node labels for scheduler pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
-    nodeSelector: { }
+    nodeSelector:
+      dedicated: redash
 
     # scheduler.tolerations -- Tolerations for scheduler pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
@@ -556,7 +560,8 @@ redash:
     securityContext: { }
 
     # genericWorker.nodeSelector -- Node labels for generic worker pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
-    nodeSelector: { }
+    nodeSelector:
+      dedicated: redash
 
     # genericWorker.tolerations -- Tolerations for generic worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:

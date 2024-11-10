@@ -409,7 +409,8 @@ openobserve-collector:
     targetAllocator:
       enabled: true
     affinity: {}
-    nodeSelector: {}
+    nodeSelector:
+      dedicated: monitoring
     tolerations:
       - key: "dedicated"
         operator: "Equal"
