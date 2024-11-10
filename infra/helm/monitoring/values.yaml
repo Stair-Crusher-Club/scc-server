@@ -117,7 +117,7 @@ openobserve-collector:
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "monitoring"
+        value: "internal"
         effect: "NoSchedule"
     resources:
       limits:
@@ -410,11 +410,11 @@ openobserve-collector:
       enabled: true
     affinity: {}
     nodeSelector:
-      dedicated: monitoring
+      dedicated: internal
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "monitoring"
+        value: "internal"
         effect: "NoSchedule"
     resources:
       # We usually recommend not to specify default resources and to leave this as a conscious
