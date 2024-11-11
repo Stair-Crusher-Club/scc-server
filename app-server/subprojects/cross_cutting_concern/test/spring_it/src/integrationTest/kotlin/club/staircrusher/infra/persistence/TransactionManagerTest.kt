@@ -103,6 +103,7 @@ class TransactionManagerTest : SccSpringITBase() {
                     }
                     Assertions.assertEquals(0, callCount.get())
                 }
+                Assertions.assertEquals(1, callCount.get())
             }
             Assertions.assertEquals(0, callCount.get())
         }
