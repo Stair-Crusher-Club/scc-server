@@ -115,7 +115,6 @@ class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager 
     private fun TransactionPropagation.toSpring() = when (this) {
         TransactionPropagation.REQUIRED -> TransactionDefinition.PROPAGATION_REQUIRED
         TransactionPropagation.REQUIRES_NEW -> TransactionDefinition.PROPAGATION_REQUIRES_NEW
-        TransactionPropagation.NEVER -> TransactionDefinition.PROPAGATION_NEVER
     }
 
     data class TransactionPreset(
