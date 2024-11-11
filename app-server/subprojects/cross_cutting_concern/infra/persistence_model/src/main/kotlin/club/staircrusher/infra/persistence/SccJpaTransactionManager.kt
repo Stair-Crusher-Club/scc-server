@@ -30,16 +30,7 @@ class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager 
         } else {
             definitionParam
         }
-        val status = delegate.getTransaction(definition)
-        currentTxState.set(TxState.ACTIVE)
-        TransactionSynchronizationManager.registerSynchronization(
-            object : TransactionSynchronization {
-                override fun afterCompletion(status: Int) {
-                    currentTxState.set(parent)
-                }
-            },
-        )
-        return status
+        return delegate.getTransaction(definition)
     }
 
     override fun <T> doInTransaction(
@@ -55,6 +46,18 @@ class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager 
         }
 
         return TransactionTemplate(this, transactionDefinition).execute {
+            val parent = currentTxState.get()
+            if (parent != TxState.ACTIVE) {
+                currentTxState.set(TxState.ACTIVE)
+                TransactionSynchronizationManager.registerSynchronization(
+                    object : TransactionSynchronization {
+                        override fun afterCompletion(status: Int) {
+                            currentTxState.set(parent)
+                        }
+                    },
+                )
+            }
+
             block()
         } as T
     }
