@@ -111,6 +111,7 @@ jobs:
           kubectl rollout restart deploy/scc-server -n dev
 
       - name: Wait for scc-server rollout
+        timeout-minutes: 10
         run: |
           kubectl rollout status deployment scc-server -n dev
 

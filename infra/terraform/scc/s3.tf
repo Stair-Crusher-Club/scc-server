@@ -119,6 +119,17 @@ resource "aws_s3_bucket_policy" "dev_home_banners" {
   })
 }
 
+resource "aws_s3_bucket_cors_configuration" "dev_home_banners" {
+  bucket = aws_s3_bucket.dev_home_banners.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT"]
+    allowed_origins = ["http://localhost:3066", "https://admin.dev.staircrusher.club"]
+    max_age_seconds = 3000
+  }
+}
+
 resource "aws_s3_bucket" "home_banners" {
   bucket = "scc-prod-home-banners"
 }
@@ -154,4 +165,15 @@ resource "aws_s3_bucket_policy" "home_banners" {
       }
     ]
   })
+}
+
+resource "aws_s3_bucket_cors_configuration" "home_banners" {
+  bucket = aws_s3_bucket.home_banners.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT"]
+    allowed_origins = ["https://admin.staircrusher.club"]
+    max_age_seconds = 3000
+  }
 }

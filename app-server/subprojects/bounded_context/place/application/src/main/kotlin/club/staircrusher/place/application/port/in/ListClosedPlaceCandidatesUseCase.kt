@@ -27,7 +27,7 @@ class ListClosedPlaceCandidatesUseCase(
             0,
             normalizedLimit,
         )
-        val result = closedPlaceCandidateRepository.findCursored(
+        val result = closedPlaceCandidateRepository.findNotIgnoredWithCursor(
             cursorCreatedAt = cursor.timestamp,
             cursorId = cursor.id,
             pageable = pageRequest,
@@ -49,7 +49,7 @@ class ListClosedPlaceCandidatesUseCase(
                     placeId = place.id,
                     name = place.name,
                     address = place.address.toString(),
-                    createdAt = candidate.createdAt,
+                    closedAt = candidate.closedAt,
                     acceptedAt = candidate.acceptedAt,
                     ignoredAt = candidate.ignoredAt,
                 )

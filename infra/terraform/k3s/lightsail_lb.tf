@@ -9,6 +9,7 @@ resource "aws_lightsail_lb_attachment" "k3s" {
     concat(
       [aws_lightsail_instance.k3s_control_plane.name],
       [for k, v in aws_lightsail_instance.k3s_data_planes : v.name],
+      [for k, v in aws_lightsail_instance.k3s_data_planes_v1_27_3 : v.name],
     )
   )
   lb_name       = aws_lightsail_lb.scc_lb.name

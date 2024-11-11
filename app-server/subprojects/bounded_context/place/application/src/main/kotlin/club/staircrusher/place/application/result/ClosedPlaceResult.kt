@@ -6,6 +6,7 @@ import java.time.LocalDate
 data class ClosedPlaceResult(
     val externalId: String,
     val name: String,
+    val address: String,
     val postalCode: String,
     val location: Location,
     val phoneNumber: String?,

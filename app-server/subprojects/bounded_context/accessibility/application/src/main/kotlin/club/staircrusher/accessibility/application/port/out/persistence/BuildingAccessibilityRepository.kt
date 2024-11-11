@@ -4,7 +4,6 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.EntranceDoorType
 import club.staircrusher.accessibility.domain.model.StairHeightLevel
 import club.staircrusher.accessibility.domain.model.StairInfo
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.time.Instant
 
@@ -12,16 +11,7 @@ interface BuildingAccessibilityRepository : CrudRepository<BuildingAccessibility
     fun findByBuildingIdInAndDeletedAtIsNull(buildingIds: Collection<String>): List<BuildingAccessibility>
     fun findFirstByBuildingIdAndDeletedAtIsNull(buildingId: String): BuildingAccessibility?
     fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
-    @Query("""
-        SELECT ba
-        FROM BuildingAccessibility ba
-        WHERE
-            ba.createdAt > :createdAt
-            AND ba.deletedAt IS NULL
-        ORDER BY ba.createdAt ASC, ba.id DESC
-        LIMIT 1
-    """)
-    fun findBlurringTargetAccessibility(createdAt: Instant): BuildingAccessibility?
+    fun findFirstByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): BuildingAccessibility?
     fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
 
     data class CreateParams(

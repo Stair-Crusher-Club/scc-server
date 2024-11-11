@@ -84,6 +84,13 @@ curl -sfL https://get.k3s.io | sh -s - agent \
   --server https://${aws_lightsail_instance.k3s_control_plane.private_ip_address} \
   --token ${data.sops_file.secret_data.data["k3s.token"]}
 USERDATA
+
+  data_plane_userdata_v1_27_3 = <<USERDATA
+#!/bin/bash
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.27.3+k3s1" sh -s - agent \
+  --server https://${aws_lightsail_instance.k3s_control_plane.private_ip_address} \
+  --token ${data.sops_file.secret_data.data["k3s.token"]}
+USERDATA
 }
 
 resource "aws_lightsail_instance" "k3s_data_planes" {
@@ -102,6 +109,67 @@ resource "aws_lightsail_instance" "k3s_data_planes" {
 
 resource "aws_lightsail_instance_public_ports" "k3s_data_planes" {
   for_each = aws_lightsail_instance.k3s_data_planes
+
+  instance_name = each.value.name
+
+  port_info {
+    protocol  = "tcp"
+    from_port = 22
+    to_port   = 22
+    cidrs     = ["172.26.0.0/20"]
+  }
+
+  port_info {
+    protocol  = "tcp"
+    from_port = var.node_port
+    to_port   = var.node_port
+    cidrs     = ["0.0.0.0/0"]
+  }
+
+  port_info {
+    protocol  = "tcp"
+    from_port = 443
+    to_port   = 443
+    cidrs     = ["172.26.0.0/20"]
+  }
+
+  port_info {
+    protocol  = "tcp"
+    from_port = 10250
+    to_port   = 10250
+    cidrs     = ["172.26.0.0/20"]
+  }
+
+  port_info {
+    protocol  = "udp"
+    from_port = 8472
+    to_port   = 8472
+    cidrs     = ["172.26.0.0/20"]
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      aws_lightsail_instance.k3s_data_planes[each.key].id
+    ]
+  }
+}
+
+resource "aws_lightsail_instance" "k3s_data_planes_v1_27_3" {
+  for_each = { for i in range(2) : i => i }
+
+  name              = "k3s_data_plane_v1_27_3_${each.value}"
+  availability_zone = element(["ap-northeast-2a", "ap-northeast-2c"], each.value % 2)
+  key_pair_name     = aws_lightsail_key_pair.scc_key_pair.name
+  bundle_id         = "medium_2_0"
+  blueprint_id      = "ubuntu_22_04"
+  user_data         = local.data_plane_userdata_v1_27_3
+  tags = {
+    role = "data_plane"
+  }
+}
+
+resource "aws_lightsail_instance_public_ports" "k3s_data_planes_v1_27_3" {
+  for_each = aws_lightsail_instance.k3s_data_planes_v1_27_3
 
   instance_name = each.value.name
 

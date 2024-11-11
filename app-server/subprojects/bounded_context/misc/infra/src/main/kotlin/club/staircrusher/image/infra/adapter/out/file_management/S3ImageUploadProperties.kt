@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.infra.adapter.out.file_management
+package club.staircrusher.image.infra.adapter.out.file_management
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -9,6 +9,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentials
 internal data class S3ImageUploadProperties @ConstructorBinding constructor(
     val bucketName: String,
     val thumbnailBucketName: String,
+    val bannerBucketName: String,
     val accessKey: String?,
     val secretKey: String?,
 ) {

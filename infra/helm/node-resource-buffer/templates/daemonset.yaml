@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-resource-buffer
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: node-resource-buffer
+  template:
+    metadata:
+      labels:
+        app: node-resource-buffer
+    spec:
+      containers:
+        - name: node-resource-buffer
+          image: busybox
+          command: ["/bin/sh", "-c", "sleep infinity"]
+          resources:
+            requests:
+              cpu: "200m" # node의 10%
+              memory: "400Mi" # node의 10%
+            limits:
+              cpu: "200m" # node의 10%
+              memory: "400Mi" # node의 10%

@@ -48,7 +48,7 @@ class PlaceSearchService(
                 region = currentLocation?.let {
                     MapsService.SearchByKeywordOption.CircleRegion(
                         centerLocation = it,
-                        radiusMeters = distanceMetersLimit.meter.toInt(),
+                        radiusMeters = minOf(distanceMetersLimit.meter.toInt(), PLACE_SEARCH_MAX_RADIUS),
                         sort = sort
                             ?.let { MapsService.SearchByKeywordOption.CircleRegion.Sort.valueFrom(it) }
                             ?: MapsService.SearchByKeywordOption.CircleRegion.Sort.ACCURACY
@@ -134,5 +134,9 @@ class PlaceSearchService(
 
     private fun List<Place>.removeDuplicates(): List<Place> {
         return associateBy { it.id }.values.toList()
+    }
+
+    companion object {
+        private const val PLACE_SEARCH_MAX_RADIUS = 20000
     }
 }

@@ -18,6 +18,15 @@ class ClosedPlaceCandidate(
     @Column(nullable = false)
     val externalId: String,
 
+    @Column(nullable = false)
+    val originalName: String,
+
+    @Column(nullable = false)
+    val originalAddress: String,
+
+    @Column(nullable = false)
+    val closedAt: Instant,
+
     @Column(nullable = true)
     var acceptedAt: Instant? = null,
 
