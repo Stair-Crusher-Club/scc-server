@@ -321,10 +321,10 @@ redash:
     # server.resources -- Server resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 500m
+        cpu: 300m
         memory: 1024Mi
       requests:
-        cpu: 500m
+        cpu: 300m
         memory: 1024Mi
 
     # server.podSecurityContext -- Security contexts for server pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
@@ -333,13 +333,13 @@ redash:
 
     # server.nodeSelector -- Node labels for server pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
     nodeSelector:
-      dedicated: internal
+      dedicated: redash
 
     # server.tolerations -- Tolerations for server pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "internal"
+        value: "redash"
         effect: "NoSchedule"
 
     # server.affinity -- Affinity for server pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
@@ -404,10 +404,10 @@ redash:
     # adhocWorker.resources -- Ad-hoc worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 200m
+        cpu: 100m
         memory: 512Mi
       requests:
-        cpu: 200m
+        cpu: 100m
         memory: 512Mi
 
     # adhocWorker.podSecurityContext -- Security contexts for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
@@ -416,13 +416,13 @@ redash:
 
     # adhocWorker.nodeSelector -- Node labels for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
     nodeSelector:
-      dedicated: internal
+      dedicated: redash
 
     # adhocWorker.tolerations -- Tolerations for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "internal"
+        value: "redash"
         effect: "NoSchedule"
 
     # adhocWorker.affinity -- Affinity for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
@@ -465,13 +465,13 @@ redash:
 
     # scheduledWorker.nodeSelector -- Node labels for scheduled worker pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
     nodeSelector:
-      dedicated: internal
+      dedicated: redash
 
     # scheduledWorker.tolerations -- Tolerations for scheduled worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "internal"
+        value: "redash"
         effect: "NoSchedule"
 
     # scheduledWorker.affinity -- Affinity for scheduled worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
@@ -500,10 +500,10 @@ redash:
     # scheduler.resources -- scheduler resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 300m
+        cpu: 200m
         memory: 384Mi
       requests:
-        cpu: 300m
+        cpu: 200m
         memory: 384Mi
 
     # scheduler.podSecurityContext -- Security contexts for scheduler pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
@@ -512,13 +512,13 @@ redash:
 
     # scheduler.nodeSelector -- Node labels for scheduler pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
     nodeSelector:
-      dedicated: internal
+      dedicated: redash
 
     # scheduler.tolerations -- Tolerations for scheduler pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "internal"
+        value: "redash"
         effect: "NoSchedule"
 
     # scheduler.affinity -- Affinity for scheduler pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
@@ -549,11 +549,11 @@ redash:
     # genericWorker.resources -- Generic worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 500m
-        memory: 1024Mi
+        cpu: 300m
+        memory: 512Mi
       requests:
-        cpu: 500m
-        memory: 1024Mi
+        cpu: 300m
+        memory: 512Mi
 
     # genericWorker.podSecurityContext -- Security contexts for generic worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
     podSecurityContext: { }
@@ -561,13 +561,13 @@ redash:
 
     # genericWorker.nodeSelector -- Node labels for generic worker pod assignment [ref](https://kubernetes.io/docs/user-guide/node-selection/)
     nodeSelector:
-      dedicated: internal
+      dedicated: redash
 
     # genericWorker.tolerations -- Tolerations for generic worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "internal"
+        value: "redash"
         effect: "NoSchedule"
 
     # genericWorker.affinity -- Affinity for generic worker pod assignment [ref](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity)
