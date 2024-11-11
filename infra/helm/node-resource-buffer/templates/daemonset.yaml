@@ -23,3 +23,16 @@ spec:
             limits:
               cpu: "200m" # node의 10%
               memory: "400Mi" # node의 10%
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - effect: NoSchedule
+          key: dedicated
+          operator: Equal
+          value: internal
