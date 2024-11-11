@@ -14,6 +14,21 @@ import org.springframework.transaction.support.TransactionTemplate
 class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager bean과 이름이 겹치지 않도록 한다.
     private val delegate: PlatformTransactionManager,
 ) : TransactionManager, PlatformTransactionManager by delegate {
+    private val transactionTemplates: Map<TransactionPreset, TransactionTemplate> = run {
+        TransactionIsolationLevel.values().flatMap { isolationLevel ->
+            TransactionPropagation.values().flatMap { propagation ->
+                listOf(true, false).map { isReadOnly ->
+                    val txTemplate = TransactionTemplate(this).also {
+                        it.isolationLevel = isolationLevel.toSpring()
+                        it.propagationBehavior = propagation.toSpring()
+                        it.isReadOnly = isReadOnly
+                    }
+
+                    TransactionPreset(isolationLevel, propagation, isReadOnly) to txTemplate
+                }
+            }
+        }.toMap()
+    }
 
     override fun getTransaction(definitionParam: TransactionDefinition?): TransactionStatus {
         val parent = currentTxState.get()
@@ -33,19 +48,18 @@ class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager 
         return delegate.getTransaction(definition)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> doInTransaction(
         isolationLevel: TransactionIsolationLevel,
         propagation: TransactionPropagation,
         isReadOnly: Boolean,
         block: () -> T
     ): T {
-        val transactionDefinition = DefaultTransactionDefinition().apply {
-            this.isolationLevel = isolationLevel.toSpring()
-            this.propagationBehavior = propagation.toSpring()
-            this.isReadOnly = isReadOnly
-        }
+        val transactionPreset = TransactionPreset(isolationLevel, propagation, isReadOnly)
+        val transactionTemplate = transactionTemplates[transactionPreset]
+            ?: TransactionTemplate(this, DefaultTransactionDefinition())
 
-        return TransactionTemplate(this, transactionDefinition).execute {
+        return transactionTemplate.execute {
             val parent = currentTxState.get()
             if (parent != TxState.ACTIVE) {
                 currentTxState.set(TxState.ACTIVE)
@@ -103,6 +117,12 @@ class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager 
         TransactionPropagation.REQUIRES_NEW -> TransactionDefinition.PROPAGATION_REQUIRES_NEW
         TransactionPropagation.NEVER -> TransactionDefinition.PROPAGATION_NEVER
     }
+
+    data class TransactionPreset(
+        val isolationLevel: TransactionIsolationLevel,
+        val propagationLevel: TransactionPropagation,
+        val isReadOnly: Boolean,
+    )
 
     enum class TxState {
         NONE,
