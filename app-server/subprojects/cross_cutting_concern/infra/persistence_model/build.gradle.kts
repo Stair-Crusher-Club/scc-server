@@ -11,15 +11,9 @@ dependencies {
     implementation(projects.boundedContext.externalAccessibility.domain)
     implementation(projects.crossCuttingConcern.domain.serverEvent)
 
-    val kotlinLoggingVersion: String by project
-    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-
-    val flywayVersion: String by project
-    implementation("org.flywaydb:flyway-core:$flywayVersion")
-
-    val jacksonModuleKotlinVersion: String by project
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
-
+    implementation(libs.kotlin.logging)
+    implementation(libs.flyway.core)
+    implementation(libs.jackson.module.kotlin)
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
 }

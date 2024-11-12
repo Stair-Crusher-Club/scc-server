@@ -10,7 +10,7 @@ dependencies {
     implementation("org.sejda.webp-imageio:webp-imageio-sejda:0.1.0")
     implementation("org.bytedeco:javacv-platform:1.5.9")
 
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation(libs.mockito.kotlin)
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
     integrationTestImplementation("org.springframework.boot:spring-boot-starter-web")

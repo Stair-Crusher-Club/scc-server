@@ -1,6 +1,6 @@
 plugins {
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
 }
 
 
@@ -15,7 +15,6 @@ dependencies {
     implementation("org.springframework:spring-webflux")
 
     // Fixme: 다른 모듈에서는 이거 안 해도 테스트 잘만 도는데...?
-    val jUnitJupiterVersion: String by project
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$jUnitJupiterVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jUnitJupiterVersion")
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }

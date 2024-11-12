@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm")
-    kotlin("plugin.spring")
-    kotlin("plugin.jpa")
-    id("org.springframework.boot")
-    id("io.gitlab.arturbosch.detekt")
-    id("io.spring.dependency-management")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.kotlin.jpa)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.spring.dependency.management)
 }
 
 repositories {
@@ -61,12 +61,7 @@ subprojects {
         } else if (project.name == "application") {
             implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         }
-        val kotlinLoggingVersion: String by project
-        val kotlinSerialization: String by project
-        val kotlinVersion: String by project
-        implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
-        implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+        implementation(rootProject.libs.bundles.kotlin.subproject)
     }
 
     tasks.test {
@@ -153,12 +148,11 @@ subprojects {
             }
         }
 
-        val coroutineVersion: String by project
         listOfNotNull(domainProject, applicationProject, infraProject)
             .forEach {
                 it.dependencies {
                     implementation(rootProject.projects.crossCuttingConcern.stdlib)
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
+                    implementation(rootProject.libs.coroutines.core)
                 }
             }
     }

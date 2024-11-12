@@ -1,17 +1,15 @@
 plugins {
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
 }
 
 dependencies {
-    val kotlinLoggingVersion: String by project
-
     implementation(projects.crossCuttingConcern.stdlib)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.retry:spring-retry")
     implementation("org.springframework:spring-aspects")
-    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+    implementation(libs.kotlin.logging)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

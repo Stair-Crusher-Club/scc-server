@@ -1,12 +1,9 @@
 plugins {
-    kotlin("plugin.serialization")
-    id("org.springframework.boot")
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.spring.boot)
 }
 
 dependencies {
-    val kotlinLoggingVersion: String by project
-    val kotlinxSerializationVersion: String by project
-
     implementation(projects.crossCuttingConcern.stdlib)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
     implementation(projects.crossCuttingConcern.infra.network)
@@ -16,15 +13,12 @@ dependencies {
     implementation("org.springframework:spring-webflux")
     implementation("io.projectreactor.netty:reactor-netty")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
-
-    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-
-    val guavaVersion: String by project
-    implementation("com.google.guava:guava:$guavaVersion")
+    implementation(libs.coroutines.reactive)
+    implementation(libs.kotlin.serialization.json)
+    implementation(libs.kotlin.logging)
+    implementation(libs.guava)
 
     testImplementation(projects.apiSpecification.domainEvent)
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation(libs.mockito.kotlin)
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 }
