@@ -118,7 +118,7 @@ class UserController(
     @PostMapping("/admin/user/sendPushNotification")
     fun sendPushNotification(
         @RequestBody request: UserSendPushNotificationPostRequest,
-        authentication: SccAppAuthentication,
+        @Suppress("UnusedPrivateMember") authentication: SccAppAuthentication,
     ) {
         userApplicationService.sendPushNotification(
             userIds = request.userIds,
