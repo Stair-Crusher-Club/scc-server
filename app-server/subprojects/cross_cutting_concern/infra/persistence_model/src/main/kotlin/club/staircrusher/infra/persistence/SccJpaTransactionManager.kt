@@ -63,16 +63,13 @@ class SccJpaTransactionManager( // Spring이 제공하는 JpaTransactionManager 
             val parent = currentTxState.get()
             if (parent != TxState.ACTIVE) {
                 currentTxState.set(TxState.ACTIVE)
-                TransactionSynchronizationManager.registerSynchronization(
-                    object : TransactionSynchronization {
-                        override fun afterCompletion(status: Int) {
-                            currentTxState.set(parent)
-                        }
-                    },
-                )
             }
 
-            block()
+            try {
+                block()
+            } finally {
+                currentTxState.set(parent)
+            }
         } as T
     }
 
