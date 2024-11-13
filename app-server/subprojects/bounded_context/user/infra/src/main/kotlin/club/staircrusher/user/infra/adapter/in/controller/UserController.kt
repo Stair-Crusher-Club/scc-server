@@ -5,6 +5,7 @@ import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
@@ -118,7 +119,7 @@ class UserController(
     @PostMapping("/admin/user/sendPushNotification")
     fun adminSendPushNotification(
         @RequestBody request: AdminSendPushNotificationRequestDto,
-        @Suppress("UnusedPrivateMember") authentication: SccAppAuthentication,
+        @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
     ) {
         userApplicationService.sendPushNotification(
             userIds = request.userIds,
