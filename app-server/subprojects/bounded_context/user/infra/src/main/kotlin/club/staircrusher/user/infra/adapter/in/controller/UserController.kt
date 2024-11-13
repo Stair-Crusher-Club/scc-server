@@ -1,6 +1,6 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
-import club.staircrusher.admin_api.spec.dto.UserSendPushNotificationPostRequest
+import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
@@ -116,8 +116,8 @@ class UserController(
     }
 
     @PostMapping("/admin/user/sendPushNotification")
-    fun sendPushNotification(
-        @RequestBody request: UserSendPushNotificationPostRequest,
+    fun adminSendPushNotification(
+        @RequestBody request: AdminSendPushNotificationRequestDto,
         @Suppress("UnusedPrivateMember") authentication: SccAppAuthentication,
     ) {
         userApplicationService.sendPushNotification(
