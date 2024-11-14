@@ -28,9 +28,12 @@ val detektExcludedProjects = listOf(
     project(":deploying_apps:local_script"),
 )
 subprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "kotlin-spring")
-    apply(plugin = "kotlin-jpa")
+    apply {
+        plugin(rootProject.libs.plugins.kotlin.jvm.get().pluginId)
+        plugin(rootProject.libs.plugins.kotlin.spring.get().pluginId)
+        plugin(rootProject.libs.plugins.kotlin.jpa.get().pluginId)
+        plugin(rootProject.libs.plugins.spring.dependency.management.get().pluginId)
+    }
 
     noArg {
         annotation("club.staircrusher.stdlib.persistence.jpa.NoArgsConstructor")
@@ -41,6 +44,12 @@ subprojects {
         annotation("jakarta.persistence.Embeddable")
         annotation("jakarta.persistence.MappedSuperclass")
         annotation("club.staircrusher.stdlib.di.annotation.Component")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        }
     }
 
     java {
@@ -82,7 +91,9 @@ subprojects {
     }
 
     if (this !in detektExcludedProjects) {
-        apply(plugin = "io.gitlab.arturbosch.detekt")
+        apply {
+            plugin(rootProject.libs.plugins.detekt.get().pluginId)
+        }
 
         detekt {
             config = files("$rootDir/detekt-config.yml")
@@ -99,14 +110,6 @@ subprojects {
                 html.required.set(true)
                 md.required.set(true)
             }
-        }
-    }
-
-
-    apply(plugin = "io.spring.dependency-management")
-    dependencyManagement {
-        imports {
-            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
         }
     }
 }
