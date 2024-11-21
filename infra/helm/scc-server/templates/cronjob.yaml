@@ -5,8 +5,8 @@ metadata:
   labels:
     {{- include "scc-server.labels" . | nindent 4 }}
 spec:
-  # Run every minute from 10:00PM to 06:00AM in KST
-  schedule: "*/2 11-21 * * *"
+  # Run every minute from 6:00PM to 08:00AM in KST
+  schedule: "* 9-23 * * *"
   jobTemplate:
     spec:
       template:
