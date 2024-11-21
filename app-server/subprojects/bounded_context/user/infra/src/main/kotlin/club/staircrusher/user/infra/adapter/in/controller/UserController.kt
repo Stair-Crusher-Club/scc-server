@@ -161,6 +161,15 @@ class UserController(
             "63c1229f-654d-4ac9-9d1f-55e5cf5006a7",
             "964c4a02-8018-4159-bcd3-ac46720dd109",
             "2b41a255-703e-44af-8004-e4a03c0fa373",
+            "12443db6-c38d-45df-a27b-fe60f4e6cf73",
+            "4bcb25b4-6225-4eca-8510-f93cac893d93",
+            "db01ba4f-53a1-413f-b03d-d453e276e082",
+            "ea450185-52a6-4a9c-868c-21b5b452babd",
+            "d77ae0a3-fd96-413e-ae3f-64e0f6362ea0",
+            "17f54bb1-1fb7-484b-8776-8dc1c14971cf",
+            "5d6212c6-5b60-4e6a-ac78-028df6cd4ea1",
+            "da680c03-9c15-4d82-846b-f54c14162cb7",
+            "2a8787d3-4f12-4d0c-94fc-955a5fdf28e0",
         )
     }
 }
