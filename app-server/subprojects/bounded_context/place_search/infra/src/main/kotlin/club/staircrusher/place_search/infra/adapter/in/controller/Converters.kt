@@ -1,5 +1,6 @@
 package club.staircrusher.place_search.infra.adapter.`in`.controller
 
+import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.PlaceCategoryDto
@@ -7,6 +8,7 @@ import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.place_search.application.port.`in`.PlaceSearchService
+import club.staircrusher.spring_web.cdn.SccCdn
 
 fun Place.toDTO(isFavorite: Boolean) = club.staircrusher.api.spec.dto.Place(
     id = id,
@@ -33,6 +35,7 @@ fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
         accessibilityScore = accessibilityScore,
         floors = placeAccessibility?.floors ?: emptyList(),
         hasSlope = placeAccessibility?.hasSlope ?: false,
+        images = placeAccessibility?.images?.map { it.toDTO() } ?: emptyList(),
         imageUrls = placeAccessibility?.imageUrls ?: emptyList(),
         createdAt = placeAccessibility?.createdAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
     ),
@@ -59,3 +62,8 @@ fun club.staircrusher.stdlib.place.PlaceCategory.toDto(): PlaceCategoryDto = whe
     club.staircrusher.stdlib.place.PlaceCategory.HOSPITAL -> PlaceCategoryDto.HOSPITAL
     club.staircrusher.stdlib.place.PlaceCategory.PHARMACY -> PlaceCategoryDto.PHARMACY
 }
+
+fun AccessibilityImage.toDTO() = club.staircrusher.api.spec.dto.ImageDto(
+    imageUrl = SccCdn.forAccessibilityImage(imageUrl),
+    thumbnailUrl = thumbnailUrl?.let { SccCdn.forAccessibilityImage(it) },
+)
