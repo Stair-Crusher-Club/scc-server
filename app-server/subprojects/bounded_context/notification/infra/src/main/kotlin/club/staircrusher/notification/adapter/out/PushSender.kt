@@ -8,6 +8,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.messaging.AndroidConfig
+import com.google.firebase.messaging.AndroidNotification
 import com.google.firebase.messaging.ApnsConfig
 import com.google.firebase.messaging.Aps
 import com.google.firebase.messaging.ApsAlert
@@ -20,7 +21,7 @@ import java.util.UUID
 @Component
 class PushSender(
     properties: PushSenderProperties,
-): PushSender {
+) : PushSender {
     private val logger = KotlinLogging.logger { }
     private val messaging by lazy {
         val firebaseApp = FirebaseApp.initializeApp(
@@ -73,6 +74,12 @@ class PushSender(
     ): AndroidConfig {
         return AndroidConfig.builder().apply {
             notification.collapseKey?.let { setCollapseKey(it) }
+            setNotification(
+                AndroidNotification.builder()
+                    .setBody(notification.body)
+                    .setTitle(notification.title)
+                    .build()
+            )
             putAllData(customData)
             notification.link?.let { putData(DEEPLINK_CUSTOM_DATA_KEY, it) }
             setPriority(AndroidConfig.Priority.HIGH)
