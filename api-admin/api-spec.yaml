@@ -565,6 +565,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminCreateImageUploadUrlsResponseDTO'
 
+  /user/sendPushNotification:
+    post:
+      summary: 유저들에게 push notification을 보낸다.
+      operationId: adminSendPushNotification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSendPushNotificationRequestDto'
+      responses:
+        '200': {}
+
 components:
   # Reusable schemas (data models)
   schemas:
@@ -1206,3 +1219,25 @@ components:
       required:
         - url
         - expireAt
+
+    AdminSendPushNotificationRequestDto:
+      type: object
+      properties:
+        userIds:
+          type: array
+          items:
+            type: string
+        notification:
+          type: object
+          properties:
+            title:
+              type: string
+            body:
+              type: string
+            deepLink:
+              type: string
+          required:
+            - body
+      required:
+        - userIds
+        - notification

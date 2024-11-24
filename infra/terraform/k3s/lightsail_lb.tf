@@ -21,6 +21,7 @@ import {
   id = "scc_lb,star.staircrusher.club"
 }
 
+// NOTE: 실제 DNS record는 AWS lightsail console에서 직접 수정해야 한다.
 resource "aws_lightsail_lb_certificate" "scc_lb_cert" {
   name                      = "star.staircrusher.club"
   lb_name                   = aws_lightsail_lb.scc_lb.id

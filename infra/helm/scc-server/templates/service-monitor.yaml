@@ -10,3 +10,4 @@ spec:
       app.kubernetes.io/name: {{ include "scc-server.name" . }}
   endpoints:
     - port: metrics
+      path: /actuator/prometheus

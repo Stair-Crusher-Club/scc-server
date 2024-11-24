@@ -1771,6 +1771,10 @@ components:
           type: array
           items:
             type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageDto'
         hasSlope:
           type: boolean
         floors:
@@ -1780,6 +1784,7 @@ components:
         createdAt:
           $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
+        - images
         - imageUrls
         - hasSlope
         - floors
