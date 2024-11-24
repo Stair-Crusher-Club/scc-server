@@ -35,12 +35,18 @@ management:
       exposure:
         include: info,health,prometheus
   metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true # for latency percentile observability
     web:
       server:
         auto-time-requests: true
         max-uri-tags: 1024
   server:
     port: 18080
+
 
 scc:
   environment: local

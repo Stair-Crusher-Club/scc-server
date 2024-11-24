@@ -1,0 +1,15 @@
+kube-prometheus-stack:
+  grafana:
+    ingress:
+      enabled: true
+
+      hosts:
+        - grafana.staircrusher.club
+
+  # https://github.com/prometheus-operator/kube-prometheus/issues/1392#issuecomment-1411719953
+  prometheus:
+    prometheusSpec:
+      ruleSelectorNilUsesHelmValues: false
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      probeSelectorNilUsesHelmValues: false
