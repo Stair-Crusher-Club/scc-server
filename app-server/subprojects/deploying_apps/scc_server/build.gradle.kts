@@ -1,14 +1,12 @@
 import com.google.cloud.tools.jib.api.buildplan.ImageFormat.Docker
 
 plugins {
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
-    id("com.google.cloud.tools.jib")
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.jib)
 }
 
 dependencies {
-    val postgresqlVersion: String by project
-
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -16,15 +14,9 @@ dependencies {
 
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("com.zaxxer:HikariCP")
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
-
-    val sentryVersion: String by project
-    runtimeOnly("io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion")
-    runtimeOnly("io.sentry:sentry-logback:$sentryVersion")
-
-    val logbackJsonVersion: String by project
-    runtimeOnly("ch.qos.logback.contrib:logback-jackson:$logbackJsonVersion")
-    runtimeOnly("ch.qos.logback.contrib:logback-json-classic:$logbackJsonVersion")
+    runtimeOnly(libs.postgresql)
+    runtimeOnly(libs.bundles.sentry)
+    runtimeOnly(libs.bundles.logback)
 
     implementation(projects.crossCuttingConcern.infra.springWeb)
     implementation(projects.crossCuttingConcern.infra.springMessage)

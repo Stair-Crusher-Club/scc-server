@@ -1,0 +1,82 @@
+[versions]
+# plugins
+kotlin = "1.8.20"
+springBoot = "3.0.5"
+springDependencyManagement = "1.1.0"
+detekt = "1.21.0"
+ksp = "1.8.20-1.0.10"
+jib = "3.4.1"
+openapiGenerator = "6.0.1"
+
+# libraries
+kotlinLogging = "3.0.5"
+kotlinSerialization = "1.5.1"
+coroutine = "1.6.4"
+geoTools = "26.5"
+jts = "1.19.0"
+proj4j = "1.3.0"
+kopykat = "1.0.4"
+apacheCommons = "1.11.0"
+jUnitJupiter = "5.9.1"
+jacksonModuleKotlin = "2.12.3"
+awsSdk = "2.17.292"
+guava = "31.1-jre"
+firebaseAdmin = "9.3.0"
+sentry = "6.7.0"
+logback = "0.1.5"
+postgresql = "42.5.0"
+flyway = "9.4.0"
+jwt = "3.18.1"
+mockitoKotlin = "5.1.0"
+
+[libraries]
+kotlin-logging = { group = "io.github.microutils", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
+kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }
+coroutines-reactive = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactive", version.ref = "coroutine" }
+coroutines-jdk8 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version.ref = "coroutine" }
+coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "coroutine" }
+coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version.ref = "coroutine" }
+geotools-referencing = { group = "org.geotools", name = "gt-referencing", version.ref = "geoTools" }
+jts-core = { group = "org.locationtech.jts", name = "jts-core", version.ref = "jts" }
+proj4j-core = { group = "org.locationtech.proj4j", name = "proj4j", version.ref = "proj4j" }
+proj4j-epsg = { group = "org.locationtech.proj4j", name = "proj4j-epsg", version.ref = "proj4j" }
+kopykat-ksp = { group = "at.kopyk", name = "kopykat-ksp", version.ref = "kopykat" }
+kopykat-annotations = { group = "at.kopyk", name = "kopykat-annotations", version.ref = "kopykat" }
+apache-commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "apacheCommons" }
+apache-commons-csv = { group = "org.apache.commons", name = "commons-csv", version.ref = "apacheCommons" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "jUnitJupiter" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "jUnitJupiter" }
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
+aws-sdk-s3 = { group = "software.amazon.awssdk", name = "s3", version.ref = "awsSdk" }
+aws-sdk-rekognition = { group = "software.amazon.awssdk", name = "rekognition", version.ref = "awsSdk" }
+aws-sdk-sts = { group = "software.amazon.awssdk", name = "sts", version.ref = "awsSdk" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+firebase-admin = { group = "com.google.firebase", name = "firebase-admin", version.ref = "firebaseAdmin" }
+sentry-spring-boot-starter = { group = "io.sentry", name = "sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
+sentry-logback = { group = "io.sentry", name = "sentry-logback", version.ref = "sentry" }
+logback-jackson = { group = "ch.qos.logback.contrib", name = "logback-jackson", version.ref = "logback" }
+logback-json-classic = { group = "ch.qos.logback.contrib", name = "logback-jackson", version.ref = "logback" }
+flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
+
+[bundles]
+kotlin-subproject = ["kotlin-logging", "kotlin-serialization-json", "kotlin-reflect"]
+sentry = ["sentry-spring-boot-starter", "sentry-logback"]
+logback = ["logback-jackson", "logback-json-classic"]
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+jib = { id = "com.google.cloud.tools.jib", version.ref = "jib" }
+openapi-generator = { id = "org.openapi.generator", version.ref = "openapiGenerator" }

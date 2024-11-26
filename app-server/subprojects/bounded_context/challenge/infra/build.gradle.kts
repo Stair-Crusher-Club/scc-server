@@ -1,6 +1,6 @@
 plugins {
-    id("io.spring.dependency-management")
-    id("org.springframework.boot")
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.spring.boot)
 }
 
 dependencies {
@@ -11,9 +11,8 @@ dependencies {
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 
-    val awsSdkVersion: String by project
-    implementation("software.amazon.awssdk:s3:$awsSdkVersion")
-    runtimeOnly("software.amazon.awssdk:sts:$awsSdkVersion") // IRSA를 사용하기 위해서 필요함
+    implementation(libs.aws.sdk.s3)
+    runtimeOnly(libs.aws.sdk.sts) // IRSA를 사용하기 위해서 필요함
 
     testImplementation(projects.boundedContext.place.application)
 }

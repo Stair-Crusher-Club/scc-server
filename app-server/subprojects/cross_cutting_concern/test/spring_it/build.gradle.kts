@@ -1,16 +1,15 @@
 plugins {
-    id("io.spring.dependency-management")
-    id("org.springframework.boot")
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.spring.boot)
 }
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
+    implementation(libs.jackson.module.kotlin)
     runtimeOnly("com.zaxxer:HikariCP")
-    val postgresqlVersion: String by project
-    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+    runtimeOnly(libs.postgresql)
     runtimeOnly("org.springframework:spring-jdbc")
 
     val dependencyHandlerScope = this

@@ -1,6 +1,6 @@
 plugins {
-    id("io.spring.dependency-management")
-    id("org.springframework.boot")
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.spring.boot)
 }
 
 dependencies {
@@ -14,14 +14,13 @@ dependencies {
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-webflux")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
+    implementation(libs.coroutines.jdk8)
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 
-    val awsSdkVersion: String by project
-    implementation("software.amazon.awssdk:s3:$awsSdkVersion")
-    implementation("software.amazon.awssdk:rekognition:$awsSdkVersion")
-    runtimeOnly("software.amazon.awssdk:sts:$awsSdkVersion") // IRSA를 사용하기 위해서 필요함
+    implementation(libs.aws.sdk.s3)
+    implementation(libs.aws.sdk.rekognition)
+    runtimeOnly(libs.aws.sdk.sts) // IRSA를 사용하기 위해서 필요함
     testImplementation(projects.apiSpecification.domainEvent)
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation(libs.mockito.kotlin)
 }

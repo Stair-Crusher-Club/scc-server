@@ -1,8 +1,8 @@
 plugins {
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
-    kotlin("plugin.serialization")
-    kotlin("plugin.spring")
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.spring)
 }
 
 dependencies {
@@ -18,10 +18,9 @@ dependencies {
 
     implementation("com.auth0:java-jwt:3.18.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
-    val kotlinxSerializationVersion: String by project
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+    implementation(libs.coroutines.reactive)
+    implementation(libs.kotlin.serialization.json)
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation(libs.mockito.kotlin)
 }

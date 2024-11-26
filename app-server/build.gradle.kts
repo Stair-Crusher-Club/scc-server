@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm")
-    kotlin("plugin.spring")
-    kotlin("plugin.jpa")
-    id("org.springframework.boot")
-    id("io.gitlab.arturbosch.detekt")
-    id("io.spring.dependency-management")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.kotlin.jpa)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.spring.dependency.management)
 }
 
 repositories {
@@ -28,9 +28,12 @@ val detektExcludedProjects = listOf(
     project(":deploying_apps:local_script"),
 )
 subprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "kotlin-spring")
-    apply(plugin = "kotlin-jpa")
+    apply {
+        plugin(rootProject.libs.plugins.kotlin.jvm.get().pluginId)
+        plugin(rootProject.libs.plugins.kotlin.spring.get().pluginId)
+        plugin(rootProject.libs.plugins.kotlin.jpa.get().pluginId)
+        plugin(rootProject.libs.plugins.spring.dependency.management.get().pluginId)
+    }
 
     noArg {
         annotation("club.staircrusher.stdlib.persistence.jpa.NoArgsConstructor")
@@ -41,6 +44,12 @@ subprojects {
         annotation("jakarta.persistence.Embeddable")
         annotation("jakarta.persistence.MappedSuperclass")
         annotation("club.staircrusher.stdlib.di.annotation.Component")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        }
     }
 
     java {
@@ -61,12 +70,7 @@ subprojects {
         } else if (project.name == "application") {
             implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         }
-        val kotlinLoggingVersion: String by project
-        val kotlinSerialization: String by project
-        val kotlinVersion: String by project
-        implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization")
-        implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+        implementation(rootProject.libs.bundles.kotlin.subproject)
     }
 
     tasks.test {
@@ -87,7 +91,9 @@ subprojects {
     }
 
     if (this !in detektExcludedProjects) {
-        apply(plugin = "io.gitlab.arturbosch.detekt")
+        apply {
+            plugin(rootProject.libs.plugins.detekt.get().pluginId)
+        }
 
         detekt {
             config = files("$rootDir/detekt-config.yml")
@@ -104,14 +110,6 @@ subprojects {
                 html.required.set(true)
                 md.required.set(true)
             }
-        }
-    }
-
-
-    apply(plugin = "io.spring.dependency-management")
-    dependencyManagement {
-        imports {
-            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
         }
     }
 }
@@ -153,12 +151,11 @@ subprojects {
             }
         }
 
-        val coroutineVersion: String by project
         listOfNotNull(domainProject, applicationProject, infraProject)
             .forEach {
                 it.dependencies {
                     implementation(rootProject.projects.crossCuttingConcern.stdlib)
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
+                    implementation(rootProject.libs.coroutines.core)
                 }
             }
     }
