@@ -58,7 +58,7 @@ firebase-admin = { group = "com.google.firebase", name = "firebase-admin", versi
 sentry-spring-boot-starter = { group = "io.sentry", name = "sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
 sentry-logback = { group = "io.sentry", name = "sentry-logback", version.ref = "sentry" }
 logback-jackson = { group = "ch.qos.logback.contrib", name = "logback-jackson", version.ref = "logback" }
-logback-json-classic = { group = "ch.qos.logback.contrib", name = "logback-jackson", version.ref = "logback" }
+logback-json-classic = { group = "ch.qos.logback.contrib", name = "logback-json-classic", version.ref = "logback" }
 flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
