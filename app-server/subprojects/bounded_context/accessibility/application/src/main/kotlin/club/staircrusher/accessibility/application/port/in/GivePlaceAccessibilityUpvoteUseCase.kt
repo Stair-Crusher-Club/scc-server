@@ -40,16 +40,16 @@ class GivePlaceAccessibilityUpvoteUseCase(
             )
         )
 
-        transactionManager.doAfterCommit {
-            val place = placeRepository.findByIdOrNull(placeAccessibility.placeId)
-            val content = """
-                접근성 정보가 도움이 돼요
-                - 접근성 정보 Id: ${placeAccessibility.id}
-                - 장소명: ${place?.name}
-                - 주소: ${place?.address}
-                - 신고자: ${user.nickname}
-            """.trimIndent()
+        val place = placeRepository.findByIdOrNull(placeAccessibility.placeId)
+        val content = """
+            접근성 정보가 도움이 돼요
+            - 접근성 정보 Id: ${placeAccessibility.id}
+            - 장소명: ${place?.name}
+            - 주소: ${place?.address}
+            - 신고자: ${user.nickname}
+        """.trimIndent()
 
+        transactionManager.doAfterCommit {
             slackService.send(
                 accessibilityReportChannel,
                 content,
