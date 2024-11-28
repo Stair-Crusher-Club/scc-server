@@ -10,6 +10,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import java.time.Clock
@@ -24,6 +25,8 @@ class GivePlaceAccessibilityUpvoteUseCase(
     @Value("\${scc.slack.channel.reportAccessibility:#scc-accessibility-report}") val accessibilityReportChannel: String,
     private val clock: Clock,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun handle(
         user: AuthUser,
         placeAccessibilityId: String,
@@ -48,8 +51,10 @@ class GivePlaceAccessibilityUpvoteUseCase(
             - 주소: ${place?.address}
             - 신고자: ${user.nickname}
         """.trimIndent()
+        logger.info("Content that will be sent to slack: $content")
 
         transactionManager.doAfterCommit {
+            logger.info("Give place accessibility upvote after commit for $placeAccessibilityId")
             slackService.send(
                 accessibilityReportChannel,
                 content,
