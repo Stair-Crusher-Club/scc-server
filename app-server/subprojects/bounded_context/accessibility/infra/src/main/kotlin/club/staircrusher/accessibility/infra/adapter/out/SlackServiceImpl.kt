@@ -25,16 +25,21 @@ class SlackServiceImpl(
     )
 
     override fun send(channel: String, content: String) {
-        val response = slackService.postMessage(
-            SlackService.PostMessageRequest(
-                channel = channel,
-                text = content,
-                attachments = emptyList(),
+        logger.info("Sending message to channel $channel, content: $content")
+        try {
+            val response = slackService.postMessage(
+                SlackService.PostMessageRequest(
+                    channel = channel,
+                    text = content,
+                    attachments = emptyList(),
+                )
             )
-        )
 
-        if (!response.ok) {
-            logger.error("Failed to send message: $content; response: $response")
+            if (!response.ok) {
+                logger.error("Failed to send message: $content; response: $response")
+            }
+        } catch (t: Throwable) {
+            logger.error("Error sending message to channel $channel", t)
         }
     }
 
