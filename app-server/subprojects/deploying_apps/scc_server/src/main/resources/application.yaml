@@ -37,10 +37,7 @@ management:
   metrics:
     distribution:
       percentiles-histogram:
-        http:
-          server:
-            requests:
-              seconds: true # for latency percentile observability
+        http.server.requests: true # for latency percentile observability
     web:
       server:
         auto-time-requests: true
