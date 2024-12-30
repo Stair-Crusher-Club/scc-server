@@ -184,6 +184,7 @@ class UserController(
             "407a3a0e-1c51-4491-90ec-cc1e52a1ebf6",
             "13add2e4-c2fc-419b-a19b-f0a873de5113",
             "4be9d41a-b869-45e7-9fc0-a23f5357a191",
+            "54c413b8-68f5-4bbd-b625-a2753236b5e0",
         )
     }
 }
