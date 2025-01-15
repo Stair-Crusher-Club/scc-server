@@ -34,7 +34,7 @@ class UserController(
         val isTargetUser = user.id in betaUsers
         val isNotProd = SccEnv.getEnv() != SccEnv.PROD
         val featureFlags: List<String> =
-            if (isTargetUser || isNotProd) listOf("MAP_VISIBLE", "TOILET_VISIBLE") else emptyList()
+            if (isTargetUser || isNotProd) listOf("MAP_VISIBLE", "TOILET_VISIBLE") else listOf("TOILET_VISIBLE")
         return GetUserInfoResponseDto(
             user = user.toDTO(),
             flags = featureFlags,
