@@ -56,13 +56,13 @@ jobs:
       - name: Gradle Check
         run: ./gradlew clean check
 
-      - uses: actions/upload-artifact@v3
-        name: Upload Check Report If Failed
-        if: failure()
-        with:
-          name: test report
-          path: "**/build/reports"
-          retention-days: 1
+#      - uses: actions/upload-artifact@v3
+#        name: Upload Check Report If Failed
+#        if: failure()
+#        with:
+#          name: test report
+#          path: "**/build/reports"
+#          retention-days: 1
 
       - name: Notify CI failure to PR
         uses: thollander/actions-comment-pull-request@v2
