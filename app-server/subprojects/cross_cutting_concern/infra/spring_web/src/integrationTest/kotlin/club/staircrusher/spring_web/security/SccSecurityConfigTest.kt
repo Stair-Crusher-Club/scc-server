@@ -66,14 +66,15 @@ class SccSecurityConfigTest {
     }
 
     private fun getUser(): IdentifiedUser {
-        return identifiedUserRepository.save(IdentifiedUser(
-            id = userId,
-            nickname = "",
-            encryptedPassword = "",
-            instagramId = null,
-            email = "",
-            mobilityTools = mutableListOf(),
-            createdAt = Instant.now()
-        ))
+        return identifiedUserRepository.save(
+            IdentifiedUser(
+                id = userId,
+                nickname = "",
+                encryptedPassword = "",
+                instagramId = null,
+                email = "",
+                mobilityTools = mutableListOf(),
+            )
+        )
     }
 }
