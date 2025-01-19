@@ -1,7 +1,7 @@
 package club.staircrusher.spring_web.security
 
-import club.staircrusher.user.domain.model.User
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.domain.model.IdentifiedUser
+import club.staircrusher.user.application.port.out.persistence.IdentifiedUserRepository
 import club.staircrusher.user.domain.service.UserAuthService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +19,7 @@ class SccSecurityConfigTest {
     lateinit var userAuthService: UserAuthService
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    lateinit var identifiedUserRepository: IdentifiedUserRepository
 
     @Autowired
     lateinit var mvc: MockMvc
@@ -65,8 +65,8 @@ class SccSecurityConfigTest {
         }
     }
 
-    private fun getUser(): User {
-        return userRepository.save(User(
+    private fun getUser(): IdentifiedUser {
+        return identifiedUserRepository.save(IdentifiedUser(
             id = userId,
             nickname = "",
             encryptedPassword = "",

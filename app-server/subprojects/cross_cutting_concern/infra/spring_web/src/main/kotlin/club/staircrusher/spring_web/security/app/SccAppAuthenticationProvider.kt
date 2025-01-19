@@ -4,7 +4,7 @@ import club.staircrusher.spring_web.security.BeforeAuthSccAuthentication
 import club.staircrusher.stdlib.auth.AuthUser
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.UserAuthApplicationService
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.IdentifiedUser
 import club.staircrusher.user.domain.exception.UserAuthenticationException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
@@ -25,7 +25,7 @@ class SccAppAuthenticationProvider(
             throw BadCredentialsException("Invalid access token.", e)
         }
 
-        val user: User = userApplicationService.getUser(userId)
+        val user: IdentifiedUser = userApplicationService.getUser(userId)
             ?: throw BadCredentialsException("No User found with given credentials.")
         if (user.isDeleted) {
             throw BadCredentialsException("No User found with given credentials.")
