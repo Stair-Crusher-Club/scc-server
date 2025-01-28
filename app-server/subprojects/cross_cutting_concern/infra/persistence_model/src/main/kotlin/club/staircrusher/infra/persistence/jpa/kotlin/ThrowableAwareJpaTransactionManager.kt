@@ -1,4 +1,4 @@
-package club.staircrusher.infra.persistence
+package club.staircrusher.infra.persistence.jpa.kotlin
 
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.orm.jpa.JpaTransactionManager
@@ -16,7 +16,7 @@ import org.springframework.transaction.support.DefaultTransactionStatus
  * https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html
  *
  */
-class KotlinJpaTransactionManager(emf: EntityManagerFactory) : JpaTransactionManager(emf) {
+class ThrowableAwareJpaTransactionManager(emf: EntityManagerFactory) : JpaTransactionManager(emf) {
     @Suppress("TooGenericExceptionThrown")
     override fun doCommit(status: DefaultTransactionStatus) {
         try {

@@ -1,5 +1,7 @@
 package club.staircrusher.infra.persistence
 
+import club.staircrusher.infra.persistence.jpa.SccPlatformTransactionManager
+import club.staircrusher.infra.persistence.jpa.kotlin.ThrowableAwareJpaTransactionManager
 import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.context.annotation.Bean
@@ -10,7 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager
 class TransactionManagerConfiguration {
     @Bean
     fun transactionManager(entityManagerFactory: EntityManagerFactory): PlatformTransactionManager {
-        return SccPlatformTransactionManager(KotlinJpaTransactionManager(entityManagerFactory))
+        return SccPlatformTransactionManager(ThrowableAwareJpaTransactionManager(entityManagerFactory))
     }
 
     @Bean

@@ -1,5 +1,6 @@
-package club.staircrusher.infra.persistence
+package club.staircrusher.infra.persistence.jpa
 
+import club.staircrusher.infra.persistence.SccTxStateHolder
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.TransactionStatus
