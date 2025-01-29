@@ -2,7 +2,7 @@ package club.staircrusher.user.domain.service
 
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.token.TokenManager
-import club.staircrusher.user.domain.model.IdentifiedUser
+import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserAccessTokenPayload
 import club.staircrusher.user.domain.exception.UserAuthenticationException
 import club.staircrusher.stdlib.token.TokenVerificationException
@@ -14,7 +14,7 @@ class UserAuthService(
     private val tokenManager: TokenManager,
 ) {
     @Deprecated("Authentication의 책임은 User에서 UserAuthInfo로 옮겨감")
-    fun issueAccessToken(user: IdentifiedUser): String {
+    fun issueAccessToken(user: UserProfile): String {
         return tokenManager.issueToken(UserAccessTokenPayload(userId = user.id))
     }
 

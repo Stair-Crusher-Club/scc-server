@@ -1,28 +1,25 @@
 package club.staircrusher.user.domain.model
 
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
-import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import java.time.Instant
+import jakarta.persistence.Table
 
 @Entity
-class AnonymousUser(
+@Table(name = "scc_user_account_connection")
+class UserAccountConnection(
     @Id
-    override val id: String,
+    val id: String,
 
-    @Column(name = "scc_user_id", nullable = true)
-    var identifiedUserId: String?,
+    val identifiedUserAccountId: String,
 
-    @Column(nullable = true)
-    var convertedAt: Instant?,
-) : User, TimeAuditingBaseEntity() {
-
+    val anonymousUserAccountId: String,
+) : TimeAuditingBaseEntity() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AnonymousUser
+        other as UserAccountConnection
 
         return id == other.id
     }
@@ -32,6 +29,6 @@ class AnonymousUser(
     }
 
     override fun toString(): String {
-        return "AnonymousUser(id='$id', identifiedUserId='$identifiedUserId', convertedAt='$convertedAt' createdAt='$createdAt', updatedAt='$updatedAt')"
+        return "UserAccountConnection(id='$id', identifiedUserAccountId='$identifiedUserAccountId', anonymousUserAccountId='$anonymousUserAccountId' createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }

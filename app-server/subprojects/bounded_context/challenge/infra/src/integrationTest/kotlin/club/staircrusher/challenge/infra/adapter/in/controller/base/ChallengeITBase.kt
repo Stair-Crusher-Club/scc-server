@@ -6,7 +6,7 @@ import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
-import club.staircrusher.user.domain.model.IdentifiedUser
+import club.staircrusher.user.domain.model.UserProfile
 import java.time.Duration
 import java.time.Instant
 import kotlin.random.Random
@@ -97,7 +97,7 @@ open class ChallengeITBase : SccSpringITBase() {
     }
 
     fun participate(
-        user: IdentifiedUser,
+        user: UserProfile,
         challenge: Challenge,
         participateAt: Instant = clock.instant()
     ): ChallengeParticipation {
@@ -107,7 +107,7 @@ open class ChallengeITBase : SccSpringITBase() {
     }
 
     fun contributePlaceAccessibility(
-        user: IdentifiedUser,
+        user: UserProfile,
         challenge: Challenge,
         overridingPlace: Place? = null,
         contributeAt: Instant = clock.instant()

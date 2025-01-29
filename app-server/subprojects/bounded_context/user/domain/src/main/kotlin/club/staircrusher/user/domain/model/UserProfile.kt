@@ -10,10 +10,11 @@ import jakarta.persistence.Transient
 import java.time.Instant
 
 @Entity
-@Table(name = "scc_user")
-class IdentifiedUser(
+// TODO: migration needed
+@Table(name = "scc_user_profile")
+class UserProfile(
     @Id
-    override val id: String,
+    val id: String,
     var nickname: String,
     @Deprecated("닉네임 로그인은 사라질 예정") var encryptedPassword: String?,
     var instagramId: String?,
@@ -22,8 +23,8 @@ class IdentifiedUser(
     @Convert(converter = UserMobilityToolListToTextAttributeConverter::class)
     val mobilityTools: MutableList<UserMobilityTool>,
     var pushToken: String? = null,
-) : User, TimeAuditingBaseEntity() {
-    private var deletedAt: Instant? = null
+) : TimeAuditingBaseEntity() {
+    var deletedAt: Instant? = null
 
     @get:Transient
     val isDeleted: Boolean
@@ -38,7 +39,7 @@ class IdentifiedUser(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as IdentifiedUser
+        other as UserProfile
 
         return id == other.id
     }
@@ -48,6 +49,6 @@ class IdentifiedUser(
     }
 
     override fun toString(): String {
-        return "IdentifiedUser(nickname='$nickname', id='$id', encryptedPassword=$encryptedPassword, instagramId=$instagramId, email=$email, mobilityTools=$mobilityTools, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
+        return "UserProfile(nickname='$nickname', id='$id', encryptedPassword=$encryptedPassword, instagramId=$instagramId, email=$email, mobilityTools=$mobilityTools, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
     }
 }

@@ -6,7 +6,7 @@ import club.staircrusher.api.spec.dto.LoginResultDto
 import club.staircrusher.api.spec.dto.LoginWithKakaoPostRequest
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
-import club.staircrusher.user.application.port.out.persistence.IdentifiedUserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoIdToken
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
 import club.staircrusher.user.domain.model.UserAuthProviderType
@@ -26,7 +26,7 @@ class DeleteUserTest : UserITBase() {
     lateinit var kakaoLoginService: KakaoLoginService
 
     @Autowired
-    private lateinit var identifiedUserRepository: IdentifiedUserRepository
+    private lateinit var userProfileRepository: UserProfileRepository
 
     @Autowired
     lateinit var userAuthInfoRepository: UserAuthInfoRepository
@@ -53,7 +53,7 @@ class DeleteUserTest : UserITBase() {
             .andExpect {
                 status { isNoContent() }
                 transactionManager.doInTransaction {
-                    val deletedUser = identifiedUserRepository.findById(user.id).get()
+                    val deletedUser = userProfileRepository.findById(user.id).get()
                     assertTrue(deletedUser.isDeleted)
                     assertNull(deletedUser.email)
                 }
@@ -89,7 +89,7 @@ class DeleteUserTest : UserITBase() {
                 val result = getResult(LoginResultDto::class)
 
                 val newUser = transactionManager.doInTransaction {
-                    identifiedUserRepository.findById(result.user.id).get()
+                    userProfileRepository.findById(result.user.id).get()
                 }
 
                 val newUserAuthInfo = transactionManager.doInTransaction {
@@ -114,7 +114,7 @@ class DeleteUserTest : UserITBase() {
             .run {
                 val result = getResult(LoginResultDto::class)
                 val otherUser = transactionManager.doInTransaction {
-                    identifiedUserRepository.findById(result.user.id).get()
+                    userProfileRepository.findById(result.user.id).get()
                 }
                 assertNotNull(otherUser)
                 assertNotEquals(user.id, otherUser.id)
@@ -129,7 +129,7 @@ class DeleteUserTest : UserITBase() {
                 // then
                 status { isNoContent() }
                 transactionManager.doInTransaction {
-                    val deletedUser = identifiedUserRepository.findById(user.id).get()
+                    val deletedUser = userProfileRepository.findById(user.id).get()
                     assertTrue(deletedUser.isDeleted)
 
                     val userAuthInfo = userAuthInfoRepository.findByUserId(user.id).find { it.authProviderType == UserAuthProviderType.KAKAO }

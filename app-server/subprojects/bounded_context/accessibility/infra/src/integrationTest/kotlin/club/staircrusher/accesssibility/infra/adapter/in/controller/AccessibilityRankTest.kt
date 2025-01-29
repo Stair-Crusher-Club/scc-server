@@ -8,7 +8,7 @@ import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.Acces
 import club.staircrusher.api.spec.dto.GetAccessibilityLeaderboardPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityRankPost200Response
 import club.staircrusher.api.spec.dto.GetCountForNextRankPost200Response
-import club.staircrusher.user.application.port.out.persistence.IdentifiedUserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -30,7 +30,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
 
     @Autowired
-    private lateinit var identifiedUserRepository: IdentifiedUserRepository
+    private lateinit var userProfileRepository: UserProfileRepository
 
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {

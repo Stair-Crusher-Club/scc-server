@@ -10,7 +10,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import club.staircrusher.user.domain.model.IdentifiedUser
+import club.staircrusher.user.domain.model.UserProfile
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -28,9 +28,9 @@ class AdminSearchAccessibilitiesUseCase(
     ) {
         data class Item(
             val placeAccessibility: PlaceAccessibility,
-            val placeAccessibilityRegisteredUser: IdentifiedUser?,
+            val placeAccessibilityRegisteredUser: UserProfile?,
             val buildingAccessibility: BuildingAccessibility?,
-            val buildingAccessibilityRegisteredUser: IdentifiedUser?,
+            val buildingAccessibilityRegisteredUser: UserProfile?,
             val place: Place,
         )
     }

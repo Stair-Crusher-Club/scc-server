@@ -12,7 +12,7 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.user.domain.model.IdentifiedUser
+import club.staircrusher.user.domain.model.UserProfile
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -394,7 +394,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     private data class RegisterAccessibilityResult(
-        val user: IdentifiedUser,
+        val user: UserProfile,
         val place: Place,
         val placeAccessibility: PlaceAccessibility,
         val buildingAccessibility: BuildingAccessibility,
