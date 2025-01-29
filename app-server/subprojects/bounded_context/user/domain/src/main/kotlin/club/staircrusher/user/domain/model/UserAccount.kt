@@ -1,6 +1,8 @@
 package club.staircrusher.user.domain.model
 
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.Transient
@@ -12,6 +14,7 @@ class UserAccount(
     @Id
     val id: String,
 
+    @Enumerated(EnumType.STRING)
     val userType: UserType,
 
     val createdAt: Instant,
