@@ -1,3 +1,6 @@
+ALTER TABLE scc_user
+    RENAME TO scc_user_profile;
+
 CREATE TABLE IF NOT EXISTS scc_user_account (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
     user_type VARCHAR(36) NULL,
