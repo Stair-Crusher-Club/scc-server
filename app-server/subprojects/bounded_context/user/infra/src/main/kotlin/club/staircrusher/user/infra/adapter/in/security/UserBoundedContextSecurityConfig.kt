@@ -6,5 +6,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 @Component
 class UserBoundedContextSecurityConfig : SccSecurityConfig {
-    override fun requestMatchers() = listOf("/updateUserInfo").map { AntPathRequestMatcher(it) }
+    override fun requestMatchers() = listOf(
+        "/getUserInfo",
+        "/updateUserInfo",
+        "/updatePushToken",
+        "/deleteUser",
+    ).map { AntPathRequestMatcher(it) }
 }
