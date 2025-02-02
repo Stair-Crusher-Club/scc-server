@@ -212,15 +212,19 @@ class UserApplicationService(
         userAuthInfoRepository.removeByUserId(userId)
     }
 
-    fun getUser(userId: String): UserProfile? = transactionManager.doInTransaction {
+    fun getUser(userId: String): UserAccount? = transactionManager.doInTransaction {
+        userAccountRepository.findByIdOrNull(userId)
+    }
+
+    fun getUserProfile(userId: String): UserProfile? = transactionManager.doInTransaction {
         userProfileRepository.findByIdOrNull(userId)
     }
 
-    fun getUsers(userIds: List<String>): List<UserProfile> = transactionManager.doInTransaction {
+    fun getUserProfiles(userIds: List<String>): List<UserProfile> = transactionManager.doInTransaction {
         userProfileRepository.findAllById(userIds).toList()
     }
 
-    fun getAllUsers(): List<UserProfile> {
+    fun getAllUserProfiles(): List<UserProfile> {
         return userProfileRepository.findAll().toList()
     }
 
