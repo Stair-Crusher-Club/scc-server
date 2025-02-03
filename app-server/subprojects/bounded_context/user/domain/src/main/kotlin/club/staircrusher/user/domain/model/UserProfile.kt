@@ -21,7 +21,7 @@ class UserProfile(
     var email: String?,
     @Column(columnDefinition = "TEXT")
     @Convert(converter = UserMobilityToolListToTextAttributeConverter::class)
-    val mobilityTools: MutableList<UserMobilityTool>,
+    var mobilityTools: List<UserMobilityTool>,
     var pushToken: String? = null,
 ) : TimeAuditingBaseEntity() {
     var deletedAt: Instant? = null

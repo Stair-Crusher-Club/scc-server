@@ -3,14 +3,17 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.ApiErrorResponse
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.api.spec.dto.UserMobilityToolDto
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
 import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
 import club.staircrusher.stdlib.testing.SccRandom
+import club.staircrusher.user.application.port.out.persistence.UserRepository
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
@@ -20,9 +23,14 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.data.repository.findByIdOrNull
 
 class UpdateUserInfoTest : UserITBase() {
+    @Autowired
+    lateinit var userRepository: UserRepository
+
     @MockBean
     lateinit var stibeeSubscriptionService: StibeeSubscriptionService
 
@@ -168,6 +176,54 @@ class UpdateUserInfoTest : UserITBase() {
             .apply {
                 val result = getResult(ApiErrorResponse::class)
                 assertEquals(ApiErrorResponse.Code.INVALID_EMAIL, result.code)
+            }
+    }
+
+    @Test
+    fun `mobility tools 를 여러번 업데이트 해도 잘 저장된다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createUser()
+        }
+
+        val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
+        val params = UpdateUserInfoPostRequest(
+            nickname = user.nickname,
+            instagramId = user.instagramId,
+            email = changedEmail,
+            mobilityTools = listOf(UserMobilityToolDto.ELECTRIC_WHEELCHAIR, UserMobilityToolDto.PROSTHETIC_FOOT),
+        )
+        mvc
+            .sccRequest("/updateUserInfo", params, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                transactionManager.doInTransaction {
+                    val user = userRepository.findById(user.id).get()
+                    Assertions.assertEquals(2, user.mobilityTools.size)
+                }
+            }
+
+        val params2 = UpdateUserInfoPostRequest(
+            nickname = user.nickname,
+            instagramId = user.instagramId,
+            email = changedEmail,
+            mobilityTools = listOf(UserMobilityToolDto.MANUAL_WHEELCHAIR),
+        )
+        mvc
+            .sccRequest("/updateUserInfo", params2, user = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                transactionManager.doInTransaction {
+                    val user = userRepository.findById(user.id).get()
+                    Assertions.assertEquals(1, user.mobilityTools.size)
+                }
             }
     }
 
