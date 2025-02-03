@@ -54,7 +54,7 @@ jobs:
       - name: Gradle Check
         run: ./gradlew clean check
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: Upload Check Report If Failed
         if: failure()
         with:

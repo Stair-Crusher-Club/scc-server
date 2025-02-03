@@ -187,8 +187,7 @@ class UserApplicationService(
             normalizedEmail
         }
         user.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
-        user.mobilityTools.clear()
-        user.mobilityTools.addAll(mobilityTools)
+        user.mobilityTools = mobilityTools
         userProfileRepository.save(user)
 
         if (isNewsLetterSubscriptionAgreed) {

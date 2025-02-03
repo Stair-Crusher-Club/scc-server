@@ -1,5 +1,11 @@
 package club.staircrusher
 
+import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
@@ -38,4 +44,29 @@ internal fun String.toInstant(): Instant {
 
 internal fun Instant.toKstString(): String {
     return this.atZone(seoulZoneId).toLocalDateTime().format(dateTimeFormatter)
+}
+
+data class FindLngLatResult(
+    val placeName: String,
+    val place: Place,
+    val lng: Double,
+    val lat: Double,
+)
+internal fun KakaoMapsService.findLngLat(placeNames: List<String>): List<FindLngLatResult> {
+    return runBlocking {
+        val deferredList = placeNames.map { placeName ->
+            async {
+                val place = findFirstByKeyword(placeName, MapsService.SearchByKeywordOption())
+                    ?: throw IllegalArgumentException("${placeName}에 해당하는 장소가 없습니다.")
+                println("station found: $placeName / ${place.name}")
+                FindLngLatResult(
+                    placeName,
+                    place,
+                    place.location.lng,
+                    place.location.lat,
+                )
+            }
+        }
+        awaitAll(*deferredList.toTypedArray())
+    }
 }
