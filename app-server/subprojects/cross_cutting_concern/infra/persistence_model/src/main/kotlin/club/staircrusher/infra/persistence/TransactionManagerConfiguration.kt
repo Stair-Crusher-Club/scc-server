@@ -6,13 +6,11 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import org.springframework.transaction.PlatformTransactionManager
 
 @Configuration
 class TransactionManagerConfiguration {
-    @Bean("transactionManager")
-    @Primary
+    @Bean
     fun sccPlatformTransactionManager(entityManagerFactory: EntityManagerFactory): PlatformTransactionManager {
         return SccPlatformTransactionManager(ThrowableAwareJpaTransactionManager(entityManagerFactory))
     }
