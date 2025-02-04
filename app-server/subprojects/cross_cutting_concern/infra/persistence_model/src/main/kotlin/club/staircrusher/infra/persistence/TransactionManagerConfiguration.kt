@@ -6,19 +6,24 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
-import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.transaction.annotation.TransactionManagementConfigurer
 
 @Configuration
-class TransactionManagerConfiguration {
-    @Bean("transactionManager")
-    @Primary
-    fun sccPlatformTransactionManager(entityManagerFactory: EntityManagerFactory): PlatformTransactionManager {
-        return SccPlatformTransactionManager(ThrowableAwareJpaTransactionManager(entityManagerFactory))
-    }
+@EnableTransactionManagement
+class TransactionManagerConfiguration(
+    private val entityManagerFactory: EntityManagerFactory,
+) : TransactionManagementConfigurer {
 
     @Bean
-    fun sccJpaTransactionManager(platformTransactionManager: PlatformTransactionManager): TransactionManager {
-        return SccJpaTransactionManager(platformTransactionManager)
+    fun sccJpaTransactionManager(): TransactionManager {
+        return SccJpaTransactionManager(
+            SccPlatformTransactionManager(ThrowableAwareJpaTransactionManager(entityManagerFactory))
+        )
    }
+
+    // `@Transactional` annotation 에서 SccPlatformTransactionManager 를 사용하도록
+    override fun annotationDrivenTransactionManager(): org.springframework.transaction.TransactionManager {
+        return SccPlatformTransactionManager(ThrowableAwareJpaTransactionManager(entityManagerFactory))
+    }
 }
