@@ -1,5 +1,3 @@
-# https://jkim68888.tistory.com/7
-# 클라이언트 팀으로부터 team_id, service_id, key_id, authkey.p8을 전달받아 사용하면 된다.
 from time import time
 import jwt
 
