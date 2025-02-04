@@ -11,7 +11,7 @@ import org.springframework.transaction.PlatformTransactionManager
 
 @Configuration
 class TransactionManagerConfiguration {
-    @Bean
+    @Bean("transactionManager")
     @Primary
     fun sccPlatformTransactionManager(entityManagerFactory: EntityManagerFactory): PlatformTransactionManager {
         return SccPlatformTransactionManager(ThrowableAwareJpaTransactionManager(entityManagerFactory))
