@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @EntityScan("club.staircrusher")
-@EnableJpaRepositories("club.staircrusher")
+@EnableJpaRepositories(
+    basePackages = ["club.staircrusher"],
+    transactionManagerRef = "sccPlatformTransactionManager",
+)
 @Configuration
 class JpaRepositoryConfig
