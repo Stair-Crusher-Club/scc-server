@@ -6,11 +6,11 @@ plugins {
 dependencies {
     api("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     implementation(libs.jackson.module.kotlin)
     runtimeOnly("com.zaxxer:HikariCP")
     runtimeOnly(libs.postgresql)
-    runtimeOnly("org.springframework:spring-jdbc")
 
     val dependencyHandlerScope = this
     rootProject.subprojects {
