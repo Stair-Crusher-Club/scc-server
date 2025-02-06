@@ -23,7 +23,7 @@ class UpdateRanksUseCase(
     fun handle() {
         // update accessibility rank with count first
         transactionManager.doInTransaction {
-            val users: List<UserProfile> = userApplicationService.getAllUsers()
+            val users: List<UserProfile> = userApplicationService.getAllUserProfiles()
             val lastRank = accessibilityRankRepository.findRankByConqueredCount(0) ?: 1
             val now = SccClock.instant()
 

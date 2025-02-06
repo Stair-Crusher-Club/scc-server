@@ -1,7 +1,11 @@
 package club.staircrusher.spring_web.security
 
+import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserType
 import club.staircrusher.user.domain.service.UserAuthService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +23,9 @@ class SccSecurityConfigTest {
 
     @Autowired
     lateinit var userProfileRepository: UserProfileRepository
+
+    @Autowired
+    lateinit var userAccountRepository: UserAccountRepository
 
     @Autowired
     lateinit var mvc: MockMvc
@@ -64,6 +71,28 @@ class SccSecurityConfigTest {
         }
     }
 
+    @Test
+    fun `회원가입 한 유저만 접근할 수 있는 엔드포인트 인증 테스트`() {
+        val user = getUser()
+        val accessToken = userAuthService.issueAccessToken(user)
+        mvc.get("/echoUserId/identified") {
+            header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+        }.andExpect {
+            content {
+                string(userId)
+            }
+        }
+        val anonymousUser = getAnonymousUser()
+        val anonymousAccessToken = userAuthService.issueAccessToken(anonymousUser.id)
+        mvc.get("/echoUserId/identified") {
+            header(HttpHeaders.AUTHORIZATION, "Bearer $anonymousAccessToken")
+        }.andExpect {
+            status {
+                isForbidden()
+            }
+        }
+    }
+
     private fun getUser(): UserProfile {
         return userProfileRepository.save(
             UserProfile(
@@ -73,6 +102,17 @@ class SccSecurityConfigTest {
                 instagramId = null,
                 email = "",
                 mobilityTools = mutableListOf(),
+            )
+        )
+    }
+
+    private fun getAnonymousUser(): UserAccount {
+        return userAccountRepository.save(
+            UserAccount(
+                id = userId,
+                userType = UserType.ANONYMOUS,
+                createdAt = SccClock.instant(),
+                updatedAt = SccClock.instant(),
             )
         )
     }

@@ -3,6 +3,7 @@ package club.staircrusher.spring_web.security.app
 import club.staircrusher.stdlib.auth.AuthUser
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 class SccAppAuthentication(
     private val authUser: AuthUser,
@@ -12,7 +13,8 @@ class SccAppAuthentication(
     }
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return listOf(GrantedAuthority { "ROLE_$authority" })
+        val roles = setOf("ROLE_ANONYMOUS", "ROLE_${authUser.type}")
+        return roles.map { SimpleGrantedAuthority(it) }
     }
 
     override fun getCredentials(): String {
@@ -33,9 +35,5 @@ class SccAppAuthentication(
 
     override fun setAuthenticated(isAuthenticated: Boolean) {
         throw IllegalArgumentException("Do not call this method. This authentication is always authenticated.")
-    }
-
-    companion object {
-        const val authority = "SCC_APP_AUTH"
     }
 }

@@ -18,6 +18,11 @@ class UserAuthService(
         return tokenManager.issueToken(UserAccessTokenPayload(userId = user.id))
     }
 
+    @Deprecated("Authentication의 책임은 User에서 UserAuthInfo로 옮겨감")
+    fun issueAccessToken(userId: String): String {
+        return tokenManager.issueToken(UserAccessTokenPayload(userId = userId))
+    }
+
     fun issueTokens(userAuthInfo: UserAuthInfo): AuthTokens {
         val accessToken = tokenManager.issueToken(UserAccessTokenPayload(userId = userAuthInfo.userId))
         return AuthTokens(accessToken = accessToken)

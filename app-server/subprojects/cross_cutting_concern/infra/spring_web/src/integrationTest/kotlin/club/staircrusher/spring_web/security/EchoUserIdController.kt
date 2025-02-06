@@ -15,4 +15,9 @@ class EchoUserIdController {
     fun securedEchoUserId(authentication: SccAppAuthentication): String {
         return authentication.principal
     }
+
+    @GetMapping("/echoUserId/identified")
+    fun identifiedEchoUserId(authentication: SccAppAuthentication): String {
+        return authentication.principal
+    }
 }

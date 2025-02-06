@@ -21,7 +21,7 @@ class GetChallengeRankUseCase(
     private val challengeService: ChallengeService,
 ) {
     fun handle(challengeId: String, userId: String): WithUserInfo<ChallengeRank>? = transactionManager.doInTransaction {
-        val user = userApplicationService.getUser(userId) ?: throw SccDomainException("잘못된 계정입니다.")
+        val user = userApplicationService.getUserProfile(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         val challenge = challengeRepository.findByIdOrNull(challengeId) ?: throw SccDomainException("잘못된 챌린지입니다.")
         if (!challengeService.hasJoined(userId, challengeId)) {
             throw SccDomainException("참여하지 않은 챌린지 입니다.")
