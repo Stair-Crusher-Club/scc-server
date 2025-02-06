@@ -23,6 +23,6 @@ class InMemoryUserProfileRepository : UserProfileRepository, InMemoryCrudReposit
     }
 
     override fun findAll(pageable: Pageable): Page<UserProfile> {
-        return Page.empty()
+        TODO()
     }
 }
