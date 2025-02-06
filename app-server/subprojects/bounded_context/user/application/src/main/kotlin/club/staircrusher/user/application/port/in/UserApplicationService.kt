@@ -18,7 +18,7 @@ import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscr
 import club.staircrusher.user.domain.model.UserAccount
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
-import club.staircrusher.user.domain.model.UserType
+import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.CoroutineScope
@@ -76,7 +76,7 @@ class UserApplicationService(
         userAccountRepository.save(
             UserAccount(
                 id = id,
-                userType = UserType.IDENTIFIED,
+                accountType = UserAccountType.IDENTIFIED,
                 createdAt = SccClock.instant(),
                 updatedAt = SccClock.instant(),
             )

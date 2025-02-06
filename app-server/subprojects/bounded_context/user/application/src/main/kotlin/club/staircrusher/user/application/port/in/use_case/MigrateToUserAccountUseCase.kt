@@ -5,7 +5,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.domain.model.UserAccount
-import club.staircrusher.user.domain.model.UserType
+import club.staircrusher.user.domain.model.UserAccountType
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -27,7 +27,7 @@ class MigrateToUserAccountUseCase(
                     // 이미 발급되어 있는 JWT 의 하위 호환성을 맞춰주려면 user id 를 맞춰줘야 한다
                     val userAccount = UserAccount(
                         id = userProfile.id,
-                        userType = UserType.IDENTIFIED,
+                        accountType = UserAccountType.IDENTIFIED,
                         // TODO: 마이그레이션을 마친 뒤에 TimeAuditingBaseEntity 로 대체
                         createdAt = userProfile.createdAt,
                         updatedAt = userProfile.updatedAt,

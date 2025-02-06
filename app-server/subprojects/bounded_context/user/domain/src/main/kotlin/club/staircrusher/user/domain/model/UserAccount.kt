@@ -15,7 +15,7 @@ class UserAccount(
     val id: String,
 
     @Enumerated(EnumType.STRING)
-    val userType: UserType,
+    val accountType: UserAccountType,
 
     val createdAt: Instant,
     val updatedAt: Instant,
@@ -44,6 +44,6 @@ class UserAccount(
     }
 
     override fun toString(): String {
-        return "UserAccount(id='$id', userType=$userType, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
+        return "UserAccount(id='$id', accountType=$accountType, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
     }
 }
