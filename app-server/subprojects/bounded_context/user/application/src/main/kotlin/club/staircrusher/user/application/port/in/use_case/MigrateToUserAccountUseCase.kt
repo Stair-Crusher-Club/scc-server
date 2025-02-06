@@ -24,6 +24,9 @@ class MigrateToUserAccountUseCase(
 
             page.content.forEach { userProfile ->
                 transactionManager.doInTransaction {
+                    if (userAccountRepository.existsById(userProfile.id)) {
+                        return@doInTransaction
+                    }
                     // 이미 발급되어 있는 JWT 의 하위 호환성을 맞춰주려면 user id 를 맞춰줘야 한다
                     val userAccount = UserAccount(
                         id = userProfile.id,
