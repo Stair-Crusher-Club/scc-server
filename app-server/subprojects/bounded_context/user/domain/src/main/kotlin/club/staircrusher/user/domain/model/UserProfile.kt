@@ -10,8 +10,7 @@ import jakarta.persistence.Transient
 import java.time.Instant
 
 @Entity
-// TODO: migration needed
-@Table(name = "scc_user_profile")
+@Table(name = "scc_user")
 class UserProfile(
     @Id
     val id: String,

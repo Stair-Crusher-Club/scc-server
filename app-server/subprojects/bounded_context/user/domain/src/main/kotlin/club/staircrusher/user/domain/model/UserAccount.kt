@@ -4,12 +4,10 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
-import jakarta.persistence.Table
 import jakarta.persistence.Transient
 import java.time.Instant
 
 @Entity
-@Table(name = "scc_user_account")
 class UserAccount(
     @Id
     val id: String,
