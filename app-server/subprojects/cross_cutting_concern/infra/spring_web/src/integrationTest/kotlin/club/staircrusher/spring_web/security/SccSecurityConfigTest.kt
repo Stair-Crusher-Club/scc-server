@@ -1,7 +1,7 @@
 package club.staircrusher.spring_web.security
 
-import club.staircrusher.user.domain.model.User
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.domain.model.UserProfile
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.domain.service.UserAuthService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import java.time.Instant
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -19,7 +18,7 @@ class SccSecurityConfigTest {
     lateinit var userAuthService: UserAuthService
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    lateinit var userProfileRepository: UserProfileRepository
 
     @Autowired
     lateinit var mvc: MockMvc
@@ -65,15 +64,16 @@ class SccSecurityConfigTest {
         }
     }
 
-    private fun getUser(): User {
-        return userRepository.save(User(
-            id = userId,
-            nickname = "",
-            encryptedPassword = "",
-            instagramId = null,
-            email = "",
-            mobilityTools = mutableListOf(),
-            createdAt = Instant.now()
-        ))
+    private fun getUser(): UserProfile {
+        return userProfileRepository.save(
+            UserProfile(
+                id = userId,
+                nickname = "",
+                encryptedPassword = "",
+                instagramId = null,
+                email = "",
+                mobilityTools = mutableListOf(),
+            )
+        )
     }
 }

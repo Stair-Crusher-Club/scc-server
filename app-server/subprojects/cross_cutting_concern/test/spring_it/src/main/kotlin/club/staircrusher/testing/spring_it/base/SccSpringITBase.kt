@@ -5,7 +5,7 @@ import club.staircrusher.spring_web.security.admin.AdminAuthenticationService
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.testing.spring_it.ITDataGenerator
 import club.staircrusher.testing.spring_it.mock.MockSccClock
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.service.UserAuthService
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -54,7 +54,7 @@ open class SccSpringITBase {
         clock.reset()
     }
 
-    protected fun MockMvc.sccRequest(url: String, requestBody: Any?, user: User? = null): ResultActionsDsl {
+    protected fun MockMvc.sccRequest(url: String, requestBody: Any?, user: UserProfile? = null): ResultActionsDsl {
         return post(url) {
             contentType = MediaType.APPLICATION_JSON
             content = requestBody?.let { objectMapper.writeValueAsBytes(it) } ?: "{}".toByteArray()

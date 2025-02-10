@@ -88,3 +88,27 @@ spec:
                 - "-XPOST"
                 - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/createClosedPlaceCandidates"
           restartPolicy: OnFailure
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scc-migrate-to-user-accounts
+  labels:
+    {{- include "scc-server.labels" . | nindent 4 }}
+spec:
+  # manual trigger only (Feb 30th)
+  schedule: "0 0 30 2 *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: curl-container
+              image: appropriate/curl
+              args:
+                - "--fail"
+                - "-XPOST"
+                - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/migrateToUserAccount"
+          restartPolicy: OnFailure

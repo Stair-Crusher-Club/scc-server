@@ -1,13 +1,16 @@
 package club.staircrusher.user.application.port.out.persistence
 
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository : CrudRepository<User, String> {
-    fun findFirstByNickname(nickname: String): User?
-    fun findFirstByEmail(email: String): User?
+interface UserProfileRepository : CrudRepository<UserProfile, String> {
+    fun findFirstByNickname(nickname: String): UserProfile?
+    fun findFirstByEmail(email: String): UserProfile?
+    fun findAll(pageable: Pageable): Page<UserProfile>
 
     data class CreateUserParams(
         val nickname: String,

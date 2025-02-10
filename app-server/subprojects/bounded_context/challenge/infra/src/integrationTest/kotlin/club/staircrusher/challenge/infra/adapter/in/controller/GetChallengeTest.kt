@@ -9,7 +9,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeRep
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -73,9 +73,9 @@ class GetChallengeTest : ChallengeITBase() {
 
     private fun generateUsersAndContributions(
         challenge: Challenge,
-        participant: User? = null,
-    ): Pair<List<User>, List<ChallengeContribution>> {
-        val users = mutableListOf<User>()
+        participant: UserProfile? = null,
+    ): Pair<List<UserProfile>, List<ChallengeContribution>> {
+        val users = mutableListOf<UserProfile>()
         transactionManager.doInTransaction {
             repeat(Random.nextInt(from = 1, until = 10)) {
                 users += testDataGenerator.createUser().also { participate(it, challenge) }

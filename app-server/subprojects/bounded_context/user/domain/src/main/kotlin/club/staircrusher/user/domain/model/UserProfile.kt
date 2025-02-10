@@ -1,5 +1,6 @@
 package club.staircrusher.user.domain.model
 
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
@@ -10,7 +11,7 @@ import java.time.Instant
 
 @Entity
 @Table(name = "scc_user")
-class User(
+class UserProfile(
     @Id
     val id: String,
     var nickname: String,
@@ -21,9 +22,8 @@ class User(
     @Convert(converter = UserMobilityToolListToTextAttributeConverter::class)
     var mobilityTools: List<UserMobilityTool>,
     var pushToken: String? = null,
-    val createdAt: Instant,
-) {
-    private var deletedAt: Instant? = null
+) : TimeAuditingBaseEntity() {
+    var deletedAt: Instant? = null
 
     @get:Transient
     val isDeleted: Boolean
@@ -38,7 +38,7 @@ class User(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as User
+        other as UserProfile
 
         return id == other.id
     }
@@ -48,6 +48,6 @@ class User(
     }
 
     override fun toString(): String {
-        return "User(nickname='$nickname', id='$id', encryptedPassword=$encryptedPassword, instagramId=$instagramId, email=$email, mobilityTools=$mobilityTools, createdAt=$createdAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
+        return "UserProfile(nickname='$nickname', id='$id', encryptedPassword=$encryptedPassword, instagramId=$instagramId, email=$email, mobilityTools=$mobilityTools, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
     }
 }

@@ -7,7 +7,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.InitialNicknameGenerator
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.login.apple.AppleLoginService
 import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType
@@ -19,7 +19,7 @@ import java.time.Duration
 class LoginWithAppleUseCase(
     private val transactionManager: TransactionManager,
     private val appleLoginService: AppleLoginService,
-    private val userRepository: UserRepository,
+    private val userProfileRepository: UserProfileRepository,
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
@@ -39,7 +39,7 @@ class LoginWithAppleUseCase(
 
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
-        val user = userRepository.findById(userAuthInfo.userId).get()
+        val user = userProfileRepository.findById(userAuthInfo.userId).get()
         return LoginResult(
             authTokens = authTokens,
             user = user,
@@ -48,7 +48,7 @@ class LoginWithAppleUseCase(
 
     private fun doLoginWithSignUp(appleRefreshToken: String, appleLoginUserId: String): LoginResult {
         val user = userApplicationService.signUp(
-            params = UserRepository.CreateUserParams(
+            params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
                 password = null,
                 instagramId = null,
