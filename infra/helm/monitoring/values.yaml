@@ -8,6 +8,13 @@ kube-prometheus-stack:
 
   # https://github.com/prometheus-operator/kube-prometheus/issues/1392#issuecomment-1411719953
   prometheus:
+    ingress:
+      enabled: true
+
+      hosts:
+        - prometheus.staircrusher.club
+      paths: []
+
     prometheusSpec:
       ruleSelectorNilUsesHelmValues: false
       serviceMonitorSelectorNilUsesHelmValues: false
