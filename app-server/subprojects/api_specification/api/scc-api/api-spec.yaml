@@ -17,9 +17,15 @@ servers:
           - 'api'
           - 'api.dev'
 
+security:
+  # 모든 API 는 기본적으로 AnonymousUserAuth 를 적용
+  - AnonymousUserAuth: []
+
 paths:
   /cancelBuildingAccessibilityUpvote:
     post:
+      security:
+        - IdentifiedUserAuth: []
       requestBody:
         content:
           application/json:
@@ -32,6 +38,8 @@ paths:
 
   /cancelPlaceAccessibilityUpvote:
     post:
+      security:
+        - IdentifiedUserAuth: []
       requestBody:
         content:
           application/json:
@@ -42,9 +50,22 @@ paths:
         '204': { }
       summary: '''이 정보가 도움이 돼요''를 취소한다.'
 
+  /createAnonymousUser:
+    post:
+      summary: 비회원 계정을 생성한다.
+      security: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAnonymousUserResponseDto'
+
   /createPlaceFavorite:
     post:
       summary: 장소를 즐겨찾기에 추가한다.
+      security:
+        - IdentifiedUserAuth: []
       requestBody:
         required: true
         content:
@@ -63,6 +84,8 @@ paths:
       summary: |
         등록한 접근성 정보를 삭제한다.
         기본적으로는 장소 정보만 삭제하지만, 삭제하는 장소 정보가 해당 건물의 마지막 장소 정보일 경우 건물 정보도 함께 삭제한다.
+      security:
+        - IdentifiedUserAuth: []
       requestBody:
         required: true
         content:
@@ -83,6 +106,8 @@ paths:
   /deletePlaceFavorite:
     post:
       summary: 장소를 즐겨찾기에서 삭제한다.
+      security:
+        - IdentifiedUserAuth: []
       requestBody:
         required: true
         content:
@@ -99,6 +124,8 @@ paths:
   /deleteUser:
     post:
       summary: 계정을 삭제한다.
+      security:
+        - IdentifiedUserAuth: []
       responses:
         '204': { }
 
@@ -848,6 +875,16 @@ paths:
                 $ref: '#/components/schemas/GetHomeBannersResponseDto'
 
 components:
+  # Security schemes
+  securitySchemes:
+    AnonymousUserAuth:
+      type: http
+      scheme: bearer
+
+    IdentifiedUserAuth:
+      type: http
+      scheme: bearer
+
   # Reusable schemas (data models)
   schemas:
     AccessibilityInfoDto:
@@ -1155,6 +1192,14 @@ components:
           type: string
       required:
         - name
+
+    CreateAnonymousUserResponseDto:
+      type: object
+      properties:
+        authTokens:
+          $ref: '#/components/schemas/AuthTokensDto'
+      required:
+        - authTokens
 
     CreatePlaceFavoriteRequestDto:
       type: object
