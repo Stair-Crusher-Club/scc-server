@@ -19,13 +19,13 @@ servers:
 
 security:
   # 모든 API 는 기본적으로 AnonymousUserAuth 를 적용
-  - AnonymousUserAuth: []
+  - Anonymous: []
 
 paths:
   /cancelBuildingAccessibilityUpvote:
     post:
       security:
-        - IdentifiedUserAuth: []
+        - Identified: []
       requestBody:
         content:
           application/json:
@@ -39,7 +39,7 @@ paths:
   /cancelPlaceAccessibilityUpvote:
     post:
       security:
-        - IdentifiedUserAuth: []
+        - Identified: []
       requestBody:
         content:
           application/json:
@@ -65,7 +65,7 @@ paths:
     post:
       summary: 장소를 즐겨찾기에 추가한다.
       security:
-        - IdentifiedUserAuth: []
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -85,7 +85,7 @@ paths:
         등록한 접근성 정보를 삭제한다.
         기본적으로는 장소 정보만 삭제하지만, 삭제하는 장소 정보가 해당 건물의 마지막 장소 정보일 경우 건물 정보도 함께 삭제한다.
       security:
-        - IdentifiedUserAuth: []
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -107,7 +107,7 @@ paths:
     post:
       summary: 장소를 즐겨찾기에서 삭제한다.
       security:
-        - IdentifiedUserAuth: []
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -125,7 +125,7 @@ paths:
     post:
       summary: 계정을 삭제한다.
       security:
-        - IdentifiedUserAuth: []
+        - Identified: []
       responses:
         '204': { }
 
@@ -198,6 +198,8 @@ paths:
   /getAccessibilityRank:
     post:
       summary: 내 현재 랭크를 조회한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -219,6 +221,8 @@ paths:
 
   /getCountForNextRank:
     post:
+      security:
+        - Identified: []
       requestBody:
         content:
           application/json:
@@ -242,6 +246,8 @@ paths:
   /getImageUploadUrls:
     post:
       summary: 점포 정보 등록 등의 상황에서 이미지를 업로드하기 위한 URL을 받아 온다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -326,6 +332,8 @@ paths:
   /getAccessibilityActivityReport:
     post:
       summary: 유저 접근성 정보 정복 활동을 조회한다
+      security:
+        - Identified: []
       responses:
         '200':
           content:
@@ -336,6 +344,8 @@ paths:
   /getUserInfo:
     get:
       summary: 유저 정보를 조회한다.
+      security:
+        - Identified: []
       responses:
         '200':
           content:
@@ -346,6 +356,8 @@ paths:
   /giveBuildingAccessibilityUpvote:
     post:
       summary: "'이 정보가 도움이 돼요'를 준다."
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -358,6 +370,8 @@ paths:
   /givePlaceAccessibilityUpvote:
     post:
       summary: "'이 정보가 도움이 돼요'를 준다."
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -370,6 +384,8 @@ paths:
   /joinChallenge:
     post:
       summary: 챌린지에 참여한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -428,6 +444,8 @@ paths:
   /listConqueredPlaces:
     post:
       summary: 내가 정복한 장소 목록을 조회한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -569,6 +587,8 @@ paths:
   /registerBuildingAccessibility:
     post:
       summary: 건물 접근성 정보를 등록한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -584,6 +604,8 @@ paths:
   /registerBuildingAccessibilityComment:
     post:
       summary: 건물에 의견을 추가한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -614,6 +636,8 @@ paths:
   /registerPlaceAccessibility:
     post:
       summary: 점포의 접근성 정보를 등록한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -630,6 +654,8 @@ paths:
   /registerPlaceAccessibilityComment:
     post:
       summary: 점포에 의견을 추가한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -660,6 +686,8 @@ paths:
   /reportAccessibility:
     post:
       summary: 등록된 접근성 정보가 올바르지 않은 경우 신고한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -804,6 +832,8 @@ paths:
   /updateUserInfo:
     post:
       summary: 유저 정보를 수정한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -877,11 +907,11 @@ paths:
 components:
   # Security schemes
   securitySchemes:
-    AnonymousUserAuth:
+    Anonymous:
       type: http
       scheme: bearer
 
-    IdentifiedUserAuth:
+    Identified:
       type: http
       scheme: bearer
 

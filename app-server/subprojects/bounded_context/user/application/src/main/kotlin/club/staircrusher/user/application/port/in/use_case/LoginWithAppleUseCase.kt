@@ -24,29 +24,31 @@ class LoginWithAppleUseCase(
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
 ) {
-    fun handle(authorizationCode: String): LoginResult = transactionManager.doInTransaction {
+    fun handle(authorizationCode: String, anonymousUserId: String?): LoginResult = transactionManager.doInTransaction {
         val appleLoginTokens = runBlocking {
             appleLoginService.getAppleLoginTokens(authorizationCode)
         }
 
         val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.APPLE, appleLoginTokens.idToken.appleLoginUserId)
         if (userAuthInfo != null) {
-            doLoginForExistingUser(userAuthInfo)
+            doLoginForExistingUser(userAuthInfo, anonymousUserId)
         } else {
-            doLoginWithSignUp(appleLoginTokens.refreshToken, appleLoginTokens.idToken.appleLoginUserId)
+            doLoginWithSignUp(appleLoginTokens.refreshToken, appleLoginTokens.idToken.appleLoginUserId, anonymousUserId)
         }
     }
 
-    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
+    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
         val user = userProfileRepository.findById(userAuthInfo.userId).get()
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }
+
         return LoginResult(
             authTokens = authTokens,
             user = user,
         )
     }
 
-    private fun doLoginWithSignUp(appleRefreshToken: String, appleLoginUserId: String): LoginResult {
+    private fun doLoginWithSignUp(appleRefreshToken: String, appleLoginUserId: String, anonymousUserId: String?): LoginResult {
         val user = userApplicationService.signUp(
             params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
@@ -55,6 +57,7 @@ class LoginWithAppleUseCase(
                 email = null,
             )
         )
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }
 
         val newUserAuthInfo = userAuthInfoRepository.save(
             UserAuthInfo(
