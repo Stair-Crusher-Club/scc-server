@@ -48,13 +48,15 @@ open class SccSecurityFilterChainConfig {
             .exceptionHandling {
                 it.authenticationEntryPoint(sccAuthenticationEntryPoint)
             }
-            .authorizeRequests {
+            .authorizeHttpRequests { authorize ->
                 sccSecurityConfigs.forEach { sccSecurityConfig ->
-                    it
+                    authorize
+                        .requestMatchers(*sccSecurityConfig.identifiedUserOnlyRequestMatchers().toTypedArray())
+                        .hasRole("IDENTIFIED")
                         .requestMatchers(*sccSecurityConfig.requestMatchers().toTypedArray())
                         .authenticated()
                 }
-                it
+                authorize
                     .anyRequest()
                     .permitAll()
             }

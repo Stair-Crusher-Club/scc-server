@@ -10,12 +10,15 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.validation.email.EmailValidator
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.domain.model.AuthTokens
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
+import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +33,8 @@ import org.springframework.data.repository.findByIdOrNull
 @Component
 class UserApplicationService(
     private val transactionManager: TransactionManager,
-    private val userRepository: UserRepository,
+    private val userAccountRepository: UserAccountRepository,
+    private val userProfileRepository: UserProfileRepository,
     private val userAuthService: UserAuthService,
     private val passwordEncryptor: PasswordEncryptor,
     private val userAuthInfoRepository: UserAuthInfoRepository,
@@ -46,7 +50,7 @@ class UserApplicationService(
         password: String,
         instagramId: String?
     ): AuthTokens = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val params = UserRepository.CreateUserParams(
+        val params = UserProfileRepository.CreateUserParams(
             nickname = nickname,
             password = password,
             instagramId = instagramId,
@@ -59,25 +63,32 @@ class UserApplicationService(
         AuthTokens(accessToken)
     }
 
-    fun signUp(
-        params: UserRepository.CreateUserParams
-    ): User {
+    fun signUp(params: UserProfileRepository.CreateUserParams): UserProfile {
         val normalizedNickname = params.nickname.trim()
         if (normalizedNickname.length < 2) {
             throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
         }
-        if (userRepository.findFirstByNickname(normalizedNickname) != null) {
+        if (userProfileRepository.findFirstByNickname(normalizedNickname) != null) {
             throw SccDomainException("${normalizedNickname}은 이미 사용된 닉네임입니다.")
         }
-        return userRepository.save(
-            User(
-                id = EntityIdGenerator.generateRandom(),
+
+        val id = EntityIdGenerator.generateRandom()
+        userAccountRepository.save(
+            UserAccount(
+                id = id,
+                accountType = UserAccountType.IDENTIFIED,
+                createdAt = SccClock.instant(),
+                updatedAt = SccClock.instant(),
+            )
+        )
+        return userProfileRepository.save(
+            UserProfile(
+                id = id,
                 nickname = normalizedNickname,
                 encryptedPassword = params.password?.trim()?.let { passwordEncryptor.encrypt(it) },
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = params.email,
                 mobilityTools = mutableListOf(),
-                createdAt = SccClock.instant(),
             )
         )
     }
@@ -87,7 +98,7 @@ class UserApplicationService(
         nickname: String,
         password: String
     ): AuthTokens = transactionManager.doInTransaction {
-        val user = userRepository.findFirstByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
+        val user = userProfileRepository.findFirstByNickname(nickname) ?: throw SccDomainException("잘못된 계정입니다.")
         if (user.isDeleted) {
             throw SccDomainException("잘못된 계정입니다.")
         }
@@ -101,10 +112,10 @@ class UserApplicationService(
     fun updatePushToken(
         userId: String,
         pushToken: String,
-    ): User = transactionManager.doInTransaction {
-        val user = userRepository.findById(userId).get()
+    ): UserProfile = transactionManager.doInTransaction {
+        val user = userProfileRepository.findById(userId).get()
         user.pushToken = pushToken
-        userRepository.save(user)
+        userProfileRepository.save(user)
     }
 
     fun sendPushNotification(
@@ -113,7 +124,7 @@ class UserApplicationService(
         body: String,
         deepLink: String?,
     ) = transactionManager.doInTransaction {
-        val users = userRepository.findAllById(userIds)
+        val users = userProfileRepository.findAllById(userIds)
         val notifications = users.mapNotNull { user ->
             user.pushToken ?: return@mapNotNull null
             user.pushToken!! to PushService.Notification(
@@ -141,8 +152,8 @@ class UserApplicationService(
         email: String,
         mobilityTools: List<UserMobilityTool>,
         isNewsLetterSubscriptionAgreed: Boolean,
-    ): User = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val user = userRepository.findById(userId).get()
+    ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
+        val user = userProfileRepository.findById(userId).get()
         user.nickname = run {
             val normalizedNickname = nickname.trim()
             if (normalizedNickname.length < 2) {
@@ -151,7 +162,7 @@ class UserApplicationService(
                     SccDomainException.ErrorCode.INVALID_NICKNAME,
                 )
             }
-            if (userRepository.findFirstByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
+            if (userProfileRepository.findFirstByNickname(normalizedNickname)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException(
                     "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
                     SccDomainException.ErrorCode.INVALID_NICKNAME,
@@ -167,7 +178,7 @@ class UserApplicationService(
                     SccDomainException.ErrorCode.INVALID_EMAIL,
                 )
             }
-            if (userRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
+            if (userProfileRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.id != user.id } != null) {
                 throw SccDomainException(
                     "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
                     SccDomainException.ErrorCode.INVALID_EMAIL,
@@ -177,7 +188,7 @@ class UserApplicationService(
         }
         user.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
         user.mobilityTools = mobilityTools
-        userRepository.save(user)
+        userProfileRepository.save(user)
 
         if (isNewsLetterSubscriptionAgreed) {
             user.email?.let {
@@ -193,23 +204,36 @@ class UserApplicationService(
     fun deleteUser(
         userId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val user = userRepository.findById(userId).get()
-        user.delete(SccClock.instant())
-        userRepository.save(user)
+        val userProfile = userProfileRepository.findByIdOrNull(userId)
+        val userAccount = userAccountRepository.findByIdOrNull(userId)
+
+        val now = SccClock.instant()
+        userProfile?.let {
+            it.delete(now)
+            userProfileRepository.save(it)
+        }
+        userAccount?.let {
+            it.delete(now)
+            userAccountRepository.save(it)
+        }
 
         userAuthInfoRepository.removeByUserId(userId)
     }
 
-    fun getUser(userId: String): User? = transactionManager.doInTransaction {
-        userRepository.findByIdOrNull(userId)
+    fun getUser(userId: String): UserAccount? = transactionManager.doInTransaction {
+        userAccountRepository.findByIdOrNull(userId)
     }
 
-    fun getUsers(userIds: List<String>): List<User> = transactionManager.doInTransaction {
-        userRepository.findAllById(userIds).toList()
+    fun getUserProfile(userId: String): UserProfile? = transactionManager.doInTransaction {
+        userProfileRepository.findByIdOrNull(userId)
     }
 
-    fun getAllUsers(): List<User> {
-        return userRepository.findAll().toList()
+    fun getUserProfiles(userIds: List<String>): List<UserProfile> = transactionManager.doInTransaction {
+        userProfileRepository.findAllById(userIds).toList()
+    }
+
+    fun getAllUserProfiles(): List<UserProfile> {
+        return userProfileRepository.findAll().toList()
     }
 
     private fun subscribeToNewsLetter(userId: String, email: String, name: String) {
