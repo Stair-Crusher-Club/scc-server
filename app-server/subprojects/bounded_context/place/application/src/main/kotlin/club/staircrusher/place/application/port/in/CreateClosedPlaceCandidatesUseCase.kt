@@ -6,6 +6,7 @@ import club.staircrusher.place.domain.model.ClosedPlaceCandidate
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.time.toStartOfDay
 import club.staircrusher.stdlib.util.string.getSimilarityWith
+import com.google.common.util.concurrent.RateLimiter
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -18,14 +19,19 @@ class CreateClosedPlaceCandidatesUseCase(
     private val openDataService: OpenDataService,
 ) {
     private val logger = KotlinLogging.logger {}
+    @Suppress("UnstableApiUsage", "MagicNumber")
+    private val rateLimiter = RateLimiter.create(10.0)
 
     fun handle() {
         val closedPlacesFromOpenData = openDataService.getClosedPlaces()
 
         val closedPlaceCandidates = closedPlacesFromOpenData.mapNotNull { closedPlace ->
-            val nearbyPlaces = placeApplicationService.searchPlacesInCircle(closedPlace.location, SEARCH_RADIUS)
-            if (nearbyPlaces.isEmpty()) return@mapNotNull null
+            rateLimiter.acquire()
+            val nearbyPlaces = transactionManager.doInTransaction(isReadOnly = true) {
+                placeApplicationService.searchPlacesInCircle(closedPlace.location, SEARCH_RADIUS)
+            }
 
+            if (nearbyPlaces.isEmpty()) return@mapNotNull null
             val placeToSimilarity = nearbyPlaces
                 .associateWith { it.name.getSimilarityWith(closedPlace.name) }
             val similarPlace = placeToSimilarity
