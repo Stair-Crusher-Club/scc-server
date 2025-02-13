@@ -10,12 +10,14 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.validation.email.EmailValidator
+import club.staircrusher.user.application.port.out.persistence.UserAccountConnectionRepository
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserAccountConnection
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.model.UserAccountType
@@ -35,6 +37,7 @@ class UserApplicationService(
     private val transactionManager: TransactionManager,
     private val userAccountRepository: UserAccountRepository,
     private val userProfileRepository: UserProfileRepository,
+    private val userAccountConnectionRepository: UserAccountConnectionRepository,
     private val userAuthService: UserAuthService,
     private val passwordEncryptor: PasswordEncryptor,
     private val userAuthInfoRepository: UserAuthInfoRepository,
@@ -89,6 +92,18 @@ class UserApplicationService(
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = params.email,
                 mobilityTools = mutableListOf(),
+            )
+        )
+    }
+
+    fun createAnonymousUser(): UserAccount {
+        val id = EntityIdGenerator.generateRandom()
+        return userAccountRepository.save(
+            UserAccount(
+                id = id,
+                accountType = UserAccountType.ANONYMOUS,
+                createdAt = SccClock.instant(),
+                updatedAt = SccClock.instant(),
             )
         )
     }
@@ -218,6 +233,16 @@ class UserApplicationService(
         }
 
         userAuthInfoRepository.removeByUserId(userId)
+    }
+
+    fun connectToIdentifiedAccount(anonymousUserId: String, identifiedUserId: String) {
+        userAccountConnectionRepository.save(
+            UserAccountConnection(
+                id = EntityIdGenerator.generateRandom(),
+                identifiedUserAccountId = identifiedUserId,
+                anonymousUserAccountId = anonymousUserId,
+            )
+        )
     }
 
     fun getUser(userId: String): UserAccount? = transactionManager.doInTransaction {

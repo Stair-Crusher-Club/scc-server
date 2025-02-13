@@ -42,6 +42,14 @@ class JWTTokenManager(
             .sign(jwtAlgorithm)
     }
 
+    override fun issueToken(content: Any, expiresAfter: Duration): String {
+        return JWT.create()
+            .withIssuer(issuer)
+            .withClaim(bodyKey, objectMapper.writeValueAsString(content))
+            .withExpiresAt(Date((clock.instant() + expiresAfter).toEpochMilli()))
+            .sign(jwtAlgorithm)
+    }
+
     @Suppress("SwallowedException", "TooGenericExceptionCaught")
     override fun <T : Any> verify(token: String, contentClass: KClass<T>): T {
         val jwt = try {
