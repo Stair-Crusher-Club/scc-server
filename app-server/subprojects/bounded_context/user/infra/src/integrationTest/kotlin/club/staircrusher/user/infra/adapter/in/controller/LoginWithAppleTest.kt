@@ -5,7 +5,7 @@ import club.staircrusher.api.spec.dto.LoginResultDto
 import club.staircrusher.api.spec.dto.LoginWithAppleRequestDto
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.login.apple.AppleIdToken
 import club.staircrusher.user.application.port.out.web.login.apple.AppleLoginService
 import club.staircrusher.user.application.port.out.web.login.apple.AppleLoginTokens
@@ -28,7 +28,7 @@ class LoginWithAppleTest : UserITBase() {
     lateinit var appleLoginService: AppleLoginService
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    lateinit var userProfileRepository: UserProfileRepository
 
     @Autowired
     lateinit var userAuthInfoRepository: UserAuthInfoRepository
@@ -37,7 +37,7 @@ class LoginWithAppleTest : UserITBase() {
     fun setUp() {
         transactionManager.doInTransaction {
             userAuthInfoRepository.deleteAll()
-            userRepository.deleteAll()
+            userProfileRepository.deleteAll()
         }
     }
 
@@ -70,7 +70,7 @@ class LoginWithAppleTest : UserITBase() {
                     val result = getResult(LoginResultDto::class)
 
                     val newUser = transactionManager.doInTransaction {
-                        userRepository.findById(result.user.id).get()
+                        userProfileRepository.findById(result.user.id).get()
                     }
                     assertNull(newUser.encryptedPassword)
                     assertNull(newUser.email)
@@ -93,7 +93,7 @@ class LoginWithAppleTest : UserITBase() {
                     val result = getResult(LoginResultDto::class)
 
                     val user = transactionManager.doInTransaction {
-                        userRepository.findById(result.user.id).get()
+                        userProfileRepository.findById(result.user.id).get()
                     }
                     assertEquals(userId, user.id)
                     assertNull(user.email)

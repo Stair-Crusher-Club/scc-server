@@ -1,6 +1,6 @@
 package club.staircrusher.accessibility.application
 
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
 
 data class AccessibilityRegisterer(
     val userId: String,
@@ -8,7 +8,7 @@ data class AccessibilityRegisterer(
     val instagramId: String?,
 )
 
-fun User.toDomainModel() = AccessibilityRegisterer(
+fun UserProfile.toDomainModel() = AccessibilityRegisterer(
     userId = id,
     nickname = nickname,
     instagramId = instagramId,

@@ -7,7 +7,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.InitialNicknameGenerator
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
 import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType
@@ -18,7 +18,7 @@ import java.time.Duration
 class LoginWithKakaoUseCase(
     private val transactionManager: TransactionManager,
     private val kakaoLoginService: KakaoLoginService,
-    private val userRepository: UserRepository,
+    private val userProfileRepository: UserProfileRepository,
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
@@ -36,7 +36,7 @@ class LoginWithKakaoUseCase(
 
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
-        val user = userRepository.findById(userAuthInfo.userId).get()
+        val user = userProfileRepository.findById(userAuthInfo.userId).get()
         return LoginResult(
             authTokens = authTokens,
             user = user,
@@ -45,7 +45,7 @@ class LoginWithKakaoUseCase(
 
     private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String): LoginResult {
         val user = userApplicationService.signUp(
-            params = UserRepository.CreateUserParams(
+            params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
                 password = null,
                 instagramId = null,

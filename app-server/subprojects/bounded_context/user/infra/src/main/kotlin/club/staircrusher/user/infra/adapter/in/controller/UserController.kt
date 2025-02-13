@@ -5,13 +5,16 @@ import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.spring_web.security.InternalIpAddressChecker
 import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.use_case.GetUserUseCase
+import club.staircrusher.user.application.port.`in`.use_case.MigrateToUserAccountUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
+import jakarta.servlet.http.HttpServletRequest
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userApplicationService: UserApplicationService,
     private val getUserUseCase: GetUserUseCase,
+    private val migrateToUserAccountUseCase: MigrateToUserAccountUseCase,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -88,6 +92,12 @@ class UserController(
     fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
         userApplicationService.deleteUser(authentication.principal)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/migrateToUserAccount")
+    fun migrateToUserAccount(request: HttpServletRequest) {
+        InternalIpAddressChecker.check(request)
+        migrateToUserAccountUseCase.handle()
     }
 
     companion object {
