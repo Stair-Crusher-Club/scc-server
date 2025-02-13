@@ -16,7 +16,7 @@ class MigrateToUserAccountUseCase(
     private val userAccountRepository: UserAccountRepository,
 ) {
     fun handle() {
-        var pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Order.asc("created_at")))
+        var pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Order.asc("createdAt")))
         do {
             val page = transactionManager.doInTransaction(isReadOnly = true) {
                 userProfileRepository.findAll(pageRequest)
