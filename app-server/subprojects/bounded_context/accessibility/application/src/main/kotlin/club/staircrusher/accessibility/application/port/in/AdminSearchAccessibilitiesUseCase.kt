@@ -6,9 +6,8 @@ import club.staircrusher.accessibility.domain.model.BuildingAccessibility
 import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.place.application.port.`in`.PlaceApplicationService
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.domain.SccDomainException
+import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.domain.model.User
 import java.time.Instant
@@ -49,7 +48,7 @@ class AdminSearchAccessibilitiesUseCase(
             placeName = placeName,
             createdAtFrom = createdAtFromLocalDate?.atStartOfDay(ZoneId.of("Asia/Seoul"))?.toInstant(),
             createdAtToExclusive = createdAtToLocalDate?.plusDays(1)?.atStartOfDay(ZoneId.of("Asia/Seoul"))?.toInstant(),
-            cursorCreatedAt = cursor.createdAt,
+            cursorCreatedAt = cursor.timestamp,
             cursorId = cursor.id,
             limit = normalizedLimit + 1, // 다음 페이지가 존재하는지 확인하기 위해 한 개를 더 조회한다.
         )
@@ -86,29 +85,18 @@ class AdminSearchAccessibilitiesUseCase(
     }
 
     private data class Cursor(
-        val id: String,
         val createdAt: Instant,
-    ) {
-        val value: String = "$id$DELIMITER${createdAt.toEpochMilli()}"
-
+        val placeAccessibilityId: String,
+    ) : TimestampCursor(createdAt, placeAccessibilityId) {
         constructor(placeAccessibility: PlaceAccessibility) : this(
-            id = placeAccessibility.id,
             createdAt = placeAccessibility.createdAt,
+            placeAccessibilityId = placeAccessibility.id,
         )
 
         companion object {
-            private const val DELIMITER = "__"
+            fun parse(cursorValue: String) = TimestampCursor.parse(cursorValue)
 
-            fun parse(cursorValue: String): Cursor {
-                return try {
-                    val (id, createdAtMillis) = cursorValue.split(DELIMITER)
-                    Cursor(id = id, createdAt = Instant.ofEpochMilli(createdAtMillis.toLong()))
-                } catch (t: Throwable) {
-                    throw SccDomainException("Invalid cursor value: $cursorValue", cause = t)
-                }
-            }
-
-            fun initial() = Cursor(id = "", createdAt = SccClock.instant())
+            fun initial() = TimestampCursor.initial()
         }
     }
 
