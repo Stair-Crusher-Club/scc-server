@@ -6,7 +6,7 @@ import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.UserAuthApplicationService
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.exception.UserAuthenticationException
-import club.staircrusher.user.domain.model.UserType
+import club.staircrusher.user.domain.model.UserAccountType
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -33,7 +33,7 @@ class SccAppAuthenticationProvider(
         }
 
         val userAccount = userApplicationService.getUser(userId)
-        val type = userAccount?.userType?.name ?: UserType.IDENTIFIED.name
+        val type = userAccount?.accountType?.name ?: UserAccountType.IDENTIFIED.name
 
         return SccAppAuthentication(
             AuthUser(

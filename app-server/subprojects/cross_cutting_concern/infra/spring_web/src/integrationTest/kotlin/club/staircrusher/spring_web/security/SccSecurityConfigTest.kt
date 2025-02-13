@@ -5,7 +5,7 @@ import club.staircrusher.user.application.port.out.persistence.UserAccountReposi
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.domain.model.UserAccount
-import club.staircrusher.user.domain.model.UserType
+import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.service.UserAuthService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -110,7 +110,7 @@ class SccSecurityConfigTest {
         return userAccountRepository.save(
             UserAccount(
                 id = userId,
-                userType = UserType.ANONYMOUS,
+                accountType = UserAccountType.ANONYMOUS,
                 createdAt = SccClock.instant(),
                 updatedAt = SccClock.instant(),
             )
