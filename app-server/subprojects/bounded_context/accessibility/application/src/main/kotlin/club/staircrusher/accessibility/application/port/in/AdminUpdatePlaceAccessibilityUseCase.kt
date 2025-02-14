@@ -39,7 +39,7 @@ class AdminUpdatePlaceAccessibilityUseCase(
 
         // 0401 이후 버전에서는 floors, entranceDoorTypes 는 필수 / isStairOnlyOption 는 floors 에 따라, stairHeightLevel 은 stairInfo 에 따라 입력을 받는다.
         if (floors == null || entranceDoorTypes == null) {
-            throw SccDomainException("floors, entranceDoorTypes 는 필수입니다.")
+            throw SccDomainException("층 정보와 출입문 유형은 필수입니다.")
         }
 
         if (floors.size > 1 && isStairOnlyOption == null) {
