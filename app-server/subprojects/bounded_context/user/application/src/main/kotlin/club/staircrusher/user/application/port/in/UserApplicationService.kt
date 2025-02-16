@@ -77,13 +77,13 @@ class UserApplicationService(
             UserAccount(
                 id = id,
                 accountType = UserAccountType.IDENTIFIED,
-                createdAt = SccClock.instant(),
-                updatedAt = SccClock.instant(),
             )
         )
         return userProfileRepository.save(
             UserProfile(
                 id = id,
+                // TODO: userProfile 와 userAccount 의 사용처를 완전히 분리한 뒤 다른 각자의 id 로 관리한 수 있다
+                userAccountId = id,
                 nickname = normalizedNickname,
                 encryptedPassword = params.password?.trim()?.let { passwordEncryptor.encrypt(it) },
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },
