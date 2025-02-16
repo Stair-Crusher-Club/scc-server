@@ -97,6 +97,7 @@ class SccSecurityConfigTest {
         return userProfileRepository.save(
             UserProfile(
                 id = userId,
+                userAccountId = "",
                 nickname = "",
                 encryptedPassword = "",
                 instagramId = null,
@@ -111,8 +112,6 @@ class SccSecurityConfigTest {
             UserAccount(
                 id = userId,
                 accountType = UserAccountType.ANONYMOUS,
-                createdAt = SccClock.instant(),
-                updatedAt = SccClock.instant(),
             )
         )
     }

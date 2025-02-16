@@ -1,5 +1,6 @@
 package club.staircrusher.user.domain.model
 
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -14,10 +15,7 @@ class UserAccount(
 
     @Enumerated(EnumType.STRING)
     val accountType: UserAccountType,
-
-    val createdAt: Instant,
-    val updatedAt: Instant,
-) {
+) : TimeAuditingBaseEntity() {
     private var deletedAt: Instant? = null
 
     @get:Transient
