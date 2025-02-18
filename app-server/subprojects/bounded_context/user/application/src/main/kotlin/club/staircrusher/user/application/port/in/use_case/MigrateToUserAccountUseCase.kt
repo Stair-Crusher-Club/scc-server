@@ -38,7 +38,7 @@ class MigrateToUserAccountUseCase(
                     }
 
                     // UserAccount 와 UserProfile 이 혼재되어 사용되는 기간이 존재하므로, 통일된 id 를 사용한다
-                    reloadedUserProfile.userAccountId = userProfile.id
+                    reloadedUserProfile.accountId = userProfile.id
                     userProfileRepository.save(reloadedUserProfile)
                 }
             }

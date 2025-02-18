@@ -1,6 +1,5 @@
 package club.staircrusher.spring_web.security
 
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
@@ -97,7 +96,7 @@ class SccSecurityConfigTest {
         return userProfileRepository.save(
             UserProfile(
                 id = userId,
-                userAccountId = "",
+                accountId = "",
                 nickname = "",
                 encryptedPassword = "",
                 instagramId = null,
