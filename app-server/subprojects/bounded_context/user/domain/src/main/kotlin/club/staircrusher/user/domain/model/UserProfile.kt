@@ -14,7 +14,7 @@ import java.time.Instant
 class UserProfile(
     @Id
     val id: String,
-    var accountId: String?,
+    var userId: String?,
     var nickname: String,
     @Deprecated("닉네임 로그인은 사라질 예정") var encryptedPassword: String?,
     var instagramId: String?,
@@ -49,6 +49,6 @@ class UserProfile(
     }
 
     override fun toString(): String {
-        return "UserProfile(nickname='$nickname', id='$id', userAccountId='$accountId', encryptedPassword=$encryptedPassword, instagramId=$instagramId, email=$email, mobilityTools=$mobilityTools, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
+        return "UserProfile(nickname='$nickname', id='$id', userId='$userId', encryptedPassword=$encryptedPassword, instagramId=$instagramId, email=$email, mobilityTools=$mobilityTools, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, isDeleted=$isDeleted)"
     }
 }

@@ -83,7 +83,7 @@ class UserApplicationService(
             UserProfile(
                 id = id,
                 // TODO: userProfile 와 userAccount 의 사용처를 완전히 분리한 뒤 다른 각자의 id 로 관리 할 수 있다
-                accountId = id,
+                userId = id,
                 nickname = normalizedNickname,
                 encryptedPassword = params.password?.trim()?.let { passwordEncryptor.encrypt(it) },
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },

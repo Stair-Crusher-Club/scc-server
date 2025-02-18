@@ -96,7 +96,7 @@ class SccSecurityConfigTest {
         return userProfileRepository.save(
             UserProfile(
                 id = userId,
-                accountId = "",
+                userId = "",
                 nickname = "",
                 encryptedPassword = "",
                 instagramId = null,
