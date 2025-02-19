@@ -105,6 +105,7 @@ class ITDataGenerator {
         return userProfileRepository.save(
             UserProfile(
                 id = EntityIdGenerator.generateRandom(),
+                userId = "",
                 nickname = nickname,
                 encryptedPassword = passwordEncryptor.encrypt(password.trim()),
                 instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() },

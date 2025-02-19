@@ -4,10 +4,10 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
-import club.staircrusher.user.domain.model.UserAccount
-import club.staircrusher.user.domain.model.UserAccountType
+import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class MigrateToUserAccountUseCase(
@@ -15,7 +15,10 @@ class MigrateToUserAccountUseCase(
     private val userProfileRepository: UserProfileRepository,
     private val userAccountRepository: UserAccountRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun handle() {
+        logger.info { "Migration start" }
         var pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Order.asc("createdAt")))
         do {
             val page = transactionManager.doInTransaction(isReadOnly = true) {
@@ -24,28 +27,25 @@ class MigrateToUserAccountUseCase(
 
             page.content.forEach { userProfile ->
                 transactionManager.doInTransaction {
-                    if (userAccountRepository.existsById(userProfile.id)) {
+                    if (userAccountRepository.existsById(userProfile.id).not()) {
+                        logger.error { "UserAccount not found with id '${userProfile.id}'" }
                         return@doInTransaction
                     }
-                    // 이미 발급되어 있는 JWT 의 하위 호환성을 맞춰주려면 user id 를 맞춰줘야 한다
-                    val userAccount = UserAccount(
-                        id = userProfile.id,
-                        accountType = UserAccountType.IDENTIFIED,
-                        // TODO: 마이그레이션을 마친 뒤에 TimeAuditingBaseEntity 로 대체
-                        createdAt = userProfile.createdAt,
-                        updatedAt = userProfile.updatedAt,
-                    )
-
-                    if (userProfile.isDeleted) {
-                        // TODO: 마이그레이션을 마친 뒤에 deletedAt 을 다시 private 으로 바꾸기
-                        userAccount.delete(userProfile.deletedAt!!)
+                    val reloadedUserProfile = userProfileRepository.findByIdOrNull(userProfile.id)
+                    if (reloadedUserProfile == null) {
+                        logger.error { "UserProfile not found with id '${userProfile.id}'" }
+                        return@doInTransaction
                     }
 
-                    userAccountRepository.save(userAccount)
+                    // UserAccount 와 UserProfile 이 혼재되어 사용되는 기간이 존재하므로, 통일된 id 를 사용한다
+                    reloadedUserProfile.userId = userProfile.id
+                    userProfileRepository.save(reloadedUserProfile)
                 }
             }
             pageRequest = pageRequest.next()
         } while (page.hasNext())
+
+        logger.info { "Migration end" }
     }
 
     companion object {
