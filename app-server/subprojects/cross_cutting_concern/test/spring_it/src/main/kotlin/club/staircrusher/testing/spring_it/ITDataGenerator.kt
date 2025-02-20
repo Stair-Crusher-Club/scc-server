@@ -39,7 +39,10 @@ import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.eupMyeonDongById
 import club.staircrusher.stdlib.geography.siGunGuById
 import club.staircrusher.stdlib.testing.SccRandom
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
@@ -55,6 +58,9 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var passwordEncryptor: PasswordEncryptor
+
+    @Autowired
+    private lateinit var userAccountRepository: UserAccountRepository
 
     @Autowired
     private lateinit var userProfileRepository: UserProfileRepository
@@ -102,10 +108,18 @@ class ITDataGenerator {
         instagramId: String? = null,
         mobilityTools: List<UserMobilityTool> = emptyList(),
     ): UserProfile {
+        val userId = EntityIdGenerator.generateRandom()
+        userAccountRepository.save(
+            UserAccount(
+                id = userId,
+                accountType = UserAccountType.IDENTIFIED,
+            )
+        )
+
         return userProfileRepository.save(
             UserProfile(
-                id = EntityIdGenerator.generateRandom(),
-                userId = "",
+                id = userId,
+                userId = userId,
                 nickname = nickname,
                 encryptedPassword = passwordEncryptor.encrypt(password.trim()),
                 instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() },
