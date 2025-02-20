@@ -36,7 +36,7 @@ class UserController(
         authentication: SccAppAuthentication,
     ): GetUserInfoResponseDto {
         val userProfile = getUserProfileUseCase.handle(authentication.principal) ?: throw SccDomainException("잘못된 계정입니다")
-        val isTargetUser = userProfile.userAccountId in betaUsers
+        val isTargetUser = userProfile.userId in betaUsers
         val isNotProd = SccEnv.getEnv() != SccEnv.PROD
         val featureFlags: List<String> =
             if (isTargetUser || isNotProd) listOf("MAP_VISIBLE", "TOILET_VISIBLE") else listOf("TOILET_VISIBLE")

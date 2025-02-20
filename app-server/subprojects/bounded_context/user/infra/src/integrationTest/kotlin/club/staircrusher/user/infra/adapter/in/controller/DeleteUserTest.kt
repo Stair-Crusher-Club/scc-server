@@ -57,7 +57,7 @@ class DeleteUserTest : UserITBase() {
             .andExpect {
                 status { isNoContent() }
                 transactionManager.doInTransaction {
-                    val deletedUserProfile = userProfileRepository.findFirstByUserAccountId(user.account.id)
+                    val deletedUserProfile = userProfileRepository.findFirstByUserId(user.account.id)
                     assertNotNull(deletedUserProfile)
                     assertTrue(deletedUserProfile!!.isDeleted)
                     assertNull(deletedUserProfile.email)

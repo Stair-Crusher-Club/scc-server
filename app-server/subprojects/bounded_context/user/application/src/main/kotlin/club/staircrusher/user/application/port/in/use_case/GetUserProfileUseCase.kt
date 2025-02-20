@@ -11,6 +11,6 @@ class GetUserProfileUseCase(
     private val userProfileRepository: UserProfileRepository,
 ) {
     fun handle(userId: String): UserProfile? = transactionManager.doInTransaction {
-        return@doInTransaction userProfileRepository.findFirstByUserAccountId(userId)
+        return@doInTransaction userProfileRepository.findFirstByUserId(userId)
     }
 }

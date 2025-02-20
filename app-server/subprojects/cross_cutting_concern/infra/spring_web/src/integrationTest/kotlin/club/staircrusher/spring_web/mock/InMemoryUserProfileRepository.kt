@@ -22,12 +22,12 @@ class InMemoryUserProfileRepository : UserProfileRepository, InMemoryCrudReposit
         return entityById.values.find { it.email == email }
     }
 
-    override fun findFirstByUserAccountId(userAccountId: String): UserProfile? {
-        return entityById.values.find { it.userAccountId == userAccountId }
+    override fun findFirstByUserId(userId: String): UserProfile? {
+        return entityById.values.find { it.userId == userId }
     }
 
-    override fun findAllByUserAccountIdIn(userAccountIds: Collection<String>): List<UserProfile> {
-        return entityById.values.filter { it.userAccountId in userAccountIds }
+    override fun findAllByUserIdIn(userIds: Collection<String>): List<UserProfile> {
+        return entityById.values.filter { it.userId in userIds }
     }
 
     override fun findAll(pageable: Pageable): Page<UserProfile> {

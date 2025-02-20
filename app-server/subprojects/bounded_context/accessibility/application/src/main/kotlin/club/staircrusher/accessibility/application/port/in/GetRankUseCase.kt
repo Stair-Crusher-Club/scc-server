@@ -23,7 +23,7 @@ class GetRankUseCase(
             val lastRank = accessibilityRankRepository.findRankByConqueredCount(0) ?: 1
             AccessibilityRank(
                 id = UUID.randomUUID().toString(),
-                userId = userProfile.userAccountId,
+                userId = userProfile.userId,
                 conqueredCount = 0,
                 rank = lastRank,
                 createdAt = now,

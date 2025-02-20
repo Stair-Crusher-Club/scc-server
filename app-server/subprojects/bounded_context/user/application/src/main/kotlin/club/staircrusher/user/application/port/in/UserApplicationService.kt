@@ -130,7 +130,7 @@ class UserApplicationService(
         userId: String,
         pushToken: String,
     ): UserProfile = transactionManager.doInTransaction {
-        val userProfile = userProfileRepository.findFirstByUserAccountId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
+        val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         userProfile.pushToken = pushToken
         userProfileRepository.save(userProfile)
     }
@@ -141,8 +141,8 @@ class UserApplicationService(
         body: String,
         deepLink: String?,
     ) = transactionManager.doInTransaction {
-        val userProfile = userProfileRepository.findAllByUserAccountIdIn(userIds)
-        val notifications = userProfile.mapNotNull { userProfile ->
+        val userProfiles = userProfileRepository.findAllByUserIdIn(userIds)
+        val notifications = userProfiles.mapNotNull { userProfile ->
             userProfile.pushToken ?: return@mapNotNull null
             userProfile.pushToken!! to PushService.Notification(
                 // just poc for now, but not sure this substitution needs to be placed here
@@ -170,7 +170,7 @@ class UserApplicationService(
         mobilityTools: List<UserMobilityTool>,
         isNewsLetterSubscriptionAgreed: Boolean,
     ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val userProfile = userProfileRepository.findFirstByUserAccountId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
+        val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         userProfile.nickname = run {
             val normalizedNickname = nickname.trim()
             if (normalizedNickname.length < 2) {
@@ -252,11 +252,11 @@ class UserApplicationService(
     }
 
     fun getUserProfileOrNull(userId: String): UserProfile? = transactionManager.doInTransaction {
-        userProfileRepository.findFirstByUserAccountId(userId)
+        userProfileRepository.findFirstByUserId(userId)
     }
 
     fun getUserProfiles(userIds: List<String>): List<UserProfile> = transactionManager.doInTransaction {
-        userProfileRepository.findAllByUserAccountIdIn(userIds)
+        userProfileRepository.findAllByUserIdIn(userIds)
     }
 
     fun getAllUserProfiles(): List<UserProfile> {
