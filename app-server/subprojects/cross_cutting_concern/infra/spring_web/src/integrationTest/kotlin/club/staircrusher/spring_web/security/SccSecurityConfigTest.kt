@@ -93,10 +93,16 @@ class SccSecurityConfigTest {
     }
 
     private fun getUser(): UserProfile {
+        userAccountRepository.save(
+            UserAccount(
+                id = userId,
+                accountType = UserAccountType.IDENTIFIED,
+            )
+        )
         return userProfileRepository.save(
             UserProfile(
                 id = userId,
-                userId = "",
+                userId = userId,
                 nickname = "",
                 encryptedPassword = "",
                 instagramId = null,
