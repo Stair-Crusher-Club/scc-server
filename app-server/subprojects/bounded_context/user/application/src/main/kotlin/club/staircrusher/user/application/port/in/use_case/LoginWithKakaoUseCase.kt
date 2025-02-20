@@ -23,27 +23,29 @@ class LoginWithKakaoUseCase(
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
 ) {
-    fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String): LoginResult = transactionManager.doInTransaction {
+    fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String, anonymousUserId: String?): LoginResult = transactionManager.doInTransaction {
         val idToken = kakaoLoginService.parseIdToken(rawKakaoIdToken)
 
         val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
         if (userAuthInfo != null) {
-            doLoginForExistingUser(userAuthInfo)
+            doLoginForExistingUser(userAuthInfo, anonymousUserId)
         } else {
-            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId)
+            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId, anonymousUserId)
         }
     }
 
-    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
+    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
         val user = userProfileRepository.findById(userAuthInfo.userId).get()
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }
+
         return LoginResult(
             authTokens = authTokens,
             user = user,
         )
     }
 
-    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String): LoginResult {
+    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String, anonymousUserId: String?): LoginResult {
         val user = userApplicationService.signUp(
             params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
@@ -52,6 +54,7 @@ class LoginWithKakaoUseCase(
                 email = null,
             )
         )
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }
 
         val newUserAuthInfo = userAuthInfoRepository.save(
             UserAuthInfo(

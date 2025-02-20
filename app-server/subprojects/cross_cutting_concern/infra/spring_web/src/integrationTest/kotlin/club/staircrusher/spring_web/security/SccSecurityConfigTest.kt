@@ -82,7 +82,7 @@ class SccSecurityConfigTest {
             }
         }
         val anonymousUser = getAnonymousUser()
-        val anonymousAccessToken = userAuthService.issueAccessToken(anonymousUser.id)
+        val anonymousAccessToken = userAuthService.issueAnonymousAccessToken(anonymousUser.id)
         mvc.get("/echoUserId/identified") {
             header(HttpHeaders.AUTHORIZATION, "Bearer $anonymousAccessToken")
         }.andExpect {

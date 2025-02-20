@@ -8,6 +8,7 @@ import club.staircrusher.user.domain.exception.UserAuthenticationException
 import club.staircrusher.stdlib.token.TokenVerificationException
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.domain.model.UserAuthInfo
+import java.time.Duration
 
 @Component
 class UserAuthService(
@@ -18,9 +19,11 @@ class UserAuthService(
         return tokenManager.issueToken(UserAccessTokenPayload(userId = user.id))
     }
 
-    @Deprecated("Authentication의 책임은 User에서 UserAuthInfo로 옮겨감")
-    fun issueAccessToken(userId: String): String {
-        return tokenManager.issueToken(UserAccessTokenPayload(userId = userId))
+    fun issueAnonymousAccessToken(userId: String): String {
+        return tokenManager.issueToken(
+            content = UserAccessTokenPayload(userId = userId),
+            expiresAfter = anonymousAccessTokenExpiresAfter,
+        )
     }
 
     fun issueTokens(userAuthInfo: UserAuthInfo): AuthTokens {
@@ -35,5 +38,9 @@ class UserAuthService(
         } catch (_: TokenVerificationException) {
             throw UserAuthenticationException()
         }
+    }
+
+    companion object {
+        private val anonymousAccessTokenExpiresAfter = Duration.ofDays(10 * 365)
     }
 }
