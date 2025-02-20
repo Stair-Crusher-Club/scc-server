@@ -8,9 +8,10 @@ import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.spring_web.security.InternalIpAddressChecker
 import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import club.staircrusher.user.application.port.`in`.use_case.GetUserUseCase
+import club.staircrusher.user.application.port.`in`.use_case.GetUserProfileUseCase
 import club.staircrusher.user.application.port.`in`.use_case.MigrateToUserAccountUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class UserController(
     private val userApplicationService: UserApplicationService,
-    private val getUserUseCase: GetUserUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
     private val migrateToUserAccountUseCase: MigrateToUserAccountUseCase,
 ) {
     private val logger = KotlinLogging.logger {}
@@ -34,13 +35,13 @@ class UserController(
     fun getUserInfo(
         authentication: SccAppAuthentication,
     ): GetUserInfoResponseDto {
-        val user = getUserUseCase.handle(authentication.principal)
-        val isTargetUser = user.id in betaUsers
+        val userProfile = getUserProfileUseCase.handle(authentication.principal) ?: throw SccDomainException("잘못된 계정입니다")
+        val isTargetUser = userProfile.userAccountId in betaUsers
         val isNotProd = SccEnv.getEnv() != SccEnv.PROD
         val featureFlags: List<String> =
             if (isTargetUser || isNotProd) listOf("MAP_VISIBLE", "TOILET_VISIBLE") else listOf("TOILET_VISIBLE")
         return GetUserInfoResponseDto(
-            user = user.toDTO(),
+            user = userProfile.toDTO(),
             flags = featureFlags,
         )
     }

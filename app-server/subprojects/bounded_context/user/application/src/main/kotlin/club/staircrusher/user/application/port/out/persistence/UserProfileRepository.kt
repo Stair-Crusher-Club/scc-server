@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UserProfileRepository : CrudRepository<UserProfile, String> {
+    fun findFirstByUserAccountId(userAccountId: String): UserProfile?
     fun findFirstByNickname(nickname: String): UserProfile?
     fun findFirstByEmail(email: String): UserProfile?
+    fun findAllByUserAccountIdIn(userAccountIds: Collection<String>): List<UserProfile>
     fun findAll(pageable: Pageable): Page<UserProfile>
 
     data class CreateUserParams(

@@ -17,7 +17,7 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
     @Test
     fun testRegisterBuildingAccessibilityComment() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser()
         }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace()
@@ -28,7 +28,7 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
                 buildingId = place.building.id,
                 comment = "실명 코멘트",
             )
-            mvc.sccRequest("/registerBuildingAccessibilityComment", params, user = user).andReturn()
+            mvc.sccRequest("/registerBuildingAccessibilityComment", params, userAccount = user.account).andReturn()
         }
         clock.advanceTime(Duration.ofSeconds(1))
         val result = run {

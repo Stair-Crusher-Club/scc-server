@@ -260,7 +260,7 @@ class AccessibilityApplicationService(
             doRegisterBuildingAccessibilityComment(it)
         }
         val userInfo =
-            createBuildingAccessibilityParams.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel()
+            createBuildingAccessibilityParams.userId?.let { userApplicationService.getUserProfileOrNull(it) }?.toDomainModel()
         return RegisterBuildingAccessibilityResult(
             building = building,
             buildingAccessibility = buildingAccessibility,
@@ -310,7 +310,7 @@ class AccessibilityApplicationService(
         }
 
         val userInfo =
-            createPlaceAccessibilityParams.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel()
+            createPlaceAccessibilityParams.userId?.let { userApplicationService.getUserProfileOrNull(it) }?.toDomainModel()
         val buildingId = building.id
 
         return RegisterPlaceAccessibilityResult(
@@ -330,7 +330,7 @@ class AccessibilityApplicationService(
             val comment = doRegisterBuildingAccessibilityComment(params)
             WithUserInfo(
                 value = comment,
-                accessibilityRegisterer = params.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel(),
+                accessibilityRegisterer = params.userId?.let { userApplicationService.getUserProfileOrNull(it) }?.toDomainModel(),
             )
         }
 
@@ -359,7 +359,7 @@ class AccessibilityApplicationService(
             val comment = doRegisterPlaceAccessibilityComment(params)
             WithUserInfo(
                 value = comment,
-                accessibilityRegisterer = params.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel(),
+                accessibilityRegisterer = params.userId?.let { userApplicationService.getUserProfileOrNull(it) }?.toDomainModel(),
             )
         }
 

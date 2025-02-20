@@ -9,7 +9,7 @@ data class AccessibilityRegisterer(
 )
 
 fun UserProfile.toDomainModel() = AccessibilityRegisterer(
-    userId = id,
+    userId = userAccountId,
     nickname = nickname,
     instagramId = instagramId,
 )

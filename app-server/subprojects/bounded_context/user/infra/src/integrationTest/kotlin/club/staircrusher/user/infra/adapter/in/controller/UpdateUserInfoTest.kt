@@ -39,7 +39,7 @@ class UpdateUserInfoTest : UserITBase() {
     @Test
     fun updateUserInfoTest() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser()
         }
 
         val changedNickname = SccRandom.string(32)
@@ -61,7 +61,7 @@ class UpdateUserInfoTest : UserITBase() {
             mobilityTools = changedMobilityTools.map { it.toDTO() },
         )
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .apply {
                 val result = getResult(UpdateUserInfoPost200Response::class)
                 assertEquals(user.id, result.user.id)
@@ -75,7 +75,7 @@ class UpdateUserInfoTest : UserITBase() {
     @Test
     fun `현재와 같은 데이터로 업데이트가 가능하다`() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser()
         }
 
         val params = UpdateUserInfoPostRequest(
@@ -85,7 +85,7 @@ class UpdateUserInfoTest : UserITBase() {
             mobilityTools = user.mobilityTools.map { it.toDTO() },
         )
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .apply {
                 val result = getResult(UpdateUserInfoPost200Response::class)
                 assertEquals(user.id, result.user.id)
@@ -97,22 +97,22 @@ class UpdateUserInfoTest : UserITBase() {
 
     @Test
     fun `중복된 닉네임으로는 변경이 불가능하다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user, userProfile) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
-        val user2 = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (_, userProfile2) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val params = UpdateUserInfoPostRequest(
-            nickname = user2.nickname,
-            instagramId = user.instagramId,
-            email = user.email!!,
-            mobilityTools = user.mobilityTools.map { it.toDTO() },
+            nickname = userProfile2.nickname,
+            instagramId = userProfile.instagramId,
+            email = userProfile.email!!,
+            mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
         )
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .andExpect {
                 status {
                     isBadRequest()
@@ -126,22 +126,22 @@ class UpdateUserInfoTest : UserITBase() {
 
     @Test
     fun `중복된 이메일로는 변경이 불가능하다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user, userProfile) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
-        val user2 = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user2, userProfile2) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val params = UpdateUserInfoPostRequest(
-            nickname = user.nickname,
-            instagramId = user.instagramId,
-            email = user2.email!!,
-            mobilityTools = user.mobilityTools.map { it.toDTO() },
+            nickname = userProfile.nickname,
+            instagramId = userProfile.instagramId,
+            email = userProfile2.email!!,
+            mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
         )
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .andExpect {
                 status {
                     isBadRequest()
@@ -155,18 +155,18 @@ class UpdateUserInfoTest : UserITBase() {
 
     @Test
     fun `유효하지 않은 포맷의 이메일로는 변경이 불가능하다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user, userProfile) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val params = UpdateUserInfoPostRequest(
-            nickname = user.nickname,
-            instagramId = user.instagramId,
+            nickname = userProfile.nickname,
+            instagramId = userProfile.instagramId,
             email = "strange",
-            mobilityTools = user.mobilityTools.map { it.toDTO() },
+            mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
         )
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .andExpect {
                 status {
                     isBadRequest()
@@ -180,19 +180,19 @@ class UpdateUserInfoTest : UserITBase() {
 
     @Test
     fun `mobility tools 를 여러번 업데이트 해도 잘 저장된다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user, userProfile) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val changedEmail = "${SccRandom.string(32)}@staircrusher.club"
         val params = UpdateUserInfoPostRequest(
-            nickname = user.nickname,
-            instagramId = user.instagramId,
+            nickname = userProfile.nickname,
+            instagramId = userProfile.instagramId,
             email = changedEmail,
             mobilityTools = listOf(UserMobilityToolDto.ELECTRIC_WHEELCHAIR, UserMobilityToolDto.PROSTHETIC_FOOT),
         )
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .andExpect {
                 status {
                     isOk()
@@ -200,19 +200,19 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 transactionManager.doInTransaction {
-                    val user = userProfileRepository.findById(user.id).get()
-                    Assertions.assertEquals(2, user.mobilityTools.size)
+                    val profile = userProfileRepository.findById(user.id).get()
+                    Assertions.assertEquals(2, profile.mobilityTools.size)
                 }
             }
 
         val params2 = UpdateUserInfoPostRequest(
-            nickname = user.nickname,
-            instagramId = user.instagramId,
+            nickname = userProfile.nickname,
+            instagramId = userProfile.instagramId,
             email = changedEmail,
             mobilityTools = listOf(UserMobilityToolDto.MANUAL_WHEELCHAIR),
         )
         mvc
-            .sccRequest("/updateUserInfo", params2, user = user)
+            .sccRequest("/updateUserInfo", params2, userAccount = user)
             .andExpect {
                 status {
                     isOk()
@@ -220,16 +220,16 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 transactionManager.doInTransaction {
-                    val user = userProfileRepository.findById(user.id).get()
-                    Assertions.assertEquals(1, user.mobilityTools.size)
+                    val profile = userProfileRepository.findById(user.id).get()
+                    Assertions.assertEquals(1, profile.mobilityTools.size)
                 }
             }
     }
 
     @Test
     fun `뉴스레터 수신에 동의하면 stibee 에 연동한다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user, _) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val changedNickname = SccRandom.string(32)
@@ -249,7 +249,7 @@ class UpdateUserInfoTest : UserITBase() {
         )
 
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .andExpect {
                 status {
                     isOk()
@@ -263,8 +263,8 @@ class UpdateUserInfoTest : UserITBase() {
 
     @Test
     fun `뉴스레터 수신에 동의하지 않으면 stibee 에 연동하지 않는다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user, _) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val changedNickname = SccRandom.string(32)
@@ -284,7 +284,7 @@ class UpdateUserInfoTest : UserITBase() {
         )
 
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .andExpect {
                 status {
                     isOk()
@@ -298,8 +298,8 @@ class UpdateUserInfoTest : UserITBase() {
 
     @Test
     fun `명시적인 동의 없이는 stibee 에 연동하지 않는다`() {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (user, _) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val changedNickname = SccRandom.string(32)
@@ -320,7 +320,7 @@ class UpdateUserInfoTest : UserITBase() {
         )
 
         mvc
-            .sccRequest("/updateUserInfo", params, user = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user)
             .andExpect {
                 status {
                     isOk()

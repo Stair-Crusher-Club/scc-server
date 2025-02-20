@@ -41,7 +41,7 @@ class LoginWithKakaoUseCase(
 
         return LoginResult(
             authTokens = authTokens,
-            user = user,
+            userProfile = user,
         )
     }
 
@@ -70,7 +70,7 @@ class LoginWithKakaoUseCase(
         val authTokens = userAuthService.issueTokens(newUserAuthInfo)
         return LoginResult(
             authTokens = authTokens,
-            user = user,
+            userProfile = user,
         )
     }
 

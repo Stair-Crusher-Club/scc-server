@@ -85,7 +85,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
         mvc.sccRequest("/updateAccessibilityRanks", null)
 
         val rank = mvc
-            .sccRequest("/getAccessibilityRank", null, user = user)
+            .sccRequest("/getAccessibilityRank", null, userAccount = user)
             .getResult(GetAccessibilityRankPost200Response::class)
             .accessibilityRank
         assertEquals(1L, rank.rank)
@@ -109,7 +109,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
         mvc.sccRequest("/updateAccessibilityRanks", null)
 
         val countForNextRank = mvc
-            .sccRequest("/getCountForNextRank", null, user = user)
+            .sccRequest("/getCountForNextRank", null, userAccount = user)
             .getResult(GetCountForNextRankPost200Response::class)
             .countForNextRank
 

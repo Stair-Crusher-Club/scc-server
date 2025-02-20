@@ -30,7 +30,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
     @Test
     fun testSearchPlaces() = runBlocking {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32))
@@ -55,7 +55,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
             distanceMetersLimit = radiusMeters,
             currentLocation = place.location.toDTO(),
         )
-        mvc.sccRequest("/searchPlaces", params, user = user)
+        mvc.sccRequest("/searchPlaces", params, userAccount = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
                 assertEquals(1, result.items!!.size)
@@ -78,7 +78,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
     @Test
     fun `서울, 성남외의 지역은 검색되지만 접근성 정보는 등록이 불가능하다`() = runBlocking {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(
@@ -114,7 +114,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
             distanceMetersLimit = radiusMeters,
             currentLocation = place.location.toDTO(),
         )
-        mvc.sccRequest("/searchPlaces", params, user = user)
+        mvc.sccRequest("/searchPlaces", params, userAccount = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
                 assertEquals(1, result.items!!.size)
@@ -132,7 +132,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
     fun `폐업된 장소는 보여주지 않는다`() = runBlocking {
         // given
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32))
@@ -157,7 +157,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
             distanceMetersLimit = radiusMeters,
             currentLocation = place.location.toDTO(),
         )
-        mvc.sccRequest("/searchPlaces", params, user = user)
+        mvc.sccRequest("/searchPlaces", params, userAccount = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
                 assertEquals(1, result.items!!.size)
@@ -172,7 +172,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
         }
 
         // then - 폐업되면 검색에 걸리지 않는다.
-        mvc.sccRequest("/searchPlaces", params, user = user)
+        mvc.sccRequest("/searchPlaces", params, userAccount = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
                 assertEquals(0, result.items!!.size)
@@ -187,7 +187,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
         }
 
         // then - 접근 불가여도 검색에 걸린다.
-        mvc.sccRequest("/searchPlaces", params, user = user)
+        mvc.sccRequest("/searchPlaces", params, userAccount = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
                 assertEquals(1, result.items!!.size)
@@ -200,17 +200,17 @@ class SearchPlacesTest : PlaceSearchITBase() {
     fun `필터 인자에 따라 장소가 노출된다`() = runBlocking {
         // given
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         val placePrefix = SccRandom.string(4)
         val placeWithSlope = transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))
-            testDataGenerator.registerPlaceAccessibility(place, user = user, hasSlope = true)
+            testDataGenerator.registerPlaceAccessibility(place, userAccount = user, hasSlope = true)
             place
         }
         val placeWithoutSlope = transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = placePrefix + SccRandom.string(20))
-            testDataGenerator.registerPlaceAccessibility(place, user = user, hasSlope = false)
+            testDataGenerator.registerPlaceAccessibility(place, userAccount = user, hasSlope = false)
             place
         }
         val placeNotRegistered = transactionManager.doInTransaction {
@@ -237,7 +237,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 currentLocation = placeWithSlope.location.toDTO(),
                 filters = filter,
             )
-            return mvc.sccRequest("/searchPlaces", params, user = user)
+            return mvc.sccRequest("/searchPlaces", params, userAccount = user)
                 .getResult(SearchPlacesPost200Response::class).items!!
         }
 
@@ -271,7 +271,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
 
     @Test
     fun `즐겨찾기 정보를 내려준다`() = runBlocking {
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser().account }
         val favoritePlace = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32)) }
         transactionManager.doInTransaction { testDataGenerator.createPlaceFavorite(userId = user.id, placeId = favoritePlace.id) }
         val notFavoritePlace = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32)) }
@@ -288,7 +288,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
         ).thenReturn(listOf(favoritePlace, notFavoritePlace))
 
         val params = SearchPlacesPostRequest(searchText = searchText, distanceMetersLimit = radiusMeters, currentLocation = favoritePlace.location.toDTO(),)
-        mvc.sccRequest("/searchPlaces", params, user = user)
+        mvc.sccRequest("/searchPlaces", params, userAccount = user)
             .apply {
                 val result = getResult(SearchPlacesPost200Response::class)
                 assertEquals(2, result.items!!.size)

@@ -11,5 +11,5 @@ fun AuthTokens.toDTO() = AuthTokensDto(
 
 fun LoginResult.toDTO() = LoginResultDto(
     authTokens = authTokens.toDTO(),
-    user = user.toDTO(),
+    user = userProfile.toDTO(),
 )

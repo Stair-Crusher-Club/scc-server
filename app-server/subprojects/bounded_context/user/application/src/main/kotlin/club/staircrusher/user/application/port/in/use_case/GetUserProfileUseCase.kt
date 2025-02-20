@@ -6,11 +6,11 @@ import club.staircrusher.user.application.port.out.persistence.UserProfileReposi
 import club.staircrusher.user.domain.model.UserProfile
 
 @Component
-class GetUserUseCase(
+class GetUserProfileUseCase(
     private val transactionManager: TransactionManager,
     private val userProfileRepository: UserProfileRepository,
 ) {
-    fun handle(userId: String): UserProfile = transactionManager.doInTransaction {
-        return@doInTransaction userProfileRepository.findById(userId).get()
+    fun handle(userId: String): UserProfile? = transactionManager.doInTransaction {
+        return@doInTransaction userProfileRepository.findFirstByUserAccountId(userId)
     }
 }
