@@ -46,7 +46,7 @@ class LoginWithKakaoUseCase(
     }
 
     private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String, anonymousUserId: String?): LoginResult {
-        val user = userApplicationService.signUp(
+        val (user, userProfile) = userApplicationService.signUp(
             params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
                 password = null,
@@ -70,7 +70,7 @@ class LoginWithKakaoUseCase(
         val authTokens = userAuthService.issueTokens(newUserAuthInfo)
         return LoginResult(
             authTokens = authTokens,
-            userProfile = user,
+            userProfile = userProfile,
         )
     }
 
