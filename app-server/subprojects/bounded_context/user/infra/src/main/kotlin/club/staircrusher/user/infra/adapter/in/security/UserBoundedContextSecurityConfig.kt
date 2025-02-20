@@ -7,6 +7,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @Component
 class UserBoundedContextSecurityConfig : SccSecurityConfig {
     override fun requestMatchers() = listOf(
+        "/loginWithKakao",
+        "/loginWithApple",
+    ).map { AntPathRequestMatcher(it) }
+
+    override fun identifiedUserOnlyRequestMatchers() = listOf(
         "/getUserInfo",
         "/updateUserInfo",
         "/updatePushToken",

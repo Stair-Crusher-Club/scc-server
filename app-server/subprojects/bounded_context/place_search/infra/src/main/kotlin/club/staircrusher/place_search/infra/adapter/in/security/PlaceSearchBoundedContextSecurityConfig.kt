@@ -7,6 +7,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @Component
 class PlaceSearchBoundedContextSecurityConfig : SccSecurityConfig {
     override fun requestMatchers() = listOf(
+        "/searchPlaces",
+        "/listPlacesInBuilding",
+        "/getPlaceWithBuilding",
+        "/listSearchKeywordsOfPlaceCategory",
+    ).map { AntPathRequestMatcher(it) }
+
+    override fun identifiedUserOnlyRequestMatchers() = listOf(
         "/listConqueredPlaces",
     ).map { AntPathRequestMatcher(it) }
 }
