@@ -102,8 +102,6 @@ class UserApplicationService(
             UserAccount(
                 id = id,
                 accountType = UserAccountType.ANONYMOUS,
-                createdAt = SccClock.instant(),
-                updatedAt = SccClock.instant(),
             )
         )
     }
