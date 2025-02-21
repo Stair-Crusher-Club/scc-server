@@ -49,10 +49,10 @@ class UpdateUserInfoTest : UserITBase() {
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
         )
-        assertNotEquals(user.nickname, changedNickname)
-        assertNotEquals(user.instagramId, changedInstagramId)
-        assertNotEquals(user.email, changedEmail)
-        assertNotEquals(user.mobilityTools, changedMobilityTools)
+        assertNotEquals(user.profile.nickname, changedNickname)
+        assertNotEquals(user.profile.instagramId, changedInstagramId)
+        assertNotEquals(user.profile.email, changedEmail)
+        assertNotEquals(user.profile.mobilityTools, changedMobilityTools)
 
         val params = UpdateUserInfoPostRequest(
             nickname = changedNickname,
@@ -61,10 +61,10 @@ class UpdateUserInfoTest : UserITBase() {
             mobilityTools = changedMobilityTools.map { it.toDTO() },
         )
         mvc
-            .sccRequest("/updateUserInfo", params, userAccount = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user.account)
             .apply {
                 val result = getResult(UpdateUserInfoPost200Response::class)
-                assertEquals(user.id, result.user.id)
+                assertEquals(user.account.id, result.user.id)
                 assertEquals(changedNickname, result.user.nickname)
                 assertEquals(changedInstagramId, result.user.instagramId)
                 assertEquals(changedEmail, result.user.email)
@@ -79,19 +79,19 @@ class UpdateUserInfoTest : UserITBase() {
         }
 
         val params = UpdateUserInfoPostRequest(
-            nickname = user.nickname,
-            instagramId = user.instagramId,
-            email = user.email!!,
-            mobilityTools = user.mobilityTools.map { it.toDTO() },
+            nickname = user.profile.nickname,
+            instagramId = user.profile.instagramId,
+            email = user.profile.email!!,
+            mobilityTools = user.profile.mobilityTools.map { it.toDTO() },
         )
         mvc
-            .sccRequest("/updateUserInfo", params, userAccount = user)
+            .sccRequest("/updateUserInfo", params, userAccount = user.account)
             .apply {
                 val result = getResult(UpdateUserInfoPost200Response::class)
-                assertEquals(user.id, result.user.id)
-                assertEquals(user.nickname, result.user.nickname)
-                assertEquals(user.instagramId, result.user.instagramId)
-                assertEquals(user.email, result.user.email)
+                assertEquals(user.account.id, result.user.id)
+                assertEquals(user.profile.nickname, result.user.nickname)
+                assertEquals(user.profile.instagramId, result.user.instagramId)
+                assertEquals(user.profile.email, result.user.email)
             }
     }
 
