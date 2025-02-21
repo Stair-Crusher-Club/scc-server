@@ -56,13 +56,13 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     fun `240401 이전 버전에서 층 정보(1층인지), 매장 입구 정보(계단, 경사로 유무), 의견이 정상적으로 등록된다`() {
         repeat(3) { idx ->
             val expectedRegisteredUserOrder = idx + 1
-            val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+            val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
             val place =
                 transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
 
             val params = getDefaultRegisterPlaceAccessibilityRequestParamsBefore240401(place)
             mvc
-                .sccRequest("/registerPlaceAccessibility", params, user = user)
+                .sccRequest("/registerPlaceAccessibility", params, userAccount = user.account)
                 .apply {
                     val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
                     val accessibilityInfo = result.accessibilityInfo!!
@@ -80,7 +80,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     val placeAccessibilityComments = accessibilityInfo.placeAccessibilityComments
                     assertEquals(1, placeAccessibilityComments.size)
                     assertEquals(place.id, placeAccessibilityComments[0].placeId)
-                    assertEquals(user.id, placeAccessibilityComments[0].user!!.id)
+                    assertEquals(user.account.id, placeAccessibilityComments[0].user!!.id)
                     assertEquals("장소 코멘트", placeAccessibilityComments[0].comment)
 
                     assertEquals(expectedRegisteredUserOrder, result.registeredUserOrder)
@@ -140,9 +140,9 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         }
         placesAndParams.forEachIndexed { idx, (place, params) ->
             val expectedRegisteredUserOrder = idx + 1
-            val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+            val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
             mvc
-                .sccRequest("/registerPlaceAccessibility", params, user = user)
+                .sccRequest("/registerPlaceAccessibility", params, userAccount = user.account)
                 .apply {
                     val result = getResult(RegisterPlaceAccessibilityResponseDto::class)
                     val accessibilityInfo = result.accessibilityInfo!!
@@ -166,7 +166,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                     val placeAccessibilityComments = accessibilityInfo.placeAccessibilityComments
                     assertEquals(1, placeAccessibilityComments.size)
                     assertEquals(place.id, placeAccessibilityComments[0].placeId)
-                    assertEquals(user.id, placeAccessibilityComments[0].user!!.id)
+                    assertEquals(user.account.id, placeAccessibilityComments[0].user!!.id)
                     assertEquals(params.comment, placeAccessibilityComments[0].comment)
 
                     assertEquals(expectedRegisteredUserOrder, result.registeredUserOrder)
@@ -176,7 +176,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
     @Test
     fun `장소가 복수 층인 경우에는 다른 층으로 이동하는 방법 정보를 등록해야한다`() {
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
         val place =
             transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "복수층의 장소") }
         val multipleFloorsParams = getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place).copy(
@@ -184,12 +184,12 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             isStairOnlyOption = true
         )
         mvc
-            .sccRequest("/registerPlaceAccessibility", multipleFloorsParams, user = user)
+            .sccRequest("/registerPlaceAccessibility", multipleFloorsParams, userAccount = user.account)
             .andExpect { status { is2xxSuccessful() } }
 
         val multipleFloorsParamsWithoutOption = multipleFloorsParams.copy(isStairOnlyOption = null)
         mvc
-            .sccRequest("/registerPlaceAccessibility", multipleFloorsParamsWithoutOption, user = user)
+            .sccRequest("/registerPlaceAccessibility", multipleFloorsParamsWithoutOption, userAccount = user.account)
             .andExpect { status { isBadRequest() } }
             .apply {
                 val result = getResult(ApiErrorResponse::class)
@@ -200,7 +200,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
     @Test
     fun `출입문 유형 입력에서 "문 없음" 과 다른 출입문 유형(미닫이, 여닫이 등)을 같이 입력할 수 없다`() {
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
         val place =
             transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "문이 없지만 여닫이 문인 장소") }
         val params = getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place).copy(
@@ -210,7 +210,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             )
         )
         mvc
-            .sccRequest("/registerPlaceAccessibility", params, user = user)
+            .sccRequest("/registerPlaceAccessibility", params, userAccount = user.account)
             .andExpect { status { isBadRequest() } }
             .apply {
                 val result = getResult(ApiErrorResponse::class)
@@ -220,7 +220,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
     @Test
     fun `로그인되어 있지 않으면 등록이 안 된다`() {
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
         val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
         mvc
             .sccRequest(
@@ -236,7 +236,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
 
     @Test
     fun `서울, 성남외의 지역을 등록하려면 에러가 난다`() {
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(
                 placeName = "장소장소",
@@ -255,7 +255,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             .sccRequest(
                 "/registerPlaceAccessibility",
                 getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place),
-                user = user
+                userAccount = user.account
             )
             .andExpect {
                 status {
@@ -268,7 +268,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     fun `참여하고 있는 챌린지 조건이 맞으면 기여도를 올린다`() {
         val (user, place, challenge) = transactionManager.doInTransaction {
             return@doInTransaction Triple(
-                testDataGenerator.createUser(),
+                testDataGenerator.createIdentifiedUser(),
                 testDataGenerator.createBuildingAndPlace(
                     placeName = "성수동간판없는집",
                     buildingAddress = BuildingAddress(
@@ -296,22 +296,22 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 )
             )
         }
-        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user, challenge, SccClock.instant()) }
+        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user.account, challenge, SccClock.instant()) }
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
                 getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place),
-                user = user
+                userAccount = user.account
             )
             .andExpect { status { is2xxSuccessful() } }
-        val contributions = challengeContributionRepository.findByUserId(user.id)
+        val contributions = challengeContributionRepository.findByUserId(user.account.id)
         assertTrue(contributions.count() == 1)
         assertTrue(contributions.firstOrNull()?.challengeId == challenge.id)
     }
 
     @Test
     fun `참여하고 있는 챌린지 조건이 맞지 않으면 기여도를 올리지 않는다`() {
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
         val (challenge1, challenge2, challenge3) = transactionManager.doInTransaction {
             return@doInTransaction Triple(
                 testDataGenerator.createChallenge(
@@ -356,9 +356,9 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             )
         }
         transactionManager.doInTransaction {
-            testDataGenerator.participateChallenge(user, challenge1, clock.instant())
-            testDataGenerator.participateChallenge(user, challenge2, clock.instant())
-            testDataGenerator.participateChallenge(user, challenge3, clock.instant())
+            testDataGenerator.participateChallenge(user.account, challenge1, clock.instant())
+            testDataGenerator.participateChallenge(user.account, challenge2, clock.instant())
+            testDataGenerator.participateChallenge(user.account, challenge3, clock.instant())
         }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace(
@@ -378,12 +378,12 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             .sccRequest(
                 "/registerPlaceAccessibility",
                 getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place),
-                user = user
+                userAccount = user.account
             )
             .andExpect { status { is2xxSuccessful() } }
-        val participations = challengeParticipationRepository.findByUserId(user.id)
+        val participations = challengeParticipationRepository.findByUserId(user.account.id)
         assertTrue(participations.count() == 3)
-        val contributions = challengeContributionRepository.findByUserId(user.id)
+        val contributions = challengeContributionRepository.findByUserId(user.account.id)
         assertTrue(contributions.isEmpty())
     }
 
@@ -391,7 +391,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     fun `참여하고 있는 않은 챌린지 조건이 맞아도 기여도를 올리지 않는다`() {
         val (user, place, _) = transactionManager.doInTransaction {
             return@doInTransaction Triple(
-                testDataGenerator.createUser(),
+                testDataGenerator.createIdentifiedUser(),
                 testDataGenerator.createBuildingAndPlace(
                     placeName = "밀크빌딩",
                     buildingAddress = BuildingAddress(
@@ -423,12 +423,12 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             .sccRequest(
                 "/registerPlaceAccessibility",
                 getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place),
-                user = user
+                userAccount = user.account
             )
             .andExpect { status { is2xxSuccessful() } }
-        val participations = challengeParticipationRepository.findByUserId(user.id)
+        val participations = challengeParticipationRepository.findByUserId(user.account.id)
         assertTrue(participations.isEmpty())
-        val contributions = challengeContributionRepository.findByUserId(user.id)
+        val contributions = challengeContributionRepository.findByUserId(user.account.id)
         assertTrue(contributions.isEmpty())
     }
 
@@ -442,7 +442,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         )
         val (user, place, challenge) = transactionManager.doInTransaction {
             return@doInTransaction Triple(
-                testDataGenerator.createUser(),
+                testDataGenerator.createIdentifiedUser(),
                 testDataGenerator.createBuildingAndPlace(
                     placeName = "성수동간판없는집",
                     buildingAddress = BuildingAddress(
@@ -471,12 +471,12 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 )
             )
         }
-        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user, challenge, clock.instant()) }
+        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user.account, challenge, clock.instant()) }
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
                 getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place),
-                user = user
+                userAccount = user.account
             )
             .apply {
                 val result = getResult(object : TypeReference<RegisterPlaceAccessibilityResponseDto>() {})

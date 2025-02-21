@@ -1,8 +1,6 @@
 package club.staircrusher.spring_web.security
 
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
-import club.staircrusher.user.domain.model.UserProfile
-import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.domain.model.UserAccount
 import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.service.UserAuthService
@@ -21,9 +19,6 @@ class SccSecurityConfigTest {
     lateinit var userAuthService: UserAuthService
 
     @Autowired
-    lateinit var userProfileRepository: UserProfileRepository
-
-    @Autowired
     lateinit var userAccountRepository: UserAccountRepository
 
     @Autowired
@@ -33,7 +28,7 @@ class SccSecurityConfigTest {
 
     @Test
     fun `기본 인증 테스트`() {
-        val user = getUser()
+        val user = getIdentifiedUser()
         val accessToken = userAuthService.issueAccessToken(user)
         mvc.get("/echoUserId/secured") {
             header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -51,7 +46,7 @@ class SccSecurityConfigTest {
 
     @Test
     fun `인증이 필요 없는 API에서도 SccAppAuthentication argument resolving이 정상적으로 동작한다`() {
-        val user = getUser()
+        val user = getIdentifiedUser()
         val accessToken = userAuthService.issueAccessToken(user)
         mvc.get("/echoUserId").andExpect {
             content {
@@ -72,7 +67,7 @@ class SccSecurityConfigTest {
 
     @Test
     fun `회원가입 한 유저만 접근할 수 있는 엔드포인트 인증 테스트`() {
-        val user = getUser()
+        val user = getIdentifiedUser()
         val accessToken = userAuthService.issueAccessToken(user)
         mvc.get("/echoUserId/identified") {
             header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -92,22 +87,11 @@ class SccSecurityConfigTest {
         }
     }
 
-    private fun getUser(): UserProfile {
-        userAccountRepository.save(
+    private fun getIdentifiedUser(): UserAccount {
+        return userAccountRepository.save(
             UserAccount(
                 id = userId,
                 accountType = UserAccountType.IDENTIFIED,
-            )
-        )
-        return userProfileRepository.save(
-            UserProfile(
-                id = userId,
-                userId = userId,
-                nickname = "",
-                encryptedPassword = "",
-                instagramId = null,
-                email = "",
-                mobilityTools = mutableListOf(),
             )
         )
     }

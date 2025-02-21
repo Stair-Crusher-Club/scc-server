@@ -4,7 +4,6 @@ import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserRequestDto
 import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserResponseDto
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.base.PlaceITBase
-import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,7 +22,7 @@ class ListPlaceFavoritesTest : PlaceITBase() {
     @Test
     fun `사용자가 즐겨찾기 리스트와 즐겨찾기한 갯수를 내려준다`() {
         val (user, places) = transactionManager.doInTransaction {
-            val user = testDataGenerator.createUser()
+            val user = testDataGenerator.createIdentifiedUser().account
             val places = listOf(
                 testDataGenerator.createBuildingAndPlace(placeName = "마루180"),
                 testDataGenerator.createBuildingAndPlace(placeName = "세인트존스호텔"),
@@ -43,7 +42,7 @@ class ListPlaceFavoritesTest : PlaceITBase() {
         }
         val notFavoritePlaces = places.subList(2, 4)
         mvc
-            .sccRequest("/listPlaceFavoritesByUser", ListPlaceFavoritesByUserRequestDto(), user = user)
+            .sccRequest("/listPlaceFavoritesByUser", ListPlaceFavoritesByUserRequestDto(), userAccount = user)
             .apply {
                 val result = getResult(ListPlaceFavoritesByUserResponseDto::class)
                 Assertions.assertEquals(result.totalNumberOfItems, 2)

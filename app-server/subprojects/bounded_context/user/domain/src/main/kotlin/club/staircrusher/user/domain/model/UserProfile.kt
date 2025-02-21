@@ -14,7 +14,7 @@ import java.time.Instant
 class UserProfile(
     @Id
     val id: String,
-    var userId: String?,
+    var userId: String,
     var nickname: String,
     @Deprecated("닉네임 로그인은 사라질 예정") var encryptedPassword: String?,
     var instagramId: String?,

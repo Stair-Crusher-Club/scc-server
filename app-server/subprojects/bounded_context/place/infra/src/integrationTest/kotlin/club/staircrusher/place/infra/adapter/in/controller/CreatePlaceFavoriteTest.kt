@@ -4,7 +4,6 @@ import club.staircrusher.api.spec.dto.CreatePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.CreatePlaceFavoriteResponseDto
 import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.base.PlaceITBase
-import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,12 +22,12 @@ class CreatePlaceFavoriteTest : PlaceITBase() {
     @Test
     fun `즐겨찾기하면 해당 장소의 즐겨찾기 수가 증가한다`() {
         val (user, place) = transactionManager.doInTransaction {
-            val user = testDataGenerator.createUser()
+            val user = testDataGenerator.createIdentifiedUser().account
             val place = testDataGenerator.createBuildingAndPlace(placeName = "마루180")
             user to place
         }
         mvc
-            .sccRequest("/createPlaceFavorite", CreatePlaceFavoriteRequestDto(placeId = place.id), user = user)
+            .sccRequest("/createPlaceFavorite", CreatePlaceFavoriteRequestDto(placeId = place.id), userAccount = user)
             .apply {
                 val result = getResult(CreatePlaceFavoriteResponseDto::class)
                 assertTrue(result.placeFavorite.placeId == place.id)

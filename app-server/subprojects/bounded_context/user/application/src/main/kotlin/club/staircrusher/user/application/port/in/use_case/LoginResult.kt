@@ -5,5 +5,5 @@ import club.staircrusher.user.domain.model.UserProfile
 
 data class LoginResult(
     val authTokens: AuthTokens,
-    val user: UserProfile,
+    val userProfile: UserProfile,
 )
