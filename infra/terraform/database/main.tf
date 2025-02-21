@@ -3,6 +3,9 @@ terraform {
     aws = {
       source = "hashicorp/aws"
     }
+    awscc = {
+      source = "hashicorp/awscc"
+    }
     sops = {
       source = "carlpett/sops"
     }
@@ -16,6 +19,10 @@ terraform {
 }
 
 provider "aws" {
+  region = "ap-northeast-2"
+}
+
+provider "awscc" {
   region = "ap-northeast-2"
 }
 
