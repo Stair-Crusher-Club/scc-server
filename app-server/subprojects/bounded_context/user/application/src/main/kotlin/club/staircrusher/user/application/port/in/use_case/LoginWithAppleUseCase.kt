@@ -40,9 +40,9 @@ class LoginWithAppleUseCase(
 
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
-        val userProfile = userProfileRepository.findFirstByUserId(userAuthInfo.userId)
-            ?: throw SccDomainException("계정 정보를 찾을 수 없습니다")
+        val userProfile = userProfileRepository.findFirstByUserId(userAuthInfo.userId) ?: throw SccDomainException("계정 정보를 찾을 수 없습니다")
         anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAuthInfo.userId) }
+
         return LoginResult(
             authTokens = authTokens,
             userProfile = userProfile,

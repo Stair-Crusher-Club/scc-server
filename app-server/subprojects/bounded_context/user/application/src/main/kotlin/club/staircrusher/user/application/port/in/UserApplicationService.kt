@@ -247,15 +247,15 @@ class UserApplicationService(
         )
     }
 
-    fun getUserAccountOrNull(userId: String): UserAccount? = transactionManager.doInTransaction {
+    fun getAccountOrNull(userId: String): UserAccount? = transactionManager.doInTransaction {
         userAccountRepository.findByIdOrNull(userId)
     }
 
-    fun getUserProfileOrNull(userId: String): UserProfile? = transactionManager.doInTransaction {
+    fun getProfileByUserIdOrNull(userId: String): UserProfile? = transactionManager.doInTransaction {
         userProfileRepository.findFirstByUserId(userId)
     }
 
-    fun getUserProfiles(userIds: List<String>): List<UserProfile> = transactionManager.doInTransaction {
+    fun getProfilesByUserIds(userIds: List<String>): List<UserProfile> = transactionManager.doInTransaction {
         userProfileRepository.findAllByUserIdIn(userIds)
     }
 

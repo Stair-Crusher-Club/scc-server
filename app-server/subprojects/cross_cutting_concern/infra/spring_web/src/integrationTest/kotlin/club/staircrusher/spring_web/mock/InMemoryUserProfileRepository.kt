@@ -5,8 +5,6 @@ import club.staircrusher.stdlib.persistence.jpa.InMemoryCrudRepositoryMixin
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.domain.model.UserProfile
 import org.springframework.context.annotation.Primary
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 
 @Component
 @Primary
@@ -28,9 +26,5 @@ class InMemoryUserProfileRepository : UserProfileRepository, InMemoryCrudReposit
 
     override fun findAllByUserIdIn(userIds: Collection<String>): List<UserProfile> {
         return entityById.values.filter { it.userId in userIds }
-    }
-
-    override fun findAll(pageable: Pageable): Page<UserProfile> {
-        TODO()
     }
 }

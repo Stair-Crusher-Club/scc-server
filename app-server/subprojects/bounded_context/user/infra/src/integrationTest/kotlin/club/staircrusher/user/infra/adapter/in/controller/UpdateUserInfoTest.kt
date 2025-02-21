@@ -200,7 +200,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 transactionManager.doInTransaction {
-                    val profile = userProfileRepository.findById(user.id).get()
+                    val profile = userProfileRepository.findById(userProfile.id).get()
                     Assertions.assertEquals(2, profile.mobilityTools.size)
                 }
             }
@@ -220,7 +220,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 transactionManager.doInTransaction {
-                    val profile = userProfileRepository.findById(user.id).get()
+                    val profile = userProfileRepository.findById(userProfile.id).get()
                     Assertions.assertEquals(1, profile.mobilityTools.size)
                 }
             }

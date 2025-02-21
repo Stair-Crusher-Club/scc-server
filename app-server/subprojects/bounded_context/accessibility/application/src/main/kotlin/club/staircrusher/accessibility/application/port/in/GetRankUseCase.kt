@@ -17,7 +17,7 @@ class GetRankUseCase(
 ) {
     fun handle(userId: String): WithUserInfo<AccessibilityRank> {
         val now = SccClock.instant()
-        val userProfile = userApplicationService.getUserProfileOrNull(userId) ?: throw SccDomainException("잘못된 계정입니다.")
+        val userProfile = userApplicationService.getProfileByUserIdOrNull(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         val accessibilityRank = accessibilityRankRepository.findFirstByUserId(userId) ?: run {
             // if lastRank can not be found, then the user is the first rank
             val lastRank = accessibilityRankRepository.findRankByConqueredCount(0) ?: 1

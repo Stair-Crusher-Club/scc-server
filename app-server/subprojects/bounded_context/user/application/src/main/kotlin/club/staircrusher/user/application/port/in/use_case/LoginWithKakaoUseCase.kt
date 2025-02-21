@@ -2,6 +2,7 @@ package club.staircrusher.user.application.port.`in`.use_case
 
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.InitialNicknameGenerator
@@ -36,12 +37,12 @@ class LoginWithKakaoUseCase(
 
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
-        val user = userProfileRepository.findById(userAuthInfo.userId).get()
-        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }
+        val userProfile = userProfileRepository.findFirstByUserId(userAuthInfo.userId) ?: throw SccDomainException("계정 정보를 찾을 수 없습니다")
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAuthInfo.userId) }
 
         return LoginResult(
             authTokens = authTokens,
-            userProfile = user,
+            userProfile = userProfile,
         )
     }
 
