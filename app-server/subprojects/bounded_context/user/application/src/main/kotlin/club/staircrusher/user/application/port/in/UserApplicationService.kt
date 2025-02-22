@@ -221,17 +221,17 @@ class UserApplicationService(
     fun deleteUser(
         userId: String,
     ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
-        val userProfile = userProfileRepository.findByIdOrNull(userId)
         val userAccount = userAccountRepository.findByIdOrNull(userId)
+        val userProfile = userProfileRepository.findFirstByUserId(userId)
 
         val now = SccClock.instant()
-        userProfile?.let {
-            it.delete(now)
-            userProfileRepository.save(it)
-        }
         userAccount?.let {
             it.delete(now)
             userAccountRepository.save(it)
+        }
+        userProfile?.let {
+            it.delete(now)
+            userProfileRepository.save(it)
         }
 
         userAuthInfoRepository.removeByUserId(userId)
