@@ -31,10 +31,10 @@ class GetChallengeLeaderboardUseCase(
     fun handle(challengeId: String): List<WithUserInfo<ChallengeRank>> = transactionManager.doInTransaction {
         val challenge = challengeRepository.findByIdOrNull(challengeId) ?: throw SccDomainException("잘못된 챌린지입니다.")
         val leaderboards = challengeRankRepository.findTopNUsers(challenge.id, NUMBER_OF_TOP_RANKER)
-        val users = userApplicationService.getUserProfiles(leaderboards.map { it.userId }).associateBy { it.id }
+        val userProfilesByUserId = userApplicationService.getProfilesByUserIds(leaderboards.map { it.userId }).associateBy { it.userId }
 
         leaderboards.map { challengeRank ->
-            WithUserInfo(challengeRank, users[challengeRank.userId]!!.toDomainModel())
+            WithUserInfo(challengeRank, userProfilesByUserId[challengeRank.userId]!!.toDomainModel())
         }
     }
 }

@@ -12,7 +12,7 @@ class GetPlaceWithBuildingTest : PlaceSearchITBase() {
     @Test
     fun 정상적인동작() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         val (building, place) = transactionManager.doInTransaction {
             val building = testDataGenerator.createBuilding()
@@ -26,7 +26,7 @@ class GetPlaceWithBuildingTest : PlaceSearchITBase() {
             placeId = place.id
         )
         mvc
-            .sccRequest("/getPlaceWithBuilding", params, user = user)
+            .sccRequest("/getPlaceWithBuilding", params, userAccount = user)
             .apply {
                 val result = getResult(object : TypeReference<PlaceListItem>() {})
                 assertEquals(place.id, result.place.id)

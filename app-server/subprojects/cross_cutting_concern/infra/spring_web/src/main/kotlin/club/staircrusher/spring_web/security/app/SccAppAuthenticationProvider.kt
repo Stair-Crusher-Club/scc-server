@@ -24,12 +24,12 @@ class SccAppAuthenticationProvider(
             throw BadCredentialsException("Invalid access token.", e)
         }
 
-        val user = userApplicationService.getUser(userId)
+        val user = userApplicationService.getAccountOrNull(userId)
             ?: throw BadCredentialsException("No User found with given credentials.")
         if (user.isDeleted) {
             throw BadCredentialsException("No User found with given credentials.")
         }
-        val userProfile = userApplicationService.getUserProfile(userId)
+        val userProfile = userApplicationService.getProfileByUserIdOrNull(userId)
 
         return SccAppAuthentication(
             AuthUser(

@@ -32,7 +32,7 @@ class ListChallengesTest : ChallengeITBase() {
     fun `진행 중 & 참여 중, 진행 중, 오픈 예정, 종료 순 으로 내려준다`() {
         val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
 
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser().account }
         val challenges = mvc
             .sccRequest(
                 "/listChallenges",
@@ -45,7 +45,7 @@ class ListChallengesTest : ChallengeITBase() {
                     nextToken = null,
                     limit = null
                 ),
-                user = user
+                userAccount = user
             )
             .getResult(ListChallengesResponseDto::class)
             .items
@@ -214,14 +214,14 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(lastChallengeBeforeParticipation.status == ChallengeStatusDto.IN_PROGRESS)
         assertTrue(lastChallengeBeforeParticipation.hasJoined.not())
 
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser().account }
         participate(
-            user = user,
+            userAccount = user,
             challenge = challengeRepository.findById(lastChallengeBeforeParticipation.id).get(),
         )
         clock.advanceTime(Duration.ofMinutes(1))
         participate(
-            user = user,
+            userAccount = user,
             challenge = challengeRepository.findById(firstChallengeBeforeParticipation.id).get(),
         )
         val challengesAfterParticipation = mvc
@@ -236,7 +236,7 @@ class ListChallengesTest : ChallengeITBase() {
                     nextToken = null,
                     limit = null
                 ),
-                user = user
+                userAccount = user
             )
             .getResult(ListChallengesResponseDto::class)
             .items

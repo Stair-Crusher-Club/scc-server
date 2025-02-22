@@ -15,10 +15,10 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
     @Test
     fun cancelBuildingAccessibilityUpvoteTest() {
         val (user, buildingAccessibility) = transactionManager.doInTransaction {
-            val user = testDataGenerator.createUser()
+            val user = testDataGenerator.createIdentifiedUser()
             val place = testDataGenerator.createBuildingAndPlace()
             val buildingAccessibility =
-                testDataGenerator.registerBuildingAndPlaceAccessibility(user = user, place = place).second
+                testDataGenerator.registerBuildingAndPlaceAccessibility(userAccount = user.account, place = place).second
             Pair(user, buildingAccessibility)
         }
 
@@ -26,12 +26,12 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
             buildingAccessibilityId = buildingAccessibility.id
         )
         mvc
-            .sccRequest("/giveBuildingAccessibilityUpvote", giveUpvoteParams, user = user)
+            .sccRequest("/giveBuildingAccessibilityUpvote", giveUpvoteParams, userAccount = user.account)
             .andExpect {
                 transactionManager.doInTransaction {
                     assertNotNull(
                         buildingAccessibilityUpvoteRepository.findExistingUpvote(
-                            user.id,
+                            user.account.id,
                             buildingAccessibility.id
                         )
                     )
@@ -42,12 +42,12 @@ class GiveAndCancelBuildingAccessibilityUpvoteTest : AccessibilityITBase() {
             buildingAccessibilityId = buildingAccessibility.id
         )
         mvc
-            .sccRequest("/cancelBuildingAccessibilityUpvote", cancelUpvoteParams, user = user)
+            .sccRequest("/cancelBuildingAccessibilityUpvote", cancelUpvoteParams, userAccount = user.account)
             .andExpect {
                 transactionManager.doInTransaction {
                     assertNull(
                         buildingAccessibilityUpvoteRepository.findExistingUpvote(
-                            user.id,
+                            user.account.id,
                             buildingAccessibility.id
                         )
                     )

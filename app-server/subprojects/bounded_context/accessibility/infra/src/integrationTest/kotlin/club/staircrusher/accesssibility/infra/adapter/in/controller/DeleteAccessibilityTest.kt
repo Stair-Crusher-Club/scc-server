@@ -47,7 +47,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
         // when: 첫 번째 장소 정보를 삭제한다.
         val deleteAccessibilityParams1 = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility1.id)
         mvc
-            .sccRequest("/deleteAccessibility", deleteAccessibilityParams1, user = user)
+            .sccRequest("/deleteAccessibility", deleteAccessibilityParams1, userAccount = user)
             .apply {
                 transactionManager.doInTransaction {
                     assertNull(placeAccessibilityRepository.findByIdOrNull(placeAccessibility1.id))
@@ -76,7 +76,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
         reset(domainEventPublisher) // 메소드 호출 횟수를 리셋해준다.
         val deleteAccessibilityParams2 = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility2.id)
         mvc
-            .sccRequest("/deleteAccessibility", deleteAccessibilityParams2, user = user)
+            .sccRequest("/deleteAccessibility", deleteAccessibilityParams2, userAccount = user)
             .apply {
                 transactionManager.doInTransaction {
                     assertNull(placeAccessibilityRepository.findByIdOrNull(placeAccessibility2.id))
@@ -107,13 +107,13 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
     @Test
     fun `본인이 등록하지 않은 정보는 삭제할 수 없다`() {
         val placeAccessibility = registerAccessibility().placeAccessibility
-        val otherUser = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (otherUser, _) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
 
         val params = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
         mvc
-            .sccRequest("/deleteAccessibility", params, user = otherUser)
+            .sccRequest("/deleteAccessibility", params, userAccount = otherUser)
             .andExpect {
                 status { isBadRequest() }
             }
@@ -132,7 +132,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
 
         val params = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
         mvc
-            .sccRequest("/deleteAccessibility", params, user = user)
+            .sccRequest("/deleteAccessibility", params, userAccount = user)
             .andExpect {
                 status { isBadRequest() }
             }
