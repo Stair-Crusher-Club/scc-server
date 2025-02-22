@@ -18,4 +18,6 @@ class QuestBoundedContextSecurityConfig : SccSecurityConfig {
         )
         return pathOnlyMatchers + pathAndMethodRequestMatchers
     }
+
+    override fun identifiedUserOnlyRequestMatchers() = emptyList<RequestMatcher>()
 }
