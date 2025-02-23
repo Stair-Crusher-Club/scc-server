@@ -14,19 +14,19 @@ class BuildingAccessibility(
     val id: String,
     val buildingId: String,
     @Enumerated(EnumType.STRING)
-    val entranceStairInfo: StairInfo,
+    var entranceStairInfo: StairInfo,
     @Enumerated(EnumType.STRING)
-    val entranceStairHeightLevel: StairHeightLevel?,
+    var entranceStairHeightLevel: StairHeightLevel?,
     entranceImageUrls: List<String>,
     entranceImages: List<AccessibilityImage>,
-    val hasSlope: Boolean,
-    val hasElevator: Boolean,
+    var hasSlope: Boolean,
+    var hasElevator: Boolean,
     @Convert(converter = EntranceDoorTypeListToTextAttributeConverter::class)
-    val entranceDoorTypes: List<EntranceDoorType>?,
+    var entranceDoorTypes: List<EntranceDoorType>?,
     @Enumerated(EnumType.STRING)
-    val elevatorStairInfo: StairInfo,
+    var elevatorStairInfo: StairInfo,
     @Enumerated(EnumType.STRING)
-    val elevatorStairHeightLevel: StairHeightLevel?,
+    var elevatorStairHeightLevel: StairHeightLevel?,
     elevatorImageUrls: List<String>,
     elevatorImages: List<AccessibilityImage>,
     val userId: String?,

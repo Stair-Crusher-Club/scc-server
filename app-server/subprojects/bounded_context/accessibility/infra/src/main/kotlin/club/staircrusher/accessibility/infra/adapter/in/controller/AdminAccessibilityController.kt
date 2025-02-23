@@ -3,13 +3,19 @@ package club.staircrusher.accessibility.infra.adapter.`in`.controller
 import club.staircrusher.accessibility.application.port.`in`.AdminDeleteBuildingAccessibilityUseCase
 import club.staircrusher.accessibility.application.port.`in`.AdminDeletePlaceAccessibilityUseCase
 import club.staircrusher.accessibility.application.port.`in`.AdminSearchAccessibilitiesUseCase
+import club.staircrusher.accessibility.application.port.`in`.AdminUpdateBuildingAccessibilityUseCase
+import club.staircrusher.accessibility.application.port.`in`.AdminUpdatePlaceAccessibilityUseCase
 import club.staircrusher.admin_api.spec.dto.AdminAccessibilityDTO
 import club.staircrusher.admin_api.spec.dto.AdminSearchAccessibilitiesResultDTO
+import club.staircrusher.admin_api.spec.dto.AdminUpdateBuildingAccessibilityRequestDTO
+import club.staircrusher.admin_api.spec.dto.AdminUpdatePlaceAccessibilityRequestDTO
 import club.staircrusher.stdlib.util.string.emptyToNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
@@ -17,6 +23,8 @@ import java.time.LocalDate
 @RestController
 class AdminAccessibilityController(
     private val adminSearchAccessibilitiesUseCase: AdminSearchAccessibilitiesUseCase,
+    private val adminUpdatePlaceAccessibilityUseCase: AdminUpdatePlaceAccessibilityUseCase,
+    private val adminUpdateBuildingAccessibilityUseCase: AdminUpdateBuildingAccessibilityUseCase,
     private val adminDeletePlaceAccessibilityUseCase: AdminDeletePlaceAccessibilityUseCase,
     private val adminDeleteBuildingAccessibilityUseCase: AdminDeleteBuildingAccessibilityUseCase,
 ) {
@@ -51,6 +59,40 @@ class AdminAccessibilityController(
             },
             cursor = result.cursor,
         )
+    }
+
+    @PutMapping("/admin/place-accessibilities/{id}")
+    fun updatePlaceAccessibility(@PathVariable id: String, @RequestBody request: AdminUpdatePlaceAccessibilityRequestDTO): ResponseEntity<Unit> {
+        adminUpdatePlaceAccessibilityUseCase.handle(
+            placeAccessibilityId = id,
+            isFirstFloor = request.isFirstFloor,
+            stairInfo = request.stairInfo.toModel(),
+            hasSlope = request.hasSlope,
+            floors = request.floors,
+            isStairOnlyOption = request.isStairOnlyOption,
+            stairHeightLevel = request.stairHeightLevel?.toModel(),
+            entranceDoorTypes = request.entranceDoorTypes?.map { it.toModel() },
+        )
+        return ResponseEntity
+            .noContent()
+            .build()
+    }
+
+    @PutMapping("/admin/building-accessibilities/{id}")
+    fun updateBuildingAccessibility(@PathVariable id: String, @RequestBody request: AdminUpdateBuildingAccessibilityRequestDTO): ResponseEntity<Unit> {
+        adminUpdateBuildingAccessibilityUseCase.handle(
+            buildingAccessibilityId = id,
+            hasElevator = request.hasElevator,
+            hasSlope = request.hasSlope,
+            entranceStairInfo = request.entranceStairInfo.toModel(),
+            entranceStairHeightLevel = request.entranceStairHeightLevel?.toModel(),
+            entranceDoorTypes = request.entranceDoorTypes?.map { it.toModel() },
+            elevatorStairInfo = request.elevatorStairInfo.toModel(),
+            elevatorStairHeightLevel = request.elevatorStairHeightLevel?.toModel(),
+        )
+        return ResponseEntity
+            .noContent()
+            .build()
     }
 
     @DeleteMapping("/admin/place-accessibilities/{id}")

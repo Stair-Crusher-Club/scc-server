@@ -393,6 +393,21 @@ paths:
           type: string
         required: true
 
+    put:
+      operationId: updatePlaceAccessibility
+      summary: 장소 정보를 업데이트한다.
+      tags:
+        - accessibility
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdatePlaceAccessibilityRequestDTO'
+      responses:
+        204:
+          description: 업데이트 성공
+
     delete:
       operationId: deletePlaceAccessibility
       summary: 장소 정보를 삭제한다.
@@ -409,6 +424,21 @@ paths:
         schema:
           type: string
         required: true
+
+    put:
+      operationId: updateBuildingAccessibility
+      summary: 건물 정보를 업데이트한다.
+      tags:
+        - accessibility
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateBuildingAccessibilityRequestDTO'
+      responses:
+        204:
+          description: 업데이트 성공
 
     delete:
       operationId: deleteBuildingAccessibility
@@ -973,6 +1003,59 @@ components:
       required:
         - items
 
+    AdminUpdatePlaceAccessibilityRequestDTO:
+      type: object
+      properties:
+        isFirstFloor:
+          type: boolean
+        stairInfo:
+          $ref: '#/components/schemas/AdminStairInfoDTO'
+        hasSlope:
+          type: boolean
+        floors:
+          type: array
+          items:
+            type: integer
+            format: int32
+        isStairOnlyOption:
+          type: boolean
+        stairHeightLevel:
+          $ref: '#/components/schemas/AdminStairHeightLevel'
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminEntranceDoorType'
+      required:
+        - isFirstFloor
+        - stairInfo
+        - hasSlope
+
+    AdminUpdateBuildingAccessibilityRequestDTO:
+      type: object
+      properties:
+        entranceStairInfo:
+          $ref: '#/components/schemas/AdminStairInfoDTO'
+        hasSlope:
+          type: boolean
+        hasElevator:
+          type: boolean
+        elevatorStairInfo:
+          $ref: '#/components/schemas/AdminStairInfoDTO'
+        entranceStairHeightLevel:
+          $ref: '#/components/schemas/AdminStairHeightLevel'
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminEntranceDoorType'
+        elevatorStairHeightLevel:
+          $ref: '#/components/schemas/AdminStairHeightLevel'
+
+      required:
+        - entranceStairInfo
+        - hasSlope
+        - hasElevator
+        - elevatorStairInfo
+
     AdminAccessibilityDTO:
       type: object
       properties:
@@ -988,16 +1071,33 @@ components:
       properties:
         id:
           type: string
+        floors:
+          type: array
+          items:
+            type: integer
         isFirstFloor:
           type: boolean
-        stairInfo:
-          $ref: '#/components/schemas/AdminStairInfoDTO'
-        hasSlope:
+        isStairOnlyOption:
           type: boolean
         imageUrls:
+          deprecated: true
           type: array
           items:
             type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminImageDTO'
+        stairInfo:
+          $ref: '#/components/schemas/AdminStairInfoDTO'
+        stairHeightLevel:
+          $ref: '#/components/schemas/AdminStairHeightLevel'
+        hasSlope:
+          type: boolean
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminEntranceDoorType'
         placeName:
           type: string
         registeredUserName:
@@ -1013,6 +1113,7 @@ components:
         - hasSlope
         - placeName
         - imageUrls
+        - images
         - createdAtMillis
 
     AdminBuildingAccessibilityDTO:
@@ -1022,20 +1123,38 @@ components:
           type: string
         entranceStairInfo:
           $ref: '#/components/schemas/AdminStairInfoDTO'
+        entranceStairHeightLevel:
+          $ref: '#/components/schemas/AdminStairHeightLevel'
+        entranceDoorTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminEntranceDoorType'
         entranceImageUrls:
+          deprecated: true
           type: array
           items:
             type: string
+        entranceImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminImageDTO'
         hasSlope:
           type: boolean
         hasElevator:
           type: boolean
         elevatorStairInfo:
           $ref: '#/components/schemas/AdminStairInfoDTO'
+        elevatorStairHeightLevel:
+          $ref: '#/components/schemas/AdminStairHeightLevel'
         elevatorImageUrls:
+          deprecated: true
           type: array
           items:
             type: string
+        elevatorImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminImageDTO'
         buildingName:
           type: string
         registeredUserName:
@@ -1048,10 +1167,12 @@ components:
         - id
         - entranceStairInfo
         - entranceImageUrls
+        - entranceImages
         - hasSlope
         - hasElevator
         - elevatorStairInfo
         - elevatorImageUrls
+        - elevatorImages
         - createdAtMillis
 
     AdminStairInfoDTO:
@@ -1062,6 +1183,33 @@ components:
         - ONE
         - TWO_TO_FIVE
         - OVER_SIX
+
+    AdminStairHeightLevel:
+      type: string
+      enum:
+        - HALF_THUMB
+        - THUMB
+        - OVER_THUMB
+
+    AdminEntranceDoorType:
+      type: string
+      enum:
+        - None
+        - Hinged
+        - Sliding
+        - Revolving
+        - Automatic
+        - ETC
+
+    AdminImageDTO:
+      type: object
+      properties:
+        imageUrl:
+          type: string
+        thumbnailUrl:
+          type: string
+      required:
+        - imageUrl
 
     StartPlaceCrawlingRequestDTO:
       properties:
