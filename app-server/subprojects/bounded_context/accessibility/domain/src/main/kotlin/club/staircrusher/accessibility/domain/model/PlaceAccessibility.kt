@@ -3,6 +3,7 @@ package club.staircrusher.accessibility.domain.model
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -30,9 +31,8 @@ class PlaceAccessibility(
     imageUrls: List<String>,
     images: List<AccessibilityImage>,
     val userId: String?,
-    val createdAt: Instant,
     val deletedAt: Instant? = null,
-) {
+) : TimeAuditingBaseEntity() {
     @Deprecated("use images instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
     var imageUrls: List<String> = imageUrls
@@ -68,7 +68,7 @@ class PlaceAccessibility(
         return "PlaceAccessibility(id='$id', placeId='$placeId', floors=$floors, isFirstFloor=$isFirstFloor, " +
             "isStairOnlyOption=$isStairOnlyOption, stairInfo=$stairInfo, stairHeightLevel=$stairHeightLevel, " +
             "hasSlope=$hasSlope, entranceDoorTypes=$entranceDoorTypes, imageUrls=$imageUrls, images=$images, " +
-            "userId=$userId, createdAt=$createdAt, deletedAt=$deletedAt)"
+            "userId=$userId, createdAt=$createdAt, updatedAt=$updatedAt deletedAt=$deletedAt)"
     }
 
     companion object {

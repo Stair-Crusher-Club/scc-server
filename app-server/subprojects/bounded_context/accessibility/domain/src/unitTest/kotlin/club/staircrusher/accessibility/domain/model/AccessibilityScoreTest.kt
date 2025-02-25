@@ -102,7 +102,6 @@ class AccessibilityScoreTest {
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
         userId: String? = null,
-        createdAt: Instant = Instant.now(),
         deletedAt: Instant? = null
     ) = PlaceAccessibility(
         id = id,
@@ -117,7 +116,6 @@ class AccessibilityScoreTest {
         imageUrls = imageUrls,
         images = images,
         userId = userId,
-        createdAt = createdAt,
         deletedAt = deletedAt,
     )
 
