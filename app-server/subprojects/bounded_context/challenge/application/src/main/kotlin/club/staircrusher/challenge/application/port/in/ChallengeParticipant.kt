@@ -7,6 +7,6 @@ data class ChallengeParticipant(
     val nickname: String,
 )
 fun UserProfile.toDomainModel() = ChallengeParticipant(
-    userId = id,
+    userId = userId,
     nickname = nickname,
 )
