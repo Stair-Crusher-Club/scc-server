@@ -64,21 +64,21 @@ class LoginWithKakaoTest : UserITBase() {
             .run {
                 val result = getResult(LoginResultDto::class)
 
-                val newUser = transactionManager.doInTransaction {
-                    userProfileRepository.findById(result.user.id).get()
+                val newUserProfile = transactionManager.doInTransaction {
+                    userProfileRepository.findFirstByUserId(result.user.id)!!
                 }
-                assertNull(newUser.encryptedPassword)
-                assertNull(newUser.email)
-                assertNull(newUser.instagramId)
+                assertNull(newUserProfile.encryptedPassword)
+                assertNull(newUserProfile.email)
+                assertNull(newUserProfile.instagramId)
 
                 val newUserAuthInfo = transactionManager.doInTransaction {
-                    userAuthInfoRepository.findByUserId(newUser.id).find { it.authProviderType == UserAuthProviderType.KAKAO }
+                    userAuthInfoRepository.findByUserId(newUserProfile.userId).find { it.authProviderType == UserAuthProviderType.KAKAO }
                 }
                 assertNotNull(newUserAuthInfo)
                 assertEquals("kakaoSyncUserId", newUserAuthInfo!!.externalId)
                 assertEquals("refreshToken", newUserAuthInfo.externalRefreshToken)
 
-                Pair(newUser.id, newUserAuthInfo.id)
+                Pair(newUserProfile.userId, newUserAuthInfo.id)
             }
 
         // 두 번째 로그인 시도 - 기 존재하는 계정에 대해 로그인
@@ -87,15 +87,15 @@ class LoginWithKakaoTest : UserITBase() {
             .apply {
                 val result = getResult(LoginResultDto::class)
 
-                val user = transactionManager.doInTransaction {
-                    userProfileRepository.findById(result.user.id).get()
+                val userProfile = transactionManager.doInTransaction {
+                    userProfileRepository.findFirstByUserId(result.user.id)!!
                 }
-                assertEquals(userId, user.id)
-                assertNull(user.email)
-                assertNull(user.instagramId)
+                assertEquals(userId, userProfile.userId)
+                assertNull(userProfile.email)
+                assertNull(userProfile.instagramId)
 
                 val userAuthInfo = transactionManager.doInTransaction {
-                    userAuthInfoRepository.findByUserId(user.id).find { it.authProviderType == UserAuthProviderType.KAKAO }!!
+                    userAuthInfoRepository.findByUserId(userProfile.userId).find { it.authProviderType == UserAuthProviderType.KAKAO }!!
                 }
                 assertEquals(userAuthInfoId, userAuthInfo.id)
                 assertEquals("kakaoSyncUserId", userAuthInfo.externalId)

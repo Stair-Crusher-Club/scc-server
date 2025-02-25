@@ -76,11 +76,11 @@ class GetBannersTest : MiscITBase() {
         }
 
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
 
         mvc
-            .sccRequest("/getHomeBanners", null, user = user)
+            .sccRequest("/getHomeBanners", null, userAccount = user)
             .andExpect {
                 status { isOk() }
             }

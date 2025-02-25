@@ -5,12 +5,12 @@ import club.staircrusher.accessibility.domain.model.PlaceAccessibility
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
-import club.staircrusher.user.domain.model.UserProfile
+import club.staircrusher.user.domain.model.UserAccount
 
 class AccessibilityITBase : SccSpringITBase() {
-    fun registerAccessibility(overridingUser: UserProfile? = null, overridingBuilding: Building? = null): RegisterAccessibilityResult {
+    fun registerAccessibility(overridingUser: UserAccount? = null, overridingBuilding: Building? = null): RegisterAccessibilityResult {
         val user = overridingUser ?: transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         return transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = overridingBuilding)
@@ -24,7 +24,7 @@ class AccessibilityITBase : SccSpringITBase() {
     }
 
     data class RegisterAccessibilityResult(
-        val user: UserProfile,
+        val user: UserAccount,
         val place: Place,
         val placeAccessibility: PlaceAccessibility,
         val buildingAccessibility: BuildingAccessibility,

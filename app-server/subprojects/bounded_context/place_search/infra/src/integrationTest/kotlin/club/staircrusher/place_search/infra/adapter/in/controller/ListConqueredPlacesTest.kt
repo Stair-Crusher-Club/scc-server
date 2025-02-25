@@ -15,7 +15,7 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
     @Test
     fun testListConqueredPlaces() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         val registeredCount = 10
         val places = transactionManager.doInTransaction {
@@ -27,7 +27,7 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
         }
 
         mvc
-            .sccRequest("/listConqueredPlaces", requestBody = null, user = user)
+            .sccRequest("/listConqueredPlaces", requestBody = null, userAccount = user)
             .apply {
                 val result = getResult(object : TypeReference<ListConqueredPlacesResponseDto>() {})
                 assertEquals(registeredCount.toLong(), result.totalNumberOfItems)
@@ -44,7 +44,7 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
     @Test
     fun 생성_시간_역순으로_내려준다() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
 
         val placeIdsOrderedByCreatedAtDesc = (1..10).map {
@@ -59,7 +59,7 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
             .map { it.first.id }
 
         mvc
-            .sccRequest("/listConqueredPlaces", requestBody = null, user = user)
+            .sccRequest("/listConqueredPlaces", requestBody = null, userAccount = user)
             .apply {
                 val result = getResult(object : TypeReference<ListConqueredPlacesResponseDto>() {})
                 assertEquals(

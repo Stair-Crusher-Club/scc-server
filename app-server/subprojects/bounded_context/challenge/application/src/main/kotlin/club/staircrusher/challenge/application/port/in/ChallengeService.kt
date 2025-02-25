@@ -12,14 +12,14 @@ import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
-import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import org.springframework.data.repository.findByIdOrNull
 import java.time.Clock
 import java.time.Instant
 
 @Component
 class ChallengeService(
-    private val userProfileRepository: UserProfileRepository,
+    private val userAccountRepository: UserAccountRepository,
     private val challengeRepository: ChallengeRepository,
     private val challengeContributionRepository: ChallengeContributionRepository,
     private val challengeParticipationRepository: ChallengeParticipationRepository,
@@ -117,7 +117,7 @@ class ChallengeService(
         challenge: Challenge,
         contribution: Contribution
     ): ChallengeContribution {
-        userProfileRepository.findByIdOrNull(id = userId) ?: throw SccDomainException("해당 유저가 존재하지 않습니다.")
+        userAccountRepository.findByIdOrNull(userId) ?: throw SccDomainException("해당 유저가 존재하지 않습니다.")
         if (challengeParticipationRepository.findByChallengeIdAndUserId(userId = userId, challengeId = challenge.id)
                 .isEmpty()
         ) {

@@ -17,7 +17,7 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
     @Test
     fun testRegisterBuildingAccessibilityComment() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser()
         }
         val place = transactionManager.doInTransaction {
             testDataGenerator.createBuildingAndPlace()
@@ -28,7 +28,7 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
                 buildingId = place.building.id,
                 comment = "실명 코멘트",
             )
-            mvc.sccRequest("/registerBuildingAccessibilityComment", params, user = user).andReturn()
+            mvc.sccRequest("/registerBuildingAccessibilityComment", params, userAccount = user.account).andReturn()
         }
         clock.advanceTime(Duration.ofSeconds(1))
         val result = run {
@@ -50,7 +50,7 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
         assertEquals(clock.millis(), comments[0].createdAt.toEpochMilli())
         assertEquals(place.building.id, comments[1].buildingId)
         assertEquals("실명 코멘트", comments[1].comment)
-        assertEquals(user.id, comments[1].userId)
+        assertEquals(user.account.id, comments[1].userId)
         assertEquals((clock.instant() - Duration.ofSeconds(1)).toEpochMilli(), comments[1].createdAt.toEpochMilli())
     }
 }

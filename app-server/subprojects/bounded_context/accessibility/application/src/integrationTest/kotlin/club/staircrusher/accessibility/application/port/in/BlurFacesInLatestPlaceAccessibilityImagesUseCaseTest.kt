@@ -145,12 +145,12 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCaseTest : BlurFacesITBase() {
 
     private fun registerPlaceAccessibilityAndBuildingAccessibility(imageUrls: List<String>) =
         transactionManager.doInTransaction {
-            val user = testDataGenerator.createUser()
+            val userAccount = testDataGenerator.createIdentifiedUser().account
             val building = testDataGenerator.createBuilding()
             val place = testDataGenerator.createPlace(placeName = SccRandom.string(32), building = building)
             val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(
-                place = place, user = user, imageUrls = imageUrls, images = imageUrls.map { AccessibilityImage(it, it) }
+                place = place, userAccount = userAccount, imageUrls = imageUrls, images = imageUrls.map { AccessibilityImage(it, it) }
             )
-            Triple(user, placeAccessibility, buildingAccessibility)
+            Triple(userAccount, placeAccessibility, buildingAccessibility)
         }
 }

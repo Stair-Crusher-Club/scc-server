@@ -26,7 +26,7 @@ class DeletePlaceFavoriteTest : PlaceITBase() {
     @Test
     fun `즐겨찾기를 해제하면 해당 장소의 즐겨찾기 수가 감소한다`() {
         val (user, place) = transactionManager.doInTransaction {
-            val user = testDataGenerator.createUser()
+            val user = testDataGenerator.createIdentifiedUser().account
             val place = testDataGenerator.createBuildingAndPlace(placeName = "마루180")
             testDataGenerator.createPlaceFavorite(userId = user.id, placeId = place.id)
             user to place
@@ -35,7 +35,7 @@ class DeletePlaceFavoriteTest : PlaceITBase() {
         val beforeRequestedAt = SccClock.instant()
         clock.advanceTime(Duration.ofSeconds(1))
         mvc
-            .sccRequest("/deletePlaceFavorite", DeletePlaceFavoriteRequestDto(placeId = place.id), user = user)
+            .sccRequest("/deletePlaceFavorite", DeletePlaceFavoriteRequestDto(placeId = place.id), userAccount = user)
             .apply {
                 val result = getResult(DeletePlaceFavoriteResponseDto::class)
                 assertEquals(0, result.totalPlaceFavoriteCount)
