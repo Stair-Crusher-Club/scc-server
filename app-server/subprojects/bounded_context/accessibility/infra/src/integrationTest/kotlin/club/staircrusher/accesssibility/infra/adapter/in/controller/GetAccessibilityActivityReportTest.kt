@@ -18,13 +18,14 @@ class GetAccessibilityActivityReportTest : SccSpringITBase() {
 
         val userAccount = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser().account }
         (0 until 10).map { index ->
-            clock.setTime(ZonedDateTime.of(baseLocalDateTime.plusDays(index.toLong()), clock.zone).toInstant())
             transactionManager.doInTransaction {
+                val createdAt = ZonedDateTime.of(baseLocalDateTime.plusDays(index.toLong()), clock.zone).toInstant()
                 val place = testDataGenerator.createBuildingAndPlace()
-                testDataGenerator.registerPlaceAccessibility(place = place, userAccount = userAccount)
+                testDataGenerator.registerPlaceAccessibility(place = place, userAccount = userAccount, at = createdAt)
                 testDataGenerator.registerBuildingAccessibilityIfNotExists(
                     building = place.building,
                     userAccount = userAccount,
+                    at = createdAt
                 )
             }
         }

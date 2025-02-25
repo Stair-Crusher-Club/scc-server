@@ -301,6 +301,7 @@ class AccessibilityApplicationService(
                     )
                 },
                 userId = createPlaceAccessibilityParams.userId,
+                createdAt = SccClock.instant(),
             )
         )
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {

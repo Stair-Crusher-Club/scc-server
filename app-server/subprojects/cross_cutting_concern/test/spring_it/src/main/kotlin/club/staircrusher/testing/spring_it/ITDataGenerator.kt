@@ -341,6 +341,7 @@ class ITDataGenerator {
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
         userAccount: UserAccount? = null,
+        at: Instant = clock.instant(),
     ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
             PlaceAccessibility(
@@ -356,6 +357,7 @@ class ITDataGenerator {
                 imageUrls = imageUrls,
                 images = images,
                 userId = userAccount?.id,
+                createdAt = at,
             ),
         )
     }
@@ -399,9 +401,10 @@ class ITDataGenerator {
         userAccount: UserAccount? = null,
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
+        at: Instant = clock.instant(),
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
-            registerPlaceAccessibility(place = place, userAccount = userAccount, imageUrls = imageUrls, images = images),
+            registerPlaceAccessibility(place = place, userAccount = userAccount, imageUrls = imageUrls, images = images, at = at),
             registerBuildingAccessibilityIfNotExists(
                 place.building,
                 userAccount = userAccount,
@@ -409,6 +412,7 @@ class ITDataGenerator {
                 entranceImages = images,
                 elevatorImageUrls = imageUrls,
                 elevatorImages = images,
+                at = at
             ),
         )
     }
