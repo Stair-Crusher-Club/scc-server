@@ -373,7 +373,6 @@ class ITDataGenerator {
         elevatorImageUrls: List<String> = emptyList(),
         elevatorImages: List<AccessibilityImage> = emptyList(),
         userAccount: UserAccount? = null,
-        at: Instant = clock.instant(),
     ): BuildingAccessibility {
         return buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id) ?: buildingAccessibilityRepository.save(
             BuildingAccessibility(
@@ -391,7 +390,6 @@ class ITDataGenerator {
                 elevatorImageUrls = elevatorImageUrls,
                 elevatorImages = elevatorImages,
                 userId = userAccount?.id,
-                createdAt = at,
             ),
         )
     }

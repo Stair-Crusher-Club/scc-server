@@ -134,7 +134,6 @@ class AccessibilityScoreTest {
         elevatorImageUrls: List<String> = emptyList(),
         elevatorImages: List<AccessibilityImage> = emptyList(),
         userId: String? = null,
-        createdAt: Instant = Instant.now(),
         deletedAt: Instant? = null,
     ) = BuildingAccessibility(
         id = id,
@@ -151,7 +150,6 @@ class AccessibilityScoreTest {
         elevatorImageUrls = elevatorImageUrls,
         elevatorImages = elevatorImages,
         userId = userId,
-        createdAt = createdAt,
         deletedAt = deletedAt,
     )
 }

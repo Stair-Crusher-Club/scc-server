@@ -1,6 +1,7 @@
 package club.staircrusher.accessibility.domain.model
 
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -30,9 +31,8 @@ class BuildingAccessibility(
     elevatorImageUrls: List<String>,
     elevatorImages: List<AccessibilityImage>,
     val userId: String?,
-    val createdAt: Instant,
     val deletedAt: Instant? = null,
-) {
+) : TimeAuditingBaseEntity() {
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
     var entranceImages: List<AccessibilityImage> = entranceImages
         protected set

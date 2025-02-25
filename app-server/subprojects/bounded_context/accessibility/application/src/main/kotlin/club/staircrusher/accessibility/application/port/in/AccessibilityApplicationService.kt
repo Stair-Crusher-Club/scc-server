@@ -252,7 +252,6 @@ class AccessibilityApplicationService(
                     elevatorImageUrls = it.elevatorImageUrls,
                     elevatorImages = elevatorImages,
                     userId = it.userId,
-                    createdAt = SccClock.instant(),
                 )
             )
         }
