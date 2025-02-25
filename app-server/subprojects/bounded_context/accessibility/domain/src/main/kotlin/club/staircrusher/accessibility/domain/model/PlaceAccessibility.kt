@@ -17,16 +17,16 @@ class PlaceAccessibility(
     val id: String,
     val placeId: String,
     @Convert(converter = IntListToTextAttributeConverter::class)
-    val floors: List<Int>?,
-    val isFirstFloor: Boolean,
-    val isStairOnlyOption: Boolean?,
+    var floors: List<Int>?,
+    var isFirstFloor: Boolean,
+    var isStairOnlyOption: Boolean?,
     @Enumerated(EnumType.STRING)
-    val stairInfo: StairInfo,
+    var stairInfo: StairInfo,
     @Enumerated(EnumType.STRING)
-    val stairHeightLevel: StairHeightLevel?,
-    val hasSlope: Boolean,
+    var stairHeightLevel: StairHeightLevel?,
+    var hasSlope: Boolean,
     @Convert(converter = EntranceDoorTypeListToTextAttributeConverter::class)
-    val entranceDoorTypes: List<EntranceDoorType>?,
+    var entranceDoorTypes: List<EntranceDoorType>?,
     imageUrls: List<String>,
     images: List<AccessibilityImage>,
     val userId: String?,
