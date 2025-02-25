@@ -5,6 +5,7 @@ import club.staircrusher.api.spec.dto.LoginPostRequest
 import club.staircrusher.api.spec.dto.LoginResultDto
 import club.staircrusher.api.spec.dto.LoginWithKakaoPostRequest
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoIdToken
@@ -26,6 +27,9 @@ class DeleteUserTest : UserITBase() {
     lateinit var kakaoLoginService: KakaoLoginService
 
     @Autowired
+    private lateinit var userAccountRepository: UserAccountRepository
+
+    @Autowired
     private lateinit var userProfileRepository: UserProfileRepository
 
     @Autowired
@@ -34,14 +38,14 @@ class DeleteUserTest : UserITBase() {
     @Test
     fun deleteUserTest() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser(
+            testDataGenerator.createIdentifiedUser(
                 password = "password",
             )
         }
 
         fun login(): ResultActionsDsl {
             return mvc
-                .sccRequest("/login", LoginPostRequest(user.nickname, "password"))
+                .sccRequest("/login", LoginPostRequest(user.profile.nickname, "password"))
         }
 
         login().andExpect {
@@ -49,13 +53,17 @@ class DeleteUserTest : UserITBase() {
         }
 
         mvc
-            .sccRequest("/deleteUser", "", user = user)
+            .sccRequest("/deleteUser", "", userAccount = user.account)
             .andExpect {
                 status { isNoContent() }
                 transactionManager.doInTransaction {
-                    val deletedUser = userProfileRepository.findById(user.id).get()
+                    val deletedUser = userAccountRepository.findById(user.account.id).get()
                     assertTrue(deletedUser.isDeleted)
-                    assertNull(deletedUser.email)
+
+                    val deletedUserProfile = userProfileRepository.findFirstByUserId(user.account.id)
+                    assertNotNull(deletedUserProfile)
+                    assertTrue(deletedUserProfile!!.isDeleted)
+                    assertNull(deletedUserProfile.email)
                 }
             }
 
@@ -89,7 +97,7 @@ class DeleteUserTest : UserITBase() {
                 val result = getResult(LoginResultDto::class)
 
                 val newUser = transactionManager.doInTransaction {
-                    userProfileRepository.findById(result.user.id).get()
+                    userAccountRepository.findById(result.user.id).get()
                 }
 
                 val newUserAuthInfo = transactionManager.doInTransaction {
@@ -114,7 +122,7 @@ class DeleteUserTest : UserITBase() {
             .run {
                 val result = getResult(LoginResultDto::class)
                 val otherUser = transactionManager.doInTransaction {
-                    userProfileRepository.findById(result.user.id).get()
+                    userAccountRepository.findById(result.user.id).get()
                 }
                 assertNotNull(otherUser)
                 assertNotEquals(user.id, otherUser.id)
@@ -124,13 +132,16 @@ class DeleteUserTest : UserITBase() {
 
         // when
         mvc
-            .sccRequest("/deleteUser", "", user = user)
+            .sccRequest("/deleteUser", "", userAccount = user)
             .andExpect {
                 // then
                 status { isNoContent() }
                 transactionManager.doInTransaction {
-                    val deletedUser = userProfileRepository.findById(user.id).get()
+                    val deletedUser = userAccountRepository.findById(user.id).get()
+                    val deletedUserProfile = userProfileRepository.findFirstByUserId(user.id)
                     assertTrue(deletedUser.isDeleted)
+                    assertNotNull(deletedUserProfile)
+                    assertTrue(deletedUserProfile!!.isDeleted)
 
                     val userAuthInfo = userAuthInfoRepository.findByUserId(user.id).find { it.authProviderType == UserAuthProviderType.KAKAO }
                     assertNull(userAuthInfo)

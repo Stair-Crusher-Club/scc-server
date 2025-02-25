@@ -9,6 +9,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeRep
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
+import club.staircrusher.user.domain.model.UserAccount
 import club.staircrusher.user.domain.model.UserProfile
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -59,7 +60,7 @@ class GetChallengeTest : ChallengeITBase() {
             GetChallengeRequestDto(
                 challengeId = challenge.id
             ),
-            user = users.first()
+            userAccount = users.first()
         )
             .getResult(GetChallengeResponseDto::class)
 
@@ -73,12 +74,12 @@ class GetChallengeTest : ChallengeITBase() {
 
     private fun generateUsersAndContributions(
         challenge: Challenge,
-        participant: UserProfile? = null,
-    ): Pair<List<UserProfile>, List<ChallengeContribution>> {
-        val users = mutableListOf<UserProfile>()
+        participant: UserAccount? = null,
+    ): Pair<List<UserAccount>, List<ChallengeContribution>> {
+        val users = mutableListOf<UserAccount>()
         transactionManager.doInTransaction {
             repeat(Random.nextInt(from = 1, until = 10)) {
-                users += testDataGenerator.createUser().also { participate(it, challenge) }
+                users += testDataGenerator.createIdentifiedUser().also { participate(it.account, challenge) }.account
             }
         }
         users += listOfNotNull(participant?.also { participate(it, challenge) })
@@ -87,7 +88,7 @@ class GetChallengeTest : ChallengeITBase() {
         users.forEach { user ->
             repeat(Random.nextInt(from = 10, until = 100)) {
                 contributions += contributePlaceAccessibility(
-                    user = user,
+                    userAccount = user,
                     challenge = challenge,
                 )
             }
@@ -104,13 +105,13 @@ class GetChallengeTest : ChallengeITBase() {
 
     @Test
     fun `참여코드가 있는 챌린지는 참여코드로도 조회가 가능하다`() {
-        val user = transactionManager.doInTransaction { testDataGenerator.createUser() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
         val invitationCode = "VCNC 모여라"
         val inProgressChallenge = registerInProgressChallenge(invitationCode = invitationCode)
         val challengeByInvitationCode = mvc.sccRequest(
             "/getChallengeWithInvitationCode",
             GetChallengeWithInvitationCodeRequestDto(invitationCode = invitationCode),
-            user = user
+            userAccount = user.account
         )
             .getResult(GetChallengeResponseDto::class)
             .challenge
@@ -124,7 +125,7 @@ class GetChallengeTest : ChallengeITBase() {
         val users = transactionManager.doInTransaction {
             (0 until Random.nextLong(from = 1, until = 10))
                 .map {
-                    val user = testDataGenerator.createUser()
+                    val user = testDataGenerator.createIdentifiedUser().account
                     participate(user, challenge)
                     return@map user
                 }
@@ -132,7 +133,7 @@ class GetChallengeTest : ChallengeITBase() {
         (0 until goal - 1)
             .map {
                 contributePlaceAccessibility(
-                    user = users.random(),
+                    userAccount = users.random(),
                     challenge = challenge
                 )
             }
@@ -141,13 +142,13 @@ class GetChallengeTest : ChallengeITBase() {
             GetChallengeRequestDto(
                 challengeId = challenge.id
             ),
-            user = users.first()
+            userAccount = users.first()
         )
             .getResult(GetChallengeResponseDto::class)
             .challenge
         assertTrue(challengeBeforeComplete.isComplete.not())
         contributePlaceAccessibility(
-            user = users.random(),
+            userAccount = users.random(),
             challenge = challenge
         )
         val challengeAfterComplete = mvc.sccRequest(
@@ -155,7 +156,7 @@ class GetChallengeTest : ChallengeITBase() {
             GetChallengeRequestDto(
                 challengeId = challenge.id
             ),
-            user = users.first()
+            userAccount = users.first()
         )
             .getResult(GetChallengeResponseDto::class)
             .challenge
@@ -165,7 +166,7 @@ class GetChallengeTest : ChallengeITBase() {
    @Test
    fun `진행 중인 챌린지에 참여하지 않았다면 다른 사람들의 랭킹이 보이지 않는다`() {
        val inProgressChallenge = registerInProgressChallenge()
-       val user = testDataGenerator.createUser()
+       val user = testDataGenerator.createIdentifiedUser().account
 
        val (_, _) = generateUsersAndContributions(inProgressChallenge)
        val getChallengeResponseDto = mvc.sccRequest(
@@ -173,7 +174,7 @@ class GetChallengeTest : ChallengeITBase() {
            GetChallengeRequestDto(
                challengeId = inProgressChallenge.id
            ),
-           user = user
+           userAccount = user
        )
            .getResult(GetChallengeResponseDto::class)
 
@@ -184,7 +185,7 @@ class GetChallengeTest : ChallengeITBase() {
    @Test
    fun `진행 중인 챌린지에 참여 중이면 내 랭킹과 다른 사람들의 랭킹까지 보여준다`() {
        val inProgressChallenge = registerInProgressChallenge()
-       val user = testDataGenerator.createUser()
+       val user = testDataGenerator.createIdentifiedUser().account
 
        val (_, _) = generateUsersAndContributions(inProgressChallenge, user)
        val getChallengeResponseDto = mvc.sccRequest(
@@ -192,7 +193,7 @@ class GetChallengeTest : ChallengeITBase() {
            GetChallengeRequestDto(
                challengeId = inProgressChallenge.id
            ),
-           user = user
+           userAccount = user
        )
            .getResult(GetChallengeResponseDto::class)
 

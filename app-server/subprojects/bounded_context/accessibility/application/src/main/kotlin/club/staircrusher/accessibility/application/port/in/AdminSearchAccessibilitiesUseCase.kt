@@ -57,10 +57,10 @@ class AdminSearchAccessibilitiesUseCase(
         val buildingAccessibilityByBuildingId = buildingAccessibilityRepository
             .findByBuildingIdInAndDeletedAtIsNull(placeById.values.map { it.building.id })
             .associateBy { it.buildingId }
-        val userById = userAplService.getUserProfiles(
+        val userProfilesByUserId = userAplService.getProfilesByUserIds(
             userIds = placeAccessibilities.mapNotNull { it.userId } +
                 buildingAccessibilityByBuildingId.values.mapNotNull { it.userId },
-        ).associateBy { it.id }
+        ).associateBy { it.userId }
 
         val nextCursorValue = if (placeAccessibilities.size > normalizedLimit) {
             Cursor(placeAccessibilities[normalizedLimit - 1]).value
@@ -74,9 +74,9 @@ class AdminSearchAccessibilitiesUseCase(
                 val buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id]
                 Result.Item(
                     placeAccessibility = placeAccessibility,
-                    placeAccessibilityRegisteredUser = userById[placeAccessibility.userId],
+                    placeAccessibilityRegisteredUser = userProfilesByUserId[placeAccessibility.userId],
                     buildingAccessibility = buildingAccessibility,
-                    buildingAccessibilityRegisteredUser = buildingAccessibility?.userId?.let { userById[it] },
+                    buildingAccessibilityRegisteredUser = buildingAccessibility?.userId?.let { userProfilesByUserId[it] },
                     place = place,
                 )
             },

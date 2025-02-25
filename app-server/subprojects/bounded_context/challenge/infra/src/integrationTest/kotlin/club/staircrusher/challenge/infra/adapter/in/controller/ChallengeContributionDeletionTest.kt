@@ -45,8 +45,8 @@ class ChallengeContributionDeletionTest : ChallengeITBase() {
         // given
         val challenge = registerInProgressChallenge()
         val user = transactionManager.doInTransaction {
-            val user = testDataGenerator.createUser()
-            participate(user, challenge)
+            val user = testDataGenerator.createIdentifiedUser()
+            participate(user.account, challenge)
             user
         }
         val place = transactionManager.doInTransaction {
@@ -54,7 +54,7 @@ class ChallengeContributionDeletionTest : ChallengeITBase() {
         }
         val contributions = (0 until 5).map {
             contributePlaceAccessibility(
-                user = user,
+                userAccount = user.account,
                 overridingPlace = place,
                 challenge = challenge,
             )
@@ -64,7 +64,7 @@ class ChallengeContributionDeletionTest : ChallengeITBase() {
             GetChallengeRequestDto(
                 challengeId = challenge.id,
             ),
-            user = user,
+            userAccount = user.account,
         )
             .getResult(GetChallengeResponseDto::class)
         assertEquals(challenge.id, getChallengeResponse.challenge.id)
@@ -88,7 +88,7 @@ class ChallengeContributionDeletionTest : ChallengeITBase() {
             GetChallengeRequestDto(
                 challengeId = challenge.id,
             ),
-            user = user,
+            userAccount = user.account,
         )
             .getResult(GetChallengeResponseDto::class)
         assertEquals(challenge.id, getChallengeResponse2.challenge.id)
