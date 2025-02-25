@@ -1,7 +1,10 @@
 package club.staircrusher.spring_web.security
 
-import club.staircrusher.user.domain.model.User
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
+import club.staircrusher.user.domain.model.UserProfile
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.service.UserAuthService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import java.time.Instant
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -19,7 +21,10 @@ class SccSecurityConfigTest {
     lateinit var userAuthService: UserAuthService
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    lateinit var userProfileRepository: UserProfileRepository
+
+    @Autowired
+    lateinit var userAccountRepository: UserAccountRepository
 
     @Autowired
     lateinit var mvc: MockMvc
@@ -65,15 +70,54 @@ class SccSecurityConfigTest {
         }
     }
 
-    private fun getUser(): User {
-        return userRepository.save(User(
-            id = userId,
-            nickname = "",
-            encryptedPassword = "",
-            instagramId = null,
-            email = "",
-            mobilityTools = mutableListOf(),
-            createdAt = Instant.now()
-        ))
+    @Test
+    fun `회원가입 한 유저만 접근할 수 있는 엔드포인트 인증 테스트`() {
+        val user = getUser()
+        val accessToken = userAuthService.issueAccessToken(user)
+        mvc.get("/echoUserId/identified") {
+            header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+        }.andExpect {
+            content {
+                string(userId)
+            }
+        }
+        val anonymousUser = getAnonymousUser()
+        val anonymousAccessToken = userAuthService.issueAnonymousAccessToken(anonymousUser.id)
+        mvc.get("/echoUserId/identified") {
+            header(HttpHeaders.AUTHORIZATION, "Bearer $anonymousAccessToken")
+        }.andExpect {
+            status {
+                isForbidden()
+            }
+        }
+    }
+
+    private fun getUser(): UserProfile {
+        userAccountRepository.save(
+            UserAccount(
+                id = userId,
+                accountType = UserAccountType.IDENTIFIED,
+            )
+        )
+        return userProfileRepository.save(
+            UserProfile(
+                id = userId,
+                userId = userId,
+                nickname = "",
+                encryptedPassword = "",
+                instagramId = null,
+                email = "",
+                mobilityTools = mutableListOf(),
+            )
+        )
+    }
+
+    private fun getAnonymousUser(): UserAccount {
+        return userAccountRepository.save(
+            UserAccount(
+                id = userId,
+                accountType = UserAccountType.ANONYMOUS,
+            )
+        )
     }
 }

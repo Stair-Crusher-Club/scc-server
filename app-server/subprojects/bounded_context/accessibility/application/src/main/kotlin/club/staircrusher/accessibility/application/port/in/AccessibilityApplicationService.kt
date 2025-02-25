@@ -75,7 +75,7 @@ class AccessibilityApplicationService(
         val placeAccessibility = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(placeId)
         val placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId)
         val placeAccessibilityChallengeCrusherGroup = placeAccessibility?.id?.let { challengeService.getPlaceAccessibilityCrusherGroup(it) }
-        val userInfoById = userApplicationService.getUsers(
+        val userInfoById = userApplicationService.getUserProfiles(
             listOfNotNull(buildingAccessibility?.userId)
                 + buildingAccessibilityComments.mapNotNull { it.userId }
                 + listOfNotNull(placeAccessibility?.userId)
@@ -260,7 +260,7 @@ class AccessibilityApplicationService(
             doRegisterBuildingAccessibilityComment(it)
         }
         val userInfo =
-            createBuildingAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
+            createBuildingAccessibilityParams.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel()
         return RegisterBuildingAccessibilityResult(
             building = building,
             buildingAccessibility = buildingAccessibility,
@@ -310,7 +310,7 @@ class AccessibilityApplicationService(
         }
 
         val userInfo =
-            createPlaceAccessibilityParams.userId?.let { userApplicationService.getUser(it) }?.toDomainModel()
+            createPlaceAccessibilityParams.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel()
         val buildingId = building.id
 
         return RegisterPlaceAccessibilityResult(
@@ -330,7 +330,7 @@ class AccessibilityApplicationService(
             val comment = doRegisterBuildingAccessibilityComment(params)
             WithUserInfo(
                 value = comment,
-                accessibilityRegisterer = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
+                accessibilityRegisterer = params.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel(),
             )
         }
 
@@ -359,7 +359,7 @@ class AccessibilityApplicationService(
             val comment = doRegisterPlaceAccessibilityComment(params)
             WithUserInfo(
                 value = comment,
-                accessibilityRegisterer = params.userId?.let { userApplicationService.getUser(it) }?.toDomainModel(),
+                accessibilityRegisterer = params.userId?.let { userApplicationService.getUserProfile(it) }?.toDomainModel(),
             )
         }
 

@@ -39,8 +39,11 @@ import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.eupMyeonDongById
 import club.staircrusher.stdlib.geography.siGunGuById
 import club.staircrusher.stdlib.testing.SccRandom
-import club.staircrusher.user.application.port.out.persistence.UserRepository
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserAccountType
+import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import org.springframework.beans.factory.annotation.Autowired
@@ -57,7 +60,10 @@ class ITDataGenerator {
     private lateinit var passwordEncryptor: PasswordEncryptor
 
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var userAccountRepository: UserAccountRepository
+
+    @Autowired
+    private lateinit var userProfileRepository: UserProfileRepository
 
     @Autowired
     private lateinit var placeRepository: PlaceRepository
@@ -101,16 +107,24 @@ class ITDataGenerator {
         email: String = "${SccRandom.string(12)}@staircrusher.club",
         instagramId: String? = null,
         mobilityTools: List<UserMobilityTool> = emptyList(),
-    ): User {
-        return userRepository.save(
-            User(
-                id = EntityIdGenerator.generateRandom(),
+    ): UserProfile {
+        val userId = EntityIdGenerator.generateRandom()
+        userAccountRepository.save(
+            UserAccount(
+                id = userId,
+                accountType = UserAccountType.IDENTIFIED,
+            )
+        )
+
+        return userProfileRepository.save(
+            UserProfile(
+                id = userId,
+                userId = userId,
                 nickname = nickname,
                 encryptedPassword = passwordEncryptor.encrypt(password.trim()),
                 instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = email,
                 mobilityTools = mobilityTools.toMutableList(),
-                createdAt = clock.instant(),
             )
         )
     }
@@ -269,7 +283,7 @@ class ITDataGenerator {
     }
 
     fun participateChallenge(
-        user: User,
+        user: UserProfile,
         challenge: Challenge,
         participateAt: Instant
     ): ChallengeParticipation {
@@ -284,7 +298,7 @@ class ITDataGenerator {
     }
 
     fun contributeToChallenge(
-        user: User,
+        user: UserProfile,
         challenge: Challenge,
         placeAccessibility: PlaceAccessibility? = null,
         placeAccessibilityComment: PlaceAccessibilityComment? = null,
@@ -325,7 +339,7 @@ class ITDataGenerator {
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
-        user: User? = null,
+        user: UserProfile? = null,
         at: Instant = clock.instant(),
     ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
@@ -359,7 +373,7 @@ class ITDataGenerator {
         elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
         elevatorImageUrls: List<String> = emptyList(),
         elevatorImages: List<AccessibilityImage> = emptyList(),
-        user: User? = null,
+        user: UserProfile? = null,
         at: Instant = clock.instant(),
     ): BuildingAccessibility {
         return buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id) ?: buildingAccessibilityRepository.save(
@@ -385,7 +399,7 @@ class ITDataGenerator {
 
     fun registerBuildingAndPlaceAccessibility(
         place: Place,
-        user: User? = null,
+        user: UserProfile? = null,
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
         at: Instant = clock.instant(),
@@ -407,7 +421,7 @@ class ITDataGenerator {
     fun registerBuildingAccessibilityComment(
         building: Building,
         comment: String,
-        user: User? = null
+        user: UserProfile? = null
     ): BuildingAccessibilityComment {
         return buildingAccessibilityCommentRepository.save(
             BuildingAccessibilityComment(
@@ -423,7 +437,7 @@ class ITDataGenerator {
     fun registerPlaceAccessibilityComment(
         place: Place,
         comment: String,
-        user: User? = null
+        user: UserProfile? = null
     ): PlaceAccessibilityComment {
         return placeAccessibilityCommentRepository.save(
             PlaceAccessibilityComment(
@@ -436,7 +450,7 @@ class ITDataGenerator {
         )
     }
 
-    fun giveBuildingAccessibilityUpvote(buildingAccessibility: BuildingAccessibility, user: User = createUser()) {
+    fun giveBuildingAccessibilityUpvote(buildingAccessibility: BuildingAccessibility, user: UserProfile = createUser()) {
         buildingAccessibilityUpvoteRepository.save(
             BuildingAccessibilityUpvote(
                 id = EntityIdGenerator.generateRandom(),

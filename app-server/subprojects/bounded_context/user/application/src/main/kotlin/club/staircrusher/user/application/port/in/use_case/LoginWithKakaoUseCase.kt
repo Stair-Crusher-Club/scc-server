@@ -7,7 +7,7 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.InitialNicknameGenerator
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
 import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType
@@ -18,40 +18,43 @@ import java.time.Duration
 class LoginWithKakaoUseCase(
     private val transactionManager: TransactionManager,
     private val kakaoLoginService: KakaoLoginService,
-    private val userRepository: UserRepository,
+    private val userProfileRepository: UserProfileRepository,
     private val userAuthInfoRepository: UserAuthInfoRepository,
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
 ) {
-    fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String): LoginResult = transactionManager.doInTransaction {
+    fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String, anonymousUserId: String?): LoginResult = transactionManager.doInTransaction {
         val idToken = kakaoLoginService.parseIdToken(rawKakaoIdToken)
 
         val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
         if (userAuthInfo != null) {
-            doLoginForExistingUser(userAuthInfo)
+            doLoginForExistingUser(userAuthInfo, anonymousUserId)
         } else {
-            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId)
+            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId, anonymousUserId)
         }
     }
 
-    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo): LoginResult {
+    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
-        val user = userRepository.findById(userAuthInfo.userId).get()
+        val user = userProfileRepository.findById(userAuthInfo.userId).get()
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }
+
         return LoginResult(
             authTokens = authTokens,
             user = user,
         )
     }
 
-    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String): LoginResult {
+    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String, anonymousUserId: String?): LoginResult {
         val user = userApplicationService.signUp(
-            params = UserRepository.CreateUserParams(
+            params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
                 password = null,
                 instagramId = null,
                 email = null,
             )
         )
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }
 
         val newUserAuthInfo = userAuthInfoRepository.save(
             UserAuthInfo(

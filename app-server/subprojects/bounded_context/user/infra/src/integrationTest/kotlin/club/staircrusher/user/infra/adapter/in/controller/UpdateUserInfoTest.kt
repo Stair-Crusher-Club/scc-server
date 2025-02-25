@@ -7,7 +7,7 @@ import club.staircrusher.api.spec.dto.UserMobilityToolDto
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
 import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
 import club.staircrusher.stdlib.testing.SccRandom
-import club.staircrusher.user.application.port.out.persistence.UserRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.infra.adapter.`in`.controller.base.UserITBase
@@ -25,11 +25,10 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.data.repository.findByIdOrNull
 
 class UpdateUserInfoTest : UserITBase() {
     @Autowired
-    lateinit var userRepository: UserRepository
+    lateinit var userProfileRepository: UserProfileRepository
 
     @MockBean
     lateinit var stibeeSubscriptionService: StibeeSubscriptionService
@@ -201,7 +200,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 transactionManager.doInTransaction {
-                    val user = userRepository.findById(user.id).get()
+                    val user = userProfileRepository.findById(user.id).get()
                     Assertions.assertEquals(2, user.mobilityTools.size)
                 }
             }
@@ -221,7 +220,7 @@ class UpdateUserInfoTest : UserITBase() {
             }
             .apply {
                 transactionManager.doInTransaction {
-                    val user = userRepository.findById(user.id).get()
+                    val user = userProfileRepository.findById(user.id).get()
                     Assertions.assertEquals(1, user.mobilityTools.size)
                 }
             }

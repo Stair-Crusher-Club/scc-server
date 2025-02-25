@@ -1,12 +1,12 @@
 package club.staircrusher.challenge.application.port.`in`
 
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
 
 data class ChallengeParticipant(
     val userId: String,
     val nickname: String,
 )
-fun User.toDomainModel() = ChallengeParticipant(
+fun UserProfile.toDomainModel() = ChallengeParticipant(
     userId = id,
     nickname = nickname,
 )

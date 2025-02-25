@@ -18,7 +18,7 @@ class GetLeaderboardUseCase(
     fun handle(): List<WithUserInfo<AccessibilityRank>> {
         val leaderboards = accessibilityRankRepository.findTopNUsers(NUMBER_OF_TOP_RANKER)
         val userIds = leaderboards.map { it.userId }
-        val users = userApplicationService.getUsers(userIds)
+        val users = userApplicationService.getUserProfiles(userIds)
 
         return leaderboards.map { rank ->
             WithUserInfo(rank, users.first { it.id == rank.userId }.toDomainModel())

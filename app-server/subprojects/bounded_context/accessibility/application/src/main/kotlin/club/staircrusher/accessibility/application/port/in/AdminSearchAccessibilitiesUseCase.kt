@@ -9,7 +9,7 @@ import club.staircrusher.place.domain.model.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -27,9 +27,9 @@ class AdminSearchAccessibilitiesUseCase(
     ) {
         data class Item(
             val placeAccessibility: PlaceAccessibility,
-            val placeAccessibilityRegisteredUser: User?,
+            val placeAccessibilityRegisteredUser: UserProfile?,
             val buildingAccessibility: BuildingAccessibility?,
-            val buildingAccessibilityRegisteredUser: User?,
+            val buildingAccessibilityRegisteredUser: UserProfile?,
             val place: Place,
         )
     }
@@ -57,7 +57,7 @@ class AdminSearchAccessibilitiesUseCase(
         val buildingAccessibilityByBuildingId = buildingAccessibilityRepository
             .findByBuildingIdInAndDeletedAtIsNull(placeById.values.map { it.building.id })
             .associateBy { it.buildingId }
-        val userById = userAplService.getUsers(
+        val userById = userAplService.getUserProfiles(
             userIds = placeAccessibilities.mapNotNull { it.userId } +
                 buildingAccessibilityByBuildingId.values.mapNotNull { it.userId },
         ).associateBy { it.id }
