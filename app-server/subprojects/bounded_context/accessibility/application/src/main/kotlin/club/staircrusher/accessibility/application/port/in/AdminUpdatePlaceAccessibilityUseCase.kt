@@ -46,6 +46,10 @@ class AdminUpdatePlaceAccessibilityUseCase(
             throw SccDomainException("다른 층으로 가는 정보를 입력해주세요.")
         }
 
+        if (isFirstFloor && floors.contains(1).not()) {
+            throw SccDomainException("1층이 포함되어 있지 않습니다.")
+        }
+
         if (stairInfo == StairInfo.ONE && stairHeightLevel == null) {
             throw SccDomainException("계단 높이를 입력해주세요.")
         }
