@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserAccountConnectionRepository : CrudRepository<UserAccountConnection, String>
+interface UserAccountConnectionRepository : CrudRepository<UserAccountConnection, String> {
+    fun findFirstByIdentifiedUserAccountId(userId: String): UserAccountConnection?
+}
