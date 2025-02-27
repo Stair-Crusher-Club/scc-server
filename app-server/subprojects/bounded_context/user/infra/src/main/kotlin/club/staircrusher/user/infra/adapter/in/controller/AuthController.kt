@@ -14,6 +14,7 @@ import club.staircrusher.user.application.port.`in`.use_case.LoginWithAppleUseCa
 import club.staircrusher.user.application.port.`in`.use_case.LoginWithKakaoUseCase
 import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,6 +27,8 @@ class AuthController(
     private val loginWithAppleUseCase: LoginWithAppleUseCase,
     private val createAnonymousUserUseCase: CreateAnonymousUserUseCase,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @PostMapping("/signUp")
     @Deprecated(message = "소셜 로그인으로 대체됨", replaceWith = ReplaceWith("loginWithKakao"))
     fun signUp(@RequestBody request: SignUpPostRequest): ResponseEntity<Unit> {
@@ -56,7 +59,9 @@ class AuthController(
     @PostMapping("/loginWithKakao")
     fun loginWithKakao(@RequestBody request: LoginWithKakaoPostRequest, authentication: SccAppAuthentication?): LoginResultDto {
         val anonymousUserId = authentication?.details?.takeIf { it.type == UserAccountType.ANONYMOUS.name }?.id
-        return loginWithKakaoUseCase.handle(request.kakaoTokens.refreshToken, request.kakaoTokens.idToken, anonymousUserId).toDTO()
+        val result = loginWithKakaoUseCase.handle(request.kakaoTokens.refreshToken, request.kakaoTokens.idToken, anonymousUserId)
+        logger.info { "loginWithKakao result for anonymous user($anonymousUserId): $result" }
+        return result.toDTO()
     }
 
     @PostMapping("/loginWithApple")
