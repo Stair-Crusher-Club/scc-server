@@ -53,7 +53,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
     @Test
     fun `leaderboard use case test`() {
         mvc
-            .sccRequest("/getAccessibilityLeaderboard", null)
+            .sccAnonymousRequest("/getAccessibilityLeaderboard", null)
             .apply {
                 val result = getResult(GetAccessibilityLeaderboardPost200Response::class)
                 assertEquals(10, result.ranks.size)
@@ -71,7 +71,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
     @Test
     fun `same conquered count case test`() {
         val leaderboard = mvc
-            .sccRequest("/getAccessibilityLeaderboard", null)
+            .sccAnonymousRequest("/getAccessibilityLeaderboard", null)
             .getResult(GetAccessibilityLeaderboardPost200Response::class)
 
         val top = leaderboard.ranks.find { it.rank == 1L }!!
@@ -86,7 +86,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
         assertEquals(1L, rank.rank)
 
         val leaderboard2 = mvc
-            .sccRequest("/getAccessibilityLeaderboard", null)
+            .sccAnonymousRequest("/getAccessibilityLeaderboard", null)
             .getResult(GetAccessibilityLeaderboardPost200Response::class)
         val secondRanker = leaderboard.ranks.first { it.rank != 1L }
         val secondRanker2 = leaderboard2.ranks.first { it.rank != 1L }

@@ -51,7 +51,7 @@ class ListPlacesInBuildingTest : PlaceSearchITBase() {
 
         // 로그인되어 있지 않아도 잘 동작한다.
         mvc
-            .sccRequest("/listPlacesInBuilding", params)
+            .sccAnonymousRequest("/listPlacesInBuilding", params)
             .andExpect {
                 status {
                     isOk()

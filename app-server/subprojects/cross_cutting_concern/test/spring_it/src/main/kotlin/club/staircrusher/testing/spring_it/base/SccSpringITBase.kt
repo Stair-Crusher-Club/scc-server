@@ -67,6 +67,19 @@ open class SccSpringITBase {
             .asyncDispatchIfNeeded()
     }
 
+    protected fun MockMvc.sccAnonymousRequest(url: String, requestBody: Any?): ResultActionsDsl {
+        return post(url) {
+            contentType = MediaType.APPLICATION_JSON
+            content = requestBody?.let { objectMapper.writeValueAsBytes(it) } ?: "{}".toByteArray()
+            accept = MediaType.APPLICATION_JSON_UTF8
+
+            val userAccount = testDataGenerator.createAnonymousUser()
+            val accessToken = userAuthService.issueAnonymousAccessToken(userAccount.id)
+            header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+        }
+            .asyncDispatchIfNeeded()
+    }
+
     protected fun MockMvc.sccAdminRequest(url: String, httpMethod: HttpMethod, requestBody: Any?): ResultActionsDsl {
         val dsl: MockHttpServletRequestDsl.() -> Unit = {
             contentType = MediaType.APPLICATION_JSON

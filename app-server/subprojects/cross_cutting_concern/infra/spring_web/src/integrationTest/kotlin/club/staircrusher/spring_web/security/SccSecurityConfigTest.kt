@@ -24,7 +24,8 @@ class SccSecurityConfigTest {
     @Autowired
     lateinit var mvc: MockMvc
 
-    private val userId = "userId"
+    private val identifiedUserId = "userId"
+    private val anonymousUserId = "anonymousUserId"
 
     @Test
     fun `기본 인증 테스트`() {
@@ -34,7 +35,7 @@ class SccSecurityConfigTest {
             header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
         }.andExpect {
             content {
-                string(userId)
+                string(identifiedUserId)
             }
         }
         mvc.get("/echoUserId/secured").andExpect {
@@ -60,7 +61,7 @@ class SccSecurityConfigTest {
                 isOk()
             }
             content {
-                string(userId)
+                string(identifiedUserId)
             }
         }
     }
@@ -69,15 +70,33 @@ class SccSecurityConfigTest {
     fun `회원가입 한 유저만 접근할 수 있는 엔드포인트 인증 테스트`() {
         val user = getIdentifiedUser()
         val accessToken = userAuthService.issueAccessToken(user)
+
+        mvc.get("/echoUserId/secured") {
+            header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+        }.andExpect {
+            content {
+                string(identifiedUserId)
+            }
+        }
+
         mvc.get("/echoUserId/identified") {
             header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
         }.andExpect {
             content {
-                string(userId)
+                string(identifiedUserId)
             }
         }
+
         val anonymousUser = getAnonymousUser()
         val anonymousAccessToken = userAuthService.issueAnonymousAccessToken(anonymousUser.id)
+
+        mvc.get("/echoUserId/secured") {
+            header(HttpHeaders.AUTHORIZATION, "Bearer $anonymousAccessToken")
+        }.andExpect {
+            content {
+                string(anonymousUserId)
+            }
+        }
         mvc.get("/echoUserId/identified") {
             header(HttpHeaders.AUTHORIZATION, "Bearer $anonymousAccessToken")
         }.andExpect {
@@ -90,7 +109,7 @@ class SccSecurityConfigTest {
     private fun getIdentifiedUser(): UserAccount {
         return userAccountRepository.save(
             UserAccount(
-                id = userId,
+                id = identifiedUserId,
                 accountType = UserAccountType.IDENTIFIED,
             )
         )
@@ -99,7 +118,7 @@ class SccSecurityConfigTest {
     private fun getAnonymousUser(): UserAccount {
         return userAccountRepository.save(
             UserAccount(
-                id = userId,
+                id = anonymousUserId,
                 accountType = UserAccountType.ANONYMOUS,
             )
         )

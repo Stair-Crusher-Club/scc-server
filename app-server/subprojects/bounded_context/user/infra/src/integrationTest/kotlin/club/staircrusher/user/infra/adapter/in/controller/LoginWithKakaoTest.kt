@@ -5,6 +5,7 @@ import club.staircrusher.api.spec.dto.KakaoTokensDto
 import club.staircrusher.api.spec.dto.LoginResultDto
 import club.staircrusher.api.spec.dto.LoginWithKakaoPostRequest
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.user.application.port.out.persistence.UserAccountConnectionRepository
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.login.kakao.InvalidKakaoIdTokenException
@@ -31,6 +32,9 @@ class LoginWithKakaoTest : UserITBase() {
     @Autowired
     lateinit var userAuthInfoRepository: UserAuthInfoRepository
 
+    @Autowired
+    lateinit var userAccountConnectionRepository: UserAccountConnectionRepository
+
     @BeforeEach
     fun setUp() {
         transactionManager.doInTransaction {
@@ -50,6 +54,7 @@ class LoginWithKakaoTest : UserITBase() {
             )
         )
 
+        val anonymousUser = testDataGenerator.createAnonymousUser()
         val params = LoginWithKakaoPostRequest(
             kakaoTokens = KakaoTokensDto(
                 accessToken = "dummy",
@@ -60,7 +65,7 @@ class LoginWithKakaoTest : UserITBase() {
 
         // 첫 로그인 시도 - 회원가입
         val (userId, userAuthInfoId) = mvc
-            .sccRequest("/loginWithKakao", params)
+            .sccRequest("/loginWithKakao", params, anonymousUser)
             .run {
                 val result = getResult(LoginResultDto::class)
 
@@ -83,7 +88,7 @@ class LoginWithKakaoTest : UserITBase() {
 
         // 두 번째 로그인 시도 - 기 존재하는 계정에 대해 로그인
         mvc
-            .sccRequest("/loginWithKakao", params)
+            .sccRequest("/loginWithKakao", params, anonymousUser)
             .apply {
                 val result = getResult(LoginResultDto::class)
 
@@ -107,6 +112,89 @@ class LoginWithKakaoTest : UserITBase() {
     fun `잘못된 kakaoTokens에 대해 INVALID_AUTHENTICATION 에러 코드가 떨어진다`() {
         Mockito.`when`(kakaoLoginService.parseIdToken("dummy")).thenThrow(InvalidKakaoIdTokenException("haha"))
 
+        val anonymousUSer = testDataGenerator.createAnonymousUser()
+        val params = LoginWithKakaoPostRequest(
+            kakaoTokens = KakaoTokensDto(
+                accessToken = "dummy",
+                refreshToken = "refreshToken",
+                idToken = "dummy",
+            )
+        )
+
+        mvc
+            .sccRequest("/loginWithKakao", params, anonymousUSer)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_AUTHENTICATION, result.code)
+            }
+    }
+
+    @Test
+    fun `비회원 계정이 생성되어 있는 상태에서 회원가입을 하면 계정 정보가 연결된다`() {
+        Mockito.`when`(kakaoLoginService.parseIdToken("dummy")).thenReturn(
+            KakaoIdToken(
+                issuer = "https://kauth.kakao.com",
+                audience = "clientId",
+                expiresAtEpochSecond = SccClock.instant().epochSecond + 10,
+                kakaoSyncUserId = "kakaoSyncUserId",
+            )
+        )
+
+        val anonymousUser = testDataGenerator.createAnonymousUser()
+        val params = LoginWithKakaoPostRequest(
+            kakaoTokens = KakaoTokensDto(
+                accessToken = "dummy",
+                refreshToken = "refreshToken",
+                idToken = "dummy",
+            )
+        )
+
+        val userId = mvc
+            .sccRequest("/loginWithKakao", params, anonymousUser)
+            .run {
+                val result = getResult(LoginResultDto::class)
+
+                val newUserProfile = transactionManager.doInTransaction {
+                    userProfileRepository.findFirstByUserId(result.user.id)!!
+                }
+                assertNull(newUserProfile.encryptedPassword)
+                assertNull(newUserProfile.email)
+                assertNull(newUserProfile.instagramId)
+
+                val newUserAuthInfo = transactionManager.doInTransaction {
+                    userAuthInfoRepository.findByUserId(newUserProfile.userId).find { it.authProviderType == UserAuthProviderType.KAKAO }
+                }
+                assertNotNull(newUserAuthInfo)
+                assertEquals("kakaoSyncUserId", newUserAuthInfo!!.externalId)
+                assertEquals("refreshToken", newUserAuthInfo.externalRefreshToken)
+
+                newUserProfile.userId
+            }
+
+        val userAccountConnection = transactionManager.doInTransaction {
+            userAccountConnectionRepository.findFirstByIdentifiedUserAccountId(userId)
+        }
+
+        assertNotNull(userAccountConnection)
+        assertEquals(anonymousUser.id, userAccountConnection!!.anonymousUserAccountId)
+    }
+
+    @Test
+    fun `비회원 계정 토큰이 없더라도 회원가입을 막지는 않는다`() {
+        Mockito.`when`(kakaoLoginService.parseIdToken("dummy")).thenReturn(
+            KakaoIdToken(
+                issuer = "https://kauth.kakao.com",
+                audience = "clientId",
+                expiresAtEpochSecond = SccClock.instant().epochSecond + 10,
+                kakaoSyncUserId = "kakaoSyncUserId",
+            )
+        )
+
         val params = LoginWithKakaoPostRequest(
             kakaoTokens = KakaoTokensDto(
                 accessToken = "dummy",
@@ -119,12 +207,8 @@ class LoginWithKakaoTest : UserITBase() {
             .sccRequest("/loginWithKakao", params)
             .andExpect {
                 status {
-                    isBadRequest()
+                    isOk()
                 }
-            }
-            .apply {
-                val result = getResult(ApiErrorResponse::class)
-                assertEquals(ApiErrorResponse.Code.INVALID_AUTHENTICATION, result.code)
             }
     }
 }

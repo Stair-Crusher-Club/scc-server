@@ -130,6 +130,15 @@ class ITDataGenerator {
         return IdentifiedUserVO(userAccount, userProfile)
     }
 
+    fun createAnonymousUser(): UserAccount {
+        return userAccountRepository.save(
+            UserAccount(
+                id = EntityIdGenerator.generateRandom(),
+                accountType = UserAccountType.ANONYMOUS,
+            )
+        )
+    }
+
     fun createPlace(
         placeName: String = "장소장소",
         building: Building,
