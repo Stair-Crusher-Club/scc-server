@@ -6,7 +6,6 @@ kube-prometheus-stack:
       hosts:
         - grafana.staircrusher.club
 
-  # https://github.com/prometheus-operator/kube-prometheus/issues/1392#issuecomment-1411719953
   prometheus:
     ingress:
       enabled: true
@@ -15,18 +14,28 @@ kube-prometheus-stack:
         - prometheus.staircrusher.club
       paths: []
 
+    # https://github.com/prometheus-operator/kube-prometheus/issues/1392#issuecomment-1411719953
     prometheusSpec:
       ruleSelectorNilUsesHelmValues: false
       serviceMonitorSelectorNilUsesHelmValues: false
       podMonitorSelectorNilUsesHelmValues: false
       probeSelectorNilUsesHelmValues: false
 
+  # k3s 추가 설정이 필요한 metric 이라서 일단 비활성화
+  # https://github.com/k3s-io/k3s/issues/3619
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+
 promtail:
   serviceAccount:
     create: true
     name: loki
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/scc
+      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/loki
 
   config:
     clients:
@@ -101,10 +110,13 @@ loki:
     enabled: false
 
   chunksCache:
-    allocatedMemory: 1024
+    # cpu request 가 500m 으로 하드코딩 되어 있어서 일단 비활성화 시킨다
+    # https://github.com/grafana/loki/blob/7200107ac4dcaf4f8e84e0c906e2f7d423aaa23d/production/helm/loki/templates/memcached/_memcached-statefulset.tpl#L99
+    enabled: false
+    # allocatedMemory: 1024
 
   serviceAccount:
     create: true
     name: loki
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/scc
+      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/loki
