@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "loki" {
+data "aws_iam_policy_document" "monitoring" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
@@ -27,9 +27,9 @@ data "aws_iam_policy_document" "scc_loki_storage_full_access" {
   }
 }
 
-resource "aws_iam_role" "loki" {
-  name               = "loki"
-  assume_role_policy = data.aws_iam_policy_document.loki.json
+resource "aws_iam_role" "monitoring" {
+  name               = "monitoring"
+  assume_role_policy = data.aws_iam_policy_document.monitoring.json
 }
 
 resource "aws_iam_policy" "scc_loki_storage_full_access" {
@@ -38,6 +38,6 @@ resource "aws_iam_policy" "scc_loki_storage_full_access" {
 }
 
 resource "aws_iam_role_policy_attachment" "scc_loki_storage_full_access" {
-  role       = aws_iam_role.loki.name
+  role       = aws_iam_role.monitoring.name
   policy_arn = aws_iam_policy.scc_loki_storage_full_access.arn
 }

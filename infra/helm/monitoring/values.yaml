@@ -35,7 +35,7 @@ promtail:
     create: true
     name: loki
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/loki
+      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring
 
   config:
     clients:
@@ -119,4 +119,4 @@ loki:
     create: true
     name: loki
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/loki
+      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring
