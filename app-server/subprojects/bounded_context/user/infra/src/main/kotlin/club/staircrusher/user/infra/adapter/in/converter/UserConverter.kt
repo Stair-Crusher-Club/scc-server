@@ -7,5 +7,6 @@ fun UserProfile.toDTO() = club.staircrusher.api.spec.dto.User(
     nickname = nickname,
     instagramId = instagramId,
     email = email,
-    mobilityTools = mobilityTools.map { it.toDTO() }
+    mobilityTools = mobilityTools.map { it.toDTO() },
+    birthYear = birthYear,
 )

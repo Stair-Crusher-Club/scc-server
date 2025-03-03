@@ -53,6 +53,7 @@ class LoginWithKakaoUseCase(
                 password = null,
                 instagramId = null,
                 email = null,
+                birthYear = null,
             )
         )
         anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, user.id) }

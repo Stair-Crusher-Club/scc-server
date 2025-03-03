@@ -16,5 +16,6 @@ interface UserProfileRepository : CrudRepository<UserProfile, String> {
         @Deprecated("패스워드 로그인은 사라질 예정") val password: String?,
         val instagramId: String?,
         val email: String?,
+        val birthYear: Int?,
     )
 }

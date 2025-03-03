@@ -9,6 +9,7 @@ import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import club.staircrusher.stdlib.time.getYear
 import club.staircrusher.stdlib.validation.email.EmailValidator
 import club.staircrusher.user.application.port.out.persistence.UserAccountConnectionRepository
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
@@ -59,6 +60,7 @@ class UserApplicationService(
             password = password,
             instagramId = instagramId,
             email = null,
+            birthYear = null,
         )
 
         val (userAccount, userProfile) = signUp(params)
@@ -93,6 +95,7 @@ class UserApplicationService(
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = params.email,
                 mobilityTools = mutableListOf(),
+                birthYear = params.birthYear,
             )
         )
 
@@ -168,6 +171,7 @@ class UserApplicationService(
         instagramId: String?,
         email: String,
         mobilityTools: List<UserMobilityTool>,
+        birthYear: Int?,
         isNewsLetterSubscriptionAgreed: Boolean,
     ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
@@ -205,6 +209,17 @@ class UserApplicationService(
         }
         userProfile.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
         userProfile.mobilityTools = mobilityTools
+        userProfile.birthYear = run {
+            birthYear?.let {
+                if (it < 1900 || it > SccClock.instant().getYear()) {
+                    throw SccDomainException(
+                        "출생 연도가 유효하지 않습니다.",
+                        SccDomainException.ErrorCode.INVALID_BIRTH_YEAR,
+                    )
+                }
+            }
+            birthYear
+        }
         userProfileRepository.save(userProfile)
 
         if (isNewsLetterSubscriptionAgreed) {

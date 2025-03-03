@@ -56,6 +56,7 @@ class LoginWithAppleUseCase(
                 password = null,
                 instagramId = null,
                 email = null,
+                birthYear = null,
             )
         )
         anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAccount.id) }
