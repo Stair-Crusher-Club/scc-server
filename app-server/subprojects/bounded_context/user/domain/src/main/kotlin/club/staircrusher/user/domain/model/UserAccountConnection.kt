@@ -2,6 +2,8 @@ package club.staircrusher.user.domain.model
 
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 
 @Entity
@@ -12,6 +14,9 @@ class UserAccountConnection(
     val identifiedUserAccountId: String,
 
     val anonymousUserAccountId: String,
+
+    @Enumerated(EnumType.STRING)
+    val reason: UserConnectionReason,
 ) : TimeAuditingBaseEntity() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -27,6 +32,6 @@ class UserAccountConnection(
     }
 
     override fun toString(): String {
-        return "UserAccountConnection(id='$id', identifiedUserAccountId='$identifiedUserAccountId', anonymousUserAccountId='$anonymousUserAccountId' createdAt=$createdAt, updatedAt=$updatedAt)"
+        return "UserAccountConnection(id='$id', identifiedUserAccountId='$identifiedUserAccountId', anonymousUserAccountId='$anonymousUserAccountId', reason=$reason, createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }

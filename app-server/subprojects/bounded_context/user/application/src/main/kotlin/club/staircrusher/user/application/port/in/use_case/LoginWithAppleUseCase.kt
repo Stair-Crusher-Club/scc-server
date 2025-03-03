@@ -12,6 +12,7 @@ import club.staircrusher.user.application.port.out.persistence.UserProfileReposi
 import club.staircrusher.user.application.port.out.web.login.apple.AppleLoginService
 import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType
+import club.staircrusher.user.domain.model.UserConnectionReason
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.runBlocking
 import java.time.Duration
@@ -41,7 +42,7 @@ class LoginWithAppleUseCase(
     private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
         val authTokens = userAuthService.issueTokens(userAuthInfo)
         val userProfile = userProfileRepository.findFirstByUserId(userAuthInfo.userId) ?: throw SccDomainException("계정 정보를 찾을 수 없습니다")
-        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAuthInfo.userId) }
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAuthInfo.userId, UserConnectionReason.LOGIN) }
 
         return LoginResult(
             authTokens = authTokens,
@@ -59,7 +60,7 @@ class LoginWithAppleUseCase(
                 birthYear = null,
             )
         )
-        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAccount.id) }
+        anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAccount.id, UserConnectionReason.SIGN_UP) }
 
         val newUserAuthInfo = userAuthInfoRepository.save(
             UserAuthInfo(
