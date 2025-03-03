@@ -904,6 +904,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetHomeBannersResponseDto'
 
+  /checkNicknameDuplication:
+    post:
+      summary: 닉네임 중복 여부를 체크한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                  description: 중복 체크할 닉네임
+              required:
+                - nickname
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isDuplicated:
+                    type: boolean
+                    description: 닉네임 중복 여부
+                required:
+                  - isDuplicated
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+
 components:
   # Security schemes
   securitySchemes:

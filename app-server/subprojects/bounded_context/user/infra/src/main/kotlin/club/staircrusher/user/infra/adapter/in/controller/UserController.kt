@@ -5,6 +5,8 @@ import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.api.spec.dto.UserCheckNicknameDuplicationRequest
+import club.staircrusher.api.spec.dto.UserCheckNicknameDuplicationResponse
 import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -89,6 +91,15 @@ class UserController(
     fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
         userApplicationService.deleteUser(authentication.principal)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/checkNicknameDuplication")
+    fun checkNicknameDuplication(
+        @RequestBody request: UserCheckNicknameDuplicationRequest,
+    ): UserCheckNicknameDuplicationResponse {
+        val nickname = request.nickname ?: throw SccDomainException("닉네임은 필수 값입니다.")
+        val isDuplicated = userApplicationService.checkNicknameDuplication(nickname)
+        return UserCheckNicknameDuplicationResponse(isDuplicated)
     }
 
     companion object {
