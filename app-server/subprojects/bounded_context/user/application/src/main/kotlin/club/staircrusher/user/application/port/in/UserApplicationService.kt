@@ -253,7 +253,7 @@ class UserApplicationService(
         userAuthInfoRepository.removeByUserId(userId)
     }
 
-    fun connectToIdentifiedAccount(anonymousUserId: String, identifiedUserId: String, reason: UserConnectionReason): UserAccount {
+    fun connectToIdentifiedAccount(anonymousUserId: String, identifiedUserId: String, reason: UserConnectionReason) {
         userAccountConnectionRepository.save(
             UserAccountConnection(
                 id = EntityIdGenerator.generateRandom(),
