@@ -23,6 +23,7 @@ import club.staircrusher.user.domain.model.UserAccountConnection
 import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.model.UserAccountType
+import club.staircrusher.user.domain.model.UserConnectionReason
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.CoroutineScope
@@ -252,12 +253,13 @@ class UserApplicationService(
         userAuthInfoRepository.removeByUserId(userId)
     }
 
-    fun connectToIdentifiedAccount(anonymousUserId: String, identifiedUserId: String) {
+    fun connectToIdentifiedAccount(anonymousUserId: String, identifiedUserId: String, reason: UserConnectionReason) {
         userAccountConnectionRepository.save(
             UserAccountConnection(
                 id = EntityIdGenerator.generateRandom(),
                 identifiedUserAccountId = identifiedUserId,
                 anonymousUserAccountId = anonymousUserId,
+                reason = reason,
             )
         )
     }
