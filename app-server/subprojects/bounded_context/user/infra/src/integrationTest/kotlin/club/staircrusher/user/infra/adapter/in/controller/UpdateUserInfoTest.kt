@@ -25,6 +25,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
+import java.time.Year
 
 class UpdateUserInfoTest : UserITBase() {
     @Autowired
@@ -354,7 +355,7 @@ class UpdateUserInfoTest : UserITBase() {
         }
 
         // 미래의 연도로 테스트
-        val futureYear = java.time.Year.now().value + 1
+        val futureYear = Year.now().value + 1
         val paramsWithFutureYear = UpdateUserInfoPostRequest(
             nickname = userProfile.nickname,
             instagramId = userProfile.instagramId,
