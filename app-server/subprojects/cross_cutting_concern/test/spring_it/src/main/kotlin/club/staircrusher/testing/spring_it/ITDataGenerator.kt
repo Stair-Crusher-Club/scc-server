@@ -124,6 +124,7 @@ class ITDataGenerator {
                 instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = email,
                 mobilityTools = mobilityTools.toMutableList(),
+                birthYear = 1990,
             )
         )
 
