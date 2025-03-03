@@ -1,6 +1,8 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
+import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPost200Response
+import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPostRequest
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
@@ -55,6 +57,7 @@ class UserController(
             email = request.email,
             mobilityTools = request.mobilityTools.map { it.toModel() },
             isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed ?: false,
+            birthYear = request.birthYear,
         )
         return UpdateUserInfoPost200Response(
             user = updatedUser.toDTO(),
@@ -89,6 +92,14 @@ class UserController(
     fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
         userApplicationService.deleteUser(authentication.principal)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/checkNicknameDuplication")
+    fun checkNicknameDuplication(
+        @RequestBody request: CheckNicknameDuplicationPostRequest,
+    ): CheckNicknameDuplicationPost200Response {
+        val isDuplicate = userApplicationService.isNicknameDuplicate(request.nickname)
+        return CheckNicknameDuplicationPost200Response(isDuplicate)
     }
 
     companion object {

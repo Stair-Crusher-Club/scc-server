@@ -1,0 +1,1 @@
+ALTER TABLE scc_user ADD COLUMN birth_year INTEGER NULL;

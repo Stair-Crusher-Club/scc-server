@@ -10,4 +10,6 @@ object SccRandom {
     fun string(length: Int): String {
         return Base64.getEncoder().encodeToString(random.nextBytes(length)).take(length)
     }
+
+    fun int(from: Int, until: Int): Int = random.nextInt(from, until)
 }
