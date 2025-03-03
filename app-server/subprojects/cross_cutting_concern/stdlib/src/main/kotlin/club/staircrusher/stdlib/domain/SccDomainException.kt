@@ -9,6 +9,7 @@ open class SccDomainException(
         INVALID_AUTHENTICATION,
         INVALID_NICKNAME,
         INVALID_EMAIL,
+        INVALID_BIRTH_YEAR,
         INVALID_PASSCODE,
         INVALID_ARGUMENTS,
         ALREADY_JOINED,

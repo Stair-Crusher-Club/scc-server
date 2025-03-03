@@ -63,6 +63,7 @@ class SccExceptionHandler {
                 SccDomainException.ErrorCode.INVALID_AUTHENTICATION -> ApiErrorResponse.Code.INVALID_AUTHENTICATION
                 SccDomainException.ErrorCode.INVALID_NICKNAME -> ApiErrorResponse.Code.INVALID_NICKNAME
                 SccDomainException.ErrorCode.INVALID_EMAIL -> ApiErrorResponse.Code.INVALID_EMAIL
+                SccDomainException.ErrorCode.INVALID_BIRTH_YEAR -> ApiErrorResponse.Code.INVALID_BIRTH_YEAR
                 SccDomainException.ErrorCode.INVALID_PASSCODE -> ApiErrorResponse.Code.INVALID_PASSCODE
                 SccDomainException.ErrorCode.INVALID_ARGUMENTS -> ApiErrorResponse.Code.INVALID_ARGUMENTS
                 SccDomainException.ErrorCode.ALREADY_JOINED -> ApiErrorResponse.Code.ALREADY_JOINED

@@ -22,6 +22,7 @@ class UserProfile(
     @Column(columnDefinition = "TEXT")
     @Convert(converter = UserMobilityToolListToTextAttributeConverter::class)
     var mobilityTools: List<UserMobilityTool>,
+    var birthYear: Int?,
     var pushToken: String? = null,
 ) : TimeAuditingBaseEntity() {
     var deletedAt: Instant? = null

@@ -848,6 +848,8 @@ paths:
                   description: 변경되지 않았으면 기존 값을 그대로 올려준다.
                 email:
                   type: string
+                birthYear:
+                  type: integer
                 mobilityTools:
                   type: array
                   items:
@@ -875,7 +877,7 @@ paths:
             에러 코드 설명
             - INVALID_NICKNAME : 닉네임이 유효하지 않을 때. e.g. 중복, 2글자 미만 등.
             - INVALID_EMAIL : 이메일이 유효하지 않을 때. e.g. 중복, 이상한 형태 등.
-
+            - INVALID_BIRTH_YEAR : 출생 연도가 유효하지 않을 때. e.g. 1900년 이전, 2025년 이후 등.
   /updatePushToken:
     post:
       summary: 유저의 push token 정보를 수정한다.
@@ -1031,6 +1033,7 @@ components:
             - ALREADY_JOINED # 11
             - CHALLENGE_NOT_OPENED # 12
             - CHALLENGE_CLOSED # 13
+            - INVALID_BIRTH_YEAR # 14
 
           enum:
             - -999999
@@ -1042,6 +1045,7 @@ components:
             - 11
             - 12
             - 13
+            - 14
 
     AuthTokensDto:
       type: object
@@ -2056,6 +2060,8 @@ components:
           type: string
         email:
           type: string
+        birthYear:
+          type: integer
         mobilityTools:
           type: array
           items:
