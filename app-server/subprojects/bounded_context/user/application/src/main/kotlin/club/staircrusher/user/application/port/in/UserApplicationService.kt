@@ -289,4 +289,8 @@ class UserApplicationService(
             )
         }
     }
+
+    fun isNicknameDuplicate(nickname: String): Boolean {
+        return userProfileRepository.existsByNickname(nickname)
+    }
 }

@@ -27,4 +27,8 @@ class InMemoryUserProfileRepository : UserProfileRepository, InMemoryCrudReposit
     override fun findAllByUserIdIn(userIds: Collection<String>): List<UserProfile> {
         return entityById.values.filter { it.userId in userIds }
     }
+
+    override fun existsByNickname(nickname: String): Boolean {
+        return entityById.values.find { it.nickname == nickname } != null
+    }
 }
