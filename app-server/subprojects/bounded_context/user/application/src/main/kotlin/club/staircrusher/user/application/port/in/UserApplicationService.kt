@@ -59,6 +59,7 @@ class UserApplicationService(
             password = password,
             instagramId = instagramId,
             email = null,
+            birthYear = null,
         )
 
         val (userAccount, userProfile) = signUp(params)
@@ -93,6 +94,7 @@ class UserApplicationService(
                 instagramId = params.instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = params.email,
                 mobilityTools = mutableListOf(),
+                birthYear = params.birthYear,
             )
         )
 
@@ -168,6 +170,7 @@ class UserApplicationService(
         instagramId: String?,
         email: String,
         mobilityTools: List<UserMobilityTool>,
+        birthYear: Int?,
         isNewsLetterSubscriptionAgreed: Boolean,
     ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
@@ -205,6 +208,15 @@ class UserApplicationService(
         }
         userProfile.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
         userProfile.mobilityTools = mobilityTools
+        userProfile.birthYear = run {
+            if (birthYear == null || birthYear < 1900 || birthYear > 2025) {
+                throw SccDomainException(
+                    "생년월일이 유효하지 않습니다.",
+                    SccDomainException.ErrorCode.INVALID_BIRTH_YEAR,
+                )
+            }
+            birthYear
+        }
         userProfileRepository.save(userProfile)
 
         if (isNewsLetterSubscriptionAgreed) {

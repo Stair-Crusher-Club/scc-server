@@ -49,16 +49,19 @@ class UpdateUserInfoTest : UserITBase() {
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
         )
+        val changedBirthYear = SccRandom.int(1900, 2025)
         assertNotEquals(user.profile.nickname, changedNickname)
         assertNotEquals(user.profile.instagramId, changedInstagramId)
         assertNotEquals(user.profile.email, changedEmail)
         assertNotEquals(user.profile.mobilityTools, changedMobilityTools)
+        assertNotEquals(user.profile.birthYear, changedBirthYear)
 
         val params = UpdateUserInfoPostRequest(
             nickname = changedNickname,
             instagramId = changedInstagramId,
             email = changedEmail,
             mobilityTools = changedMobilityTools.map { it.toDTO() },
+            birthYear = changedBirthYear,
         )
         mvc
             .sccRequest("/updateUserInfo", params, userAccount = user.account)
@@ -69,6 +72,7 @@ class UpdateUserInfoTest : UserITBase() {
                 assertEquals(changedInstagramId, result.user.instagramId)
                 assertEquals(changedEmail, result.user.email)
                 assertEquals(changedMobilityTools.sorted(), result.user.mobilityTools.map { it.toModel() }.sorted())
+                assertEquals(changedBirthYear, result.user.birthYear)
             }
     }
 
@@ -83,6 +87,7 @@ class UpdateUserInfoTest : UserITBase() {
             instagramId = user.profile.instagramId,
             email = user.profile.email!!,
             mobilityTools = user.profile.mobilityTools.map { it.toDTO() },
+            birthYear = user.profile.birthYear,
         )
         mvc
             .sccRequest("/updateUserInfo", params, userAccount = user.account)
@@ -92,6 +97,7 @@ class UpdateUserInfoTest : UserITBase() {
                 assertEquals(user.profile.nickname, result.user.nickname)
                 assertEquals(user.profile.instagramId, result.user.instagramId)
                 assertEquals(user.profile.email, result.user.email)
+                assertEquals(user.profile.birthYear, result.user.birthYear)
             }
     }
 
@@ -110,6 +116,7 @@ class UpdateUserInfoTest : UserITBase() {
             instagramId = userProfile.instagramId,
             email = userProfile.email!!,
             mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
+            birthYear = userProfile.birthYear,
         )
         mvc
             .sccRequest("/updateUserInfo", params, userAccount = user)
@@ -139,6 +146,7 @@ class UpdateUserInfoTest : UserITBase() {
             instagramId = userProfile.instagramId,
             email = userProfile2.email!!,
             mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
+            birthYear = userProfile.birthYear,
         )
         mvc
             .sccRequest("/updateUserInfo", params, userAccount = user)
@@ -164,6 +172,7 @@ class UpdateUserInfoTest : UserITBase() {
             instagramId = userProfile.instagramId,
             email = "strange",
             mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
+            birthYear = userProfile.birthYear,
         )
         mvc
             .sccRequest("/updateUserInfo", params, userAccount = user)
@@ -190,6 +199,7 @@ class UpdateUserInfoTest : UserITBase() {
             instagramId = userProfile.instagramId,
             email = changedEmail,
             mobilityTools = listOf(UserMobilityToolDto.ELECTRIC_WHEELCHAIR, UserMobilityToolDto.PROSTHETIC_FOOT),
+            birthYear = userProfile.birthYear,
         )
         mvc
             .sccRequest("/updateUserInfo", params, userAccount = user)
@@ -210,6 +220,7 @@ class UpdateUserInfoTest : UserITBase() {
             instagramId = userProfile.instagramId,
             email = changedEmail,
             mobilityTools = listOf(UserMobilityToolDto.MANUAL_WHEELCHAIR),
+            birthYear = userProfile.birthYear,
         )
         mvc
             .sccRequest("/updateUserInfo", params2, userAccount = user)
@@ -239,13 +250,14 @@ class UpdateUserInfoTest : UserITBase() {
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
         )
-
+        val changedBirthYear = SccRandom.int(1900, 2025)
         val params = UpdateUserInfoPostRequest(
             nickname = changedNickname,
             instagramId = changedInstagramId,
             email = changedEmail,
             mobilityTools = changedMobilityTools.map { it.toDTO() },
             isNewsLetterSubscriptionAgreed = true,
+            birthYear = changedBirthYear,
         )
 
         mvc
@@ -274,13 +286,14 @@ class UpdateUserInfoTest : UserITBase() {
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
         )
-
+        val changedBirthYear = SccRandom.int(1900, 2025)
         val params = UpdateUserInfoPostRequest(
             nickname = changedNickname,
             instagramId = changedInstagramId,
             email = changedEmail,
             mobilityTools = changedMobilityTools.map { it.toDTO() },
             isNewsLetterSubscriptionAgreed = false,
+            birthYear = changedBirthYear,
         )
 
         mvc
@@ -309,6 +322,7 @@ class UpdateUserInfoTest : UserITBase() {
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
         )
+        val changedBirthYear = SccRandom.int(1900, 2025)
 
         val params = UpdateUserInfoPostRequest(
             nickname = changedNickname,
@@ -317,6 +331,7 @@ class UpdateUserInfoTest : UserITBase() {
             mobilityTools = changedMobilityTools.map { it.toDTO() },
             // 하위 호환성
             isNewsLetterSubscriptionAgreed = null,
+            birthYear = changedBirthYear,
         )
 
         mvc
@@ -329,6 +344,72 @@ class UpdateUserInfoTest : UserITBase() {
             .apply {
                 verifyBlocking(stibeeSubscriptionService, never()) { registerSubscriber(eq(changedEmail), eq(changedNickname), any()) }
                 verify(sccServerEventRecorder, never()).record(NewsletterSubscribedOnSignupPayload(user.id))
+            }
+    }
+
+    @Test
+    fun `유효하지 않은 생년으로는 변경이 불가능하다`() {
+        val (user, userProfile) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
+        }
+
+        // 미래의 연도로 테스트
+        val futureYear = java.time.Year.now().value + 1
+        val paramsWithFutureYear = UpdateUserInfoPostRequest(
+            nickname = userProfile.nickname,
+            instagramId = userProfile.instagramId,
+            email = userProfile.email!!,
+            mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
+            birthYear = futureYear,
+        )
+        mvc
+            .sccRequest("/updateUserInfo", paramsWithFutureYear, userAccount = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_BIRTH_YEAR, result.code)
+            }
+
+        // 너무 과거의 연도로 테스트 (1800년)
+        val tooOldYear = 1800
+        val paramsWithTooOldYear = UpdateUserInfoPostRequest(
+            nickname = userProfile.nickname,
+            instagramId = userProfile.instagramId,
+            email = userProfile.email!!,
+            mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
+            birthYear = tooOldYear,
+        )
+        mvc
+            .sccRequest("/updateUserInfo", paramsWithTooOldYear, userAccount = user)
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+            .apply {
+                val result = getResult(ApiErrorResponse::class)
+                assertEquals(ApiErrorResponse.Code.INVALID_BIRTH_YEAR, result.code)
+            }
+
+        // 유효한 연도로 테스트 (1950년)
+        val validYear = 1950
+        val paramsWithValidYear = UpdateUserInfoPostRequest(
+            nickname = userProfile.nickname,
+            instagramId = userProfile.instagramId,
+            email = userProfile.email!!,
+            mobilityTools = userProfile.mobilityTools.map { it.toDTO() },
+            birthYear = validYear,
+        )
+        mvc
+            .sccRequest("/updateUserInfo", paramsWithValidYear, userAccount = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
             }
     }
 }

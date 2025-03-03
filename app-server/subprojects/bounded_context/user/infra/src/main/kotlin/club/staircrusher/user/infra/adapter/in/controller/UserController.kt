@@ -55,6 +55,7 @@ class UserController(
             email = request.email,
             mobilityTools = request.mobilityTools.map { it.toModel() },
             isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed ?: false,
+            birthYear = request.birthYear,
         )
         return UpdateUserInfoPost200Response(
             user = updatedUser.toDTO(),
