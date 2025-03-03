@@ -1,8 +1,8 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationRequest
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationResponse
+import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPost200Response
+import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPostRequest
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
@@ -95,11 +95,10 @@ class UserController(
 
     @PostMapping("/checkNicknameDuplication")
     fun checkNicknameDuplication(
-        @RequestBody request: CheckNicknameDuplicationRequest,
-    ): CheckNicknameDuplicationResponse {
-        val nickname = request.nickname ?: throw SccDomainException("닉네임은 필수 값입니다.")
-        val isDuplicated = userApplicationService.checkNicknameDuplication(nickname)
-        return CheckNicknameDuplicationResponse(isDuplicated)
+        @RequestBody request: CheckNicknameDuplicationPostRequest,
+    ): CheckNicknameDuplicationPost200Response {
+        val isDuplicated = userApplicationService.isNicknameDuplicated(request.nickname)
+        return CheckNicknameDuplicationPost200Response(isDuplicated)
     }
 
     companion object {
