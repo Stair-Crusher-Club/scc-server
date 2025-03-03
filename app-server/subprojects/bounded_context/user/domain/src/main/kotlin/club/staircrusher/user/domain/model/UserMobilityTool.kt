@@ -9,5 +9,6 @@ enum class UserMobilityTool {
     WALKING_ASSISTANCE_DEVICE,
     CLUCH,
     NONE,
+    FRIEND_OF_TOOL_USER,
     ;
 }
