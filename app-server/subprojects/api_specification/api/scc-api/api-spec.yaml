@@ -928,11 +928,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  isDuplicated:
+                  isDuplicate:
                     type: boolean
                     description: 닉네임 중복 여부
                 required:
-                  - isDuplicated
+                  - isDuplicate
         '400':
           $ref: '#/components/responses/ApiFailure'
 

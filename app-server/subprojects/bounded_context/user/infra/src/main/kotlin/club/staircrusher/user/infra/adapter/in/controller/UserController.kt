@@ -98,8 +98,8 @@ class UserController(
     fun checkNicknameDuplication(
         @RequestBody request: CheckNicknameDuplicationPostRequest,
     ): CheckNicknameDuplicationPost200Response {
-        val isDuplicated = userApplicationService.isNicknameDuplicated(request.nickname)
-        return CheckNicknameDuplicationPost200Response(isDuplicated)
+        val isDuplicate = userApplicationService.isNicknameDuplicate(request.nickname)
+        return CheckNicknameDuplicationPost200Response(isDuplicate)
     }
 
     companion object {
