@@ -8,7 +8,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
 
 @Component
 class UpdateRanksUseCase(
@@ -23,15 +23,15 @@ class UpdateRanksUseCase(
     fun handle() {
         // update accessibility rank with count first
         transactionManager.doInTransaction {
-            val users: List<User> = userApplicationService.getAllUsers()
+            val userProfiles: List<UserProfile> = userApplicationService.getAllUserProfiles()
             val lastRank = accessibilityRankRepository.findRankByConqueredCount(0) ?: 1
             val now = SccClock.instant()
 
-            val ranks = users.map {
-                val conqueredCount = placeAccessibilityRepository.countByUserIdAndDeletedAtIsNull(it.id)
-                val accessibilityRank = accessibilityRankRepository.findFirstByUserId(it.id) ?: AccessibilityRank(
+            val ranks = userProfiles.map {
+                val conqueredCount = placeAccessibilityRepository.countByUserIdAndDeletedAtIsNull(it.userId)
+                val accessibilityRank = accessibilityRankRepository.findFirstByUserId(it.userId) ?: AccessibilityRank(
                     id = EntityIdGenerator.generateRandom(),
-                    userId = it.id,
+                    userId = it.userId,
                     conqueredCount = conqueredCount,
                     rank = lastRank,
                     createdAt = now,

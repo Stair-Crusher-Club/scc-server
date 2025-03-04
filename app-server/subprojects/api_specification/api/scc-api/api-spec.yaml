@@ -17,9 +17,15 @@ servers:
           - 'api'
           - 'api.dev'
 
+security:
+  # 모든 API 는 기본적으로 AnonymousUserAuth 를 적용
+  - Anonymous: []
+
 paths:
   /cancelBuildingAccessibilityUpvote:
     post:
+      security:
+        - Identified: []
       requestBody:
         content:
           application/json:
@@ -32,6 +38,8 @@ paths:
 
   /cancelPlaceAccessibilityUpvote:
     post:
+      security:
+        - Identified: []
       requestBody:
         content:
           application/json:
@@ -42,9 +50,22 @@ paths:
         '204': { }
       summary: '''이 정보가 도움이 돼요''를 취소한다.'
 
+  /createAnonymousUser:
+    post:
+      summary: 비회원 계정을 생성한다.
+      security: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAnonymousUserResponseDto'
+
   /createPlaceFavorite:
     post:
       summary: 장소를 즐겨찾기에 추가한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -63,6 +84,8 @@ paths:
       summary: |
         등록한 접근성 정보를 삭제한다.
         기본적으로는 장소 정보만 삭제하지만, 삭제하는 장소 정보가 해당 건물의 마지막 장소 정보일 경우 건물 정보도 함께 삭제한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -83,6 +106,8 @@ paths:
   /deletePlaceFavorite:
     post:
       summary: 장소를 즐겨찾기에서 삭제한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -99,6 +124,8 @@ paths:
   /deleteUser:
     post:
       summary: 계정을 삭제한다.
+      security:
+        - Identified: []
       responses:
         '204': { }
 
@@ -171,6 +198,8 @@ paths:
   /getAccessibilityRank:
     post:
       summary: 내 현재 랭크를 조회한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -192,6 +221,8 @@ paths:
 
   /getCountForNextRank:
     post:
+      security:
+        - Identified: []
       requestBody:
         content:
           application/json:
@@ -215,6 +246,8 @@ paths:
   /getImageUploadUrls:
     post:
       summary: 점포 정보 등록 등의 상황에서 이미지를 업로드하기 위한 URL을 받아 온다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -299,6 +332,8 @@ paths:
   /getAccessibilityActivityReport:
     post:
       summary: 유저 접근성 정보 정복 활동을 조회한다
+      security:
+        - Identified: []
       responses:
         '200':
           content:
@@ -309,6 +344,8 @@ paths:
   /getUserInfo:
     get:
       summary: 유저 정보를 조회한다.
+      security:
+        - Identified: []
       responses:
         '200':
           content:
@@ -319,6 +356,8 @@ paths:
   /giveBuildingAccessibilityUpvote:
     post:
       summary: "'이 정보가 도움이 돼요'를 준다."
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -331,6 +370,8 @@ paths:
   /givePlaceAccessibilityUpvote:
     post:
       summary: "'이 정보가 도움이 돼요'를 준다."
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -343,6 +384,8 @@ paths:
   /joinChallenge:
     post:
       summary: 챌린지에 참여한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -401,6 +444,8 @@ paths:
   /listConqueredPlaces:
     post:
       summary: 내가 정복한 장소 목록을 조회한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -542,6 +587,8 @@ paths:
   /registerBuildingAccessibility:
     post:
       summary: 건물 접근성 정보를 등록한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -557,6 +604,8 @@ paths:
   /registerBuildingAccessibilityComment:
     post:
       summary: 건물에 의견을 추가한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -587,6 +636,8 @@ paths:
   /registerPlaceAccessibility:
     post:
       summary: 점포의 접근성 정보를 등록한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -603,6 +654,8 @@ paths:
   /registerPlaceAccessibilityComment:
     post:
       summary: 점포에 의견을 추가한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -633,6 +686,8 @@ paths:
   /reportAccessibility:
     post:
       summary: 등록된 접근성 정보가 올바르지 않은 경우 신고한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -777,6 +832,8 @@ paths:
   /updateUserInfo:
     post:
       summary: 유저 정보를 수정한다.
+      security:
+        - Identified: []
       requestBody:
         required: true
         content:
@@ -791,6 +848,8 @@ paths:
                   description: 변경되지 않았으면 기존 값을 그대로 올려준다.
                 email:
                   type: string
+                birthYear:
+                  type: integer
                 mobilityTools:
                   type: array
                   items:
@@ -818,7 +877,7 @@ paths:
             에러 코드 설명
             - INVALID_NICKNAME : 닉네임이 유효하지 않을 때. e.g. 중복, 2글자 미만 등.
             - INVALID_EMAIL : 이메일이 유효하지 않을 때. e.g. 중복, 이상한 형태 등.
-
+            - INVALID_BIRTH_YEAR : 출생 연도가 유효하지 않을 때. e.g. 1900년 이전, 2025년 이후 등.
   /updatePushToken:
     post:
       summary: 유저의 push token 정보를 수정한다.
@@ -847,7 +906,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetHomeBannersResponseDto'
 
+  /checkNicknameDuplication:
+    post:
+      summary: 닉네임 중복 여부를 체크한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                  description: 중복 체크할 닉네임
+              required:
+                - nickname
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isDuplicate:
+                    type: boolean
+                    description: 닉네임 중복 여부
+                required:
+                  - isDuplicate
+        '400':
+          $ref: '#/components/responses/ApiFailure'
+
 components:
+  # Security schemes
+  securitySchemes:
+    Anonymous:
+      type: http
+      scheme: bearer
+
+    Identified:
+      type: http
+      scheme: bearer
+
   # Reusable schemas (data models)
   schemas:
     AccessibilityInfoDto:
@@ -934,6 +1033,7 @@ components:
             - ALREADY_JOINED # 11
             - CHALLENGE_NOT_OPENED # 12
             - CHALLENGE_CLOSED # 13
+            - INVALID_BIRTH_YEAR # 14
 
           enum:
             - -999999
@@ -945,6 +1045,7 @@ components:
             - 11
             - 12
             - 13
+            - 14
 
     AuthTokensDto:
       type: object
@@ -1155,6 +1256,14 @@ components:
           type: string
       required:
         - name
+
+    CreateAnonymousUserResponseDto:
+      type: object
+      properties:
+        authTokens:
+          $ref: '#/components/schemas/AuthTokensDto'
+      required:
+        - authTokens
 
     CreatePlaceFavoriteRequestDto:
       type: object
@@ -1951,6 +2060,8 @@ components:
           type: string
         email:
           type: string
+        birthYear:
+          type: integer
         mobilityTools:
           type: array
           items:

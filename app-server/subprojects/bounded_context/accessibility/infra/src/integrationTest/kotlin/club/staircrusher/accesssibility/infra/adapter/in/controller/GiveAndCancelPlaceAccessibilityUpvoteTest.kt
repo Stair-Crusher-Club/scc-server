@@ -24,19 +24,19 @@ class GiveAndCancelPlaceAccessibilityUpvoteTest : AccessibilityITBase() {
     @Test
     fun cancelBuildingAccessibilityUpvoteTest() {
         val (user, placeAccessibility) = transactionManager.doInTransaction {
-            val user = testDataGenerator.createUser()
+            val user = testDataGenerator.createIdentifiedUser()
             val place = testDataGenerator.createBuildingAndPlace()
-            val placeAccessibility = testDataGenerator.registerPlaceAccessibility(user = user, place = place)
+            val placeAccessibility = testDataGenerator.registerPlaceAccessibility(userAccount = user.account, place = place)
             user to placeAccessibility
         }
 
         val giveUpvoteParams = GivePlaceAccessibilityUpvoteRequestDto(placeAccessibilityId = placeAccessibility.id)
         mvc
-            .sccRequest("/givePlaceAccessibilityUpvote", giveUpvoteParams, user = user)
+            .sccRequest("/givePlaceAccessibilityUpvote", giveUpvoteParams, userAccount = user.account)
             .andExpect {
                 transactionManager.doInTransaction {
                     assertNotNull(
-                        placeAccessibilityUpvoteRepository.findExistingUpvote(user.id, placeAccessibility.id)
+                        placeAccessibilityUpvoteRepository.findExistingUpvote(user.account.id, placeAccessibility.id)
                     )
                 }
             }
@@ -51,11 +51,11 @@ class GiveAndCancelPlaceAccessibilityUpvoteTest : AccessibilityITBase() {
             placeAccessibilityId = placeAccessibility.id
         )
         mvc
-            .sccRequest("/cancelPlaceAccessibilityUpvote", cancelUpvoteParams, user = user)
+            .sccRequest("/cancelPlaceAccessibilityUpvote", cancelUpvoteParams, userAccount = user.account)
             .andExpect {
                 transactionManager.doInTransaction {
                     assertNull(
-                        placeAccessibilityUpvoteRepository.findExistingUpvote(user.id, placeAccessibility.id)
+                        placeAccessibilityUpvoteRepository.findExistingUpvote(user.account.id, placeAccessibility.id)
                     )
                 }
             }

@@ -1,15 +1,18 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
+import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPost200Response
+import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPostRequest
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
 import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import club.staircrusher.user.application.port.`in`.use_case.GetUserUseCase
+import club.staircrusher.user.application.port.`in`.use_case.GetUserProfileUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
 import mu.KotlinLogging
@@ -22,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class UserController(
     private val userApplicationService: UserApplicationService,
-    private val getUserUseCase: GetUserUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -30,13 +33,13 @@ class UserController(
     fun getUserInfo(
         authentication: SccAppAuthentication,
     ): GetUserInfoResponseDto {
-        val user = getUserUseCase.handle(authentication.principal)
-        val isTargetUser = user.id in betaUsers
+        val userProfile = getUserProfileUseCase.handle(authentication.principal) ?: throw SccDomainException("잘못된 계정입니다")
+        val isTargetUser = userProfile.userId in betaUsers
         val isNotProd = SccEnv.getEnv() != SccEnv.PROD
         val featureFlags: List<String> =
             if (isTargetUser || isNotProd) listOf("MAP_VISIBLE", "TOILET_VISIBLE") else listOf("TOILET_VISIBLE")
         return GetUserInfoResponseDto(
-            user = user.toDTO(),
+            user = userProfile.toDTO(),
             flags = featureFlags,
         )
     }
@@ -54,6 +57,7 @@ class UserController(
             email = request.email,
             mobilityTools = request.mobilityTools.map { it.toModel() },
             isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed ?: false,
+            birthYear = request.birthYear,
         )
         return UpdateUserInfoPost200Response(
             user = updatedUser.toDTO(),
@@ -88,6 +92,14 @@ class UserController(
     fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
         userApplicationService.deleteUser(authentication.principal)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/checkNicknameDuplication")
+    fun checkNicknameDuplication(
+        @RequestBody request: CheckNicknameDuplicationPostRequest,
+    ): CheckNicknameDuplicationPost200Response {
+        val isDuplicate = userApplicationService.isNicknameDuplicate(request.nickname)
+        return CheckNicknameDuplicationPost200Response(isDuplicate)
     }
 
     companion object {
@@ -189,6 +201,7 @@ class UserController(
             "4be9d41a-b869-45e7-9fc0-a23f5357a191",
             "54c413b8-68f5-4bbd-b625-a2753236b5e0",
             "140e9f10-4890-4d55-b594-fa2f3c259864",
+            "3fa51d8e-72cb-4776-834f-4fd0af87b0f1",
         )
     }
 }

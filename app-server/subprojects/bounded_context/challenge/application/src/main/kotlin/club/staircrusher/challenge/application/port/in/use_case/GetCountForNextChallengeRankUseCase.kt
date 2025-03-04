@@ -22,7 +22,7 @@ class GetCountForNextChallengeRankUseCase(
     private val challengeService: ChallengeService,
 ) {
     fun handle(challengeId: String, userId: String): Long?  = transactionManager.doInTransaction {
-        userApplicationService.getUser(userId) ?: throw SccDomainException("잘못된 계정입니다.")
+        userApplicationService.getProfileByUserIdOrNull(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         val challenge = challengeRepository.findByIdOrNull(challengeId) ?: throw SccDomainException("잘못된 챌린지입니다.")
         if (!challengeService.hasJoined(userId, challengeId)) {
             throw SccDomainException("참여하지 않은 챌린지 입니다.")

@@ -6,9 +6,8 @@ import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.place.domain.model.Place
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
-import club.staircrusher.user.domain.model.User
-import org.springframework.beans.factory.annotation.Autowired
-import java.time.Clock
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserProfile
 import java.time.Duration
 import java.time.Instant
 import kotlin.random.Random
@@ -99,26 +98,26 @@ open class ChallengeITBase : SccSpringITBase() {
     }
 
     fun participate(
-        user: User,
+        userAccount: UserAccount,
         challenge: Challenge,
         participateAt: Instant = clock.instant()
     ): ChallengeParticipation {
         return transactionManager.doInTransaction {
-            testDataGenerator.participateChallenge(user, challenge, participateAt)
+            testDataGenerator.participateChallenge(userAccount, challenge, participateAt)
         }
     }
 
     fun contributePlaceAccessibility(
-        user: User,
+        userAccount: UserAccount,
         challenge: Challenge,
         overridingPlace: Place? = null,
         contributeAt: Instant = clock.instant()
     ): ChallengeContribution {
         return transactionManager.doInTransaction {
             val place = overridingPlace ?: testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = null)
-            val (placeAccessibility, _) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
+            val (placeAccessibility, _) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, userAccount)
             testDataGenerator.contributeToChallenge(
-                user = user,
+                userAccount = userAccount,
                 challenge = challenge,
                 placeAccessibility = placeAccessibility,
                 contributeAt = contributeAt

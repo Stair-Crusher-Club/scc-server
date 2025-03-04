@@ -12,7 +12,7 @@ class LoginTest : UserITBase() {
         val nickname = SccRandom.string(32)
         val password = "password"
         transactionManager.doInTransaction {
-            testDataGenerator.createUser(nickname = nickname, password = password)
+            testDataGenerator.createIdentifiedUser(nickname = nickname, password = password)
         }
         val params = LoginPostRequest(
             nickname = nickname,

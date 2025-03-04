@@ -12,7 +12,7 @@ class ListSearchKeywordOfPlaceCategoryTest : PlaceSearchITBase() {
     fun testListPlacesInBuilding() {
 
         mvc
-            .sccRequest("/listSearchKeywordsOfPlaceCategory", null)
+            .sccAnonymousRequest("/listSearchKeywordsOfPlaceCategory", null)
             .apply {
                 val result = getResult(object : TypeReference<ListSearchKeywordsOfPlaceCategoryPost200Response>() {})
                 assertEquals(result.items.size, ListSearchKeywordOfPlaceCategoryUseCase().handle().size)

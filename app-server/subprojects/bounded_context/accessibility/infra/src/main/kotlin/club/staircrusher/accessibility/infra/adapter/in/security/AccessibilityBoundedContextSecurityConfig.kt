@@ -8,6 +8,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 class AccessibilityBoundedContextSecurityConfig : SccSecurityConfig {
     // TODO: 뭔가 불편하고 error prone, annotation으로 해결할 수 없을까?
     override fun requestMatchers() = listOf(
+        "/getAccessibilityLeaderboard",
+        "/admin/accessibilityAllowedRegions"
+    ).map { AntPathRequestMatcher(it) }
+
+    override fun identifiedUserOnlyRequestMatchers() = listOf(
         "/giveBuildingAccessibilityUpvote",
         "/cancelBuildingAccessibilityUpvote",
         "/deleteAccessibility",
@@ -16,6 +21,7 @@ class AccessibilityBoundedContextSecurityConfig : SccSecurityConfig {
         "/registerPlaceAccessibility",
         "/registerBuildingAccessibility",
         "/reportAccessibility",
-        "/admin/accessibilityAllowedRegions"
+        "/getImageUploadUrls",
+        "/getAccessibilityActivityReport",
     ).map { AntPathRequestMatcher(it) }
 }

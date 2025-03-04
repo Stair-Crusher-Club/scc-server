@@ -1,11 +1,12 @@
 package club.staircrusher.user.infra.adapter.`in`.converter
 
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.UserProfile
 
-fun User.toDTO() = club.staircrusher.api.spec.dto.User(
-    id = id,
+fun UserProfile.toDTO() = club.staircrusher.api.spec.dto.User(
+    id = userId,
     nickname = nickname,
     instagramId = instagramId,
     email = email,
-    mobilityTools = mobilityTools.map { it.toDTO() }
+    mobilityTools = mobilityTools.map { it.toDTO() },
+    birthYear = birthYear,
 )

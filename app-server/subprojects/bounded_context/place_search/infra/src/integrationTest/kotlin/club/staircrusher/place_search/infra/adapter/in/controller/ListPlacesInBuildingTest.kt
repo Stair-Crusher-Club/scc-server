@@ -14,7 +14,7 @@ class ListPlacesInBuildingTest : PlaceSearchITBase() {
     @Test
     fun testListPlacesInBuilding() {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser().account
         }
         val placesCount = 10
         val accessibilityRegisteredPlaceIds = mutableSetOf<String>()
@@ -36,7 +36,7 @@ class ListPlacesInBuildingTest : PlaceSearchITBase() {
             buildingId = building.id
         )
         mvc
-            .sccRequest("/listPlacesInBuilding", params, user = user)
+            .sccRequest("/listPlacesInBuilding", params, userAccount = user)
             .apply {
                 val result = getResult(object : TypeReference<List<PlaceListItem>>() {})
                 assertEquals(placesCount, result.size)
@@ -51,7 +51,7 @@ class ListPlacesInBuildingTest : PlaceSearchITBase() {
 
         // 로그인되어 있지 않아도 잘 동작한다.
         mvc
-            .sccRequest("/listPlacesInBuilding", params)
+            .sccAnonymousRequest("/listPlacesInBuilding", params)
             .andExpect {
                 status {
                     isOk()

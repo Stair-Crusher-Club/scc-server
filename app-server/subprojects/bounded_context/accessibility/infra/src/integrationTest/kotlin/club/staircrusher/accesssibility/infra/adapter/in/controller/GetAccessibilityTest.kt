@@ -12,7 +12,9 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.domain.model.Building
 import club.staircrusher.place.domain.model.Place
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.domain.model.IdentifiedUserVO
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserProfile
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -40,7 +42,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             placeId = place.id
         )
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
                 assertEquals(buildingAccessibility.id, result.buildingAccessibility!!.id)
@@ -55,7 +57,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                     buildingAccessibility.elevatorStairInfo,
                     result.buildingAccessibility!!.elevatorStairInfo.toModel()
                 )
-                assertEquals(user.nickname, result.buildingAccessibility!!.registeredUserName)
+                assertEquals(user.profile.nickname, result.buildingAccessibility!!.registeredUserName)
                 assertTrue(result.buildingAccessibility!!.isUpvoted)
                 assertEquals(3, result.buildingAccessibility!!.totalUpvoteCount)
                 assertEquals(1, result.buildingAccessibilityComments.size)
@@ -78,7 +80,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertEquals(placeAccessibility.hasSlope, result.placeAccessibility!!.hasSlope)
                 assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
 
-                assertEquals(user.nickname, result.placeAccessibility!!.registeredUserName)
+                assertEquals(user.profile.nickname, result.placeAccessibility!!.registeredUserName)
                 assertEquals(1, result.placeAccessibilityComments.size)
                 assertEquals(placeAccessibilityComment.id, result.placeAccessibilityComments[0].id)
                 assertEquals(placeAccessibilityComment.placeId, result.placeAccessibilityComments[0].placeId)
@@ -99,7 +101,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             testDataGenerator.createPlace(placeName = "장소장소 2", building = place.building)
         }
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
                 assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
@@ -132,11 +134,11 @@ class GetAccessibilityTest : AccessibilityITBase() {
         val params = GetAccessibilityPostRequest(
             placeId = place.id
         )
-        val otherUser = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val (otherUser, _) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
         mvc
-            .sccRequest("/getAccessibility", params, user = otherUser) // 타인이 조회한다.
+            .sccRequest("/getAccessibility", params, userAccount = otherUser) // 타인이 조회한다.
             .andExpect {
                 status {
                     isOk()
@@ -157,7 +159,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             placeId = place1.id
         )
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .andExpect {
                 status {
                     isOk()
@@ -176,7 +178,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             placeId = place1.id
         )
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .andExpect {
                 status {
                     isOk()
@@ -190,7 +192,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
         clock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
 
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .andExpect {
                 status {
                     isOk()
@@ -210,7 +212,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             placeId = place.id
         )
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .andExpect {
                 status {
                     isOk()
@@ -235,7 +237,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
         )
 
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .andExpect {
                 status {
                     isOk()
@@ -260,7 +262,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
         )
 
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .andExpect {
                 status {
                     isOk()
@@ -274,9 +276,9 @@ class GetAccessibilityTest : AccessibilityITBase() {
     @Test
     fun `즐겨찾기 등록한 유저에게는 즐겨찾기 등록했는지 정보를 내려준다`() {
         val (hasFavoriteUser, place) = registerAccessibility()
-        transactionManager.doInTransaction { testDataGenerator.createPlaceFavorite(hasFavoriteUser.id, place.id) }
+        transactionManager.doInTransaction { testDataGenerator.createPlaceFavorite(hasFavoriteUser.account.id, place.id) }
         mvc
-            .sccRequest("/getAccessibility", GetAccessibilityPostRequest(placeId = place.id), user = hasFavoriteUser)
+            .sccRequest("/getAccessibility", GetAccessibilityPostRequest(placeId = place.id), userAccount = hasFavoriteUser.account)
             .andExpect {
                 status {
                     isOk()
@@ -288,12 +290,12 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertEquals(result.totalFavoriteCount, 1L)
             }
 
-        val doesNotHaveFavoriteUser = testDataGenerator.createUser()
+        val (doesNotHaveFavoriteUser, _) = testDataGenerator.createIdentifiedUser()
         mvc
             .sccRequest(
                 "/getAccessibility",
                 GetAccessibilityPostRequest(placeId = place.id),
-                user = doesNotHaveFavoriteUser
+                userAccount = doesNotHaveFavoriteUser
             )
             .andExpect {
                 status { isOk() }
@@ -316,7 +318,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             placeId = place1.id
         )
         mvc
-            .sccRequest("/getAccessibility", params, user = user)
+            .sccRequest("/getAccessibility", params, userAccount = user.account)
             .andExpect {
                 status {
                     isOk()
@@ -333,23 +335,23 @@ class GetAccessibilityTest : AccessibilityITBase() {
 
     private fun registerAccessibility(overridingBuilding: Building? = null): RegisterAccessibilityResult {
         val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+            testDataGenerator.createIdentifiedUser()
         }
         return transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = overridingBuilding)
             val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(
                 place,
-                user
+                user.account
             )
 
             repeat(2) {
                 testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility)
             }
-            testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user)
+            testDataGenerator.giveBuildingAccessibilityUpvote(buildingAccessibility, user.account)
 
             val buildingAccessibilityComment =
                 testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
-            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
+            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user.account)
 
             RegisterAccessibilityResult(
                 user,
@@ -366,24 +368,24 @@ class GetAccessibilityTest : AccessibilityITBase() {
         imageUrls: List<String>? = null,
         images: List<AccessibilityImage>? = null
     ): RegisterAccessibilityResult {
-        val user = transactionManager.doInTransaction {
-            testDataGenerator.createUser()
+        val identifiedUser = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
         }
         return transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소")
             val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(
                 place,
-                user,
+                identifiedUser.account,
                 imageUrls ?: emptyList(),
                 images ?: emptyList()
             )
 
             val buildingAccessibilityComment =
                 testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
-            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
+            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", identifiedUser.account)
 
             RegisterAccessibilityResult(
-                user,
+                identifiedUser,
                 place,
                 placeAccessibility,
                 buildingAccessibility,
@@ -394,7 +396,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     private data class RegisterAccessibilityResult(
-        val user: User,
+        val identifiedUser: IdentifiedUserVO,
         val place: Place,
         val placeAccessibility: PlaceAccessibility,
         val buildingAccessibility: BuildingAccessibility,

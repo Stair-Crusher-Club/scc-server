@@ -11,7 +11,6 @@ import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import java.time.Instant
 import java.util.concurrent.Executors
@@ -23,12 +22,10 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val transactionManager: TransactionManager,
 ) {
-    private val logger = KotlinLogging.logger {}
     private val taskExecutor = Executors.newCachedThreadPool()
 
     fun handleAsync() {
         if (SccEnv.isProduction().not()) {
-            logger.info { "Skip blurring faces in the latest place accessibility images because it's not a production environment." }
             return
         }
         taskExecutor.execute {

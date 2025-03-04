@@ -39,8 +39,12 @@ import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.eupMyeonDongById
 import club.staircrusher.stdlib.geography.siGunGuById
 import club.staircrusher.stdlib.testing.SccRandom
-import club.staircrusher.user.application.port.out.persistence.UserRepository
-import club.staircrusher.user.domain.model.User
+import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
+import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
+import club.staircrusher.user.domain.model.IdentifiedUserVO
+import club.staircrusher.user.domain.model.UserAccount
+import club.staircrusher.user.domain.model.UserAccountType
+import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import org.springframework.beans.factory.annotation.Autowired
@@ -57,7 +61,10 @@ class ITDataGenerator {
     private lateinit var passwordEncryptor: PasswordEncryptor
 
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var userAccountRepository: UserAccountRepository
+
+    @Autowired
+    private lateinit var userProfileRepository: UserProfileRepository
 
     @Autowired
     private lateinit var placeRepository: PlaceRepository
@@ -95,22 +102,40 @@ class ITDataGenerator {
     @Autowired
     private lateinit var externalAccessibilityRepository: ExternalAccessibilityRepository
 
-    fun createUser(
+    fun createIdentifiedUser(
         nickname: String = SccRandom.string(12),
         password: String = "password",
         email: String = "${SccRandom.string(12)}@staircrusher.club",
         instagramId: String? = null,
         mobilityTools: List<UserMobilityTool> = emptyList(),
-    ): User {
-        return userRepository.save(
-            User(
+    ): IdentifiedUserVO {
+        val userAccount = userAccountRepository.save(
+            UserAccount(
                 id = EntityIdGenerator.generateRandom(),
+                accountType = UserAccountType.IDENTIFIED,
+            )
+        )
+        val userProfile = userProfileRepository.save(
+            UserProfile(
+                id = EntityIdGenerator.generateRandom(),
+                userId = userAccount.id,
                 nickname = nickname,
                 encryptedPassword = passwordEncryptor.encrypt(password.trim()),
                 instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() },
                 email = email,
                 mobilityTools = mobilityTools.toMutableList(),
-                createdAt = clock.instant(),
+                birthYear = 1990,
+            )
+        )
+
+        return IdentifiedUserVO(userAccount, userProfile)
+    }
+
+    fun createAnonymousUser(): UserAccount {
+        return userAccountRepository.save(
+            UserAccount(
+                id = EntityIdGenerator.generateRandom(),
+                accountType = UserAccountType.ANONYMOUS,
             )
         )
     }
@@ -269,7 +294,7 @@ class ITDataGenerator {
     }
 
     fun participateChallenge(
-        user: User,
+        userAccount: UserAccount,
         challenge: Challenge,
         participateAt: Instant
     ): ChallengeParticipation {
@@ -277,14 +302,14 @@ class ITDataGenerator {
             ChallengeParticipation(
                 id = EntityIdGenerator.generateRandom(),
                 challengeId = challenge.id,
-                userId = user.id,
+                userId = userAccount.id,
                 createdAt = participateAt
             )
         )
     }
 
     fun contributeToChallenge(
-        user: User,
+        userAccount: UserAccount,
         challenge: Challenge,
         placeAccessibility: PlaceAccessibility? = null,
         placeAccessibilityComment: PlaceAccessibilityComment? = null,
@@ -295,7 +320,7 @@ class ITDataGenerator {
         val contribution = challengeContributionRepository.save(
             ChallengeContribution(
                 id = EntityIdGenerator.generateRandom(),
-                userId = user.id,
+                userId = userAccount.id,
                 challengeId = challenge.id,
                 placeAccessibilityId = placeAccessibility?.id,
                 placeAccessibilityCommentId = placeAccessibilityComment?.id,
@@ -325,7 +350,7 @@ class ITDataGenerator {
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
-        user: User? = null,
+        userAccount: UserAccount? = null,
         at: Instant = clock.instant(),
     ): PlaceAccessibility {
         return placeAccessibilityRepository.save(
@@ -341,7 +366,7 @@ class ITDataGenerator {
                 entranceDoorTypes = entranceDoorTypes,
                 imageUrls = imageUrls,
                 images = images,
-                userId = user?.id,
+                userId = userAccount?.id,
                 createdAt = at,
             ),
         )
@@ -359,7 +384,7 @@ class ITDataGenerator {
         elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
         elevatorImageUrls: List<String> = emptyList(),
         elevatorImages: List<AccessibilityImage> = emptyList(),
-        user: User? = null,
+        userAccount: UserAccount? = null,
         at: Instant = clock.instant(),
     ): BuildingAccessibility {
         return buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id) ?: buildingAccessibilityRepository.save(
@@ -377,7 +402,7 @@ class ITDataGenerator {
                 elevatorStairHeightLevel = elevatorStairHeightLevel,
                 elevatorImageUrls = elevatorImageUrls,
                 elevatorImages = elevatorImages,
-                userId = user?.id,
+                userId = userAccount?.id,
                 createdAt = at,
             ),
         )
@@ -385,16 +410,16 @@ class ITDataGenerator {
 
     fun registerBuildingAndPlaceAccessibility(
         place: Place,
-        user: User? = null,
+        userAccount: UserAccount? = null,
         imageUrls: List<String> = emptyList(),
         images: List<AccessibilityImage> = emptyList(),
         at: Instant = clock.instant(),
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
-            registerPlaceAccessibility(place = place, user = user, imageUrls = imageUrls, images = images, at = at),
+            registerPlaceAccessibility(place = place, userAccount = userAccount, imageUrls = imageUrls, images = images, at = at),
             registerBuildingAccessibilityIfNotExists(
                 place.building,
-                user = user,
+                userAccount = userAccount,
                 entranceImageUrls = imageUrls,
                 entranceImages = images,
                 elevatorImageUrls = imageUrls,
@@ -407,13 +432,13 @@ class ITDataGenerator {
     fun registerBuildingAccessibilityComment(
         building: Building,
         comment: String,
-        user: User? = null
+        userAccount: UserAccount? = null
     ): BuildingAccessibilityComment {
         return buildingAccessibilityCommentRepository.save(
             BuildingAccessibilityComment(
                 id = EntityIdGenerator.generateRandom(),
                 buildingId = building.id,
-                userId = user?.id,
+                userId = userAccount?.id,
                 comment = comment,
                 createdAt = clock.instant(),
             ),
@@ -423,24 +448,24 @@ class ITDataGenerator {
     fun registerPlaceAccessibilityComment(
         place: Place,
         comment: String,
-        user: User? = null
+        userAccount: UserAccount? = null
     ): PlaceAccessibilityComment {
         return placeAccessibilityCommentRepository.save(
             PlaceAccessibilityComment(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = place.id,
-                userId = user?.id,
+                userId = userAccount?.id,
                 comment = comment,
                 createdAt = clock.instant(),
             ),
         )
     }
 
-    fun giveBuildingAccessibilityUpvote(buildingAccessibility: BuildingAccessibility, user: User = createUser()) {
+    fun giveBuildingAccessibilityUpvote(buildingAccessibility: BuildingAccessibility, userAccount: UserAccount = createIdentifiedUser().account) {
         buildingAccessibilityUpvoteRepository.save(
             BuildingAccessibilityUpvote(
                 id = EntityIdGenerator.generateRandom(),
-                userId = user.id,
+                userId = userAccount.id,
                 buildingAccessibilityId = buildingAccessibility.id,
                 createdAt = clock.instant(),
             ),

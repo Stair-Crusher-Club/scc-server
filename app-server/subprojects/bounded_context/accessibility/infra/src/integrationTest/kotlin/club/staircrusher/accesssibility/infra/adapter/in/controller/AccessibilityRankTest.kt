@@ -8,7 +8,6 @@ import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.Acces
 import club.staircrusher.api.spec.dto.GetAccessibilityLeaderboardPost200Response
 import club.staircrusher.api.spec.dto.GetAccessibilityRankPost200Response
 import club.staircrusher.api.spec.dto.GetCountForNextRankPost200Response
-import club.staircrusher.user.application.port.out.persistence.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -29,12 +28,8 @@ class AccessibilityRankTest : AccessibilityITBase() {
     @Autowired
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
 
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
-//        userRepository.deleteAll()
         accessibilityRankRepository.deleteAll()
         placeAccessibilityRepository.deleteAll()
         buildingAccessibilityUpvoteRepository.deleteAll()
@@ -58,7 +53,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
     @Test
     fun `leaderboard use case test`() {
         mvc
-            .sccRequest("/getAccessibilityLeaderboard", null)
+            .sccAnonymousRequest("/getAccessibilityLeaderboard", null)
             .apply {
                 val result = getResult(GetAccessibilityLeaderboardPost200Response::class)
                 assertEquals(10, result.ranks.size)
@@ -76,7 +71,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
     @Test
     fun `same conquered count case test`() {
         val leaderboard = mvc
-            .sccRequest("/getAccessibilityLeaderboard", null)
+            .sccAnonymousRequest("/getAccessibilityLeaderboard", null)
             .getResult(GetAccessibilityLeaderboardPost200Response::class)
 
         val top = leaderboard.ranks.find { it.rank == 1L }!!
@@ -85,13 +80,13 @@ class AccessibilityRankTest : AccessibilityITBase() {
         mvc.sccRequest("/updateAccessibilityRanks", null)
 
         val rank = mvc
-            .sccRequest("/getAccessibilityRank", null, user = user)
+            .sccRequest("/getAccessibilityRank", null, userAccount = user)
             .getResult(GetAccessibilityRankPost200Response::class)
             .accessibilityRank
         assertEquals(1L, rank.rank)
 
         val leaderboard2 = mvc
-            .sccRequest("/getAccessibilityLeaderboard", null)
+            .sccAnonymousRequest("/getAccessibilityLeaderboard", null)
             .getResult(GetAccessibilityLeaderboardPost200Response::class)
         val secondRanker = leaderboard.ranks.first { it.rank != 1L }
         val secondRanker2 = leaderboard2.ranks.first { it.rank != 1L }
@@ -109,7 +104,7 @@ class AccessibilityRankTest : AccessibilityITBase() {
         mvc.sccRequest("/updateAccessibilityRanks", null)
 
         val countForNextRank = mvc
-            .sccRequest("/getCountForNextRank", null, user = user)
+            .sccRequest("/getCountForNextRank", null, userAccount = user)
             .getResult(GetCountForNextRankPost200Response::class)
             .countForNextRank
 
