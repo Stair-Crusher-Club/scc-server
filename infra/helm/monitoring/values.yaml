@@ -1,4 +1,22 @@
+deploySecret:
+  awsRoleArn: arn:aws:iam::291889421067:role/monitoring-deploy-secret
+
+filesDir: files
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
 kube-prometheus-stack:
+  defaultRules:
+    rules:
+      etcd: false
+
   grafana:
     ingress:
       enabled: true
@@ -6,20 +24,84 @@ kube-prometheus-stack:
       hosts:
         - grafana.staircrusher.club
 
-  # https://github.com/prometheus-operator/kube-prometheus/issues/1392#issuecomment-1411719953
   prometheus:
+    ingress:
+      enabled: true
+
+      hosts:
+        - prometheus.staircrusher.club
+      paths: []
+
+    # https://github.com/prometheus-operator/kube-prometheus/issues/1392#issuecomment-1411719953
     prometheusSpec:
       ruleSelectorNilUsesHelmValues: false
       serviceMonitorSelectorNilUsesHelmValues: false
       podMonitorSelectorNilUsesHelmValues: false
       probeSelectorNilUsesHelmValues: false
 
+  # k3s 추가 설정이 필요한 metric 이라서 일단 비활성화
+  # https://github.com/k3s-io/k3s/issues/3619
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+
+  alertmanager:
+    alertmanagerSpec:
+      secrets:
+        - monitoring-secret
+    config:
+      route:
+        group_by: [ 'alertname', 'job' ]
+        group_wait: 30s
+        group_interval: 1m
+        repeat_interval: 4h
+        receiver: 'slack'
+        routes:
+          - matchers:
+              - alertname = Watchdog
+            repeat_interval: 24h
+            receiver: 'slack'
+          - matchers:
+              - severity = critical
+            continue: true
+            receiver: 'slack'
+      receivers:
+        - name: 'slack'
+          slack_configs:
+            - api_url_file: '/etc/alertmanager/secrets/monitoring-secret/slack-api-url'
+              channel: '#scc-server-alert'
+              text: '{{ template "slack.alertmanager.text" . }}'
+              color: '{{ if eq .GroupLabels.alertname "Watchdog" }}good{{ else }}danger{{ end }}'
+      templates:
+        - '/etc/alertmanager/config/*.tmpl'
+
+    templateFiles:
+      slack_template.tmpl: |-
+        {{ define "cluster" }}{{ .ExternalURL | reReplaceAll ".*alertmanager\\.(.*)" "$1" }}{{ end }}
+
+        {{ define "slack.alertmanager.text" }}
+        {{- $root := . }}
+        {{ range .Alerts }}
+          *Alert:* `{{ .Labels.alertname }}` - `{{ .Labels.severity }}`
+          *Cluster:*  {{ template "cluster" $root }}
+          *Description:* {{ .Annotations.message }}
+          *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
+          *Runbook:* <{{ .Annotations.runbook_url }}|:spiral_note_pad:>
+          *Details:*
+            {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+            {{ end }}
+        {{ end }}
+        {{ end }}
+
 promtail:
   serviceAccount:
     create: true
     name: loki
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/scc
+      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring
 
   config:
     clients:
@@ -86,18 +168,57 @@ loki:
     replicas: 1
   read:
     replicas: 1
+    extraEnv:
+      - name: AWS_ROLE_ARN
+        value: arn:aws:iam::291889421067:role/monitoring
+      - name: AWS_WEB_IDENTITY_TOKEN_FILE
+        value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+    extraVolumeMounts:
+      - name: aws-iam-token
+        mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        readOnly: true
+    extraVolumes:
+      - name: aws-iam-token
+        projected:
+          defaultMode: 420
+          sources:
+            - serviceAccountToken:
+                audience: sts.amazonaws.com
+                expirationSeconds: 86400
+                path: token
   write:
     replicas: 1
+    extraEnv:
+      - name: AWS_ROLE_ARN
+        value: arn:aws:iam::291889421067:role/monitoring
+      - name: AWS_WEB_IDENTITY_TOKEN_FILE
+        value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+    extraVolumeMounts:
+      - name: aws-iam-token
+        mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        readOnly: true
+    extraVolumes:
+      - name: aws-iam-token
+        projected:
+          defaultMode: 420
+          sources:
+            - serviceAccountToken:
+                audience: sts.amazonaws.com
+                expirationSeconds: 86400
+                path: token
 
   # Disable minio storage
   minio:
     enabled: false
 
   chunksCache:
-    allocatedMemory: 1024
+    # cpu request 가 500m 으로 하드코딩 되어 있어서 일단 비활성화 시킨다
+    # https://github.com/grafana/loki/blob/7200107ac4dcaf4f8e84e0c906e2f7d423aaa23d/production/helm/loki/templates/memcached/_memcached-statefulset.tpl#L99
+    enabled: false
+    # allocatedMemory: 1024
 
   serviceAccount:
     create: true
     name: loki
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/scc
+      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring

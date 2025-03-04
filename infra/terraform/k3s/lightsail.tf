@@ -155,7 +155,7 @@ resource "aws_lightsail_instance_public_ports" "k3s_data_planes" {
 }
 
 resource "aws_lightsail_instance" "k3s_data_planes_v1_27_3" {
-  for_each = { for i in range(2) : i => i }
+  for_each = { for i in range(3) : i => i }
 
   name              = "k3s_data_plane_v1_27_3_${each.value}"
   availability_zone = element(["ap-northeast-2a", "ap-northeast-2c"], each.value % 2)
