@@ -139,7 +139,7 @@ class AccessibilityApplicationService(
         taskExecutor.execute {
             try {
                 accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
-                // accessibilityImageService.generateThumbnailsIfNeeded(placeId)
+                accessibilityImageService.generateThumbnailsIfNeeded(placeId)
             } catch (t: Throwable) {
                 logger.error(t) { "Failed to migrate images or generate thumbnails for $placeId" }
             }
