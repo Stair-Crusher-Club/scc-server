@@ -1,0 +1,94 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus-rules
+  labels:
+    app: prometheus-rules
+spec:
+  groups:
+    - name: scc-server
+      rules:
+        - alert: Many500StatusCodes
+          annotations:
+            message: "{{`{{ $labels.service }}`}}'s {{`{{ $labels.uri }}`}} served {{`{{ printf \"%0.0f\" $value }}`}}s 5xx results in the last 5 minutes!"
+            runbook_url: ''
+          expr: |-
+            sum(increase(http_server_requests_seconds_count{outcome!="UNKNOWN", status=~"5.{2}"}[5m])) by (service, uri) > 50
+          for: 5m
+          labels:
+            severity: critical
+        - alert: Many500StatusCodes
+          annotations:
+            message: "{{`{{ $labels.service }}`}}'s {{`{{ $labels.uri }}`}} served {{`{{ printf \"%0.0f\" $value }}`}}% 5xx results in the last 5 minutes!"
+            runbook_url: ''
+          expr: |-
+            sum(increase(http_server_requests_seconds_count{outcome!="UNKNOWN", status=~"5.{2}"}[5m])) by (service, uri)
+            /
+            sum(increase(http_server_requests_seconds_count[5m])) by (service, uri)
+            * 100 > 10
+          for: 5m
+          labels:
+            severity: warning
+        - alert: ManyNot200StatusCodesFromExternalService
+          annotations:
+            message: "{{`{{ $labels.service }}`}}'s {{`{{ $labels.client_name }}`}}{{`{{ $labels.uri }}`}} return {{`{{ printf \"%0.0f\" $value }}`}}s not 2xx results in the last 5 minutes!"
+            runbook_url: ''
+          expr: |-
+            sum(increase(http_client_requests_seconds_count{status!~"2.{2}"}[5m])) by (service, client_name, uri) > 50
+          for: 5m
+          labels:
+            severity: warning
+        - alert: ManyNot200StatusCodesFromExternalService
+          annotations:
+            message: "{{`{{ $labels.service }}`}}'s {{`{{ $labels.client_name }}`}}{{`{{ $labels.uri }}`}} return {{`{{ printf \"%0.0f\" $value }}`}}% not 2xx results in the last 5 minutes!"
+            runbook_url: ''
+          expr: |-
+            sum(increase(http_client_requests_seconds_count{status!~"2.{2}"}[5m])) by (service, client_name, uri)
+            /
+            sum(increase(http_client_requests_seconds_count[5m])) by (service, client_name, uri)
+            * 100 > 10
+          for: 5m
+          labels:
+            severity: warning
+        - alert: APILatencyHigh
+          annotations:
+            message: "{{`{{ $labels.service }}`}}\'s {{`{{ $labels.uri }}`}}\'s latency is {{`{{ printf \"%0.1f\" $value }}`}}s in the last 5 minutes!"
+            runbook_url: ''
+          expr: |-
+            sum(increase(http_server_requests_seconds_sum{uri!~"/updateAccessibilityRanks|/updateChallengeRanks"}[5m])) by (uri, service)
+            /
+            sum(increase(http_server_requests_seconds_count{uri!~"/updateAccessibilityRanks|/updateChallengeRanks"}[5m])) by (uri, service)
+            > 10
+          for: 5m
+          labels:
+            severity: critical
+        - alert: APILatencyHigh
+          annotations:
+            message: "{{`{{ $labels.service }}`}}\'s {{`{{ $labels.uri }}`}}\'s latency is {{`{{ printf \"%0.1f\" $value }}`}}s in the last 5 minutes!"
+            runbook_url: ''
+          expr: |-
+            sum(increase(http_server_requests_seconds_sum{uri!~"/updateAccessibilityRanks|/updateChallengeRanks"}[5m])) by (uri, service)
+            /
+            sum(increase(http_server_requests_seconds_count{uri!~"/updateAccessibilityRanks|/updateChallengeRanks"}[5m])) by (uri, service)
+            > 5
+          for: 5m
+          labels:
+            severity: warning
+        - alert: KubePodContainerStatusRestart
+          annotations:
+            message: "Some pod in namespace scc is restarted"
+            runbook_url: ''
+          expr: |-
+            sum(increase(kube_pod_container_status_restarts_total{namespace="scc"}[20m])) by (container) > 0
+          for: 1m
+          labels:
+            severity: warning
+        - alert: UserAPIRequestHigh
+          annotations:
+            message: "{{`{{ $labels.service }}`}}\'s {{`{{ $labels.uri }}`}}\'s Request High in the last 5 minutes! ({{`{{ printf \"%0.2f\" $value }}`}} rps)"
+            runbook_url: ''
+          expr: |-
+            sum(rate(http_server_requests_seconds_count[1m])) by (service, uri) > 5
+          for: 5m
+          labels:
+            severity: warning
