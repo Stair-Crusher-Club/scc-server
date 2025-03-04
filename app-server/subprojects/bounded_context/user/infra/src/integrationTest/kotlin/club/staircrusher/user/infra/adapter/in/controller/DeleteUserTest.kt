@@ -92,7 +92,7 @@ class DeleteUserTest : UserITBase() {
             )
         )
         val user = mvc
-            .sccRequest("/loginWithKakao", params)
+            .sccAnonymousRequest("/loginWithKakao", params)
             .run {
                 val result = getResult(LoginResultDto::class)
 
@@ -118,7 +118,7 @@ class DeleteUserTest : UserITBase() {
             )
         )
         val otherUser = mvc
-            .sccRequest("/loginWithKakao", params)
+            .sccAnonymousRequest("/loginWithKakao", params)
             .run {
                 val result = getResult(LoginResultDto::class)
                 val otherUser = transactionManager.doInTransaction {

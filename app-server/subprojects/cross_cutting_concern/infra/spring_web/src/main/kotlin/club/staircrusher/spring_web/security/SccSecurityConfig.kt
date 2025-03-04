@@ -4,5 +4,5 @@ import org.springframework.security.web.util.matcher.RequestMatcher
 
 interface SccSecurityConfig {
     fun requestMatchers(): List<RequestMatcher>
-    fun identifiedUserOnlyRequestMatchers(): List<RequestMatcher> = emptyList()
+    fun identifiedUserOnlyRequestMatchers(): List<RequestMatcher>
 }
