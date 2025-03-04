@@ -1,3 +1,17 @@
+deploySecret:
+  awsRoleArn: arn:aws:iam::291889421067:role/monitoring-deploy-secret
+
+filesDir: files
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
 kube-prometheus-stack:
   defaultRules:
     rules:
@@ -35,6 +49,9 @@ kube-prometheus-stack:
     enabled: false
 
   alertmanager:
+    alertmanagerSpec:
+      secrets:
+        - monitoring-secret
     config:
       route:
         group_by: [ 'alertname', 'job' ]
@@ -54,7 +71,7 @@ kube-prometheus-stack:
       receivers:
         - name: 'slack'
           slack_configs:
-            - api_url: 'https://hooks.slack.com/services/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'
+            - api_url_file: '/etc/alertmanager/secrets/monitoring-secret/slack-api-url'
               channel: '#scc-server-alert'
               text: '{{ template "slack.alertmanager.text" . }}'
               color: '{{ if eq .GroupLabels.alertname "Watchdog" }}good{{ else }}danger{{ end }}'

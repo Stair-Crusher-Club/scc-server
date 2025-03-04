@@ -18,3 +18,12 @@ data "terraform_remote_state" "oidc" {
     region = "ap-northeast-2"
   }
 }
+
+data "terraform_remote_state" "kms" {
+  backend = "s3"
+  config = {
+    bucket = "scc-prod-tf-remote-state"
+    key    = "kms.tfstate"
+    region = "ap-northeast-2"
+  }
+}
