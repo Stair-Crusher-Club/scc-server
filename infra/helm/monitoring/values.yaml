@@ -84,7 +84,7 @@ kube-prometheus-stack:
         {{- $root := . }}
         {{ range .Alerts }}
           *Alert:* `{{ .Labels.alertname }}` - `{{ .Labels.severity }}`
-          *Namespace:* {{ .CommonLabels.namespace | default "unknown" }}
+          *Namespace:* {{ if .Labels.namespace }}{{ .Labels.namespace }}{{ else }}unknown{{ end }}
           *Description:* {{ .Annotations.message }}
           *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
           *Runbook:* <{{ .Annotations.runbook_url }}|:spiral_note_pad:>
