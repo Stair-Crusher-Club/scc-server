@@ -14,6 +14,6 @@ class UserBoundedContextSecurityConfig : SccSecurityConfig {
         "/updateUserInfo",
         "/updatePushToken",
         "/deleteUser",
-        "/checkNicknameDuplication",
+        "/validateUserProfile",
     ).map { AntPathRequestMatcher(it) }
 }

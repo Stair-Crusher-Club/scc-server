@@ -11,6 +11,7 @@ import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.time.getYear
 import club.staircrusher.stdlib.validation.email.EmailValidator
+import club.staircrusher.stdlib.validation.nickname.NicknameValidator
 import club.staircrusher.user.application.port.out.persistence.UserAccountConnectionRepository
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
@@ -72,8 +73,8 @@ class UserApplicationService(
 
     fun signUp(params: UserProfileRepository.CreateUserParams): IdentifiedUserVO {
         val normalizedNickname = params.nickname.trim()
-        if (normalizedNickname.length < 2) {
-            throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
+        if (!NicknameValidator.isValid(normalizedNickname)) {
+            throw SccDomainException("최소 ${NicknameValidator.getMinLength()}자 이상의 닉네임을 설정해주세요.")
         }
         if (userProfileRepository.findFirstByNickname(normalizedNickname) != null) {
             throw SccDomainException("${normalizedNickname}은 이미 사용된 닉네임입니다.")
@@ -178,9 +179,9 @@ class UserApplicationService(
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         userProfile.nickname = run {
             val normalizedNickname = nickname.trim()
-            if (normalizedNickname.length < 2) {
+            if (!NicknameValidator.isValid(normalizedNickname)) {
                 throw SccDomainException(
-                    "최소 2자 이상의 닉네임을 설정해주세요.",
+                    "최소 ${NicknameValidator.getMinLength()}자 이상의 닉네임을 설정해주세요.",
                     SccDomainException.ErrorCode.INVALID_NICKNAME,
                 )
             }
@@ -292,7 +293,37 @@ class UserApplicationService(
         }
     }
 
-    fun isNicknameDuplicate(nickname: String): Boolean {
-        return userProfileRepository.existsByNickname(nickname)
+    data class UserProfileValidationResult(
+        val nicknameErrorMessage: String?,
+        val emailErrorMessage: String?,
+    )
+
+    fun validateUserProfile(nickname: String?, email: String?, userId: String? = null): UserProfileValidationResult {
+        val nicknameErrorMessage = nickname?.let { nick ->
+            val normalizedNickname = nick.trim()
+            when {
+                !NicknameValidator.isValid(normalizedNickname) -> "올바른 닉네임 형식이 아닙니다."
+                userProfileRepository.findFirstByNickname(normalizedNickname)?.let { existingUser ->
+                    userId == null || existingUser.userId != userId
+                } == true -> "이미 사용 중인 닉네임입니다."
+                else -> null
+            }
+        }
+
+        val emailErrorMessage = email?.let { mail ->
+            val normalizedEmail = mail.trim()
+            when {
+                !EmailValidator.isValid(normalizedEmail) -> "올바른 이메일 형식이 아닙니다."
+                userProfileRepository.findFirstByEmail(normalizedEmail)?.let { existingUser ->
+                    userId == null || existingUser.id != userId
+                } == true -> "이미 사용 중인 이메일입니다."
+                else -> null
+            }
+        }
+
+        return UserProfileValidationResult(
+            nicknameErrorMessage = nicknameErrorMessage,
+            emailErrorMessage = emailErrorMessage,
+        )
     }
 }
