@@ -1,8 +1,8 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPost200Response
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPostRequest
+import club.staircrusher.api.spec.dto.CheckUserProfileValidationPost200Response
+import club.staircrusher.api.spec.dto.CheckUserProfileValidationPostRequest
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
