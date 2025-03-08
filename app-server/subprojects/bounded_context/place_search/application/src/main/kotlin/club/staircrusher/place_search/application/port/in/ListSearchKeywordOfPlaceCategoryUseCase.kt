@@ -10,6 +10,7 @@ class ListSearchKeywordOfPlaceCategoryUseCase {
             PlaceCategory.RESTAURANT,
             PlaceCategory.CAFE,
             PlaceCategory.CONVENIENCE_STORE,
+            PlaceCategory.HOSPITAL,
             PlaceCategory.PHARMACY
         )
             .map { it to it.humanReadableName }
