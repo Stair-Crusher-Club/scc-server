@@ -906,9 +906,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetHomeBannersResponseDto'
 
-  /checkNicknameDuplication:
+  /checkUserProfileValidation:
     post:
-      summary: 닉네임 중복 여부를 체크한다.
+      summary: 유저 프로필 정보의 유효성을 검사한다.
       requestBody:
         required: true
         content:
@@ -918,9 +918,16 @@ paths:
               properties:
                 nickname:
                   type: string
-                  description: 중복 체크할 닉네임
-              required:
-                - nickname
+                  nullable: true
+                  description: 유효성을 검사할 닉네임. null인 경우 유효한 것으로 간주
+                email:
+                  type: string
+                  nullable: true
+                  description: 유효성을 검사할 이메일. null인 경우 유효한 것으로 간주
+                userId:
+                  type: string
+                  description: 현재 유저의 ID. 이메일/닉네임 중복 검사 시 자신의 것은 허용하기 위해 사용
+              required: []
       responses:
         '200':
           content:
@@ -928,11 +935,17 @@ paths:
               schema:
                 type: object
                 properties:
-                  isDuplicate:
-                    type: boolean
-                    description: 닉네임 중복 여부
+                  nicknameErrorMessage:
+                    type: string
+                    nullable: true
+                    description: 닉네임이 유효하지 않은 경우 에러 메시지, 유효하거나 null인 경우 null
+                  emailErrorMessage:
+                    type: string
+                    nullable: true
+                    description: 이메일이 유효하지 않은 경우 에러 메시지, 유효하거나 null인 경우 null
                 required:
-                  - isDuplicate
+                  - nicknameErrorMessage
+                  - emailErrorMessage
         '400':
           $ref: '#/components/responses/ApiFailure'
 

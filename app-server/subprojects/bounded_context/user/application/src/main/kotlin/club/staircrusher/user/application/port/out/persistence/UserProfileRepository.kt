@@ -11,7 +11,7 @@ interface UserProfileRepository : CrudRepository<UserProfile, String> {
     fun findFirstByEmail(email: String): UserProfile?
     fun findAllByUserIdIn(userIds: Collection<String>): List<UserProfile>
     fun existsByNickname(nickname: String): Boolean
-
+    fun existsByEmail(email: String): Boolean
     data class CreateUserParams(
         val nickname: String,
         @Deprecated("패스워드 로그인은 사라질 예정") val password: String?,

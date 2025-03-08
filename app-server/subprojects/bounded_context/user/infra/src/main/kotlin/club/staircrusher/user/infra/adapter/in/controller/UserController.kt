@@ -94,12 +94,19 @@ class UserController(
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/checkNicknameDuplication")
-    fun checkNicknameDuplication(
-        @RequestBody request: CheckNicknameDuplicationPostRequest,
-    ): CheckNicknameDuplicationPost200Response {
-        val isDuplicate = userApplicationService.isNicknameDuplicate(request.nickname)
-        return CheckNicknameDuplicationPost200Response(isDuplicate)
+    @PostMapping("/checkUserProfileValidation")
+    fun checkUserProfileValidation(
+        @RequestBody request: CheckUserProfileValidationPostRequest,
+    ): CheckUserProfileValidationPost200Response {
+        val result = userApplicationService.validateUserProfile(
+            nickname = request.nickname,
+            email = request.email,
+            userId = request.userId,
+        )
+        return CheckUserProfileValidationPost200Response(
+            nicknameErrorMessage = result.nicknameErrorMessage,
+            emailErrorMessage = result.emailErrorMessage,
+        )
     }
 
     companion object {

@@ -292,7 +292,37 @@ class UserApplicationService(
         }
     }
 
-    fun isNicknameDuplicate(nickname: String): Boolean {
-        return userProfileRepository.existsByNickname(nickname)
+    data class UserProfileValidationResult(
+        val nicknameErrorMessage: String?,
+        val emailErrorMessage: String?,
+    )
+
+    fun validateUserProfile(nickname: String?, email: String?, userId: String? = null): UserProfileValidationResult {
+        val nicknameErrorMessage = nickname?.let { nick ->
+            val normalizedNickname = nick.trim()
+            when {
+                normalizedNickname.length < 2 -> "최소 2자 이상의 닉네임을 설정해주세요."
+                userProfileRepository.findFirstByNickname(normalizedNickname)?.let { existingUser ->
+                    userId == null || existingUser.id != userId
+                } == true -> "${normalizedNickname}은 이미 사용 중인 닉네임입니다."
+                else -> null
+            }
+        }
+
+        val emailErrorMessage = email?.let { mail ->
+            val normalizedEmail = mail.trim()
+            when {
+                !EmailValidator.isValid(normalizedEmail) -> "${normalizedEmail}은 유효한 형태의 이메일이 아닙니다."
+                userProfileRepository.findFirstByEmail(normalizedEmail)?.let { existingUser ->
+                    userId == null || existingUser.id != userId
+                } == true -> "${normalizedEmail}은 이미 사용 중인 이메일입니다."
+                else -> null
+            }
+        }
+
+        return UserProfileValidationResult(
+            nicknameErrorMessage = nicknameErrorMessage,
+            emailErrorMessage = emailErrorMessage,
+        )
     }
 }
