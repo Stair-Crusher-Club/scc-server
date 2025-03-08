@@ -304,7 +304,7 @@ class UserApplicationService(
             when {
                 !NicknameValidator.isValid(normalizedNickname) -> "올바른 닉네임 형식이 아닙니다."
                 userProfileRepository.findFirstByNickname(normalizedNickname)?.let { existingUser ->
-                    userId == null || existingUser.id != userId
+                    userId == null || existingUser.userId != userId
                 } == true -> "이미 사용 중인 닉네임입니다."
                 else -> null
             }
