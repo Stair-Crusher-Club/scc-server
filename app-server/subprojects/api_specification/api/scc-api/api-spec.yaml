@@ -922,9 +922,6 @@ paths:
                 email:
                   type: string
                   description: 유효성을 검사할 이메일. null인 경우 유효한 것으로 간주
-                userId:
-                  type: string
-                  description: 현재 유저의 ID. 이메일/닉네임 중복 검사 시 자신의 것은 허용하기 위해 사용
               required: []
       responses:
         '200':

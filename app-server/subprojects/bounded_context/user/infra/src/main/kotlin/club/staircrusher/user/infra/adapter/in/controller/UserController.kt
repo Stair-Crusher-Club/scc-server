@@ -97,11 +97,12 @@ class UserController(
     @PostMapping("/validateUserProfile")
     fun validateUserProfile(
         @RequestBody request: ValidateUserProfilePostRequest,
+        authentication: SccAppAuthentication,
     ): ValidateUserProfilePost200Response {
         val result = userApplicationService.validateUserProfile(
             nickname = request.nickname,
             email = request.email,
-            userId = request.userId,
+            userId = authentication.principal,
         )
         return ValidateUserProfilePost200Response(
             nicknameErrorMessage = result.nicknameErrorMessage,
