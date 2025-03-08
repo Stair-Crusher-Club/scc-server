@@ -1,12 +1,12 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
-import club.staircrusher.api.spec.dto.CheckUserProfileValidationPost200Response
-import club.staircrusher.api.spec.dto.CheckUserProfileValidationPostRequest
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.api.spec.dto.ValidateUserProfilePost200Response
+import club.staircrusher.api.spec.dto.ValidateUserProfilePostRequest
 import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -94,16 +94,16 @@ class UserController(
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/checkUserProfileValidation")
-    fun checkUserProfileValidation(
-        @RequestBody request: CheckUserProfileValidationPostRequest,
-    ): CheckUserProfileValidationPost200Response {
+    @PostMapping("/validateUserProfile")
+    fun validateUserProfile(
+        @RequestBody request: ValidateUserProfilePostRequest,
+    ): ValidateUserProfilePost200Response {
         val result = userApplicationService.validateUserProfile(
             nickname = request.nickname,
             email = request.email,
             userId = request.userId,
         )
-        return CheckUserProfileValidationPost200Response(
+        return ValidateUserProfilePost200Response(
             nicknameErrorMessage = result.nicknameErrorMessage,
             emailErrorMessage = result.emailErrorMessage,
         )
