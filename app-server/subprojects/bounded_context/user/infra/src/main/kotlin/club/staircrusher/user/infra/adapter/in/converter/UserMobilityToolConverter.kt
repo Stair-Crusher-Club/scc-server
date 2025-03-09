@@ -12,6 +12,7 @@ fun UserMobilityToolDto.toModel() = when (this) {
     UserMobilityToolDto.WALKING_ASSISTANCE_DEVICE -> UserMobilityTool.WALKING_ASSISTANCE_DEVICE
     UserMobilityToolDto.CLUCH -> UserMobilityTool.CLUCH
     UserMobilityToolDto.NONE -> UserMobilityTool.NONE
+    UserMobilityToolDto.FRIEND_OF_TOOL_USER -> UserMobilityTool.FRIEND_OF_TOOL_USER
 }
 
 fun UserMobilityTool.toDTO() = when (this) {
@@ -23,4 +24,5 @@ fun UserMobilityTool.toDTO() = when (this) {
     UserMobilityTool.WALKING_ASSISTANCE_DEVICE -> UserMobilityToolDto.WALKING_ASSISTANCE_DEVICE
     UserMobilityTool.CLUCH -> UserMobilityToolDto.CLUCH
     UserMobilityTool.NONE -> UserMobilityToolDto.NONE
+    UserMobilityTool.FRIEND_OF_TOOL_USER -> UserMobilityToolDto.FRIEND_OF_TOOL_USER
 }
