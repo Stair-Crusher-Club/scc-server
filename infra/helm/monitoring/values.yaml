@@ -80,13 +80,11 @@ kube-prometheus-stack:
 
     templateFiles:
       slack_template.tmpl: |-
-        {{ define "cluster" }}{{ .ExternalURL | reReplaceAll ".*alertmanager\\.(.*)" "$1" }}{{ end }}
-
         {{ define "slack.alertmanager.text" }}
         {{- $root := . }}
         {{ range .Alerts }}
           *Alert:* `{{ .Labels.alertname }}` - `{{ .Labels.severity }}`
-          *Cluster:*  {{ template "cluster" $root }}
+          *Namespace:* {{ if .Labels.namespace }}{{ .Labels.namespace }}{{ else }}unknown{{ end }}
           *Description:* {{ .Annotations.message }}
           *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
           *Runbook:* <{{ .Annotations.runbook_url }}|:spiral_note_pad:>
