@@ -24,4 +24,8 @@ class MockAppleLoginService : AppleLoginService {
             ),
         )
     }
+
+    override suspend fun revoke(token: String): Boolean {
+        return true
+    }
 }

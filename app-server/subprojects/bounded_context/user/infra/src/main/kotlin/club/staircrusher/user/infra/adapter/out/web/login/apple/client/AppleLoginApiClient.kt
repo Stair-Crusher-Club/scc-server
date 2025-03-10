@@ -1,5 +1,6 @@
 package club.staircrusher.user.infra.adapter.out.web.login.apple.client
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.service.annotation.PostExchange
 import reactor.core.publisher.Mono
@@ -21,8 +22,27 @@ internal interface AppleLoginApiClient {
         @RequestParam(required = false) redirect_uri: String? = null,
     ): Mono<GetAppleLoginTokensResponseDto>
 
+    @Suppress("FunctionParameterNaming")
+    @PostExchange(
+        url = "/auth/revoke",
+        contentType = "application/x-www-form-urlencoded",
+        accept = ["application/json"],
+    )
+    fun revoke(
+        @RequestParam client_id: String,
+        @RequestParam client_secret: String,
+        @RequestParam token: String,
+        @RequestParam(required = false) token_type_hint: String,
+    ): Mono<ResponseEntity<Unit>>
+
     enum class GrantType(val externalName: String) {
         AUTHORIZATION_CODE("authorization_code"),
+        REFRESH_TOKEN("refresh_token"),
+        ;
+    }
+
+    enum class TokenType(val externalName: String) {
+        ACCESS_TOKEN("access_token"),
         REFRESH_TOKEN("refresh_token"),
         ;
     }

@@ -12,6 +12,7 @@ import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import club.staircrusher.user.application.port.`in`.use_case.DeleteUserUseCase
 import club.staircrusher.user.application.port.`in`.use_case.GetUserProfileUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userApplicationService: UserApplicationService,
     private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val deleteUserUseCase: DeleteUserUseCase,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -90,7 +92,7 @@ class UserController(
 
     @PostMapping("/deleteUser")
     fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
-        userApplicationService.deleteUser(authentication.principal)
+        deleteUserUseCase.handle(authentication.principal)
         return ResponseEntity.noContent().build()
     }
 

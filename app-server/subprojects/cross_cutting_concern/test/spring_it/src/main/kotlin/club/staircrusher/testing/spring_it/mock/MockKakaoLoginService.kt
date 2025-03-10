@@ -13,4 +13,8 @@ class MockKakaoLoginService : KakaoLoginService {
             kakaoSyncUserId = "dummy",
         )
     }
+
+    override suspend fun disconnect(externalId: String): Boolean {
+        return true
+    }
 }

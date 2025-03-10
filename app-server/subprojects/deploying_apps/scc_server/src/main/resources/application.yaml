@@ -54,6 +54,7 @@ scc:
 
   kakao-login:
     oauth-client-id: test
+    admin-key: test
 
   naver:
     open-api:
