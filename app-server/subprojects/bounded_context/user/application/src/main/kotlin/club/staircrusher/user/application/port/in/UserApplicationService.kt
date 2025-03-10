@@ -13,7 +13,6 @@ import club.staircrusher.stdlib.time.getYear
 import club.staircrusher.stdlib.validation.email.EmailValidator
 import club.staircrusher.user.application.port.out.persistence.UserAccountConnectionRepository
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
-import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
@@ -43,7 +42,6 @@ class UserApplicationService(
     private val userAccountConnectionRepository: UserAccountConnectionRepository,
     private val userAuthService: UserAuthService,
     private val passwordEncryptor: PasswordEncryptor,
-    private val userAuthInfoRepository: UserAuthInfoRepository,
     private val stibeeSubscriptionService: StibeeSubscriptionService,
     private val sccServerEventRecorder: SccServerEventRecorder,
     private val pushService: PushService,
@@ -234,9 +232,7 @@ class UserApplicationService(
         return@doInTransaction userProfile
     }
 
-    fun deleteUser(
-        userId: String,
-    ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
+    fun deleteUser(userId: String) {
         val userAccount = userAccountRepository.findByIdOrNull(userId)
         val userProfile = userProfileRepository.findFirstByUserId(userId)
 
@@ -249,8 +245,6 @@ class UserApplicationService(
             it.delete(now)
             userProfileRepository.save(it)
         }
-
-        userAuthInfoRepository.removeByUserId(userId)
     }
 
     fun connectToIdentifiedAccount(anonymousUserId: String, identifiedUserId: String, reason: UserConnectionReason) {
