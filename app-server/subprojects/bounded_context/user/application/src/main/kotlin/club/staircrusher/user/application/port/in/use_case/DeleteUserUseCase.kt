@@ -28,16 +28,16 @@ class DeleteUserUseCase(
 
         val userAuthInfo = userAuthInfoRepository.findByUserId(userId).maxByOrNull { it.createdAt }
         userAuthInfo?.let {
-            revokeExternalConnectionAfterCommit(userId, it.externalId, it.authProviderType)
+            revokeExternalConnectionAfterCommit(userId, it.externalId, it.externalRefreshToken, it.authProviderType)
             userAuthInfoRepository.removeByUserId(userId)
         }
     }
 
-    private fun revokeExternalConnectionAfterCommit(userId: String, externalId: String, authProviderType: UserAuthProviderType) {
+    private fun revokeExternalConnectionAfterCommit(userId: String, externalId: String, refreshToken: String, authProviderType: UserAuthProviderType) {
         transactionManager.doAfterCommit {
             CoroutineScope(Dispatchers.IO).launch {
                 val revokeResult = when (authProviderType) {
-                    UserAuthProviderType.APPLE -> appleLoginService.revoke(externalId)
+                    UserAuthProviderType.APPLE -> appleLoginService.revoke(refreshToken)
                     UserAuthProviderType.KAKAO -> kakaoLoginService.disconnect(externalId)
                 }
 

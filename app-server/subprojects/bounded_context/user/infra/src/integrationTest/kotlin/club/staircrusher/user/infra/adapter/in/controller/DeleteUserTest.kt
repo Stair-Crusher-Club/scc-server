@@ -174,16 +174,16 @@ class DeleteUserTest : UserITBase() {
     @Test
     fun `애플 로그인으로 가입한 유저의 경우 애플에 연결 해제 요청을 한다`() {
         // given - 소셜 로그인으로 회원가입
-        val deletedUserExternalId = "appleLoginUserId"
+        val deletedUserRefreshToken = "refreshToken"
         val appleLoginTokens = AppleLoginTokens(
             accessToken = "",
             expiresAt = SccClock.instant() + Duration.ofHours(1),
-            refreshToken = "refreshToken",
+            refreshToken = deletedUserRefreshToken,
             idToken = AppleIdToken(
                 issuer = "https://appleid.apple.com",
                 audience = "clientId",
                 expiresAtEpochSecond = SccClock.instant().epochSecond + 10,
-                appleLoginUserId = deletedUserExternalId,
+                appleLoginUserId = "appleLoginUserId",
             ),
         )
         doReturn(appleLoginTokens).wheneverBlocking(appleLoginService) { getAppleLoginTokens(eq("dummy")) }
@@ -222,7 +222,7 @@ class DeleteUserTest : UserITBase() {
                     assertNotNull(deletedUserProfile)
                     assertTrue(deletedUserProfile!!.isDeleted)
 
-                    verifyBlocking(appleLoginService, times(1)) { revoke(eq(deletedUserExternalId)) }
+                    verifyBlocking(appleLoginService, times(1)) { revoke(eq(deletedUserRefreshToken)) }
 
                     val userAuthInfo = userAuthInfoRepository.findByUserId(user.id).find { it.authProviderType == UserAuthProviderType.APPLE }
                     assertNull(userAuthInfo)
