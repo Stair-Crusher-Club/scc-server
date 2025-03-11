@@ -34,7 +34,7 @@ class PushSender(
         FirebaseMessaging.getInstance(firebaseApp)
     }
 
-    public override suspend fun send(
+    override suspend fun send(
         pushToken: String,
         customData: Map<String, String>,
         notification: PushService.Notification,
@@ -72,14 +72,14 @@ class PushSender(
         customData: Map<String, String>,
         notification: PushService.Notification,
     ): AndroidConfig {
+        val androidNotification = AndroidNotification.builder().apply {
+            notification.title?.let { setTitle(it) }
+            setBody(notification.body)
+        }.build()
+
         return AndroidConfig.builder().apply {
             notification.collapseKey?.let { setCollapseKey(it) }
-            setNotification(
-                AndroidNotification.builder()
-                    .setBody(notification.body)
-                    .setTitle(notification.title)
-                    .build()
-            )
+            setNotification(androidNotification)
             putAllData(customData)
             notification.link?.let { putData(DEEPLINK_CUSTOM_DATA_KEY, it) }
             setPriority(AndroidConfig.Priority.HIGH)
