@@ -22,6 +22,7 @@ internal interface AppleLoginApiClient {
         @RequestParam(required = false) redirect_uri: String? = null,
     ): Mono<GetAppleLoginTokensResponseDto>
 
+    // https://developer.apple.com/documentation/signinwithapplerestapi/revoke_tokens
     @Suppress("FunctionParameterNaming")
     @PostExchange(
         url = "/auth/revoke",

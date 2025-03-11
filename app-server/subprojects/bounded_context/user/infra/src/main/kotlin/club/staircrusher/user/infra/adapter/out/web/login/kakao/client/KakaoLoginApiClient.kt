@@ -5,6 +5,7 @@ import org.springframework.web.service.annotation.PostExchange
 import reactor.core.publisher.Mono
 
 internal interface KakaoLoginApiClient {
+    // https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#unlink
     @Suppress("FunctionParameterNaming")
     @PostExchange(
         url = "/v1/user/unlink",
