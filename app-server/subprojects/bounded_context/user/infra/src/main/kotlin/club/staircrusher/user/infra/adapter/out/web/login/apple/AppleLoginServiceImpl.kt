@@ -36,6 +36,17 @@ internal class AppleLoginServiceImpl(
         }
     }
 
+    override suspend fun revoke(token: String): Boolean {
+        val response = appleLoginApiClient.revoke(
+            client_id = appleLoginProperties.serviceId,
+            client_secret = appleLoginProperties.clientSecret,
+            token = token,
+            token_type_hint = AppleLoginApiClient.TokenType.REFRESH_TOKEN.externalName,
+        ).awaitFirst()
+
+        return response.statusCode.is2xxSuccessful
+    }
+
     private fun parseIdToken(idToken: String): AppleIdToken {
         val decodedJWT = JWT.decode(idToken)
         val appleIdToken = AppleIdToken(
