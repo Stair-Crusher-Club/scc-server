@@ -177,7 +177,3 @@ resource "aws_s3_bucket_cors_configuration" "home_banners" {
     max_age_seconds = 3000
   }
 }
-
-resource "aws_s3_bucket" "scc_loki_storage" {
-  bucket = "scc-loki-storage"
-}

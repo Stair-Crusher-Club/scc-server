@@ -252,7 +252,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
     }
 
-    @Disabled("정복 활동에 방해될 것 같아서 잠시 비활성화")
     @Test
     fun `썸네일이 없으면 생성한다`() {
         val imageUrl = "resources/example.jpg"

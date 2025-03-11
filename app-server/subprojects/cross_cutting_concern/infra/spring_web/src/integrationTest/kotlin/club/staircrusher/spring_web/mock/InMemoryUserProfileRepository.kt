@@ -31,4 +31,8 @@ class InMemoryUserProfileRepository : UserProfileRepository, InMemoryCrudReposit
     override fun existsByNickname(nickname: String): Boolean {
         return entityById.values.find { it.nickname == nickname } != null
     }
+
+    override fun existsByEmail(email: String): Boolean {
+        return entityById.values.find { it.email == email } != null
+    }
 }
