@@ -28,7 +28,7 @@ class DeleteUserUseCase(
 
         val userAuthInfo = userAuthInfoRepository.findByUserId(userId).maxByOrNull { it.createdAt }
         userAuthInfo?.let {
-            revokeExternalConnectionAfterCommit(userId, userAuthInfo.externalId, userAuthInfo.authProviderType)
+            revokeExternalConnectionAfterCommit(userId, it.externalId, it.authProviderType)
             userAuthInfoRepository.removeByUserId(userId)
         }
     }

@@ -3,11 +3,15 @@ package club.staircrusher.user.infra.adapter.`in`.controller
 import club.staircrusher.api.spec.dto.KakaoTokensDto
 import club.staircrusher.api.spec.dto.LoginPostRequest
 import club.staircrusher.api.spec.dto.LoginResultDto
+import club.staircrusher.api.spec.dto.LoginWithAppleRequestDto
 import club.staircrusher.api.spec.dto.LoginWithKakaoPostRequest
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
+import club.staircrusher.user.application.port.out.web.login.apple.AppleIdToken
+import club.staircrusher.user.application.port.out.web.login.apple.AppleLoginService
+import club.staircrusher.user.application.port.out.web.login.apple.AppleLoginTokens
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoIdToken
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
 import club.staircrusher.user.domain.model.UserAuthProviderType
@@ -18,17 +22,23 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
+import org.mockito.kotlin.wheneverBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.web.servlet.ResultActionsDsl
+import java.time.Duration
 
 class DeleteUserTest : UserITBase() {
     @MockBean
     lateinit var kakaoLoginService: KakaoLoginService
+
+    @MockBean
+    lateinit var appleLoginService: AppleLoginService
 
     @Autowired
     private lateinit var userAccountRepository: UserAccountRepository
@@ -163,26 +173,27 @@ class DeleteUserTest : UserITBase() {
 
     @Test
     fun `애플 로그인으로 가입한 유저의 경우 애플에 연결 해제 요청을 한다`() {
-        val params = LoginWithKakaoPostRequest(
-            kakaoTokens = KakaoTokensDto(
-                accessToken = "dummy",
-                refreshToken = "refreshToken",
-                idToken = "dummy",
-            )
-        )
-
         // given - 소셜 로그인으로 회원가입
-        val deletedUserSyncId = "kakaoSyncUserId1"
-        Mockito.`when`(kakaoLoginService.parseIdToken("dummy")).thenReturn(
-            KakaoIdToken(
-                issuer = "https://kauth.kakao.com",
+        val deletedUserExternalId = "appleLoginUserId"
+        val appleLoginTokens = AppleLoginTokens(
+            accessToken = "",
+            expiresAt = SccClock.instant() + Duration.ofHours(1),
+            refreshToken = "refreshToken",
+            idToken = AppleIdToken(
+                issuer = "https://appleid.apple.com",
                 audience = "clientId",
                 expiresAtEpochSecond = SccClock.instant().epochSecond + 10,
-                kakaoSyncUserId = deletedUserSyncId,
-            )
+                appleLoginUserId = deletedUserExternalId,
+            ),
+        )
+        doReturn(appleLoginTokens).wheneverBlocking(appleLoginService) { getAppleLoginTokens(eq("dummy")) }
+
+        val params = LoginWithAppleRequestDto(
+            identityToken = "dummy",
+            authorizationCode = "dummy",
         )
         val user = mvc
-            .sccAnonymousRequest("/loginWithKakao", params)
+            .sccAnonymousRequest("/loginWithApple", params)
             .run {
                 val result = getResult(LoginResultDto::class)
 
@@ -191,33 +202,11 @@ class DeleteUserTest : UserITBase() {
                 }
 
                 val newUserAuthInfo = transactionManager.doInTransaction {
-                    userAuthInfoRepository.findByUserId(newUser.id).find { it.authProviderType == UserAuthProviderType.KAKAO }
+                    userAuthInfoRepository.findByUserId(newUser.id).find { it.authProviderType == UserAuthProviderType.APPLE }
                 }
                 assertNotNull(newUserAuthInfo)
 
                 newUser
-            }
-
-        // given - 소셜 로그인으로 한 명 더 유저를 만들어둔다.
-        Mockito.`when`(kakaoLoginService.parseIdToken("dummy")).thenReturn(
-            KakaoIdToken(
-                issuer = "https://kauth.kakao.com",
-                audience = "clientId",
-                expiresAtEpochSecond = SccClock.instant().epochSecond + 10,
-                kakaoSyncUserId = "kakaoSyncUserId2",
-            )
-        )
-        val otherUser = mvc
-            .sccAnonymousRequest("/loginWithKakao", params)
-            .run {
-                val result = getResult(LoginResultDto::class)
-                val otherUser = transactionManager.doInTransaction {
-                    userAccountRepository.findById(result.user.id).get()
-                }
-                assertNotNull(otherUser)
-                assertNotEquals(user.id, otherUser.id)
-
-                otherUser
             }
 
         // when
@@ -233,15 +222,10 @@ class DeleteUserTest : UserITBase() {
                     assertNotNull(deletedUserProfile)
                     assertTrue(deletedUserProfile!!.isDeleted)
 
-                    // 각 벤더(카카오, 애플)에 필요한 연결 해제 API 를 호출한다
-                    verifyBlocking(kakaoLoginService, times(1)) { disconnect(eq(deletedUserSyncId)) }
+                    verifyBlocking(appleLoginService, times(1)) { revoke(eq(deletedUserExternalId)) }
 
-                    val userAuthInfo = userAuthInfoRepository.findByUserId(user.id).find { it.authProviderType == UserAuthProviderType.KAKAO }
+                    val userAuthInfo = userAuthInfoRepository.findByUserId(user.id).find { it.authProviderType == UserAuthProviderType.APPLE }
                     assertNull(userAuthInfo)
-
-                    // 다른 유저의 userAuthInfo는 삭제되지 않는다.
-                    val otherUserAuthInfo = userAuthInfoRepository.findByUserId(otherUser.id).find { it.authProviderType == UserAuthProviderType.KAKAO }
-                    assertNotNull(otherUserAuthInfo)
                 }
             }
     }
