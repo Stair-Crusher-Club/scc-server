@@ -1,8 +1,9 @@
-package club.staircrusher.place.infra.adapter.out.web
+package club.staircrusher.user.infra.adapter.out.web.login.kakao
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("scc.kakao")
 data class KakaoProperties(
-    val apiKey: String,
+    val restApiKey: String,
+    val adminKey: String,
 )

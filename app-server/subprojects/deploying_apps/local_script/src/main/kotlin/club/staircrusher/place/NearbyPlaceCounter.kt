@@ -4,7 +4,7 @@ import club.staircrusher.readTsvAsLines
 import club.staircrusher.TargetRegionInfo
 import club.staircrusher.place.application.port.out.web.MapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
-import club.staircrusher.place.infra.adapter.out.web.KakaoProperties
+import club.staircrusher.place.infra.adapter.out.web.KakaoMapsProperties
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
 import kotlinx.coroutines.async
@@ -44,7 +44,7 @@ private val targetCategoryGroups = listOf(
 @Suppress("MagicNumber")
 private val radiusMetersList = listOf(500)
 
-private val kakaoMapsService = KakaoMapsService(KakaoProperties(kakaoApiKey))
+private val kakaoMapsService = KakaoMapsService(KakaoMapsProperties(kakaoApiKey))
 
 fun main() {
     val regionInfos = getTargetRegionInfos()

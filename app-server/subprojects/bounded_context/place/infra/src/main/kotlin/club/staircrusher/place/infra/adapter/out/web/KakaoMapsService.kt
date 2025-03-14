@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit
 @Component
 @Priority(Int.MAX_VALUE - 1)
 class KakaoMapsService(
-    kakaoProperties: KakaoProperties,
+    kakaoMapsProperties: KakaoMapsProperties,
 ) : MapsService {
     companion object {
         private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
@@ -45,7 +45,7 @@ class KakaoMapsService(
     @Suppress("UnstableApiUsage", "MagicNumber") private val rateLimiter = RateLimiter.create(20.0)
 
     private val kakaoService: KakaoService by lazy {
-        // FIXME: extract configurable parameters to kakaoProperties
+        // FIXME: extract configurable parameters to kakaoMapsProperties
         val httpClient = HttpClient.create()
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT.toMillis().toInt())
             .compress(true)
@@ -62,7 +62,7 @@ class KakaoMapsService(
             .baseUrl("https://dapi.kakao.com")
             .clientConnector(ReactorClientHttpConnector(httpClient))
             .codecs { it.defaultCodecs().kotlinSerializationJsonDecoder(decoder) }
-            .defaultHeaders { it.add(HttpHeaders.AUTHORIZATION, "KakaoAK ${kakaoProperties.apiKey}") }
+            .defaultHeaders { it.add(HttpHeaders.AUTHORIZATION, "KakaoAK ${kakaoMapsProperties.restApiKey}") }
             .defaultStatusHandler(HttpStatusCode::isError) { response ->
                 response
                     .bodyToMono(KakaoError::class.java)
