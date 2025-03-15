@@ -10,7 +10,7 @@ import java.time.Instant
 @Entity
 class ClosedPlaceCandidate(
     @Id
-    val id: String,
+    override val id: String,
 
     @Column(nullable = false)
     val placeId: String,
@@ -39,23 +39,5 @@ class ClosedPlaceCandidate(
 
     fun ignore() {
         ignoredAt = SccClock.instant()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ClosedPlaceCandidate
-
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
-
-    override fun toString(): String {
-        return "ClosedPlaceCandidate(id='$id', placeId='$placeId', externalId='$externalId', " +
-            "acceptedAt='$acceptedAt', ignoredAt='$ignoredAt' createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }
