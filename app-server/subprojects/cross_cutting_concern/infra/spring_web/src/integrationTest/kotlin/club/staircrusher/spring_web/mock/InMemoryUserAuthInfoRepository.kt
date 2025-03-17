@@ -6,6 +6,7 @@ import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepos
 import club.staircrusher.user.domain.model.UserAuthInfo
 import club.staircrusher.user.domain.model.UserAuthProviderType
 import org.springframework.context.annotation.Primary
+import java.time.Instant
 
 @Component
 @Primary
@@ -19,6 +20,14 @@ class InMemoryUserAuthInfoRepository : UserAuthInfoRepository, InMemoryCrudRepos
 
     override fun findByUserId(userId: String): List<UserAuthInfo> {
         return entityById.values.filter { it.userId == userId }
+    }
+
+    override fun findByAuthProviderTypeAndExternalRefreshTokenExpiresAtBetween(
+        authProviderType: UserAuthProviderType,
+        from: Instant,
+        to: Instant
+    ): List<UserAuthInfo> {
+        return entityById.values.filter { it.authProviderType == authProviderType && it.externalRefreshTokenExpiresAt in from..to }
     }
 
     override fun removeByUserId(userId: String) {
