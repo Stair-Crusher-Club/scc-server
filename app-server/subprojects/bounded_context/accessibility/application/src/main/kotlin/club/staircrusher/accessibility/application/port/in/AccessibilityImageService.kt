@@ -138,6 +138,8 @@ class AccessibilityImageService(
             val thumbnailOutputStream = thumbnailGenerator.generate(imageFile, THUMBNAIL_FORMAT)
 
             return Thumbnail(originalImageUrl, thumbnailFileName, thumbnailOutputStream)
+        } catch (t: FileAlreadyExistsException) {
+            return null
         } catch (t: Throwable) {
             logger.error(t) { "Failed to generate thumbnail for place: $placeId, image: $originalImageUrl" }
             return null
