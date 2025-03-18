@@ -7,7 +7,7 @@ package club.staircrusher.data_restore
 //import club.staircrusher.place.application.port.out.web.MapsService
 //import club.staircrusher.place.domain.model.Building
 //import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
-//import club.staircrusher.place.infra.adapter.out.web.KakaoProperties
+//import club.staircrusher.place.infra.adapter.out.web.KakaoMapsProperties
 //import club.staircrusher.readTsvAsLines
 //import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 //import club.staircrusher.toKstString
@@ -16,7 +16,7 @@ package club.staircrusher.data_restore
 //import java.time.Instant
 //
 //val kakaoMapsService = KakaoMapsService(
-//    KakaoProperties("dummy")
+//    KakaoMapsProperties("dummy")
 //)
 //
 //fun main() {

@@ -78,6 +78,6 @@ class LoginWithKakaoUseCase(
     }
 
     companion object {
-        private val kakaoRefreshTokenExpirationDuration = Duration.ofDays(30)
+        val kakaoRefreshTokenExpirationDuration = Duration.ofDays(30)
     }
 }
