@@ -29,22 +29,10 @@ git subtree pull --prefix app-server/subprojects/api/scc-api scc-api main
 git subtree push --prefix app-server/subprojects/api/scc-api scc-api main
 ```
 
-이때 openapi-generator CLI의 버전은 7.1.0 이하여야 합니다. 7.2.0부터는 axios 버전이 1.x.x로 올라가서 호환이 깨집니다.
-
 ### 로컬에서 빌드하기 / 서버 띄우기
 
 로컬에서 빌드하거나 서버를 띄우기 위해서는 DB가 필요합니다.
-로컬에서 빌드할 때 테스트가 사용하는 DB를 띄우려면 아래 커맨드를 실행하면 됩니다.
+DB를 띄우려면 아래 커맨드를 실행하면 됩니다.
 ```bash
 docker compose up -d
-```
-
-위 커맨드는 `scc_test`라는 데이터베이스를 생성합니다. 로컬에서 서버를 띄우려면 `scc`라는 데이터베이스가 필요한데, 이는 직접 생성해줘야 합니다.
-```bash
-❯ psql -h localhost -p 15432 -U test -d scc_test -W
-Password: 
-psql (14.5 (Homebrew))
-Type "help" for help.
-
-scc_test= create database scc;
 ```
