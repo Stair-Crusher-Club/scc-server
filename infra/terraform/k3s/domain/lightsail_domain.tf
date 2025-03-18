@@ -103,6 +103,30 @@ resource "aws_lightsail_domain_entry" "redash" {
   }
 }
 
+resource "aws_lightsail_domain_entry" "grafana" {
+  domain_name = aws_lightsail_domain.staircrusher_club.domain_name
+  name        = "grafana"
+  type        = "A"
+  target      = data.terraform_remote_state.lightsail.outputs.lb_dns_name
+  is_alias    = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
+}
+
+resource "aws_lightsail_domain_entry" "prometheus" {
+  domain_name = aws_lightsail_domain.staircrusher_club.domain_name
+  name        = "prometheus"
+  type        = "A"
+  target      = data.terraform_remote_state.lightsail.outputs.lb_dns_name
+  is_alias    = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
+}
+
 resource "aws_lightsail_domain_entry" "dev_admin" {
   domain_name = aws_lightsail_domain.dev_staircrusher_club.domain_name
   name        = "admin"
