@@ -27,15 +27,16 @@ resource "aws_lightsail_lb_certificate" "scc_lb_cert" {
   lb_name                   = aws_lightsail_lb.scc_lb.id
   domain_name               = "api.staircrusher.club"
   subject_alternative_names = [
-    "admin-api.dev.staircrusher.club",
-    "admin-api.staircrusher.club",
     "admin.dev.staircrusher.club",
     "admin.staircrusher.club",
     "api.dev.staircrusher.club",
     "api.staircrusher.club",
     "redash.staircrusher.club",
+    "grafana.staircrusher.club",
+    "prometheus.staircrusher.club",
     "staircrusher.club",
     "www.staircrusher.club",
+    "con.staircrusher.club",
   ]
 }
 
