@@ -4,7 +4,7 @@
 
 scc-server 레포지토리는 크게 아래와 같이 구성되어 있습니다.
 ```
-scc-backend/
+scc-server/
 ├─ api-admin/               - 어드민 api spec
 ├─ app-server/              - scc 통합 API 서버 코드
 └─ infra/                   - scc 통합 인프라 코드
