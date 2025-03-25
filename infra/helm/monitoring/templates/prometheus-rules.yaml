@@ -76,10 +76,10 @@ spec:
             severity: warning
         - alert: KubePodContainerStatusRestart
           annotations:
-            message: "Some pod in namespace scc is restarted"
+            message: "Some pod in namespace {{`{{ $labels.namespace }}`}} is restarted"
             runbook_url: ''
           expr: |-
-            sum(increase(kube_pod_container_status_restarts_total{namespace="scc"}[20m])) by (container) > 0
+            sum(increase(kube_pod_container_status_restarts_total{namespace=~"scc|dev"}[10m])) by (namespace, container) > 0
           for: 1m
           labels:
             severity: warning
