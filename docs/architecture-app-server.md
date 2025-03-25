@@ -12,7 +12,7 @@
 
 계단정복지도 서버 프로젝트는 강력한 의존성 관리를 위해 **코드의 논리적 단위를 패키지가 아닌 gradle module 단위로 분리**하고, 반드시 필요한 의존성만 gradle dependency로 선언합니다.
 
-gradle module은 모두 `subprojects/` 디렉토리 아래에 존재하며, 크게 네 가지 종류의 module로 나뉩니다.
+gradle module은 모두 `app-server/subprojects/` 디렉토리 아래에 존재하며, 크게 네 가지 종류의 module로 나뉩니다.
 - API specification module - 계단정복지도 서비스의 서버 프로젝트에서 필요로 하는 다양한 API 명세를 정의합니다.
   - `api` module - 계단정복지도 서비스 클라이언트와의 API 명세
   - `admin_api` module - 계단정복지도 어드민 클라이언트와의 API 명세
@@ -30,8 +30,12 @@ gradle module은 모두 `subprojects/` 디렉토리 아래에 존재하며, 크�
 
 ### Bounded Context의 식별 및 분리
 
-2023년 6월 기준, 계단정복지도 서비스에는 크게 5가지의 bounded context(이하 BC)가 있습니다(alphabetical order). 
+2025년 3월 기준, 계단정복지도 서비스에는 크게 9가지의 bounded context(이하 BC)가 있습니다(alphabetical order). 
 - accessibility - 접근성 정보 관리
+- challenge - 챌린지 관리
+- external-accessibility - 외부 데이터를 통해 가져오는 접근성 정보 관리
+- misc - 도메인 로직과 크게 관계 없거나 독립적인 BC 로 묶이기 애매한 기타 정보 관리 (e.g. 홈 배너)
+- notification - 알림 관리
 - place - 장소 / 건물 정보 관리
 - place_search - 장소 / 건물 검색 유즈 케이스 지원
 - quest - 오프라인 클럽 활동을 위한 퀘스트 관리 
@@ -48,7 +52,7 @@ Bounded context의 경계는 프로젝트가 발전함에 따라 얼마든지 �
   - `out` port - persistence layer 접근 패턴(e.g. repository interface) 등
 - infra - application 계층에서 정의된 port에 대한 adapter를 구현합니다.
   - `in` port - REST controller, domain event subscriber
-  - `out` port - persistence layer 접근 상세 구현(e.g. RDB, in-memory DB) 등
+  - `out` port - 외부 서비스 접근 상세 구현(e.g. slack api, kakao map api) 등
 
 ### BC간의 의존 - 직접 호출의 경우
 
@@ -79,10 +83,13 @@ Domain event의 발행과 구독은 아래의 workflow로 작업할 수 있습�
 계단정복지도 서버 프로젝트는 다양한 cross-cutting concerns를 지원하기 위한 gradle module을 제공합니다(alphabetical order).
 `cross_cutting_concerns` module은 `stdlib` module과 DDD의 각 레이어(domain, application, infra) + test source set을 위한 module로 나뉩니다.
 - `stdlib` - BC를 개발할 때 공통적으로 필요한 기능을 제공합니다. 경계가 다소 모호한데, BC의 특정 계층이 아닌 전체 계층에서 사용 가능하면 보통 stdlib에 들어갑니다.
-- `domain` - 아직 없습니다.
-- `application` - 아직 없습니다.
+- `domain`
+  - `server_event` - 로깅성으로 저장해야 하는 이벤트를 저장합니다.
+- `application`
+  - `server_event` - 서버 이벤트를 실제로 저장하는 부분을 구현합니다. e.g. DB에 저장 혹은 추후에 빅쿼리로 저장 (빅쿼리 같은 외부 서비스를 사용하게 된다면 `infra` 계층에도 `server_event` 가 추가되어야 한다)
 - `infra`
-  - `persistence_model` - DB migration script를 선언합니다. 
+  - `network` - 외부 API 호출 서비스 구현을 간편하게 할 수 있는 util 을 제공합니다.
+  - `persistence_model` - DB migration script를 선언합니다. JPA 관련 설정과 Transaction 관리를 담당합니다.
   - `spring_message` - Domain event의 발행 / 구독 시스템을 실제로 구현합니다.
   - `spring_web` - Spring MVC 환경에서 필요한 기능을 제공합니다. e.g. 보안 및 에러 핸들링에 필요한 util 등. 
 - `test`

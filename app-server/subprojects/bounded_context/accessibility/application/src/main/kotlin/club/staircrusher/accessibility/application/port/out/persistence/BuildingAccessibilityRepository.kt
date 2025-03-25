@@ -8,10 +8,11 @@ import org.springframework.data.repository.CrudRepository
 import java.time.Instant
 
 interface BuildingAccessibilityRepository : CrudRepository<BuildingAccessibility, String> {
+    fun findByIdIn(ids: Collection<String>): List<BuildingAccessibility>
     fun findByBuildingIdInAndDeletedAtIsNull(buildingIds: Collection<String>): List<BuildingAccessibility>
     fun findFirstByBuildingIdAndDeletedAtIsNull(buildingId: String): BuildingAccessibility?
     fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
-    fun findFirstByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): BuildingAccessibility?
+    fun findTop5ByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): List<BuildingAccessibility>
     fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
 
     data class CreateParams(

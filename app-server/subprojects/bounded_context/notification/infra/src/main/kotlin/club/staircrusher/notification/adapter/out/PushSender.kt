@@ -94,7 +94,11 @@ class PushSender(
             notification.title?.let { setTitle(it) }
             setBody(notification.body)
         }.build()
-        val aps = Aps.builder().setAlert(apsAlert).build()
+
+        val aps = Aps.builder()
+            .setAlert(apsAlert)
+            .setSound("default")
+            .build()
 
         return ApnsConfig.builder().apply {
             putAllCustomData(customData)

@@ -2,6 +2,8 @@ package club.staircrusher.accessibility.infra.adapter.`in`.controller
 
 import club.staircrusher.accessibility.application.port.`in`.BlurFacesInLatestBuildingAccessibilityImagesUseCase
 import club.staircrusher.accessibility.application.port.`in`.BlurFacesInLatestPlaceAccessibilityImagesUseCase
+import club.staircrusher.spring_web.security.InternalIpAddressChecker
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -11,14 +13,14 @@ class AccessibilityImagePostProcessController(
     private val blurFacesInLatestBuildingAccessibilityImagesUseCase: BlurFacesInLatestBuildingAccessibilityImagesUseCase
 ) {
     @PostMapping("/blurFacesInLatestPlaceAccessibilityImages")
-    fun blurFacesInLatestPlaceAccessibilityImages() {
-        // TODO: UpdateChallengeRank 처럼 IP 체크
+    fun blurFacesInLatestPlaceAccessibilityImages(request: HttpServletRequest) {
+        InternalIpAddressChecker.check(request)
         blurFacesInLatestPlaceAccessibilityImagesUseCase.handleAsync()
     }
 
     @PostMapping("/blurFacesInLatestBuildingAccessibilityImages")
-    fun blurFacesInLatestBuildingAccessibilityImages() {
-        // TODO: UpdateChallengeRank 처럼 IP 체크
+    fun blurFacesInLatestBuildingAccessibilityImages(request: HttpServletRequest) {
+        InternalIpAddressChecker.check(request)
         blurFacesInLatestBuildingAccessibilityImagesUseCase.handleAsync()
     }
 }

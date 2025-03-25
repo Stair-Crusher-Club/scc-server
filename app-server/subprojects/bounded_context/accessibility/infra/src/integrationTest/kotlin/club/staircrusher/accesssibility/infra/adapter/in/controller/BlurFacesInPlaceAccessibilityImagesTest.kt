@@ -1,10 +1,12 @@
-package club.staircrusher.accessibility.application.port.`in`
+package club.staircrusher.accesssibility.infra.adapter.`in`.controller
 
+import club.staircrusher.accessibility.application.port.`in`.BlurFacesInLatestPlaceAccessibilityImagesUseCase
 import club.staircrusher.accessibility.application.port.out.persistence.AccessibilityImageFaceBlurringHistoryRepository
 import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.AccessibilityImageFaceBlurringHistory
+import club.staircrusher.accesssibility.infra.adapter.`in`.controller.base.BlurFacesITBase
 import club.staircrusher.stdlib.testing.SccRandom
 import club.staircrusher.testing.spring_it.mock.MockDetectFacesService
 import kotlinx.coroutines.runBlocking
@@ -17,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import java.time.Duration
 
-class BlurFacesInLatestPlaceAccessibilityImagesUseCaseTest : BlurFacesITBase() {
+class BlurFacesInPlaceAccessibilityImagesTest : BlurFacesITBase() {
     @Autowired
     private lateinit var accessibilityImageFaceBlurringHistoryRepository: AccessibilityImageFaceBlurringHistoryRepository
 
@@ -80,17 +82,59 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCaseTest : BlurFacesITBase() {
                     originalImageUrls = listOf("image_url"),
                     blurredImageUrls = listOf("blurred_image_url"),
                     detectedPeopleCounts = emptyList(),
-                    createdAt = clock.instant(),
-                    updatedAt = clock.instant()
                 )
             )
         }
 
         blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
 
-        val result =
-            accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(secondOldestPlaceAccessibility.id)
+        val result = accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(secondOldestPlaceAccessibility.id)
         Assertions.assertTrue(result.isNotEmpty())
+    }
+
+    @Test
+    fun `얼굴 블러링 기록에 있는 place accessibility 가 hard delete 된 경우에도 잘 작동한다`() {
+        val (_, firstPlaceAccessibility, _) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES)
+        )
+        clock.advanceTime(Duration.ofMinutes(1))
+        val (_, secondPlaceAccessibility, _) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES)
+        )
+        clock.advanceTime(Duration.ofMinutes(1))
+        val (_, thirdPlaceAccessibility, _) = registerPlaceAccessibilityAndBuildingAccessibility(
+            listOf(MockDetectFacesService.URL_WITH_FACES)
+        )
+
+        transactionManager.doInTransaction {
+            accessibilityImageFaceBlurringHistoryRepository.save(
+                AccessibilityImageFaceBlurringHistory(
+                    id = "",
+                    placeAccessibilityId = firstPlaceAccessibility.id,
+                    buildingAccessibilityId = null,
+                    originalImageUrls = listOf("image_url"),
+                    blurredImageUrls = listOf("blurred_image_url"),
+                    detectedPeopleCounts = emptyList(),
+                )
+            )
+        }
+
+        transactionManager.doInTransaction {
+            placeAccessibilityRepository.deleteById(firstPlaceAccessibility.id)
+        }
+
+        blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
+        run {
+            val result = accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(secondPlaceAccessibility.id)
+            Assertions.assertTrue(result.isNotEmpty())
+        }
+
+        // Run blur again
+        blurFacesInLatestPlaceAccessibilityImagesUseCase.handle()
+        run {
+            val result = accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(secondPlaceAccessibility.id)
+            Assertions.assertTrue(result.isNotEmpty())
+        }
     }
 
     @Test

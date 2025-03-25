@@ -4,14 +4,11 @@ import club.staircrusher.accessibility.application.port.out.persistence.Accessib
 import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
 import club.staircrusher.accessibility.domain.model.AccessibilityImage
 import club.staircrusher.accessibility.domain.model.AccessibilityImageFaceBlurringHistory
-import club.staircrusher.accessibility.domain.model.PlaceAccessibility
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.stdlib.persistence.TransactionManager
 import kotlinx.coroutines.runBlocking
-import org.springframework.data.repository.findByIdOrNull
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -34,26 +31,26 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
     }
 
     fun handle() {
-        val targetAccessibility: PlaceAccessibility = transactionManager.doInTransaction {
+        val targetAccessibility = transactionManager.doInTransaction(isReadOnly = true) {
             // 가장 최근에 블러 처리한 accessibility 보다 이후에 생성된 accessibility 를 찾는다
-            val latestHistory =
-                accessibilityImageFaceBlurringHistoryRepository.findFirstByPlaceAccessibilityIdIsNotNullOrderByCreatedAtDesc()
-            val lastBlurredPlaceAccessibility = latestHistory?.let { history ->
-                history.placeAccessibilityId?.let { placeAccessibilityRepository.findByIdOrNull(it) }
-            }
-            placeAccessibilityRepository.findFirstByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(
-                createdAt = lastBlurredPlaceAccessibility?.createdAt ?: Instant.EPOCH
+            // place accessibility 가 hard delete 되는 경우를 대비해 여러개를 가져와서 비교한다
+            val recentHistories = accessibilityImageFaceBlurringHistoryRepository.findTop5ByPlaceAccessibilityIdIsNotNullOrderByCreatedAtDesc()
+            val recentlyBlurredPlaceAccessibilities = placeAccessibilityRepository.findByIdIn(recentHistories.mapNotNull { it.placeAccessibilityId })
+            val mostRecentCreatedAt = recentlyBlurredPlaceAccessibilities.maxByOrNull { it.createdAt }?.createdAt
+
+            val blurCandidatePlaceAccessibilities = placeAccessibilityRepository.findTop5ByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(
+                createdAt = mostRecentCreatedAt ?: Instant.EPOCH
             )
+
+            val alreadyBlurredPlaceAccessibilityIds = accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityIdIn(blurCandidatePlaceAccessibilities.map { it.id })
+                .groupBy { it.placeAccessibilityId!! }
+                .filter { it.value.isNotEmpty() }
+                .map { it.key }
+
+            blurCandidatePlaceAccessibilities.firstOrNull { it.id !in alreadyBlurredPlaceAccessibilityIds }
         } ?: return
 
-        // 최신 데이터까지 블러 처리된 상황
-        val alreadyBlurred =
-            accessibilityImageFaceBlurringHistoryRepository.findByPlaceAccessibilityId(targetAccessibility.id).isNotEmpty()
-        if (alreadyBlurred) return
-
-        val result =
-            runBlocking { accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id) }
-                ?: return
+        val result = runBlocking { accessibilityImageFaceBlurringService.blurFacesInPlaceAccessibility(targetAccessibility.id) } ?: return
         val entranceResults = result.entranceResults
         transactionManager.doInTransaction {
             val imageUrls = entranceResults.map { it.blurredImageUrl }
@@ -67,8 +64,6 @@ class BlurFacesInLatestPlaceAccessibilityImagesUseCase(
                     originalImageUrls = entranceResults.map { it.originalImageUrl },
                     blurredImageUrls = entranceResults.filter { it.isBlurred() }.map { it.blurredImageUrl },
                     detectedPeopleCounts = entranceResults.map { it.detectedPeopleCount },
-                    createdAt = SccClock.instant(),
-                    updatedAt = SccClock.instant()
                 )
             )
         }
