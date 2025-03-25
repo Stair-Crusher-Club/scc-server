@@ -27,7 +27,8 @@ scc:
       credential: test
 
   kakao:
-    apiKey: test
+    rest-api-key: test
+    admin-key: test
 
   naver:
     open-api:
@@ -54,7 +55,6 @@ scc:
 
   kakao-login:
     oauth-client-id: test
-    admin-key: test
 
   apple-login:
     service-id: test
