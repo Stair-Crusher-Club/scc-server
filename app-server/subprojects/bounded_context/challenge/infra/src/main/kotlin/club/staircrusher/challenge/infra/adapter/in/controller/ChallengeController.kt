@@ -42,10 +42,10 @@ class ChallengeController(
         authentication: SccAppAuthentication?,
     ): GetChallengeResponseDto {
         val result = getChallengeUseCase.handle(userId = authentication?.principal, challengeId = request.challengeId)
-        val ranks = if (result.hasJoined && authentication != null) {
+        val leaderboardResult = if (result.hasJoined && authentication != null) {
             getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
         } else {
-            emptyList()
+            null
         }
         val myRank = if (result.hasJoined && authentication != null) {
             getChallengeRankUseCase.handle(
@@ -69,7 +69,8 @@ class ChallengeController(
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
+            ranks = leaderboardResult?.ranks?.map { (rank, user) -> rank.toDto(user!!.nickname) } ?: emptyList(),
+            leaderboardUpdatePeriod = leaderboardResult?.updatePeriodMinutes ?: 10,
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
@@ -86,7 +87,7 @@ class ChallengeController(
             userId = authentication.principal,
             invitationCode = request.invitationCode
         )
-        val ranks = getChallengeLeaderboardUseCase.handle(result.challenge.id)
+        val leaderboardResult = getChallengeLeaderboardUseCase.handle(result.challenge.id)
         val myRank = if (result.hasJoined) {
             getChallengeRankUseCase.handle(
                 challengeId = result.challenge.id,
@@ -109,7 +110,8 @@ class ChallengeController(
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
+            ranks = leaderboardResult.ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
+            leaderboardUpdatePeriod = leaderboardResult.updatePeriodMinutes,
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
@@ -128,14 +130,15 @@ class ChallengeController(
             challengeId = request.challengeId,
             passcode = request.passcode
         )
-        val ranks = getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
+        val leaderboardResult = getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
         return JoinChallengeResponseDto(
             challenge = result.challenge.toDto(
                 participationsCount = result.participationsCount,
                 contributionsCount = result.contributionsCount,
                 criteriaTime = clock.instant()
             ),
-            ranks = ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
+            ranks = leaderboardResult.ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
+            leaderboardUpdatePeriod = leaderboardResult.updatePeriodMinutes,
         )
     }
 

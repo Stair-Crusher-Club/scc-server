@@ -24,17 +24,27 @@ class GetChallengeLeaderboardUseCase(
     private val challengeRankRepository: ChallengeRankRepository,
     private val userApplicationService: UserApplicationService,
 ) {
-    companion object {
-        const val NUMBER_OF_TOP_RANKER = 10
-    }
-
-    fun handle(challengeId: String): List<WithUserInfo<ChallengeRank>> = transactionManager.doInTransaction {
+    fun handle(challengeId: String): GetChallengeLeaderboardResult = transactionManager.doInTransaction {
         val challenge = challengeRepository.findByIdOrNull(challengeId) ?: throw SccDomainException("잘못된 챌린지입니다.")
         val leaderboards = challengeRankRepository.findTopNUsers(challenge.id, NUMBER_OF_TOP_RANKER)
         val userProfilesByUserId = userApplicationService.getProfilesByUserIds(leaderboards.map { it.userId }).associateBy { it.userId }
 
-        leaderboards.map { challengeRank ->
-            WithUserInfo(challengeRank, userProfilesByUserId[challengeRank.userId]!!.toDomainModel())
-        }
+        GetChallengeLeaderboardResult(
+            ranks = leaderboards.map { challengeRank ->
+                WithUserInfo(challengeRank, userProfilesByUserId[challengeRank.userId]!!.toDomainModel())
+            },
+            updatePeriodMinutes = LEADERBOARD_UPDATE_PERIOD_MINUTES,
+        )
+
+    }
+
+    data class GetChallengeLeaderboardResult(
+        val ranks: List<WithUserInfo<ChallengeRank>>,
+        val updatePeriodMinutes: Int,
+    )
+
+    companion object {
+        private const val NUMBER_OF_TOP_RANKER = 10
+        private const val LEADERBOARD_UPDATE_PERIOD_MINUTES = 10
     }
 }
