@@ -1394,10 +1394,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ChallengeRankDto'
-        leaderboardUpdatePeriod:
-          type: integer
-          format: int32
-          description: 리더보드 업데이트 주기, 단위는 분. ex) 10분
         contributionCountForNextRank:
           type: integer
           format: int64
@@ -1411,7 +1407,6 @@ components:
       required:
         - challenge
         - ranks
-        - leaderboardUpdatePeriod
         - hasJoined
         - hasPasscode
 
@@ -1503,14 +1498,9 @@ components:
           description: 10위권까지의 랭킹 정보
           items:
             $ref: '#/components/schemas/ChallengeRankDto'
-        leaderboardUpdatePeriod:
-          type: integer
-          format: int32
-          description: 리더보드 업데이트 주기, 단위는 분. ex) 10분
       required:
         - challenge
         - ranks
-        - leaderboardUpdatePeriod
 
     KakaoTokensDto:
       type: object

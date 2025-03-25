@@ -70,7 +70,6 @@ class ChallengeController(
                 criteriaTime = clock.instant()
             ),
             ranks = leaderboardResult?.ranks?.map { (rank, user) -> rank.toDto(user!!.nickname) } ?: emptyList(),
-            leaderboardUpdatePeriod = leaderboardResult?.updatePeriodMinutes ?: 10,
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
@@ -111,7 +110,6 @@ class ChallengeController(
                 criteriaTime = clock.instant()
             ),
             ranks = leaderboardResult.ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
-            leaderboardUpdatePeriod = leaderboardResult.updatePeriodMinutes,
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
@@ -138,7 +136,6 @@ class ChallengeController(
                 criteriaTime = clock.instant()
             ),
             ranks = leaderboardResult.ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
-            leaderboardUpdatePeriod = leaderboardResult.updatePeriodMinutes,
         )
     }
 
