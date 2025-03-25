@@ -30,13 +30,19 @@ class LoginWithKakaoUseCase(
 
         val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
         if (userAuthInfo != null) {
-            doLoginForExistingUser(userAuthInfo, anonymousUserId)
+            doLoginForExistingUser(userAuthInfo,  kakaoRefreshToken, anonymousUserId)
         } else {
             doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId, anonymousUserId)
         }
     }
 
-    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
+    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, kakaoRefreshToken: String, anonymousUserId: String?): LoginResult {
+        userAuthInfo.externalRefreshToken = kakaoRefreshToken
+        // 처음 expiresAt 을 세팅할 때 kakao 에서 주는 expiresAt 을 사용하지 않았기 때문에 로그인 시 결과로 나온 refresh token 이 언제 만료되는지 알 수 없다
+        // 그래서 일단 1일로 세팅하고 나중에 자동 refresh token 잡이 처리하도록 한다
+        userAuthInfo.externalRefreshTokenExpiresAt = SccClock.instant() + Duration.ofDays(1L)
+        userAuthInfoRepository.save(userAuthInfo)
+
         val authTokens = userAuthService.issueTokens(userAuthInfo)
         val userProfile = userProfileRepository.findFirstByUserId(userAuthInfo.userId) ?: throw SccDomainException("계정 정보를 찾을 수 없습니다")
         anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAuthInfo.userId, UserConnectionReason.LOGIN) }

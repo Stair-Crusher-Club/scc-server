@@ -43,17 +43,28 @@ class UpdateExternalRefreshTokensUseCase(
 
             val kakaoLoginTokens = runBlocking { kakaoLoginService.refreshToken(token) } ?: return@mapNotNull null
 
-            // refresh token 이 업데이트가 가능할 때만 response 에 refresh token 이 포함된다
-            if (kakaoLoginTokens.refreshToken != null) {
-                transactionManager.doInTransaction {
-                    val userAuthInfo = userAuthInfoRepository.findByIdOrNull(id)!!
+            transactionManager.doInTransaction {
+                val userAuthInfo = userAuthInfoRepository.findByIdOrNull(id)!!
+                if (kakaoLoginTokens.refreshToken != null) {
+                    // refresh token 이 업데이트가 가능할 때만 response 에 refresh token 이 포함된다
                     userAuthInfo.externalRefreshToken = kakaoLoginTokens.refreshToken
                     userAuthInfo.externalRefreshTokenExpiresAt = SccClock.instant() + LoginWithKakaoUseCase.kakaoRefreshTokenExpirationDuration
+                } else {
+                    // 응답에 refresh token 이 포함되지 않았다면, 아직 만료 기간이 1달 이상 남아있는 것이므로 14일 뒤에 다시 시도한다
+                    userAuthInfo.externalRefreshTokenExpiresAt = SccClock.instant() + retryUpdatingRefreshTokenAfter
                 }
+                userAuthInfoRepository.save(userAuthInfo)
             }
+
             kakaoLoginTokens.refreshToken
         }
 
-        logger.info { "UpdateExternalRefresh Job complete. ${updatedTokens.size} tokens updated"}
+        logger.info {
+            "UpdateExternalRefresh Job complete. Tried updating ${userAuthIdToExpiringKakaoAuthTokens.size} tokens, updated ${updatedTokens.size} tokens"
+        }
+    }
+
+    companion object {
+        private val retryUpdatingRefreshTokenAfter = Duration.ofDays(14L)
     }
 }
