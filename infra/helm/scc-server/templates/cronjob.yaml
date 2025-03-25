@@ -28,7 +28,7 @@ metadata:
   labels:
     {{- include "scc-server.labels" . | nindent 4 }}
 spec:
-  schedule: "0 * * * *"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       template:
