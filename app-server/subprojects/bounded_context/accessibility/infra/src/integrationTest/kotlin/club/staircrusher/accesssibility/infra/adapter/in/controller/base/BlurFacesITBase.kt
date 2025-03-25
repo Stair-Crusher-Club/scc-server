@@ -1,4 +1,4 @@
-package club.staircrusher.accessibility.application.port.`in`
+package club.staircrusher.accesssibility.infra.adapter.`in`.controller.base
 
 import club.staircrusher.accessibility.application.port.`in`.image.ImageProcessor
 import club.staircrusher.accessibility.application.port.out.DetectFacesResponse

@@ -2,10 +2,10 @@ package club.staircrusher.accessibility.domain.model
 
 import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import java.time.Instant
 
 @Entity
 class AccessibilityImageFaceBlurringHistory(
@@ -19,9 +19,7 @@ class AccessibilityImageFaceBlurringHistory(
     val blurredImageUrls: List<String>,
     @Convert(converter = IntListToTextAttributeConverter::class)
     val detectedPeopleCounts: List<Int>,
-    val createdAt: Instant,
-    val updatedAt: Instant
-) {
+) : TimeAuditingBaseEntity() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
