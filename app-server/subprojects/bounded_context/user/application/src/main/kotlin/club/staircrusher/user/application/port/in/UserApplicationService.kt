@@ -191,7 +191,7 @@ class UserApplicationService(
                 SccDomainException.ErrorCode.INVALID_EMAIL,
             )
         }
-        if (userProfileRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.id != currentUserId } != null) {
+        if (userProfileRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.userId != currentUserId } != null) {
             throw SccDomainException(
                 "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
                 SccDomainException.ErrorCode.INVALID_EMAIL,
