@@ -413,4 +413,55 @@ class UpdateUserInfoTest : UserITBase() {
                 }
             }
     }
+
+    @Test
+    fun `뉴스레터 수신 동의 후 취소하면 stibee 에서 구독 취소된다`() {
+        val (user, _) = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
+        }
+
+        val email = "${SccRandom.string(32)}@staircrusher.club"
+        val nickname = SccRandom.string(32)
+        
+        // First subscribe to newsletter
+        val subscribeParams = UpdateUserInfoPostRequest(
+            nickname = nickname,
+            email = email,
+            isNewsLetterSubscriptionAgreed = true,
+            mobilityTools = listOf(),
+            birthYear = SccRandom.int(1900, 2025),
+        )
+
+        mvc
+            .sccRequest("/updateUserInfo", subscribeParams, userAccount = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                verifyBlocking(stibeeSubscriptionService, atLeastOnce()) { registerSubscriber(eq(email), eq(nickname), any()) }
+                verify(sccServerEventRecorder, atLeastOnce()).record(NewsletterSubscribedOnSignupPayload(user.id))
+            }
+
+        // Then unsubscribe from newsletter
+        val unsubscribeParams = UpdateUserInfoPostRequest(
+            nickname = nickname,
+            email = email,
+            isNewsLetterSubscriptionAgreed = false,
+            mobilityTools = listOf(),
+            birthYear = SccRandom.int(1900, 2025),
+        )
+
+        mvc
+            .sccRequest("/updateUserInfo", unsubscribeParams, userAccount = user)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+            .apply {
+                verifyBlocking(stibeeSubscriptionService, atLeastOnce()) { unregisterSubscriber(eq(email)) }
+            }
+    }
 }
