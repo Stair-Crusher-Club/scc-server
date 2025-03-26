@@ -24,6 +24,7 @@ class UserProfile(
     var mobilityTools: List<UserMobilityTool>,
     var birthYear: Int?,
     var pushToken: String? = null,
+    var isNewsLetterSubscriptionAgreed: Boolean? = null,
 ) : TimeAuditingBaseEntity() {
     var deletedAt: Instant? = null
 
