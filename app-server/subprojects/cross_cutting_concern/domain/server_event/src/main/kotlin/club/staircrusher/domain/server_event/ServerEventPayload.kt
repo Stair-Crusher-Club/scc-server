@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
-    JsonSubTypes.Type(NewsletterSubscribedOnSignupPayload::class),
-    JsonSubTypes.Type(NewsletterUnsubscribedOnSignupPayload::class),
+    JsonSubTypes.Type(NewsletterSubscribedPayload::class),
+    JsonSubTypes.Type(NewsletterUnsubscribedPayload::class),
 )
 sealed interface ServerEventPayload {
     val type: ServerEventType
@@ -18,14 +18,14 @@ object UnknownServerEventPayload: ServerEventPayload {
         get() = ServerEventType.UNKNOWN
 }
 
-data class NewsletterSubscribedOnSignupPayload(
+data class NewsletterSubscribedPayload(
     val userId: String,
 ) : ServerEventPayload {
     override val type = ServerEventType.NEWSLETTER_SUBSCRIBED_ON_SIGN_UP
 }
 
-data class NewsletterUnsubscribedOnSignupPayload(
+data class NewsletterUnsubscribedPayload(
     val userId: String,
 ) : ServerEventPayload {
-    override val type = ServerEventType.NEWSLETTER_UNSUBSCRIBED_ON_SIGN_UP
+    override val type = ServerEventType.NEWSLETTER_UNSUBSCRIBED
 }

@@ -1,8 +1,8 @@
 package club.staircrusher.user.application.port.`in`
 
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
-import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
-import club.staircrusher.domain.server_event.NewsletterUnsubscribedOnSignupPayload
+import club.staircrusher.domain.server_event.NewsletterSubscribedPayload
+import club.staircrusher.domain.server_event.NewsletterUnsubscribedPayload
 import club.staircrusher.notification.port.`in`.PushService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
@@ -296,7 +296,7 @@ class UserApplicationService(
     }
 
     private fun subscribeToNewsLetter(userId: String, email: String, name: String) {
-        sccServerEventRecorder.record(NewsletterSubscribedOnSignupPayload(userId))
+        sccServerEventRecorder.record(NewsletterSubscribedPayload(userId))
         runBlocking {
             stibeeSubscriptionService.registerSubscriber(
                 email = email,
@@ -308,7 +308,7 @@ class UserApplicationService(
     }
 
     private fun unsubscribeToNewsLetter(userId: String, email: String) {
-        sccServerEventRecorder.record(NewsletterUnsubscribedOnSignupPayload(userId))
+        sccServerEventRecorder.record(NewsletterUnsubscribedPayload(userId))
         runBlocking {
             stibeeSubscriptionService.unregisterSubscriber(email)
         }
