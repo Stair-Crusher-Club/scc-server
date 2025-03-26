@@ -2,6 +2,7 @@ package club.staircrusher.user.application.port.`in`
 
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
 import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
+import club.staircrusher.domain.server_event.NewsletterUnsubscribedOnSignupPayload
 import club.staircrusher.notification.port.`in`.PushService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
@@ -172,7 +173,7 @@ class UserApplicationService(
         email: String,
         mobilityTools: List<UserMobilityTool>,
         birthYear: Int?,
-        isNewsLetterSubscriptionAgreed: Boolean,
+        isNewsLetterSubscriptionAgreed: Boolean?,
     ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         userProfile.nickname = run {
@@ -222,14 +223,23 @@ class UserApplicationService(
         }
         userProfileRepository.save(userProfile)
 
-        if (isNewsLetterSubscriptionAgreed) {
+        if (userProfile.isNewsLetterSubscriptionAgreed == isNewsLetterSubscriptionAgreed) {
+            // do nothing
+        } else if (isNewsLetterSubscriptionAgreed == true) {
+            userProfile.isNewsLetterSubscriptionAgreed = true
             userProfile.email?.let {
                 transactionManager.doAfterCommit {
                     subscribeToNewsLetter(userId, it, userProfile.nickname)
                 }
             }
+        } else if (isNewsLetterSubscriptionAgreed == false) {
+            userProfile.isNewsLetterSubscriptionAgreed = false
+            userProfile.email?.let {
+                transactionManager.doAfterCommit {
+                    unsubscribeToNewsLetter(userId, it)
+                }
+            }
         }
-
         return@doInTransaction userProfile
     }
 
@@ -284,6 +294,13 @@ class UserApplicationService(
                 // 일단 false 로 두지만 나중에 동의 버튼이 추가될 수도 있다
                 isMarketingPushAgreed = false,
             )
+        }
+    }
+
+    private fun unsubscribeToNewsLetter(userId: String, email: String) {
+        sccServerEventRecorder.record(NewsletterUnsubscribedOnSignupPayload(userId))
+        runBlocking {
+            stibeeSubscriptionService.unregisterSubscriber(email)
         }
     }
 
