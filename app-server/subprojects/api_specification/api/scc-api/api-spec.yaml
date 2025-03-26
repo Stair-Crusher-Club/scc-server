@@ -2073,6 +2073,7 @@ components:
         isNewsLetterSubscriptionAgreed:
           type: boolean
           description: 뉴스레터 수신 동의 여부
+          nullable: true
       required:
         - id
         - nickname
