@@ -9,7 +9,7 @@ class ServerEventTest {
 
     @Test
     fun `ServerEvent 의 type 과 주어진 payload 의 type 이 일치해야 한다`() {
-        val serverEventPayload = NewsletterSubscribedOnSignupPayload("example")
+        val serverEventPayload = NewsletterSubscribedPayload("example")
 
         assertDoesNotThrow {
             ServerEvent(

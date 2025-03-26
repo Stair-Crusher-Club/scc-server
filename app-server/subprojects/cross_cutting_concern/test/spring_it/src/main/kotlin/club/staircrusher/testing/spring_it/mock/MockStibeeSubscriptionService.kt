@@ -6,4 +6,8 @@ class MockStibeeSubscriptionService : StibeeSubscriptionService {
     override suspend fun registerSubscriber(email: String, name: String, isMarketingPushAgreed: Boolean): Boolean {
         return true
     }
+
+    override suspend fun unregisterSubscriber(email: String): Boolean {
+        return true
+    }
 }
