@@ -8,4 +8,5 @@ resource "aws_lightsail_database" "scc_db_v2" {
   bundle_id                = "medium_2_0"
   skip_final_snapshot      = false
   final_snapshot_name      = "scc-db-v2-final-snapshot"
+  publicly_accessible = true
 }
