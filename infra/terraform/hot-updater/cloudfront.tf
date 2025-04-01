@@ -2,8 +2,8 @@ resource "aws_cloudfront_distribution" "hot_updater_distribution" {
   origin {
     connection_attempts = 3
     connection_timeout  = 10
-    domain_name         = "scc-hot-updater-storage.s3.ap-northeast-2.amazonaws.com"
-    origin_id           = "scc-hot-updater-storage"
+    domain_name         = aws_s3_bucket.prod_scc_hot_updater_storage.bucket_regional_domain_name
+    origin_id           = aws_s3_bucket.prod_scc_hot_updater_storage.bucket_regional_domain_name
   }
 
   comment             = "Hot Updater CloudFront distribution"
@@ -15,7 +15,7 @@ resource "aws_cloudfront_distribution" "hot_updater_distribution" {
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "scc-hot-updater-storage"
+    target_origin_id       = aws_s3_bucket.prod_scc_hot_updater_storage.bucket_regional_domain_name
     viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
@@ -51,7 +51,7 @@ resource "aws_cloudfront_distribution" "hot_updater_distribution" {
     min_ttl                = 0
     path_pattern           = "/api/*"
     smooth_streaming       = false
-    target_origin_id       = "scc-hot-updater-storage"
+    target_origin_id       = aws_s3_bucket.prod_scc_hot_updater_storage.bucket_regional_domain_name
     trusted_key_groups     = []
     trusted_signers        = []
     viewer_protocol_policy = "redirect-to-https"
@@ -97,8 +97,8 @@ resource "aws_cloudfront_distribution" "dev_hot_updater_distribution" {
   origin {
     connection_attempts = 3
     connection_timeout  = 10
-    domain_name         = "dev-scc-hot-updater-storage.s3.ap-northeast-2.amazonaws.com"
-    origin_id           = "dev-scc-hot-updater-storage"
+    domain_name         = aws_s3_bucket.dev_scc_hot_updater_storage.bucket_regional_domain_name
+    origin_id           = aws_s3_bucket.dev_scc_hot_updater_storage.bucket_regional_domain_name
   }
 
   comment             = "Dev Hot Updater CloudFront distribution"
@@ -110,7 +110,7 @@ resource "aws_cloudfront_distribution" "dev_hot_updater_distribution" {
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "dev-scc-hot-updater-storage"
+    target_origin_id       = aws_s3_bucket.dev_scc_hot_updater_storage.bucket_regional_domain_name
     viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
@@ -146,7 +146,7 @@ resource "aws_cloudfront_distribution" "dev_hot_updater_distribution" {
     min_ttl                = 0
     path_pattern           = "/api/*"
     smooth_streaming       = false
-    target_origin_id       = "dev-scc-hot-updater-storage"
+    target_origin_id       = aws_s3_bucket.dev_scc_hot_updater_storage.bucket_regional_domain_name
     trusted_key_groups     = []
     trusted_signers        = []
     viewer_protocol_policy = "redirect-to-https"
