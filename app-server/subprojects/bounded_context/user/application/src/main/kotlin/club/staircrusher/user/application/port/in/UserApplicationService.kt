@@ -1,7 +1,8 @@
 package club.staircrusher.user.application.port.`in`
 
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
-import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
+import club.staircrusher.domain.server_event.NewsletterSubscribedPayload
+import club.staircrusher.domain.server_event.NewsletterUnsubscribedPayload
 import club.staircrusher.notification.port.`in`.PushService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
@@ -165,6 +166,54 @@ class UserApplicationService(
         }
     }
 
+    private fun validateAndNormalizeNickname(nickname: String, currentUserId: String? = null): String {
+        val normalizedNickname = nickname.trim()
+        if (!NicknameValidator.isValid(normalizedNickname)) {
+            throw SccDomainException(
+                "최소 ${NicknameValidator.getMinLength()}자 이상의 닉네임을 설정해주세요.",
+                SccDomainException.ErrorCode.INVALID_NICKNAME,
+            )
+        }
+        val alreadyRegisteredUser = userProfileRepository.findFirstByNickname(normalizedNickname)
+        if (alreadyRegisteredUser != null && alreadyRegisteredUser.userId != currentUserId) {
+            throw SccDomainException(
+                "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
+                SccDomainException.ErrorCode.INVALID_NICKNAME,
+            )
+        }
+        return normalizedNickname
+    }
+
+    private fun validateAndNormalizeEmail(email: String, currentUserId: String? = null): String {
+        val normalizedEmail = email.trim()
+        if (!EmailValidator.isValid(normalizedEmail)) {
+            throw SccDomainException(
+                "${normalizedEmail}은 유효한 형태의 이메일이 아닙니다.",
+                SccDomainException.ErrorCode.INVALID_EMAIL,
+            )
+        }
+        val alreadyRegisteredUser = userProfileRepository.findFirstByEmail(normalizedEmail)
+        if (alreadyRegisteredUser != null && alreadyRegisteredUser.userId != currentUserId) {
+            throw SccDomainException(
+                "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
+                SccDomainException.ErrorCode.INVALID_EMAIL,
+            )
+        }
+        return normalizedEmail
+    }
+
+    private fun validateBirthYear(birthYear: Int?): Int? {
+        birthYear?.let {
+            if (it < 1900 || it > SccClock.instant().getYear()) {
+                throw SccDomainException(
+                    "출생 연도가 유효하지 않습니다.",
+                    SccDomainException.ErrorCode.INVALID_BIRTH_YEAR,
+                )
+            }
+        }
+        return birthYear
+    }
+
     fun updateUserInfo(
         userId: String,
         nickname: String,
@@ -172,65 +221,38 @@ class UserApplicationService(
         email: String,
         mobilityTools: List<UserMobilityTool>,
         birthYear: Int?,
-        isNewsLetterSubscriptionAgreed: Boolean,
+        isNewsLetterSubscriptionAgreed: Boolean?,
     ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
-        userProfile.nickname = run {
-            val normalizedNickname = nickname.trim()
-            if (!NicknameValidator.isValid(normalizedNickname)) {
-                throw SccDomainException(
-                    "최소 ${NicknameValidator.getMinLength()}자 이상의 닉네임을 설정해주세요.",
-                    SccDomainException.ErrorCode.INVALID_NICKNAME,
-                )
-            }
-            if (userProfileRepository.findFirstByNickname(normalizedNickname)?.takeIf { it.id != userProfile.id } != null) {
-                throw SccDomainException(
-                    "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
-                    SccDomainException.ErrorCode.INVALID_NICKNAME,
-                )
-            }
-            normalizedNickname
+
+        userProfile.let {
+            it.nickname = validateAndNormalizeNickname(nickname, it.userId)
+            it.email = validateAndNormalizeEmail(email, it.userId)
+            it.instagramId = instagramId?.trim()?.takeIf(CharSequence::isNotEmpty)
+            it.mobilityTools = mobilityTools
+            it.birthYear = validateBirthYear(birthYear)
         }
-        userProfile.email = run {
-            val normalizedEmail = email.trim()
-            if (!EmailValidator.isValid(normalizedEmail)) {
-                throw SccDomainException(
-                    "${normalizedEmail}은 유효한 형태의 이메일이 아닙니다.",
-                    SccDomainException.ErrorCode.INVALID_EMAIL,
-                )
-            }
-            if (userProfileRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.id != userProfile.id } != null) {
-                throw SccDomainException(
-                    "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
-                    SccDomainException.ErrorCode.INVALID_EMAIL,
-                )
-            }
-            normalizedEmail
-        }
-        userProfile.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
-        userProfile.mobilityTools = mobilityTools
-        userProfile.birthYear = run {
-            birthYear?.let {
-                if (it < 1900 || it > SccClock.instant().getYear()) {
-                    throw SccDomainException(
-                        "출생 연도가 유효하지 않습니다.",
-                        SccDomainException.ErrorCode.INVALID_BIRTH_YEAR,
-                    )
-                }
-            }
-            birthYear
-        }
+
         userProfileRepository.save(userProfile)
 
-        if (isNewsLetterSubscriptionAgreed) {
-            userProfile.email?.let {
-                transactionManager.doAfterCommit {
-                    subscribeToNewsLetter(userId, it, userProfile.nickname)
+        handleNewsletterSubscription(userProfile, isNewsLetterSubscriptionAgreed)
+        return@doInTransaction userProfile
+    }
+
+    private fun handleNewsletterSubscription(userProfile: UserProfile, isNewsLetterSubscriptionAgreed: Boolean?) {
+        if (userProfile.isNewsLetterSubscriptionAgreed == isNewsLetterSubscriptionAgreed || isNewsLetterSubscriptionAgreed == null) {
+            return
+        }
+
+        userProfile.isNewsLetterSubscriptionAgreed = isNewsLetterSubscriptionAgreed
+        userProfile.email?.let { email ->
+            transactionManager.doAfterCommit {
+                when (isNewsLetterSubscriptionAgreed) {
+                    true -> subscribeToNewsLetter(userProfile.userId, email, userProfile.nickname)
+                    false -> unsubscribeToNewsLetter(userProfile.userId, email)
                 }
             }
         }
-
-        return@doInTransaction userProfile
     }
 
     fun deleteUser(userId: String) {
@@ -276,7 +298,7 @@ class UserApplicationService(
     }
 
     private fun subscribeToNewsLetter(userId: String, email: String, name: String) {
-        sccServerEventRecorder.record(NewsletterSubscribedOnSignupPayload(userId))
+        sccServerEventRecorder.record(NewsletterSubscribedPayload(userId))
         runBlocking {
             stibeeSubscriptionService.registerSubscriber(
                 email = email,
@@ -284,6 +306,13 @@ class UserApplicationService(
                 // 일단 false 로 두지만 나중에 동의 버튼이 추가될 수도 있다
                 isMarketingPushAgreed = false,
             )
+        }
+    }
+
+    private fun unsubscribeToNewsLetter(userId: String, email: String) {
+        sccServerEventRecorder.record(NewsletterUnsubscribedPayload(userId))
+        runBlocking {
+            stibeeSubscriptionService.unregisterSubscriber(email)
         }
     }
 
