@@ -321,10 +321,10 @@ redash:
     # server.resources -- Server resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 300m
+        cpu: 400m
         memory: 1024Mi
       requests:
-        cpu: 300m
+        cpu: 400m
         memory: 1024Mi
 
     # server.podSecurityContext -- Security contexts for server pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
@@ -404,10 +404,10 @@ redash:
     # adhocWorker.resources -- Ad-hoc worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 100m
+        cpu: 200m
         memory: 512Mi
       requests:
-        cpu: 100m
+        cpu: 200m
         memory: 512Mi
 
     # adhocWorker.podSecurityContext -- Security contexts for ad-hoc worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
@@ -549,10 +549,10 @@ redash:
     # genericWorker.resources -- Generic worker resource requests and limits [ref](http://kubernetes.io/docs/user-guide/compute-resources/)
     resources:
       limits:
-        cpu: 300m
+        cpu: 100m
         memory: 512Mi
       requests:
-        cpu: 300m
+        cpu: 100m
         memory: 512Mi
 
     # genericWorker.podSecurityContext -- Security contexts for generic worker pod assignment [ref](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
