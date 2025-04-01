@@ -4,10 +4,9 @@ import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.challenge.domain.model.ChallengeStatus
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.user.domain.model.UserAccount
-import club.staircrusher.user.domain.model.UserProfile
 import java.time.Duration
 import java.time.Instant
 import kotlin.random.Random

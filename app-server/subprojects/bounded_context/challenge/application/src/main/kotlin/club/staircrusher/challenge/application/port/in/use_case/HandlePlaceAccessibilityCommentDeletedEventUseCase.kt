@@ -3,7 +3,7 @@ package club.staircrusher.challenge.application.port.`in`.use_case
 import club.staircrusher.challenge.application.port.`in`.ChallengeService
 import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.domain_event.PlaceAccessibilityCommentDeletedEvent
-import club.staircrusher.place.application.port.`in`.toPlace
+import club.staircrusher.place.application.port.`in`.place.toPlace
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 

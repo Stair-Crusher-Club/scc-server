@@ -1,7 +1,7 @@
 package club.staircrusher.place.infra.adapter.out.web
 
 import club.staircrusher.infra.network.createExternalApiService
-import club.staircrusher.place.application.port.out.web.OpenDataService
+import club.staircrusher.place.application.port.out.place.web.OpenDataService
 import club.staircrusher.place.application.result.ClosedPlaceResult
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.CrsConverter

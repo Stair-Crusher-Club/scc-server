@@ -1,10 +1,10 @@
 package club.staircrusher.quest.application.port.`in`
 
 import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
-import club.staircrusher.place.application.port.`in`.PlaceApplicationService
-import club.staircrusher.place.application.port.`in`.PlaceCrawler
-import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
+import club.staircrusher.place.application.port.`in`.place.PlaceCrawler
+import club.staircrusher.place.domain.model.place.Building
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService

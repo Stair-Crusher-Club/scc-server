@@ -6,7 +6,7 @@ import club.staircrusher.accessibility.application.port.out.DetectFacesService
 import club.staircrusher.accessibility.application.port.out.SlackService
 import club.staircrusher.image.application.port.out.file_management.FileManagementService
 import club.staircrusher.notification.port.out.PushSender
-import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService

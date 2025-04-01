@@ -9,7 +9,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeRep
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
 import club.staircrusher.domain_event.PlaceAccessibilityDeletedEvent
 import club.staircrusher.domain_event.dto.AccessibilityRegistererDTO
-import club.staircrusher.place.application.port.`in`.toPlaceDTO
+import club.staircrusher.place.application.port.`in`.place.toPlaceDTO
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
