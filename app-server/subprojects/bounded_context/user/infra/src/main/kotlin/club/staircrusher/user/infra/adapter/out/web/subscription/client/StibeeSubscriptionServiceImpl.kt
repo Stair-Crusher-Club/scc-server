@@ -27,4 +27,15 @@ internal class StibeeSubscriptionServiceImpl(
 
         return responseDto.isOk
     }
+
+    override suspend fun unregisterSubscriber(email: String): Boolean {
+        val responseDto = stibeeApiClient.unregisterSubscriber(
+            listId = stibeeProperties.listId,
+            body = StibeeApiClient.UnregisterSubscriberRequestDto(
+                subscribers = listOf(email),
+            ),
+        ).awaitFirst()
+
+        return responseDto.isOk
+    }
 }

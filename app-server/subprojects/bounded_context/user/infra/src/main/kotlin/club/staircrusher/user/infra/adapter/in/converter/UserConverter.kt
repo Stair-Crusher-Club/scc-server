@@ -9,4 +9,5 @@ fun UserProfile.toDTO() = club.staircrusher.api.spec.dto.User(
     email = email,
     mobilityTools = mobilityTools.map { it.toDTO() },
     birthYear = birthYear,
+    isNewsLetterSubscriptionAgreed = isNewsLetterSubscriptionAgreed ?: false,
 )
