@@ -1,8 +1,8 @@
 package club.staircrusher.place.application.port.`in`.accessibility.result
 
-import club.staircrusher.accessibility.application.AccessibilityRegisterer
-import club.staircrusher.accessibility.domain.model.PlaceAccessibility
-import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
+import club.staircrusher.place.application.result.AccessibilityRegisterer
+import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
+import club.staircrusher.place.domain.model.accessibility.PlaceAccessibilityComment
 import club.staircrusher.place.domain.model.place.Place
 
 data class RegisterPlaceAccessibilityResult(

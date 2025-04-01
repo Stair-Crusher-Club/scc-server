@@ -3,7 +3,6 @@ package club.staircrusher.challenge.application.port.`in`.use_case
 import club.staircrusher.challenge.application.port.`in`.ChallengeService
 import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.domain_event.BuildingAccessibilityCommentDeletedEvent
-import club.staircrusher.place.application.port.`in`.place.toBuilding
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 
@@ -20,7 +19,13 @@ class HandleBuildingAccessibilityCommentDeletedEventUseCase(
             userId = event.commentRegisterer.id!!,
             contribution = ChallengeService.Contribution.BuildingAccessibility(
                 buildingAccessibilityId = event.id,
-                buildingAccessibilityAddress = ChallengeAddress(event.building.toBuilding()),
+                buildingAccessibilityAddress = ChallengeAddress(
+                    siDo = event.building.address.siDo,
+                    siGunGu = event.building.address.siGunGu,
+                    eupMyeonDong = event.building.address.eupMyeonDong,
+                    li = event.building.address.li,
+                    roadName = event.building.address.roadName,
+                ),
             ),
         )
     }
