@@ -174,7 +174,8 @@ class UserApplicationService(
                 SccDomainException.ErrorCode.INVALID_NICKNAME,
             )
         }
-        if (userProfileRepository.findFirstByNickname(normalizedNickname)?.takeIf { it.id != currentUserId } != null) {
+        val alreadyRegisteredUser = userProfileRepository.findFirstByNickname(normalizedNickname)
+        if (alreadyRegisteredUser != null && alreadyRegisteredUser.userId != currentUserId) {
             throw SccDomainException(
                 "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
                 SccDomainException.ErrorCode.INVALID_NICKNAME,
@@ -191,7 +192,8 @@ class UserApplicationService(
                 SccDomainException.ErrorCode.INVALID_EMAIL,
             )
         }
-        if (userProfileRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.userId != currentUserId } != null) {
+        val alreadyRegisteredUser = userProfileRepository.findFirstByEmail(normalizedEmail)
+        if (alreadyRegisteredUser != null && alreadyRegisteredUser.userId != currentUserId) {
             throw SccDomainException(
                 "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
                 SccDomainException.ErrorCode.INVALID_EMAIL,
@@ -222,15 +224,15 @@ class UserApplicationService(
         isNewsLetterSubscriptionAgreed: Boolean?,
     ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
-        
-        userProfile.apply {
-            this.nickname = validateAndNormalizeNickname(nickname, id)
-            this.email = validateAndNormalizeEmail(email, id)
-            this.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
-            this.mobilityTools = mobilityTools
-            this.birthYear = validateBirthYear(birthYear)
+
+        userProfile.let {
+            it.nickname = validateAndNormalizeNickname(nickname, it.userId)
+            it.email = validateAndNormalizeEmail(email, it.userId)
+            it.instagramId = instagramId?.trim()?.takeIf(CharSequence::isNotEmpty)
+            it.mobilityTools = mobilityTools
+            it.birthYear = validateBirthYear(birthYear)
         }
-        
+
         userProfileRepository.save(userProfile)
 
         handleNewsletterSubscription(userProfile, isNewsLetterSubscriptionAgreed)
