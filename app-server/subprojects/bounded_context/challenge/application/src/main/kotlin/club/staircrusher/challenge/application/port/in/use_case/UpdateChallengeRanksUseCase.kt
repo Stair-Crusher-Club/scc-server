@@ -11,12 +11,9 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
+import mu.KotlinLogging
 import java.time.Duration
-import java.time.Instant
 
-/**
- * Update the users' ranks of all challenges.
- */
 @Component
 class UpdateChallengeRanksUseCase(
     private val transactionManager: TransactionManager,
@@ -25,9 +22,18 @@ class UpdateChallengeRanksUseCase(
     private val challengeContributionRepository: ChallengeContributionRepository,
     private val challengeParticipationRepository: ChallengeParticipationRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun handle() {
-        val challenges = challengeRepository.findAllByOrderByCreatedAtDesc()
-            .filter { (it.endsAt ?: Instant.MAX) > SccClock.instant() - Duration.ofDays(1) }
+        logger.info { "Starting to update challenge ranks" }
+
+        val challenges = transactionManager.doInTransaction(isReadOnly = true) {
+            val endsAtAfter = SccClock.instant() - Duration.ofDays(1)
+            challengeRepository.findAllByEndsAtIsNullOrEndsAtAfterOrderByCreatedAtDesc(endsAtAfter)
+        }
+
+        logger.info { "Found ${challenges.size} challenges to update ranks" }
+
         challenges.forEach { challenge ->
             val now = SccClock.instant()
             transactionManager.doInTransaction(TransactionIsolationLevel.SERIALIZABLE) {
@@ -66,5 +72,7 @@ class UpdateChallengeRanksUseCase(
                 challengeRankRepository.saveAll(updatedRanks)
             }
         }
+
+        logger.info { "Finished updating challenge ranks" }
     }
 }

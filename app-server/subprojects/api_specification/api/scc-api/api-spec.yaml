@@ -906,9 +906,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetHomeBannersResponseDto'
 
-  /checkNicknameDuplication:
+  /validateUserProfile:
     post:
-      summary: 닉네임 중복 여부를 체크한다.
+      summary: 유저 프로필 정보의 유효성을 검사한다.
       requestBody:
         required: true
         content:
@@ -918,9 +918,11 @@ paths:
               properties:
                 nickname:
                   type: string
-                  description: 중복 체크할 닉네임
-              required:
-                - nickname
+                  description: 유효성을 검사할 닉네임. null인 경우 유효한 것으로 간주
+                email:
+                  type: string
+                  description: 유효성을 검사할 이메일. null인 경우 유효한 것으로 간주
+              required: []
       responses:
         '200':
           content:
@@ -928,11 +930,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  isDuplicate:
-                    type: boolean
-                    description: 닉네임 중복 여부
-                required:
-                  - isDuplicate
+                  nicknameErrorMessage:
+                    type: string
+                    description: 닉네임이 유효하지 않은 경우 에러 메시지, 유효하거나 null인 경우 null
+                  emailErrorMessage:
+                    type: string
+                    description: 이메일이 유효하지 않은 경우 에러 메시지, 유효하거나 null인 경우 null
+                required: []
         '400':
           $ref: '#/components/responses/ApiFailure'
 
@@ -2082,6 +2086,7 @@ components:
         - WALKING_ASSISTANCE_DEVICE # 보행보조기구
         - CLUCH # 클러치(목발, 지팡이)
         - NONE # 해당사항없음
+        - FRIEND_OF_TOOL_USER # 도구를 사용하는 사람의 친구
 
     ImageDto:
       type: object

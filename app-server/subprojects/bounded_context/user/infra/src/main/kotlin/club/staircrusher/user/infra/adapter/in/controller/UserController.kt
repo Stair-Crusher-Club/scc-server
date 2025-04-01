@@ -1,17 +1,18 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPost200Response
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPostRequest
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
+import club.staircrusher.api.spec.dto.ValidateUserProfilePost200Response
+import club.staircrusher.api.spec.dto.ValidateUserProfilePostRequest
 import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import club.staircrusher.user.application.port.`in`.use_case.DeleteUserUseCase
 import club.staircrusher.user.application.port.`in`.use_case.GetUserProfileUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userApplicationService: UserApplicationService,
     private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val deleteUserUseCase: DeleteUserUseCase,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -90,16 +92,24 @@ class UserController(
 
     @PostMapping("/deleteUser")
     fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
-        userApplicationService.deleteUser(authentication.principal)
+        deleteUserUseCase.handle(authentication.principal)
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/checkNicknameDuplication")
-    fun checkNicknameDuplication(
-        @RequestBody request: CheckNicknameDuplicationPostRequest,
-    ): CheckNicknameDuplicationPost200Response {
-        val isDuplicate = userApplicationService.isNicknameDuplicate(request.nickname)
-        return CheckNicknameDuplicationPost200Response(isDuplicate)
+    @PostMapping("/validateUserProfile")
+    fun validateUserProfile(
+        @RequestBody request: ValidateUserProfilePostRequest,
+        authentication: SccAppAuthentication,
+    ): ValidateUserProfilePost200Response {
+        val result = userApplicationService.validateUserProfile(
+            nickname = request.nickname,
+            email = request.email,
+            userId = authentication.principal,
+        )
+        return ValidateUserProfilePost200Response(
+            nicknameErrorMessage = result.nicknameErrorMessage,
+            emailErrorMessage = result.emailErrorMessage,
+        )
     }
 
     companion object {

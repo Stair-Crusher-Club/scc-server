@@ -131,8 +131,17 @@ class AccessibilityImageService(
     }
 
     private fun generateThumbnail(originalImageUrl: String, placeId: String): Thumbnail? {
+        val destinationPath = thumbnailPath.resolve(placeId)
+        if (Files.notExists(destinationPath)) {
+            try {
+                Files.createDirectory(destinationPath)
+            } catch (t: Throwable) {
+                logger.error(t) { "Failed to create directory for thumbnail: $destinationPath" }
+                return null
+            }
+        }
+
         try {
-            val destinationPath = thumbnailPath.resolve(placeId).createDirectory()
             val imageFile = fileManagementService.downloadFile(originalImageUrl, destinationPath)
             val thumbnailFileName = "thumbnail_${imageFile.nameWithoutExtension}.$THUMBNAIL_FORMAT"
             val thumbnailOutputStream = thumbnailGenerator.generate(imageFile, THUMBNAIL_FORMAT)
@@ -146,6 +155,7 @@ class AccessibilityImageService(
 
     // FIXME: ThumbnailUploadResult 같은 data class를 만들어서 반환하면 findGeneratedThumbnailUrl에서 온몸비틀기를 안 해도 될지도?
     private fun uploadThumbnailImages(thumbnails: List<Thumbnail>) = runBlocking {
+        if (thumbnails.isEmpty()) return@runBlocking emptyList()
         logger.info { "Uploading thumbnails" }
         return@runBlocking thumbnails
             .map { (_, fileName, outputStream) ->

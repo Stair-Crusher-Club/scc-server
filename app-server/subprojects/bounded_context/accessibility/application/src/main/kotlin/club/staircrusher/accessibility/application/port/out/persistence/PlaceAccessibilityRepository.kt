@@ -10,11 +10,12 @@ import java.time.Instant
 
 @Suppress("TooManyFunctions")
 interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, String> {
+    fun findByIdIn(ids: Collection<String>): List<PlaceAccessibility>
     fun findByPlaceIdInAndDeletedAtIsNull(placeIds: Collection<String>): List<PlaceAccessibility>
     fun findFirstByPlaceIdAndDeletedAtIsNull(placeId: String): PlaceAccessibility?
     fun findByUserIdAndDeletedAtIsNull(userId: String): List<PlaceAccessibility>
     fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<PlaceAccessibility>
-    fun findFirstByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): PlaceAccessibility?
+    fun findTop5ByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): List<PlaceAccessibility>
     fun countByUserIdAndDeletedAtIsNull(userId: String): Int
     fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
     @Query("""

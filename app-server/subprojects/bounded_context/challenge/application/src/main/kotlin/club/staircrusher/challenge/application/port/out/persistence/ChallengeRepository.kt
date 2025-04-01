@@ -7,6 +7,7 @@ import java.time.Instant
 
 interface ChallengeRepository : CrudRepository<Challenge, String> {
     fun findAllByOrderByCreatedAtDesc(): List<Challenge>
+    fun findAllByEndsAtIsNullOrEndsAtAfterOrderByCreatedAtDesc(endsAtAfter: Instant): List<Challenge>
     fun findFirstByInvitationCode(invitationCode: String): Challenge?
     @Query("""
         SELECT c
