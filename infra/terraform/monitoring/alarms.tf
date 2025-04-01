@@ -28,10 +28,10 @@ variable "alarms" {
     }
     scc_rds_connection = {
       alarm_name          = "SccRdsTooManyConnections"
-      alarm_description   = "Triggers when connections to the RDS instance exceed 100"
+      alarm_description   = "Triggers when connections to the RDS instance exceed 350 (Max: 403)"
       comparison_operator = "GreaterThanOrEqualToThreshold"
       evaluation_periods  = 1
-      threshold           = 100
+      threshold           = 350
       period              = 60
       unit                = "Count"
       namespace           = "AWS/RDS"
