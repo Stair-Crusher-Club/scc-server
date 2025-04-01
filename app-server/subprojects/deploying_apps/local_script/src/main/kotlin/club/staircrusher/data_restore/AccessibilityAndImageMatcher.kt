@@ -1,6 +1,6 @@
 package club.staircrusher.data_restore
 
-import club.staircrusher.accessibility.domain.model.StairInfo
+import club.staircrusher.place.domain.model.accessibility.StairInfo
 import club.staircrusher.readTsvAsLines
 import club.staircrusher.toInstant
 import club.staircrusher.toKstString
