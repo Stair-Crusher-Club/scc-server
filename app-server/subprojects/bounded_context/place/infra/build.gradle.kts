@@ -26,7 +26,8 @@ dependencies {
     implementation(libs.aws.sdk.rekognition)
     runtimeOnly(libs.aws.sdk.sts) // IRSA를 사용하기 위해서 필요함
 
-    testImplementation(projects.apiSpecification.domainEvent)
-    testImplementation(libs.mockito.kotlin)
+    integrationTestImplementation(projects.apiSpecification.domainEvent)
+    integrationTestImplementation(libs.mockito.kotlin)
+    integrationTestImplementation(libs.jackson.module.kotlin)
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
 }
