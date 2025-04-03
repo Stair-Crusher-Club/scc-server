@@ -1,7 +1,7 @@
 package club.staircrusher
 
-import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.application.port.out.place.web.MapsService
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

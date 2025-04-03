@@ -1,7 +1,7 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
-import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.domain.model.BuildingAddress
+import club.staircrusher.place.domain.model.place.Building
+import club.staircrusher.place.domain.model.place.BuildingAddress
 import club.staircrusher.stdlib.geography.Location
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

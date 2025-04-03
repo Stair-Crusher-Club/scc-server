@@ -1,8 +1,8 @@
 package club.staircrusher.testing.spring_it.mock
 
-import club.staircrusher.accessibility.application.port.out.DetectFacesResponse
-import club.staircrusher.accessibility.application.port.out.DetectFacesService
-import club.staircrusher.accessibility.domain.model.DetectedFacePosition
+import club.staircrusher.place.application.port.out.accessibility.DetectFacesResponse
+import club.staircrusher.place.application.port.out.accessibility.DetectFacesService
+import club.staircrusher.place.domain.model.accessibility.DetectedFacePosition
 import club.staircrusher.stdlib.Size
 
 class MockDetectFacesService : DetectFacesService {

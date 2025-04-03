@@ -2,7 +2,7 @@ package club.staircrusher.place
 
 import club.staircrusher.readTsvAsLines
 import club.staircrusher.TargetRegionInfo
-import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoProperties
 import com.github.kittinunf.fuel.httpGet

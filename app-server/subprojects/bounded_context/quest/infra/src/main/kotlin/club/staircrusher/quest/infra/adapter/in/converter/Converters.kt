@@ -10,7 +10,7 @@ import club.staircrusher.admin_api.spec.dto.ClubQuestSummaryDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetBuildingDTO
 import club.staircrusher.admin_api.spec.dto.ClubQuestTargetPlaceDTO
 import club.staircrusher.admin_api.spec.dto.QuestTargetPlaceCategoryEnumDTO
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateRegionType
 import club.staircrusher.quest.application.port.`in`.ClubQuestWithDtoInfo
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem

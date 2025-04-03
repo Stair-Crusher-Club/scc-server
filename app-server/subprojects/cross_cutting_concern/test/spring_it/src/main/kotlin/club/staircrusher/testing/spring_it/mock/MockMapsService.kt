@@ -1,7 +1,7 @@
 package club.staircrusher.testing.spring_it.mock
 
-import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.application.port.out.place.web.MapsService
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.stdlib.place.PlaceCategory
 
 open class MockMapsService : MapsService {

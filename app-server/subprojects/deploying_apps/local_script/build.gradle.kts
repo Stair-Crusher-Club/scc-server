@@ -13,5 +13,4 @@ dependencies {
     implementation(projects.boundedContext.place.domain)
     implementation(projects.boundedContext.place.application)
     implementation(projects.boundedContext.place.infra)
-    implementation(projects.boundedContext.accessibility.domain)
 }

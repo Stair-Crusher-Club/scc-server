@@ -1,9 +1,9 @@
 package club.staircrusher.place.infra.adapter.out.web
 
-import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.domain.model.BuildingAddress
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.application.port.out.place.web.MapsService
+import club.staircrusher.place.domain.model.place.Building
+import club.staircrusher.place.domain.model.place.BuildingAddress
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory

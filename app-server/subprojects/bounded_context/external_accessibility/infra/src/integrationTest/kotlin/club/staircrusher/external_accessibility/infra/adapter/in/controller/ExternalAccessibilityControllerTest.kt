@@ -31,7 +31,7 @@ class ExternalAccessibilityControllerTest : ExternalAccessibilityITBase() {
     fun 서치_정상_동작() {
         val currentLocation = Location(127.5, 37.5)
         // 데이터가 없다면 보여주지 않는다.
-        val response = mvc.sccRequest(
+        val response = mvc.sccAnonymousRequest(
             "/searchExternalAccessibilities",
             SearchExternalAccessibilitiesPostRequest(
                 currentLocation = currentLocation.toDTO(),
@@ -44,7 +44,7 @@ class ExternalAccessibilityControllerTest : ExternalAccessibilityITBase() {
         // 데이터가 존재한다면 보여준다.
         testDataGenerator.createExternalAccessibility(location = currentLocation)
         testDataGenerator.createExternalAccessibility(location = currentLocation.plusLat(Length.ofMeters(1000)))
-        val response2 = mvc.sccRequest(
+        val response2 = mvc.sccAnonymousRequest(
             "/searchExternalAccessibilities",
             SearchExternalAccessibilitiesPostRequest(
                 currentLocation = currentLocation.toDTO(),
@@ -55,7 +55,7 @@ class ExternalAccessibilityControllerTest : ExternalAccessibilityITBase() {
         assertTrue(response2.size == 2)
 
         // 범위 안의 데이터만 보여준다.
-        val response3 = mvc.sccRequest(
+        val response3 = mvc.sccAnonymousRequest(
             "/searchExternalAccessibilities",
             SearchExternalAccessibilitiesPostRequest(
                 currentLocation = currentLocation.toDTO(),
@@ -69,7 +69,7 @@ class ExternalAccessibilityControllerTest : ExternalAccessibilityITBase() {
     @Test
     fun 서치_단건_조회() {
         val data = testDataGenerator.createExternalAccessibility()
-        val response = mvc.sccRequest(
+        val response = mvc.sccAnonymousRequest(
             "/getExternalAccessibility",
             GetExternalAccessibilityPostRequest(externalAccessibilityId = data.id)
         )
