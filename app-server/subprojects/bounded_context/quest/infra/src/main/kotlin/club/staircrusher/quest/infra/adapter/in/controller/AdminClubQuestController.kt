@@ -12,10 +12,13 @@ import club.staircrusher.admin_api.spec.dto.CreateClubQuestRequest
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
 import club.staircrusher.admin_api.spec.dto.GetCursoredClubQuestSummariesResultDTO
 import club.staircrusher.quest.application.port.`in`.ClubQuestCreateAplService
+import club.staircrusher.quest.application.port.`in`.ClubQuestDtoAggregator
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsClosedUseCase
 import club.staircrusher.quest.application.port.`in`.ClubQuestSetIsNotAccessibleUseCase
 import club.staircrusher.quest.application.port.`in`.CreateAndNotifyDailyClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.CrossValidateClubQuestPlacesUseCase
+import club.staircrusher.quest.application.port.`in`.DeleteClubQuestTargetBuildingUseCase
+import club.staircrusher.quest.application.port.`in`.DeleteClubQuestTargetPlaceUseCase
 import club.staircrusher.quest.application.port.`in`.DeleteClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetClubQuestUseCase
 import club.staircrusher.quest.application.port.`in`.GetCursoredClubQuestSummariesUseCase
@@ -42,6 +45,9 @@ class AdminClubQuestController(
     private val crossValidateClubQuestPlacesUseCase: CrossValidateClubQuestPlacesUseCase,
     private val getCursoredClubQuestSummariesUseCase: GetCursoredClubQuestSummariesUseCase,
     private val createAndNotifyDailyClubQuestUseCase: CreateAndNotifyDailyClubQuestUseCase,
+    private val deleteClubQuestTargetPlaceUseCase: DeleteClubQuestTargetPlaceUseCase,
+    private val clubQuestDtoAggregator: ClubQuestDtoAggregator,
+    private val deleteClubQuestTargetBuildingUseCase: DeleteClubQuestTargetBuildingUseCase,
 ) {
     @GetMapping("/admin/clubQuestSummaries/cursored")
     fun getCursoredClubQuestSummaries(
@@ -148,6 +154,18 @@ class AdminClubQuestController(
         )
 
         return ResponseEntity.noContent().build()
+    }
+
+    @DeleteMapping("/admin/clubQuests/{clubQuestId}/targetPlaces")
+    fun deleteClubQuestTargetPlace(@PathVariable clubQuestId: String, @RequestParam placeId: String): ClubQuestDTO {
+        deleteClubQuestTargetPlaceUseCase.handle(clubQuestId, placeId)
+        return clubQuestDtoAggregator.withDtoInfo(clubQuestId).toDTO()
+    }
+
+    @DeleteMapping("/admin/clubQuests/{clubQuestId}/targetBuildings")
+    fun deleteClubQuestTargetBuilding(@PathVariable clubQuestId: String, @RequestParam buildingId: String): ClubQuestDTO {
+        deleteClubQuestTargetBuildingUseCase.handle(clubQuestId, buildingId)
+        return clubQuestDtoAggregator.withDtoInfo(clubQuestId).toDTO()
     }
 
     @PutMapping("/admin/clubQuests/{clubQuestId}/crossValidate")

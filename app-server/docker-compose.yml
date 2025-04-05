@@ -1,7 +1,7 @@
 services:
   postgres:
-    platform: linux/amd64
-    image: postgis/postgis:14-3.4-alpine
+    platform: linux/arm64
+    image: ghcr.io/baosystems/postgis:15-3.5
     restart: always
     ports:
       - "15432:5432"
@@ -10,8 +10,8 @@ services:
       POSTGRES_PASSWORD: test
       POSTGRES_DB: scc_test
   postgres-local:
-    platform: linux/amd64
-    image: postgis/postgis:14-3.4-alpine
+    platform: linux/arm64
+    image: ghcr.io/baosystems/postgis:15-3.5
     restart: always
     ports:
       - "15433:5432"

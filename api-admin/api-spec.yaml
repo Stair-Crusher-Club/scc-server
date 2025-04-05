@@ -245,6 +245,48 @@ paths:
         '204':
           description: success to update
 
+  /clubQuests/{clubQuestId}/targetPlaces:
+    delete:
+      summary: 퀘스트에서 특정 장소를 제외한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+        - in: query # buildingId와 패턴을 맞춘다.
+          name: targetPlaceId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubQuestDTO'
+
+  /clubQuests/{clubQuestId}/targetBuildings:
+    delete:
+      summary: 퀘스트에서 특정 건물을 제외한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+        - in: query # buildingId에 `/`가 들어가는 경우가 있어서 query parameter로 우회한다.
+          name: targetBuildingId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubQuestDTO'
+
   /accessibilityAllowedRegions:
     post:
       summary: 정보 등록 가능 지역을 생성한다.
