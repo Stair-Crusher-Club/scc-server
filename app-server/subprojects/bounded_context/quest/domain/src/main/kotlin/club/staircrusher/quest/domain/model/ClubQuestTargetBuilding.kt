@@ -26,10 +26,13 @@ class ClubQuestTargetBuilding(
     )
     val location: Location,
     @OneToMany(mappedBy = "targetBuildingId", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val places: List<ClubQuestTargetPlace>,
+    val places: MutableList<ClubQuestTargetPlace>,
     val createdAt: Instant = SccClock.instant(),
     private val updatedAt: Instant = SccClock.instant(),
 ) {
+    fun removePlace(targetPlace: ClubQuestTargetPlace) {
+        places.remove(targetPlace)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -64,7 +67,7 @@ class ClubQuestTargetBuilding(
                         clubQuestId = clubQuestId,
                         targetBuildingId = id,
                     )
-                },
+                }.toMutableList(),
             )
         }
     }
