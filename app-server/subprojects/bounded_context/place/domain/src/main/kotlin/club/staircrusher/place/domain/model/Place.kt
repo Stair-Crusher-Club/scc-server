@@ -19,7 +19,7 @@ import org.locationtech.jts.geom.Point
 @Entity
 class Place private constructor(
     @Id
-    val id: String,
+    override val id: String,
     val name: String,
     @AttributeOverrides(
         AttributeOverride(name = "lng", column = Column(name = "location_x")),
@@ -59,24 +59,6 @@ class Place private constructor(
     fun isUpdated(maybeUpdated: Place): Boolean {
         check(this.id == maybeUpdated.id)
         return this.locationForQuery == null && maybeUpdated.locationForQuery != null
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Place
-
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
-
-    override fun toString(): String {
-        return "Place(id='$id', name='$name', location=$location, building=$building, siGunGuId=$siGunGuId, " +
-            "eupMyeonDongId=$eupMyeonDongId, category=$category, isClosed=$isClosed, isNotAccessible=$isNotAccessible)"
     }
 
     companion object {
