@@ -37,7 +37,7 @@ interface ClosedPlaceCandidateRepository : CrudRepository<ClosedPlaceCandidate, 
                 OR (c.createdAt < :cursorCreatedAt)
             )
             AND c.ignoredAt IS NULL
-            AND pa IS NOT NULL
+            AND pa.id IS NOT NULL
         ORDER BY c.createdAt DESC, c.id DESC
     """)
     fun findNotIgnoredAndAccessibilityNotNullWithCursor(
