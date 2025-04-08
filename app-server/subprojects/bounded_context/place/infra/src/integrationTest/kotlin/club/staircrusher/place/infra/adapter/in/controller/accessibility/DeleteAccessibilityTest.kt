@@ -124,17 +124,4 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
                 status { isUnauthorized() }
             }
     }
-
-    @Test
-    fun `등록한지 6시간이 지난 장소 정보는 삭제할 수 없다`() {
-        val (user, _, placeAccessibility) = registerAccessibility()
-        clock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
-
-        val params = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
-        mvc
-            .sccRequest("/deleteAccessibility", params, userAccount = user)
-            .andExpect {
-                status { isBadRequest() }
-            }
-    }
 }

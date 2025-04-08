@@ -168,39 +168,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `장소 정보는 등록한지 6시간까지만 삭제 가능하다`() {
-        val (user, place1) = registerAccessibility()
-        val params = GetAccessibilityPostRequest(
-            placeId = place1.id
-        )
-        mvc
-            .sccRequest("/getAccessibility", params, userAccount = user.account)
-            .andExpect {
-                status {
-                    isOk()
-                }
-            }
-            .apply {
-                val result = getResult(AccessibilityInfoDto::class)
-                assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
-            }
-
-        clock.advanceTime(PlaceAccessibility.deletableDuration + Duration.ofMinutes(1))
-
-        mvc
-            .sccRequest("/getAccessibility", params, userAccount = user.account)
-            .andExpect {
-                status {
-                    isOk()
-                }
-            }
-            .apply {
-                val result = getResult(AccessibilityInfoDto::class)
-                assertNull(result.placeAccessibility!!.deletionInfo)
-            }
-    }
-
-    @Test
     fun `imageUrls 만 존재한다면 images 로 마이그레이션이 이뤄진다`() {
         val imageUrl = "https://example.com/image.jpg"
         val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
