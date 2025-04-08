@@ -4,6 +4,8 @@ import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.accessibility.StairHeightLevel
 import club.staircrusher.place.domain.model.accessibility.StairInfo
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.time.Instant
@@ -13,7 +15,6 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
     fun findByIdIn(ids: Collection<String>): List<PlaceAccessibility>
     fun findByPlaceIdInAndDeletedAtIsNull(placeIds: Collection<String>): List<PlaceAccessibility>
     fun findFirstByPlaceIdAndDeletedAtIsNull(placeId: String): PlaceAccessibility?
-    fun findByUserIdAndDeletedAtIsNull(userId: String): List<PlaceAccessibility>
     fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<PlaceAccessibility>
     fun findTop5ByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): List<PlaceAccessibility>
     fun countByUserIdAndDeletedAtIsNull(userId: String): Int
@@ -43,7 +44,20 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
         limit: Int,
     ): List<PlaceAccessibility>
 
-    fun countBy(): Int
+    @Query("""
+        SELECT pa
+        FROM PlaceAccessibility pa
+        WHERE pa.userId = :userId
+            AND (
+                (pa.createdAt = :cursorCreatedAt AND pa.id < :cursorId)
+                OR (pa.createdAt < :cursorCreatedAt)
+            )
+            AND pa.deletedAt IS NULL
+        ORDER BY pa.createdAt DESC, pa.id DESC
+    """)
+    fun findCursoredByUserId(userId: String, pageable: Pageable, cursorCreatedAt: Instant, cursorId: String): Page<PlaceAccessibility>
+
+    fun countByDeletedAtIsNull(): Int
 
     data class CreateParams(
         val placeId: String,
