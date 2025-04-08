@@ -20,7 +20,7 @@ class CreateClosedPlaceCandidatesUseCase(
 ) {
     private val logger = KotlinLogging.logger {}
     @Suppress("UnstableApiUsage", "MagicNumber")
-    private val rateLimiter = RateLimiter.create(10.0)
+    private val rateLimiter = RateLimiter.create(5.0)
 
     fun handle() {
         val closedPlacesFromOpenData = openDataService.getClosedPlaces()
