@@ -25,6 +25,27 @@ interface ClosedPlaceCandidateRepository : CrudRepository<ClosedPlaceCandidate, 
         pageable: Pageable,
     ): Page<ClosedPlaceCandidate>
 
+
+    @Query("""
+        SELECT c
+        FROM ClosedPlaceCandidate c
+            LEFT OUTER JOIN PlaceAccessibility pa
+            ON c.placeId = pa.placeId
+        WHERE
+            (
+                (c.createdAt = :cursorCreatedAt AND c.id < :cursorId)
+                OR (c.createdAt < :cursorCreatedAt)
+            )
+            AND c.ignoredAt IS NULL
+            AND pa.id IS NOT NULL
+        ORDER BY c.createdAt DESC, c.id DESC
+    """)
+    fun findNotIgnoredAndAccessibilityNotNullWithCursor(
+        cursorCreatedAt: Instant,
+        cursorId: String,
+        pageable: Pageable,
+    ): Page<ClosedPlaceCandidate>
+
     fun findByExternalIdIn(externalIds: List<String>): List<ClosedPlaceCandidate>
     fun findByPlaceIdIn(placeIds: List<String>): List<ClosedPlaceCandidate>
     fun findByPlaceId(placeId: String): ClosedPlaceCandidate?
