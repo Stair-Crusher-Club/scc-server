@@ -32,10 +32,12 @@ class AdminPlaceController(
 
     @GetMapping("/admin/closed-place-candidates")
     fun listClosedPlaceCandidates(
+        @RequestParam(required = false) isAccessibilityRegistered: Boolean?,
         @RequestParam(required = false) limit: Int?,
         @RequestParam(required = false) cursor: String?,
     ): AdminListClosedPlaceCandidatesResponseDTO {
         return listClosedPlaceCandidatesUseCase.handle(
+            isAccessibilityRegistered = isAccessibilityRegistered,
             limit = limit,
             cursorValue = cursor,
         ).run {

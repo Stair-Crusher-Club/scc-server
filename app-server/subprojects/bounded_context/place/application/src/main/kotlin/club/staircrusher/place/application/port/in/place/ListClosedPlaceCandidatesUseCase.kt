@@ -17,6 +17,7 @@ class ListClosedPlaceCandidatesUseCase(
     private val placeRepository: PlaceRepository,
 ) {
     fun handle(
+        isAccessibilityRegistered: Boolean?,
         limit: Int?,
         cursorValue: String?,
     ) = transactionManager.doInTransaction {
@@ -27,11 +28,19 @@ class ListClosedPlaceCandidatesUseCase(
             0,
             normalizedLimit,
         )
-        val result = closedPlaceCandidateRepository.findNotIgnoredWithCursor(
-            cursorCreatedAt = cursor.timestamp,
-            cursorId = cursor.id,
-            pageable = pageRequest,
-        )
+        val result = if (isAccessibilityRegistered == true) {
+            closedPlaceCandidateRepository.findNotIgnoredAndAccessibilityNotNullWithCursor(
+                cursorCreatedAt = cursor.timestamp,
+                cursorId = cursor.id,
+                pageable = pageRequest,
+            )
+        } else {
+            closedPlaceCandidateRepository.findNotIgnoredWithCursor(
+                cursorCreatedAt = cursor.timestamp,
+                cursorId = cursor.id,
+                pageable = pageRequest,
+            )
+        }
 
         val nextCursor = if (result.hasNext()) {
             Cursor(result.content[normalizedLimit - 1])
