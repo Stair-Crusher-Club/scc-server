@@ -30,14 +30,12 @@ gradle module은 모두 `app-server/subprojects/` 디렉토리 아래에 존재�
 
 ### Bounded Context의 식별 및 분리
 
-2025년 3월 기준, 계단정복지도 서비스에는 크게 9가지의 bounded context(이하 BC)가 있습니다(alphabetical order). 
-- accessibility - 접근성 정보 관리
+2025년 4월 기준, 계단정복지도 서비스에는 크게 7가지의 bounded context(이하 BC)가 있습니다(alphabetical order). 
 - challenge - 챌린지 관리
 - external-accessibility - 외부 데이터를 통해 가져오는 접근성 정보 관리
 - misc - 도메인 로직과 크게 관계 없거나 독립적인 BC 로 묶이기 애매한 기타 정보 관리 (e.g. 홈 배너)
 - notification - 알림 관리
-- place - 장소 / 건물 정보 관리
-- place_search - 장소 / 건물 검색 유즈 케이스 지원
+- place - 장소 / 건물 / 접근성 정보 관리 및 검색 유즈 케이스 지원
 - quest - 오프라인 클럽 활동을 위한 퀘스트 관리 
 - user - 계정 정보 관리, 인증 처리
 

@@ -15,6 +15,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-security")
     implementation(libs.kotlin.logging)
     implementation(libs.jackson.module.kotlin)
+    runtimeOnly(libs.coroutines.reactor)
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
     integrationTestImplementation(libs.jackson.module.kotlin)

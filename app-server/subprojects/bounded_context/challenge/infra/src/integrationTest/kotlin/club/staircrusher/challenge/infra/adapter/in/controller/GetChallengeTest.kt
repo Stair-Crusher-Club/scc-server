@@ -44,7 +44,7 @@ class GetChallengeTest : ChallengeITBase() {
     fun `참여자 수, 정복한 장소 수가 맞는지 확인한다`() {
         val challenge = registerInProgressChallenge()
         // 참여 전 상태 확인
-        val challengeBeforeParticipationAndContribution = mvc.sccRequest(
+        val challengeBeforeParticipationAndContribution = mvc.sccAnonymousRequest(
             "/getChallenge",
             GetChallengeRequestDto(challengeId = challenge.id),
         )

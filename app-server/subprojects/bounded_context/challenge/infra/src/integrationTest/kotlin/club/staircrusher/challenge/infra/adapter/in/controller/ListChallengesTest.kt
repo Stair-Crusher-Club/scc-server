@@ -77,7 +77,7 @@ class ListChallengesTest : ChallengeITBase() {
         val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
 
         val inProgressChallenges = mvc
-            .sccRequest(
+            .sccAnonymousRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(ChallengeStatusDto.IN_PROGRESS),
@@ -96,7 +96,7 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(inProgressChallenges.isDistinct())
 
         val upcomingChallenges = mvc
-            .sccRequest(
+            .sccAnonymousRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(ChallengeStatusDto.UPCOMING),
@@ -115,7 +115,7 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(upcomingChallenges.isDistinct())
 
         val closedChallenges = mvc
-            .sccRequest(
+            .sccAnonymousRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(ChallengeStatusDto.CLOSED),
@@ -139,7 +139,7 @@ class ListChallengesTest : ChallengeITBase() {
         val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
 
         val inProgressOrUpcomingChallenges = mvc
-            .sccRequest(
+            .sccAnonymousRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(ChallengeStatusDto.IN_PROGRESS, ChallengeStatusDto.UPCOMING),
@@ -162,7 +162,7 @@ class ListChallengesTest : ChallengeITBase() {
         assertTrue(inProgressOrUpcomingChallenges.isDistinct())
 
         val upcomingOrCloseChallenges = mvc
-            .sccRequest(
+            .sccAnonymousRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(ChallengeStatusDto.UPCOMING, ChallengeStatusDto.CLOSED),
@@ -190,7 +190,7 @@ class ListChallengesTest : ChallengeITBase() {
         val registeredChallengesByStatus = transactionManager.doInTransaction { registerChallenges() }
 
         val inProgressChallengesBeforeParticipation = mvc
-            .sccRequest(
+            .sccAnonymousRequest(
                 "/listChallenges",
                 ListChallengesRequestDto(
                     statuses = listOf(ChallengeStatusDto.IN_PROGRESS),

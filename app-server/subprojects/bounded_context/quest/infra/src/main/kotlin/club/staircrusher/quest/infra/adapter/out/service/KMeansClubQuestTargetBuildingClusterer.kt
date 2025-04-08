@@ -1,6 +1,6 @@
 package club.staircrusher.quest.infra.adapter.out.service
 
-import club.staircrusher.place.domain.model.Building
+import club.staircrusher.place.domain.model.place.Building
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
 import club.staircrusher.quest.infra.kmeans.Centroid
 import club.staircrusher.quest.infra.kmeans.EuclideanDistance
