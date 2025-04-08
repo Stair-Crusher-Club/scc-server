@@ -2,6 +2,7 @@ package club.staircrusher.place.infra.adapter.`in`.controller.place
 
 import club.staircrusher.admin_api.spec.dto.AdminClosedPlaceCandidateDTO
 import club.staircrusher.admin_api.spec.dto.AdminListClosedPlaceCandidatesResponseDTO
+import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.application.port.out.place.persistence.ClosedPlaceCandidateRepository
 import club.staircrusher.place.domain.model.place.ClosedPlaceCandidate
 import club.staircrusher.place.domain.model.place.Place
@@ -20,6 +21,9 @@ class AdminPlaceControllerTest : PlaceITBase() {
 
     @Autowired
     private lateinit var closedPlaceCandidateRepository: ClosedPlaceCandidateRepository
+
+    @Autowired
+    private lateinit var placeAccessibilityRepository: PlaceAccessibilityRepository
 
     @BeforeEach
     fun setUp() {
@@ -105,6 +109,31 @@ class AdminPlaceControllerTest : PlaceITBase() {
                     val candidateEntity = closedPlaceCandidateRepository.findByIdOrNull(closedPlaceCandidate.id)
                     Assertions.assertNotNull(candidateEntity!!.ignoredAt)
                     Assertions.assertNull(candidateEntity.acceptedAt)
+                }
+            }
+    }
+
+    @Test
+    fun `폐업 상태로 확정할 때 접근성 정보가 등록되어 있다면, 함께 삭제된다`() {
+        val (place, closedPlaceCandidate) = registerPlaceAndClosedPlaceCandidate()
+        val placeAccessibilityId = testDataGenerator.registerPlaceAccessibility(place).id
+
+        mvc
+            .sccAdminRequest("/admin/closed-place-candidates/${closedPlaceCandidate.id}/accept", HttpMethod.PUT, null)
+            .run {
+                val result = getResult(AdminClosedPlaceCandidateDTO::class)
+
+                Assertions.assertEquals(closedPlaceCandidate.placeId, result.placeId)
+                Assertions.assertEquals(place.name, result.name)
+                Assertions.assertNotNull(result.acceptedAt)
+
+                transactionManager.doInTransaction {
+                    val candidateEntity = closedPlaceCandidateRepository.findByIdOrNull(closedPlaceCandidate.id)!!
+                    val placeAccessibility = placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)
+
+                    Assertions.assertNotNull(candidateEntity.acceptedAt)
+                    Assertions.assertNull(candidateEntity.ignoredAt)
+                    Assertions.assertNull(placeAccessibility)
                 }
             }
     }
