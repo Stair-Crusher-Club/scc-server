@@ -26,10 +26,13 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import mu.KotlinLogging
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -318,7 +321,7 @@ class AccessibilityApplicationService(
             placeAccessibility = result,
             placeAccessibilityComment = placeAccessibilityComment,
             accessibilityRegisterer = userInfo,
-            registrationOrder = placeAccessibilityRepository.countBy(),
+            registrationOrder = placeAccessibilityRepository.countByDeletedAtIsNull(),
             isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId) ?: false,
         )
     }
@@ -389,14 +392,19 @@ class AccessibilityApplicationService(
         }
     }
 
-    fun findByUserId(userId: String): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
-        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndDeletedAtIsNull(userId)
-        if (placeAccessibilities.isEmpty()) return Pair(emptyList(), emptyList())
+    fun findCursoredByUserId(userId: String, pageable: Pageable, cursor: TimestampCursor): Pair<Page<PlaceAccessibility>, List<BuildingAccessibility>> {
+        val placeAccessibilityPage = placeAccessibilityRepository.findCursoredByUserId(userId, pageable, cursor.timestamp, cursor.id)
+        if (placeAccessibilityPage.content.isEmpty()) return Pair(Page.empty(), emptyList())
 
-        val buildingIds = placeApplicationService.findAllByIds(placeAccessibilities.map { it.placeId })
+        val buildingIds = placeApplicationService.findAllByIds(placeAccessibilityPage.content.map { it.placeId })
             .map { it.building.id }
         val buildingAccessibilities = buildingAccessibilityRepository.findByBuildingIdInAndDeletedAtIsNull(buildingIds)
-        return Pair(placeAccessibilities, buildingAccessibilities)
+
+        return Pair(placeAccessibilityPage, buildingAccessibilities)
+    }
+
+    fun countByUserId(userId: String): Int {
+        return placeAccessibilityRepository.countByUserIdAndDeletedAtIsNull(userId)
     }
 
     fun countByUserIdAndCreatedAtBetween(userId: String, from: Instant, to: Instant): Int =

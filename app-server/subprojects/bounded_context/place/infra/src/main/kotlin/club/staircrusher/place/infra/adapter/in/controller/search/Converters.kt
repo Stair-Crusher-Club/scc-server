@@ -4,7 +4,7 @@ import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.PlaceCategoryDto
 import club.staircrusher.api.spec.dto.PlaceListItem
-import club.staircrusher.place.application.port.`in`.search.PlaceSearchService
+import club.staircrusher.place.application.result.SearchPlacesResult
 import club.staircrusher.place.domain.model.place.Building
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.place.infra.adapter.`in`.controller.common.toDTO
@@ -23,7 +23,7 @@ fun Building.toDTO() = club.staircrusher.api.spec.dto.Building(
     location = location.toDTO(),
 )
 
-fun PlaceSearchService.SearchPlacesResult.toDTO() = PlaceListItem(
+fun SearchPlacesResult.toDTO() = PlaceListItem(
     place = place.toDTO(isFavorite = isFavoritePlace),
     building = place.building.toDTO(),
     hasBuildingAccessibility = buildingAccessibility != null,
