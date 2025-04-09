@@ -35,14 +35,14 @@ class SccExceptionHandler {
                 logger.info(t) { "Bad Request: ${t.message}" }
                 return ResponseEntity
                     .badRequest()
-                    .body(t.message)
+                    .body(objectMapper.writeValueAsString(ApiErrorResponse(msg = t.message)))
             }
 
             else -> {
                 logger.error(t) { "Unexpected Error: ${t.message}" } // 일단은 모든 에러를 ERROR 레벨로 찍고, 불필요한 에러를 제외하는 식으로 간다.
                 ResponseEntity
                     .internalServerError()
-                    .body("알 수 없는 에러가 발생했습니다. 다시 시도해주세요.")
+                    .body(objectMapper.writeValueAsString(ApiErrorResponse(msg = "알 수 없는 에러가 발생했습니다. 다시 시도해주세요.")))
             }
         }
     }
