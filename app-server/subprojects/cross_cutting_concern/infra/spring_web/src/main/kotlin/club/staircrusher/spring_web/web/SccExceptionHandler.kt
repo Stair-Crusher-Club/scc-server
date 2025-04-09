@@ -12,7 +12,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
-// TODO: error 내려주기 위한 api spec 정의
 @ControllerAdvice
 class SccExceptionHandler {
     private val logger = KotlinLogging.logger {}
@@ -23,24 +22,16 @@ class SccExceptionHandler {
         return when (t) {
             is SccDomainException -> {
                 logger.info(t) { "Bad Request: $t, cause: ${t.cause}" }
-                if (t.errorCode != null) {
-                    ResponseEntity
-                        .badRequest()
-                        // FIXME: 하위호환을 위해 ResponseEntity<ApiErrorResponse>를 내려주는 대신 ResponseEntity<String>으로 내려준다.
-                        //        이후 ApiErrorResponse를 클라가 이해하게 되면 전부 ApiErrorResponse를 내려주도록 변경한다.
-                        .body(objectMapper.writeValueAsString(t.toApiErrorResponse()))
-                } else {
-                    ResponseEntity
-                        .badRequest()
-                        .body(t.msg)
-                }
+                ResponseEntity
+                    .badRequest()
+                    .body(objectMapper.writeValueAsString(t.toApiErrorResponse()))
             }
 
             is HttpRequestMethodNotSupportedException,
             is HttpMediaTypeNotSupportedException,
             is HttpMessageNotReadableException,
             is MissingKotlinParameterException,
-            -> {
+                -> {
                 logger.info(t) { "Bad Request: ${t.message}" }
                 return ResponseEntity
                     .badRequest()
