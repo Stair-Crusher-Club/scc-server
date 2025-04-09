@@ -11,10 +11,10 @@ interface ClientVersionService {
 @Component
 class ClientVersionServiceImpl : ClientVersionService {
     override fun getUpgradedNeededVersion(): SemanticVersion {
-        return SemanticVersion(0, 2, 0)
+        return SemanticVersion(0, 6, 1)
     }
 
     override fun getUpgradedRecommendedVersion(): SemanticVersion {
-        return SemanticVersion(0, 2, 0)
+        return SemanticVersion(0, 6, 1)
     }
 }
