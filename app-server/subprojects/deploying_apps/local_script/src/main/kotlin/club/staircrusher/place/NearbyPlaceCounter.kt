@@ -2,11 +2,13 @@ package club.staircrusher.place
 
 import club.staircrusher.readTsvAsLines
 import club.staircrusher.TargetRegionInfo
+import club.staircrusher.infra.network.RateLimiterFactory
 import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoProperties
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -44,7 +46,7 @@ private val targetCategoryGroups = listOf(
 @Suppress("MagicNumber")
 private val radiusMetersList = listOf(500)
 
-private val kakaoMapsService = KakaoMapsService(KakaoProperties(kakaoApiKey))
+private val kakaoMapsService = KakaoMapsService(KakaoProperties(kakaoApiKey), RateLimiterFactory(SimpleMeterRegistry()))
 
 fun main() {
     val regionInfos = getTargetRegionInfos()
