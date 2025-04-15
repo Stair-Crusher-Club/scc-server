@@ -2,7 +2,7 @@ package club.staircrusher.quest.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.ClubQuestsClubQuestIdIsNotAccessiblePutRequest
 import club.staircrusher.admin_api.spec.dto.CreateClubQuestResponseDTO
-import club.staircrusher.place.application.port.out.persistence.PlaceRepository
+import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

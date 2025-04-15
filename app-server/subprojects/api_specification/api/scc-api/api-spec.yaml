@@ -2070,10 +2070,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserMobilityToolDto'
+        isNewsLetterSubscriptionAgreed:
+          type: boolean
+          description: 뉴스레터 수신 동의 여부
       required:
         - id
         - nickname
         - mobilityTools
+        - isNewsLetterSubscriptionAgreed
 
     UserMobilityToolDto:
       type: string

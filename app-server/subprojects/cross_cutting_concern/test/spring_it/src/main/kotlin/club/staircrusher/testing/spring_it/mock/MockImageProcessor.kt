@@ -1,7 +1,8 @@
 package club.staircrusher.testing.spring_it.mock
 
-import club.staircrusher.accessibility.application.port.`in`.image.ImageProcessor
-import club.staircrusher.accessibility.domain.model.DetectedFacePosition
+import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
+import club.staircrusher.place.domain.model.accessibility.DetectedFacePosition
+
 
 class MockImageProcessor : ImageProcessor {
     override fun blur(

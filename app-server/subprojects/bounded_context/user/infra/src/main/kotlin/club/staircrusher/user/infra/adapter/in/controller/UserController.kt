@@ -62,7 +62,7 @@ class UserController(
             instagramId = request.instagramId,
             email = request.email,
             mobilityTools = request.mobilityTools.map { it.toModel() },
-            isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed ?: false,
+            isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed,
             birthYear = request.birthYear,
         )
         return UpdateUserInfoPost200Response(

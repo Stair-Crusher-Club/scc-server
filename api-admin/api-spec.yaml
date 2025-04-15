@@ -245,6 +245,48 @@ paths:
         '204':
           description: success to update
 
+  /clubQuests/{clubQuestId}/targetPlaces:
+    delete:
+      summary: 퀘스트에서 특정 장소를 제외한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+        - in: query # buildingId와 패턴을 맞춘다.
+          name: targetPlaceId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubQuestDTO'
+
+  /clubQuests/{clubQuestId}/targetBuildings:
+    delete:
+      summary: 퀘스트에서 특정 건물을 제외한다.
+      parameters:
+        - in: path
+          name: clubQuestId
+          schema:
+            type: string
+          required: true
+        - in: query # buildingId에 `/`가 들어가는 경우가 있어서 query parameter로 우회한다.
+          name: targetBuildingId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubQuestDTO'
+
   /accessibilityAllowedRegions:
     post:
       summary: 정보 등록 가능 지역을 생성한다.
@@ -462,11 +504,16 @@ paths:
       responses:
         '204': {}
 
-  /closedPlaceCandidates:
+  /closed-place-candidates:
     get:
       operationId: listClosedPlaceCandidates
       summary: 폐업이 추정되는 장소의 리스트를 조회한다.
       parameters:
+        - in: query
+          name: isAccessibilityRegistered
+          schema:
+            type: boolean
+          required: false
         - in: query
           name: cursor
           schema:
@@ -485,7 +532,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminListClosedPlaceCandidatesResponseDTO'
 
-  /closedPlaceCandidates/{id}:
+  /closed-place-candidates/{id}:
     get:
       operationId: getClosedPlaceCandidate
       summary: 폐업이 추정되는 장소를 조회한다.
@@ -496,7 +543,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminClosedPlaceCandidateDTO'
 
-  /closedPlaceCandidates/{id}/accept:
+  /closed-place-candidates/{id}/accept:
     put:
       operationId: acceptClosedPlaceCandidate
       summary: 해당 장소를 폐업 상태로 변경한다.
@@ -507,7 +554,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminClosedPlaceCandidateDTO'
 
-  /closedPlaceCandidates/{id}/ignore:
+  /closed-place-candidates/{id}/ignore:
     put:
       operationId: ignoreClosedPlaceCandidate
       summary: 해당 장소를 폐업의 폐업 추정을 무시한다.

@@ -28,6 +28,10 @@ postgresql = "42.5.0"
 flyway = "9.4.0"
 jwt = "3.18.1"
 mockitoKotlin = "5.1.0"
+thumbnailator = "0.4.20"
+webpImageio = "0.1.0"
+javaCv = "1.5.9"
+bucket4j = "8.10.1"
 
 [libraries]
 kotlin-logging = { group = "io.github.microutils", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
@@ -63,6 +67,10 @@ flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "fly
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
+thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "thumbnailator" }
+webp-imageio = { group = "org.sejda.webp-imageio", name = "webp-imageio-sejda", version.ref = "webpImageio" }
+java-cv = { group = "org.bytedeco", name = "javacv-platform", version.ref = "javaCv" }
+bucket4j-core = { group = "com.bucket4j", name = "bucket4j-core", version.ref = "bucket4j" }
 
 [bundles]
 kotlin-subproject = ["kotlin-logging", "kotlin-serialization-json", "kotlin-reflect"]

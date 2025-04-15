@@ -1,8 +1,8 @@
 package club.staircrusher.challenge.domain.model
 
-import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.domain.model.BuildingAddress
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.domain.model.place.Building
+import club.staircrusher.place.domain.model.place.BuildingAddress
+import club.staircrusher.place.domain.model.place.Place
 
 data class ChallengeAddress(
     val siDo: String,

@@ -63,10 +63,3 @@ jobs:
           name: test report
           path: "**/build/reports"
           retention-days: 1
-
-      - name: Notify CI failure to PR
-        uses: thollander/actions-comment-pull-request@v2
-        if: failure()
-        with:
-          message: |
-            :fire::fire::fire: Backend CI Failed. [github action link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) :fire::fire::fire:

@@ -1,6 +1,6 @@
 package club.staircrusher.quest.application.port.`in`
 
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.quest.domain.model.ClubQuest
 
 data class ClubQuestWithDtoInfo(
