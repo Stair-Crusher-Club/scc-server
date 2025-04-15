@@ -14,7 +14,7 @@ spring:
     url: jdbc:postgresql://scc-rds.ch28o2ai2p5m.ap-northeast-2.rds.amazonaws.com:5432/scc_dev
     driver-class-name: org.postgresql.Driver
     hikari:
-      connection-timeout: 2000
+      connection-timeout: 25000
       data-source-properties.cachePrepStmts: true
       data-source-properties.prepStmtCacheSize: 250
       data-source-properties.prepStmtCacheSqlLimit: 2048
