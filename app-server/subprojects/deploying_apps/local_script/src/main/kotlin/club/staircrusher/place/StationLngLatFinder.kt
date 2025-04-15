@@ -4,6 +4,7 @@ import club.staircrusher.findLngLat
 import club.staircrusher.infra.network.RateLimiterFactory
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsProperties
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 
 private const val kakaoApiKey = "test key"
 private val kakaoMapsService = KakaoMapsService(KakaoMapsProperties(kakaoApiKey), RateLimiterFactory(SimpleMeterRegistry()))
