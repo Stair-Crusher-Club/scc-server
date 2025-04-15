@@ -75,7 +75,7 @@ metadata:
   labels:
     {{- include "scc-server.labels" . | nindent 4 }}
 spec:
-  # At 11:00 pm (KST) every day
+  # At 10:00 pm (KST) every day
   schedule: "0 13 * * *"
   jobTemplate:
     spec:
