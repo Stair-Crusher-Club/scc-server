@@ -41,13 +41,10 @@ class SccAppAuthenticationProvider(
                 if (user.isDeleted) {
                     throw BadCredentialsException("No User found with given credentials.")
                 }
-                val userProfile = userApplicationService.getProfileByUserIdOrNull(userId)
 
                 AuthUser(
                     id = user.id,
                     type = user.accountType.name,
-                    nickname = userProfile?.nickname,
-                    instagramId = userProfile?.instagramId,
                 )
             }
         }
