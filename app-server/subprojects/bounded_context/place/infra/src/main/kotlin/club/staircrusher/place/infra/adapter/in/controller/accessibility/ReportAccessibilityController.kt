@@ -19,7 +19,7 @@ class ReportAccessibilityController(
     ): ResponseEntity<Unit> {
         reportAccessibilityUseCase.handle(
             request.placeId,
-            authentication.details,
+            authentication.principal,
             request.reason,
         )
         return ResponseEntity
