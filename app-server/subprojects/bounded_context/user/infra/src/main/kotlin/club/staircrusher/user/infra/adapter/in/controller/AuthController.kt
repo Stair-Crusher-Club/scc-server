@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
 
 @RestController
 class AuthController(
@@ -56,7 +57,12 @@ class AuthController(
     @PostMapping("/loginWithKakao")
     fun loginWithKakao(@RequestBody request: LoginWithKakaoPostRequest, authentication: SccAppAuthentication?): LoginResultDto {
         val anonymousUserId = authentication?.details?.takeIf { it.type == UserAccountType.ANONYMOUS.name }?.id
-        return loginWithKakaoUseCase.handle(request.kakaoTokens.refreshToken, request.kakaoTokens.idToken, anonymousUserId).toDTO()
+        return loginWithKakaoUseCase.handle(
+            kakaoRefreshToken = request.kakaoTokens.refreshToken,
+            rawKakaoIdToken = request.kakaoTokens.idToken,
+            refreshTokenExpiresAt = request.kakaoTokens.refreshTokenExpiresAt?.let { Instant.ofEpochMilli(it.value) },
+            anonymousUserId = anonymousUserId,
+        ).toDTO()
     }
 
     @PostMapping("/loginWithApple")

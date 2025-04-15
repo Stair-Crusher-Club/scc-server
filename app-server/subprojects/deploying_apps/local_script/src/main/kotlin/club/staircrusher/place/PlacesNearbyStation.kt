@@ -5,7 +5,7 @@ import club.staircrusher.infra.network.RateLimiterFactory
 import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.place.infra.adapter.out.web.KakaoMapsService
-import club.staircrusher.place.infra.adapter.out.web.KakaoProperties
+import club.staircrusher.place.infra.adapter.out.web.KakaoMapsProperties
 import club.staircrusher.readTsvAsLines
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory
@@ -39,7 +39,7 @@ private fun Place.toCsvRow(): String = "${building.id},${id},$name,${category?.t
 @Suppress("MagicNumber")
 private val radiusMeter: Int = 500
 
-private val kakaoMapsService = KakaoMapsService(KakaoProperties(kakaoApiKey), RateLimiterFactory(SimpleMeterRegistry()))
+private val kakaoMapsService = KakaoMapsService(KakaoMapsProperties(kakaoApiKey), RateLimiterFactory(SimpleMeterRegistry()))
 
 fun main() = runBlocking {
     val regionInfos = getTargetRegionInfos()
