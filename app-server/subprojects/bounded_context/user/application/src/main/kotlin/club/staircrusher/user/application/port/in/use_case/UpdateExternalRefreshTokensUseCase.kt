@@ -4,7 +4,6 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.time.toEndOfDay
-import club.staircrusher.stdlib.time.toStartOfDay
 import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.application.port.out.web.login.kakao.KakaoLoginService
 import club.staircrusher.user.domain.model.UserAuthProviderType
@@ -28,11 +27,10 @@ class UpdateExternalRefreshTokensUseCase(
     fun handle() {
         logger.info { "UpdateExternalRefreshToken Job started" }
 
-        // 카카오의 refresh 토큰은 2달간 유효하지만, LoginWithKakaoUseCase 에서 externalRefreshTokenExpiresAt 을 임의로 30일 뒤로 저장한다
         // 토큰 갱신하기 API 의 경우 refresh token 의 유효기간이 1개월 미만으로 남았을 때만 갱신되어 전달되므로
         // externalRefreshTokenExpiresAt 이 만료될 때쯤 요청을 보내서 refresh token 이 응답이 오는 경우에만 갱신해주면 된다.
-        val from = SccClock.instant().toStartOfDay() - Duration.ofDays(1L)
-        val to = SccClock.instant().toEndOfDay() + Duration.ofDays(1L)
+        val from = SccClock.instant()
+        val to = SccClock.instant().toEndOfDay() + Duration.ofDays(31L)
         val userAuthIdToExpiringKakaoAuthTokens = transactionManager.doInTransaction(isReadOnly = true) {
             userAuthInfoRepository.findByAuthProviderTypeAndExternalRefreshTokenExpiresAtBetween(UserAuthProviderType.KAKAO, from, to)
                 .map { it.id to it.externalRefreshToken }
@@ -48,10 +46,7 @@ class UpdateExternalRefreshTokensUseCase(
                 if (kakaoLoginTokens.refreshToken != null) {
                     // refresh token 이 업데이트가 가능할 때만 response 에 refresh token 이 포함된다
                     userAuthInfo.externalRefreshToken = kakaoLoginTokens.refreshToken
-                    userAuthInfo.externalRefreshTokenExpiresAt = SccClock.instant() + LoginWithKakaoUseCase.kakaoRefreshTokenExpirationDuration
-                } else {
-                    // 응답에 refresh token 이 포함되지 않았다면, 아직 만료 기간이 1달 이상 남아있는 것이므로 14일 뒤에 다시 시도한다
-                    userAuthInfo.externalRefreshTokenExpiresAt = SccClock.instant() + retryUpdatingRefreshTokenAfter
+                    userAuthInfo.externalRefreshTokenExpiresAt = kakaoLoginTokens.refreshTokenExpiresAt ?: (SccClock.instant() + LoginWithKakaoUseCase.kakaoRefreshTokenExpirationDuration)
                 }
                 userAuthInfoRepository.save(userAuthInfo)
             }
@@ -62,9 +57,5 @@ class UpdateExternalRefreshTokensUseCase(
         logger.info {
             "UpdateExternalRefresh Job complete. Tried updating ${userAuthIdToExpiringKakaoAuthTokens.size} tokens, updated ${updatedTokens.size} tokens"
         }
-    }
-
-    companion object {
-        private val retryUpdatingRefreshTokenAfter = Duration.ofDays(14L)
     }
 }

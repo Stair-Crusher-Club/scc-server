@@ -1511,6 +1511,10 @@ components:
           type: string
         idToken:
           type: string
+        accessTokenExpiresAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
+        refreshTokenExpiresAt:
+          $ref: '#/components/schemas/EpochMillisTimestamp'
       required:
         - accessToken
         - refreshToken
@@ -2072,7 +2076,7 @@ components:
             $ref: '#/components/schemas/UserMobilityToolDto'
         isNewsLetterSubscriptionAgreed:
           type: boolean
-          description: 뉴스레터 수신 동의 여부
+          description: 뉴스레터 구독 동의 여부
       required:
         - id
         - nickname

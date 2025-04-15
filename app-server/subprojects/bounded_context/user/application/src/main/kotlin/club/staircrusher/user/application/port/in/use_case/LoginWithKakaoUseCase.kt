@@ -15,6 +15,7 @@ import club.staircrusher.user.domain.model.UserAuthProviderType
 import club.staircrusher.user.domain.model.UserConnectionReason
 import club.staircrusher.user.domain.service.UserAuthService
 import java.time.Duration
+import java.time.Instant
 
 @Component
 class LoginWithKakaoUseCase(
@@ -25,22 +26,25 @@ class LoginWithKakaoUseCase(
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
 ) {
-    fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String, anonymousUserId: String?): LoginResult = transactionManager.doInTransaction {
+    fun handle(
+        kakaoRefreshToken: String,
+        rawKakaoIdToken: String,
+        refreshTokenExpiresAt: Instant?,
+        anonymousUserId: String?,
+    ): LoginResult = transactionManager.doInTransaction {
         val idToken = kakaoLoginService.parseIdToken(rawKakaoIdToken)
 
         val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
         if (userAuthInfo != null) {
-            doLoginForExistingUser(userAuthInfo,  kakaoRefreshToken, anonymousUserId)
+            doLoginForExistingUser(userAuthInfo, kakaoRefreshToken, refreshTokenExpiresAt, anonymousUserId)
         } else {
-            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId, anonymousUserId)
+            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId, refreshTokenExpiresAt, anonymousUserId)
         }
     }
 
-    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, kakaoRefreshToken: String, anonymousUserId: String?): LoginResult {
+    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, kakaoRefreshToken: String, refreshTokenExpiresAt: Instant?, anonymousUserId: String?): LoginResult {
         userAuthInfo.externalRefreshToken = kakaoRefreshToken
-        // 처음 expiresAt 을 세팅할 때 kakao 에서 주는 expiresAt 을 사용하지 않았기 때문에 로그인 시 결과로 나온 refresh token 이 언제 만료되는지 알 수 없다
-        // 그래서 일단 1일로 세팅하고 나중에 자동 refresh token 잡이 처리하도록 한다
-        userAuthInfo.externalRefreshTokenExpiresAt = SccClock.instant() + Duration.ofDays(1L)
+        userAuthInfo.externalRefreshTokenExpiresAt = refreshTokenExpiresAt ?: (SccClock.instant() + kakaoRefreshTokenExpirationDuration)
         userAuthInfoRepository.save(userAuthInfo)
 
         val authTokens = userAuthService.issueTokens(userAuthInfo)
@@ -53,7 +57,7 @@ class LoginWithKakaoUseCase(
         )
     }
 
-    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String, anonymousUserId: String?): LoginResult {
+    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String, refreshTokenExpiresAt: Instant?, anonymousUserId: String?): LoginResult {
         val (user, userProfile) = userApplicationService.signUp(
             params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
@@ -72,7 +76,7 @@ class LoginWithKakaoUseCase(
                 authProviderType = UserAuthProviderType.KAKAO,
                 externalId = kakaoSyncUserId,
                 externalRefreshToken = kakaoRefreshToken,
-                externalRefreshTokenExpiresAt = SccClock.instant() + kakaoRefreshTokenExpirationDuration,
+                externalRefreshTokenExpiresAt = refreshTokenExpiresAt ?: (SccClock.instant() + kakaoRefreshTokenExpirationDuration),
             )
         )
 
