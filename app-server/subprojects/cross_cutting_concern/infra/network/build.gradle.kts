@@ -7,5 +7,5 @@ dependencies {
     implementation("io.projectreactor.netty:reactor-netty")
 
     implementation(libs.kotlin.serialization.json)
-    implementation(libs.bucket4j.core)
+    api(libs.bucket4j.core)
 }
