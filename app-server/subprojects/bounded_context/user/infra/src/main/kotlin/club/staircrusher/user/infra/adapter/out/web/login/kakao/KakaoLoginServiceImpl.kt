@@ -70,7 +70,9 @@ class KakaoLoginServiceImpl(
                 KakaoLoginTokens(
                     accessToken = access_token,
                     accessTokenExpiresAt = SccClock.instant().plusSeconds(expires_in.toLong()),
-                    idToken = id_token?.let { parseIdToken(it) },
+                    // idToken 이 존재하지만 필요 없기 때문에 null 로 처리한다
+                    // 만약 사용하고 싶다면, 위에서 client_id 를 restApiKey 로 넣어줬기 때문에 jwt 토큰을 까봤을 때 aud 가 restApiKey 로 오는지 확인해야 한다
+                    idToken = null,
                     refreshToken = refresh_token,
                     refreshTokenExpiresAt = refresh_token_expires_in?.let { SccClock.instant().plusSeconds(it.toLong()) },
                 )
