@@ -37,6 +37,7 @@ class UpdateExternalRefreshTokensUseCase(
         }
 
         val updatedTokens = userAuthIdToExpiringKakaoAuthTokens.mapNotNull { (id, token) ->
+            @Suppress("UnstableApiUsage")
             rateLimiter.acquire()
 
             val kakaoLoginTokens = runBlocking { kakaoLoginService.refreshToken(token) } ?: return@mapNotNull null
