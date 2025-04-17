@@ -66,6 +66,8 @@ class KakaoLoginServiceImpl(
                 refresh_token = refreshToken,
             ).awaitFirst()
 
+            logger.info { "Response: $response" }
+
             with(response) {
                 KakaoLoginTokens(
                     accessToken = access_token,
