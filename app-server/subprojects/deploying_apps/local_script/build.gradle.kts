@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.crossCuttingConcern.stdlib)
     implementation(projects.boundedContext.place.domain)
     implementation(projects.boundedContext.place.application)
+    implementation(projects.boundedContext.challenge.domain)
     implementation(projects.boundedContext.place.infra)
     implementation(projects.crossCuttingConcern.infra.network)
 }
