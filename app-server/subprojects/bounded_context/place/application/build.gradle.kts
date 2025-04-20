@@ -12,4 +12,5 @@ dependencies {
     implementation(libs.java.cv)
     implementation(variantOf(libs.open.cv) { classifier("linux-x86_64") })
     implementation(variantOf(libs.java.cpp) { classifier("linux-x86_64") })
+    implementation(variantOf(libs.open.blas) { classifier("linux-x86_64") })
 }

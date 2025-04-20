@@ -30,10 +30,12 @@ jwt = "3.18.1"
 mockitoKotlin = "5.1.0"
 thumbnailator = "0.4.20"
 webpImageio = "0.1.0"
-javaCv = "1.5.9"
-openCv = "4.7.0-1.5.9"
-javaCpp = "1.5.9"
 bucket4j = "8.10.1"
+# 아래 4개의 버전은 함께 관리
+javaCv = "1.5.9"
+javaCpp = "1.5.9"
+openCv = "4.7.0-1.5.9"
+openBlas = "0.3.23-1.5.9"
 
 [libraries]
 kotlin-logging = { group = "io.github.microutils", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
@@ -71,10 +73,11 @@ java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "thumbnailator" }
 webp-imageio = { group = "org.sejda.webp-imageio", name = "webp-imageio-sejda", version.ref = "webpImageio" }
-java-cv = { group = "org.bytedeco", name = "javacv", version.ref = "javaCv" }
-open-cv = { group = "org.bytedeco", name = "opencv", version.ref = "openCv" }
-java-cpp = { group = "org.bytedeco", name = "javacpp", version.ref = "javaCpp"}
 bucket4j-core = { group = "com.bucket4j", name = "bucket4j-core", version.ref = "bucket4j" }
+java-cv = { group = "org.bytedeco", name = "javacv", version.ref = "javaCv" }
+java-cpp = { group = "org.bytedeco", name = "javacpp", version.ref = "javaCpp"}
+open-cv = { group = "org.bytedeco", name = "opencv", version.ref = "openCv" }
+open-blas = { group = "org.bytedeco", name = "openblas", version.ref = "openBlas" }
 
 [bundles]
 kotlin-subproject = ["kotlin-logging", "kotlin-serialization-json", "kotlin-reflect"]
