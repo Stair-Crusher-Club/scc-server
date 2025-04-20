@@ -10,7 +10,6 @@ dependencies {
     implementation(libs.jts.core)
     implementation(libs.guava)
     implementation(libs.java.cv)
-
-    runtimeOnly(variantOf(libs.open.cv) { classifier("linux-x86_64") })
-    runtimeOnly(variantOf(libs.java.cpp) { classifier("linux-x86_64") })
+    implementation(variantOf(libs.open.cv) { classifier("linux-x86_64") })
+    implementation(variantOf(libs.java.cpp) { classifier("linux-x86_64") })
 }
