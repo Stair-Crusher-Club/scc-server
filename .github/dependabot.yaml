@@ -5,6 +5,34 @@ updates:
     schedule:
       interval: "weekly"
     rebase-strategy: "disabled"
+    allow:
+      dependency-type: "direct"
+    groups:
+      coroutines:
+        patterns:
+          - "org.jetbrains.kotlinx:kotlinx-coroutines-*"
+      junit:
+        patterns:
+          - "org.junit.jupiter:junit-jupiter*"
+      awsSdk:
+        patterns:
+          - "software.amazon.awssdk:*"
+      apacheCommons:
+        patterns:
+          - "org.apache.commons:commons-*"
+      sentry:
+        patterns:
+          - "io.sentry:sentry-*"
+      logback:
+        patterns:
+          - "ch.qos.logback.contrib:logback-*"
+      cv:
+        patterns:
+          - "org.bytedeco:*"
+    ignore:
+      - dependency-name: "org.jetbrains.kotlin:kotlin-reflect"
+      - dependency-name: "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+      - dependency-name: "com.fasterxml.jackson.module:jackson-module-kotlin"
 
   - package-ecosystem: "github-actions"
     directory: "/"
