@@ -35,7 +35,7 @@ bucket4j = "8.10.1"
 javaCv = "1.5.9"
 javaCpp = "1.5.9"
 openCv = "4.7.0-1.5.9"
-openBlas = "0.3.23-1.5.9"
+openBlas = "0.3.28-1.5.11"
 
 [libraries]
 kotlin-logging = { group = "io.github.microutils", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
