@@ -17,7 +17,7 @@ dependencies {
     implementation("org.springframework:spring-webflux")
     implementation("io.projectreactor.netty:reactor-netty")
 
-    implementation(libs.coroutines.jdk8)
+    implementation(libs.coroutines.core)
     implementation(libs.coroutines.reactive)
     implementation(libs.kotlin.serialization.json)
     implementation(libs.kotlin.logging)

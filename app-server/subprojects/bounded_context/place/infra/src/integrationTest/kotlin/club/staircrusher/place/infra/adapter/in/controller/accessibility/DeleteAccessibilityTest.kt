@@ -9,7 +9,6 @@ import club.staircrusher.domain_event.BuildingAccessibilityDeletedEvent
 import club.staircrusher.domain_event.BuildingAccessibilityCommentDeletedEvent
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
-import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
 import club.staircrusher.stdlib.domain.event.DomainEventPublisher
 import kotlinx.coroutines.runBlocking
