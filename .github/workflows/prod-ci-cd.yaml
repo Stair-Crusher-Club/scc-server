@@ -103,7 +103,7 @@ jobs:
           version: '3.8.2'
         id: install-helm
 
-      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-kubectl@v4
         with:
            version: 'v1.24.1'
         id: install-kubectl
