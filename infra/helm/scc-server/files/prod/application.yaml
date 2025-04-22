@@ -22,6 +22,9 @@ spring:
       maximum-pool-size: 32
       minimum-idle: 10
 
+  jpa:
+    open-in-view: false
+
 # logging:
 #   config: /app/conf/logback.xml
 
