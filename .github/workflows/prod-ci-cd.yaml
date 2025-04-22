@@ -98,7 +98,7 @@ jobs:
         run: |
           mkdir -p ~/.kube && echo "$SCC_K3S_KUBECONFIG" > ~/.kube/config
 
-      - uses: azure/setup-helm@v1
+      - uses: azure/setup-helm@v4
         with:
           version: '3.8.2'
         id: install-helm
