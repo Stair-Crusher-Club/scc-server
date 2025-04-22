@@ -18,6 +18,8 @@ style:
     active: false
   ReturnCount:
     active: false
+  UseRequire:
+    active: false
 naming:
   PackageNaming:
     active: false
