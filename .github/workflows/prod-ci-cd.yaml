@@ -63,7 +63,7 @@ jobs:
           retention-days: 1
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::291889421067:role/github-action-ci-cd
           aws-region: ap-northeast-2
