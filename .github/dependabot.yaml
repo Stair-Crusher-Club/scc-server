@@ -8,24 +8,6 @@ updates:
     allow:
       dependency-type: "direct"
     groups:
-      coroutines:
-        patterns:
-          - "org.jetbrains.kotlinx:kotlinx-coroutines-*"
-      junit:
-        patterns:
-          - "org.junit.jupiter:junit-jupiter*"
-      awsSdk:
-        patterns:
-          - "software.amazon.awssdk:*"
-      apacheCommons:
-        patterns:
-          - "org.apache.commons:commons-*"
-      sentry:
-        patterns:
-          - "io.sentry:sentry-*"
-      logback:
-        patterns:
-          - "ch.qos.logback.contrib:logback-*"
       cv:
         patterns:
           - "org.bytedeco:*"
