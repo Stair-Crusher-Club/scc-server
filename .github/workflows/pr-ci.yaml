@@ -32,7 +32,7 @@ jobs:
         working-directory: app-server
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -41,7 +41,7 @@ jobs:
           java-version: 19
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       # https://github.com/actions/cache/blob/main/examples.md#java---gradle
       - uses: actions/cache@v4

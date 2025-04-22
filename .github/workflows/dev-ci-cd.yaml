@@ -26,7 +26,7 @@ jobs:
         working-directory: app-server
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -35,7 +35,7 @@ jobs:
           java-version: 19
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       # https://github.com/actions/cache/blob/main/examples.md#java---gradle
       - uses: actions/cache@v4
@@ -59,7 +59,7 @@ jobs:
           retention-days: 1
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::291889421067:role/github-action-ci-cd
           aws-region: ap-northeast-2
@@ -79,7 +79,7 @@ jobs:
       - backend-ci
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Notify CD start to slack
         run: |
@@ -91,12 +91,12 @@ jobs:
         run: |
           mkdir -p ~/.kube && echo "$SCC_K3S_KUBECONFIG" > ~/.kube/config
 
-      - uses: azure/setup-helm@v1
+      - uses: azure/setup-helm@v4
         with:
           version: '3.8.2'
         id: install-helm
 
-      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-kubectl@v4
         with:
            version: 'v1.24.1'
         id: install-kubectl
