@@ -6,7 +6,7 @@ updates:
       interval: "weekly"
     rebase-strategy: "disabled"
     allow:
-      dependency-type: "direct"
+      - dependency-type: direct
     groups:
       cv:
         patterns:
