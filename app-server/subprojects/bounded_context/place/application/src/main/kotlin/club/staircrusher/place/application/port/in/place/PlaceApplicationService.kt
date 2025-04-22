@@ -39,7 +39,8 @@ class PlaceApplicationService(
             return@coroutineScope emptyList()
         }
 
-        val places = mapsService.findAllByKeyword(keyword, option)
+        val combinedSearchResult = (findFromDatabase(keyword) + mapsService.findAllByKeyword(keyword, option)).removeDuplicates()
+        val places = combinedSearchResult
             .mergeLocalDatabases()
             .filterClosed()
             .let {
@@ -63,6 +64,10 @@ class PlaceApplicationService(
             .mergeLocalDatabases()
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
+    }
+
+    private fun findFromDatabase(keyword: String): List<Place> {
+        return placeRepository.findAllByNameStartsWith(keyword)
     }
 
     private fun List<Place>.filterClosed(): List<Place> {
@@ -151,6 +156,10 @@ class PlaceApplicationService(
 
     fun getTotalFavoriteCount(placeId: String): Long {
         return placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId)
+    }
+
+   private fun List<Place>.removeDuplicates(): List<Place> {
+        return associateBy { it.id }.values.toList()
     }
 
     private fun List<Place>.mergeLocalDatabases(): List<Place> {

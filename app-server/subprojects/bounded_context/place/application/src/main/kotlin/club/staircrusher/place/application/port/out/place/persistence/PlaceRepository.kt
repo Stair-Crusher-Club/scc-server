@@ -33,4 +33,7 @@ interface PlaceRepository : CrudRepository<Place, String> {
 
     @EntityGraph(attributePaths = ["building"])
     fun findAllByIdIn(ids: List<String>): List<Place>
+
+    @EntityGraph(attributePaths = ["building"])
+    fun findAllByNameStartsWith(name: String): List<Place>
 }
