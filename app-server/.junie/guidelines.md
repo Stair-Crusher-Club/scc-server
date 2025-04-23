@@ -187,7 +187,7 @@ Many bounded contexts have base test classes that provide common functionality:
 ### Transaction Management
 
 - Transactions are managed at the application service level
-- Use the `@Transactional` annotation on application service methods
+- Use the `transactionManager.doInTransaction` with appropriate isolation level.
 
 ### Error Handling
 
