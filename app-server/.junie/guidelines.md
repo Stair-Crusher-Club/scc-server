@@ -141,6 +141,42 @@ Many bounded contexts have base test classes that provide common functionality:
 - The project uses Detekt for static code analysis
 - Run `./gradlew detekt` to check for code style issues
 - Configuration is in `detekt-config.yml`
+- Several rules are disabled in the configuration to accommodate project-specific needs:
+  - Complexity rules like `ComplexCondition`, `LongParameterList`, `TooManyFunctions`
+  - Style rules like `ForbiddenComment`, `MaxLineLength`, `MagicNumber`
+  - Naming rules like `PackageNaming`, `InvalidPackageDeclaration`
+
+### API Code Generation
+
+- The project uses OpenAPI Generator to generate API interfaces and DTOs from OpenAPI specifications
+- API specifications are located in `subprojects/api_specification/api/scc-api/api-spec.yaml` and `subprojects/api_specification/admin_api/scc-api/api-spec.yaml`
+- Run `./gradlew openApiGenerate` to generate code from the API specifications
+- Generated code is placed in `src/main/kotlin` directories of the respective modules
+- The generator is configured to use Jackson for serialization
+- The `openApiGenerate` task runs automatically before Kotlin compilation
+- When adding new API endpoints or DTOs, update the API specification files and run the generator
+
+### Database Migration Scripts
+
+- The project uses Flyway for database schema migrations
+- Migration scripts are located in `subprojects/cross_cutting_concern/infra/persistence_model/src/main/resources/db/migration`
+- Scripts follow the naming convention `V{version}__{description}.sql` where:
+  - `{version}` is a sequential number (e.g., V1, V2, V42)
+  - `{description}` is a brief description of the migration using underscores (e.g., add_user_table)
+- Migrations are automatically applied when the application starts
+- Each script should be idempotent (safe to run multiple times)
+- Types of migrations:
+  - Creating new tables: `CREATE TABLE IF NOT EXISTS table_name (...)`
+  - Adding columns: `ALTER TABLE table_name ADD COLUMN column_name ...`
+  - Creating indexes: `CREATE INDEX idx_name ON table_name(column_name)`
+  - Other schema changes as needed
+- Best practices:
+  - Keep migrations small and focused on a single change
+  - Use descriptive names that clearly indicate the purpose
+  - Include `IF NOT EXISTS` or similar guards when appropriate
+  - Add comments for complex changes
+  - Test migrations thoroughly before deployment
+  - Never modify an existing migration that has been applied to any environment
 
 ### Dependency Injection
 
