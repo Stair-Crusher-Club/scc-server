@@ -4,6 +4,7 @@ import club.staircrusher.place.application.port.`in`.place.PlaceApplicationServi
 import club.staircrusher.place.application.port.out.accessibility.SlackService
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityReportRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityReport
+import club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -20,10 +21,11 @@ class ReportAccessibilityUseCase(
     private val accessibilityReportRepository: AccessibilityReportRepository,
     @Value("\${scc.slack.channel.reportAccessibility:#scc-accessibility-report}") val accessibilityReportChannel: String,
 ) {
-    fun handle(placeId: String, userId: String, reason: String?, detail: String? = null) {
+    fun handle(placeId: String, userId: String, reason: AccessibilityReportReason, detail: String? = null) {
         val (place, placeAccessibility, userProfile) = transactionManager.doInTransaction {
             val place = placeApplicationService.findPlace(placeId)
-            val placeAccessibility = accessibilityApplicationService.doGetAccessibility(placeId, null).placeAccessibility
+            val placeAccessibility =
+                accessibilityApplicationService.doGetAccessibility(placeId, null).placeAccessibility
             val userProfile = userProfileRepository.findFirstByUserId(userId)
 
             // Create and save the accessibility report
@@ -44,7 +46,7 @@ class ReportAccessibilityUseCase(
             - 접근성 정보 Id: ${placeAccessibility?.value?.id}
             - 장소명: ${place?.name}
             - 주소: ${place?.address}
-            - 신고 사유: ${reason ?: "사유 없음"}
+            - 신고 사유: $reason
             - 상세 내용: ${detail ?: "상세 내용 없음"}
             - 신고자: ${userProfile?.nickname ?: "익명"}
         """.trimIndent()

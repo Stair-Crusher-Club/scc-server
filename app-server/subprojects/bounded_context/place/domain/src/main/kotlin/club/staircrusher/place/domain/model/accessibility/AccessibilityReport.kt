@@ -2,12 +2,14 @@ package club.staircrusher.place.domain.model.accessibility
 
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Column
+import jakarta.persistence.Convert
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "accessibility_report")
 class AccessibilityReport(
     @Id
     val id: String,
@@ -18,8 +20,9 @@ class AccessibilityReport(
     @Column(name = "user_id", nullable = false)
     val userId: String,
 
-    @Column(name = "reason", nullable = true)
-    val reason: String?,
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reason", nullable = false)
+    val reason: AccessibilityReportReason,
 
     @Column(name = "detail", nullable = true)
     val detail: String?,
@@ -29,7 +32,7 @@ class AccessibilityReport(
             id: String,
             placeId: String,
             userId: String,
-            reason: String?,
+            reason: AccessibilityReportReason,
             detail: String?,
         ): AccessibilityReport {
             return AccessibilityReport(
