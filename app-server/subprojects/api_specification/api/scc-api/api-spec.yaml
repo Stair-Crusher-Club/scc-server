@@ -699,11 +699,11 @@ paths:
                   type: string
                   description: 신고할 장소의 아이디
                 reason:
-                  type: string
+                  $ref: '#/components/schemas/AccessibilityReportReason'
                   description: 신고 사유
                 detail:
                   type: string
-                  description: 상세
+                  description: 신고 상세 내용
               required:
                 - placeId
       responses:
@@ -2158,6 +2158,13 @@ components:
         - imageUrl
         - clickPageUrl
         - clickPageTitle
+
+    AccessibilityReportReason:
+      type: string
+      enum:
+        - INACCURATE_INFO
+        - CLOSED
+        - BAD_USER
 
   responses:
     ApiFailure:
