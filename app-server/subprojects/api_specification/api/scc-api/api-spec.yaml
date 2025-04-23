@@ -701,6 +701,9 @@ paths:
                 reason:
                   type: string
                   description: 신고 사유
+                detail:
+                  type: string
+                  description: 상세
               required:
                 - placeId
       responses:
