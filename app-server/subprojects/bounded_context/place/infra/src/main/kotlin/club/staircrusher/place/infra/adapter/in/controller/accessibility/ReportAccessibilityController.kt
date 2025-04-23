@@ -21,6 +21,7 @@ class ReportAccessibilityController(
             request.placeId,
             authentication.principal,
             request.reason,
+            request.detail,
         )
         return ResponseEntity
             .noContent()
