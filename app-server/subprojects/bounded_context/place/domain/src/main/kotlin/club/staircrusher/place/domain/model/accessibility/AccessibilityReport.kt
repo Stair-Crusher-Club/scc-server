@@ -2,12 +2,10 @@ package club.staircrusher.place.domain.model.accessibility
 
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Column
-import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
-import jakarta.persistence.Table
 
 @Entity
 class AccessibilityReport(
