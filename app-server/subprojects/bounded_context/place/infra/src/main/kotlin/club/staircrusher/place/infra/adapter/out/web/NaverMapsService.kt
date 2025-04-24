@@ -103,8 +103,8 @@ class NaverMapsService(
         option: MapsService.SearchByKeywordOption,
     ): Place? {
         return fetchPageForSearchByKeyword(keyword)
-            ?.convertToModel()
-            ?.firstOrNull()
+            .convertToModel()
+            .firstOrNull()
     }
 
     override suspend fun findAllByCategory(
@@ -116,16 +116,13 @@ class NaverMapsService(
 
     private suspend fun fetchPageForSearchByKeyword(
         keyword: String,
-    ): LocalSearchResult? {
-        // FIXME: if it exceeds the rate limit, it simply returns null
-        //   It might be better to throw an exception showing an error message to the user
-        return if (rateLimiter.tryConsume(1L)) {
-            return naverOpenApiService.localSearch(
-                query = keyword,
-            ).awaitFirst()
-        } else {
-            null
-        }
+    ): LocalSearchResult {
+        // FIXME: same behavior as Guava RateLimiter
+        //  it blocks the thread until permit
+        //  We are using kotlin coroutine or project reactor which are using size-limited thread pool normally,
+        //  it could block all threads and prevent them from running.
+        rateLimiter.asBlocking().consumeUninterruptibly(1L)
+        return naverOpenApiService.localSearch(query = keyword,).awaitFirst()
     }
 
     @Serializable
