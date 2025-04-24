@@ -7,7 +7,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.BeanProperty
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer
 
@@ -29,7 +30,7 @@ class FallbackEnumDeserializer<T : Enum<T>>(
     override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): JsonDeserializer<*> {
         val type = ctxt.contextualType
         val rawClass = type.rawClass as? Class<T>
-            ?: throw IllegalStateException("Expected enum class, got: $type")
+            ?: error("Expected enum class, got: $type")
         return FallbackEnumDeserializer(rawClass, deserializer)
     }
 }
