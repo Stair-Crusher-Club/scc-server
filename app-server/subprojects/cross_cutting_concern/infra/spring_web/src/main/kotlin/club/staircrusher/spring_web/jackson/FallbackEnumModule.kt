@@ -21,8 +21,8 @@ class FallbackEnumDeserializer<T : Enum<T>>(
             return deserializer?.deserialize(p, ctxt) as T
         } catch (e: Exception) {
             val constants = enumClass!!.enumConstants
-            return (constants.firstOrNull { it.name.lowercase() == "UNKNOWN" }
-                ?: ctxt.reportInputMismatch(enumClass, "No matching enum and no UNDEFINED fallback.")) as T
+            return (constants.firstOrNull { it.name.uppercase() == "UNKNOWN" }
+                ?: ctxt.reportInputMismatch(enumClass, "No matching enum and no UNKNOWN fallback.")) as T
         }
     }
 

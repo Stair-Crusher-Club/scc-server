@@ -24,7 +24,7 @@ enum class TestEnum2 {
 }
 
 // Data class for testing
-data class EnumContainer(val enumValue: TestEnum)
+data class EnumContainer(val enumValue: TestEnum?)
 data class EnumContainer2(val enumValue: TestEnum2)
 
 @SpringBootTest
@@ -37,7 +37,6 @@ class SccJacksonConfigTest {
 
     @Test
     fun `EnumFallbackModule should handle valid enum values`() {
-        // Test with a valid enum value
         val json = """{"enumValue":"VALUE1"}"""
         val result = objectMapper.readValue<EnumContainer>(json)
         assertEquals(TestEnum.VALUE1, result.enumValue)
@@ -45,12 +44,29 @@ class SccJacksonConfigTest {
 
     @Test
     fun `EnumFallbackModule should fallback to UNKNOWN for unknown values`() {
-        // Test with an unknown enum value that should fallback to UNKNOWN
         val json = """{"enumValue":"UNKNOWN_VALUE"}"""
         val result = assertDoesNotThrow {
             objectMapper.readValue<EnumContainer>(json)
         }
         assertEquals(TestEnum.UNKNOWN, result.enumValue)
+    }
+
+    @Test
+    fun `EnumFallbackModule should handle null case`() {
+        val json = """{"enumValue":null}"""
+        val result = assertDoesNotThrow {
+            objectMapper.readValue<EnumContainer>(json)
+        }
+        assertEquals(null, result.enumValue)
+    }
+
+    @Test
+    fun `EnumFallbackModule should handle empty case`() {
+        val json = """{}"""
+        val result = assertDoesNotThrow {
+            objectMapper.readValue<EnumContainer>(json)
+        }
+        assertEquals(null, result.enumValue)
     }
 
     @Test
