@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.DeserializationConfig
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.deser.Deserializers
 import com.fasterxml.jackson.databind.module.SimpleModule
 
 import com.fasterxml.jackson.core.JsonParser
@@ -22,7 +21,7 @@ class FallbackEnumDeserializer<T : Enum<T>>(
             return deserializer?.deserialize(p, ctxt) as T
         } catch (e: Exception) {
             val constants = enumClass!!.enumConstants
-            return (constants.firstOrNull { it.name == "UNDEFINED" }
+            return (constants.firstOrNull { it.name.lowercase() == "UNKNOWN" }
                 ?: ctxt.reportInputMismatch(enumClass, "No matching enum and no UNDEFINED fallback.")) as T
         }
     }
@@ -49,7 +48,7 @@ class FallbackEnumDeserializerModifier : BeanDeserializerModifier() {
     }
 }
 
-class EnumFallbackModule : SimpleModule() {
+class FallbackEnumModule : SimpleModule() {
     override fun setupModule(context: SetupContext) {
         super.setupModule(context)
         context.addBeanDeserializerModifier(FallbackEnumDeserializerModifier())

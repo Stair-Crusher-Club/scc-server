@@ -19,7 +19,7 @@ open class SccJacksonConfig {
     }
 
     @Bean
-    fun enumFallbackModule(): EnumFallbackModule {
-        return EnumFallbackModule()
+    fun enumFallbackModule(): FallbackEnumModule {
+        return FallbackEnumModule()
     }
 }

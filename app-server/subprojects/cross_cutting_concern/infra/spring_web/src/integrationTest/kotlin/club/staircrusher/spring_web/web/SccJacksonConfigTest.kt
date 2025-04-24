@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 
-// Test enum with UNDEFINED fallback value
+// Test enum with UNKNOWN fallback value
 enum class TestEnum {
     VALUE1,
     VALUE2,
-    UNDEFINED
+    UNKNOWN
 }
 
 enum class TestEnum2 {
@@ -44,22 +44,22 @@ class SccJacksonConfigTest {
     }
 
     @Test
-    fun `EnumFallbackModule should fallback to UNDEFINED for unknown values`() {
-        // Test with an unknown enum value that should fallback to UNDEFINED
+    fun `EnumFallbackModule should fallback to UNKNOWN for unknown values`() {
+        // Test with an unknown enum value that should fallback to UNKNOWN
         val json = """{"enumValue":"UNKNOWN_VALUE"}"""
         val result = assertDoesNotThrow {
             objectMapper.readValue<EnumContainer>(json)
         }
-        assertEquals(TestEnum.UNDEFINED, result.enumValue)
+        assertEquals(TestEnum.UNKNOWN, result.enumValue)
     }
 
     @Test
-    fun `EnumFallbackModule failed with no UNDEFINED values`() {
+    fun `EnumFallbackModule failed with no UNKNOWN values`() {
         val json = """{"enumValue":"VALUE3"}"""
         val exception = assertThrows<MismatchedInputException> {
             val a = objectMapper.readValue<EnumContainer2>(json)
             println(a)
         }
-        assert(exception.message!!.startsWith("No matching enum and no UNDEFINED fallback."))
+        assert(exception.message!!.startsWith("No matching enum and no UNKNOWN fallback."))
     }
 }
