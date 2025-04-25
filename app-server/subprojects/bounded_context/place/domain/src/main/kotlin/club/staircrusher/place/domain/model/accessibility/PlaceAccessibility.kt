@@ -1,6 +1,5 @@
 package club.staircrusher.place.domain.model.accessibility
 
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
 import jakarta.persistence.Convert
@@ -8,7 +7,6 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
-import java.time.Duration
 import java.time.Instant
 
 @Entity
@@ -48,7 +46,7 @@ class PlaceAccessibility(
     }
 
     fun isDeletable(uid: String?): Boolean {
-        return uid != null && uid == userId && SccClock.instant() < createdAt + deletableDuration
+        return uid != null && uid == userId
     }
 
     override fun equals(other: Any?): Boolean {
@@ -69,9 +67,5 @@ class PlaceAccessibility(
             "isStairOnlyOption=$isStairOnlyOption, stairInfo=$stairInfo, stairHeightLevel=$stairHeightLevel, " +
             "hasSlope=$hasSlope, entranceDoorTypes=$entranceDoorTypes, imageUrls=$imageUrls, images=$images, " +
             "userId=$userId, createdAt=$createdAt, deletedAt=$deletedAt)"
-    }
-
-    companion object {
-        val deletableDuration = Duration.ofHours(6)
     }
 }

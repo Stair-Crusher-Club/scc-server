@@ -53,7 +53,7 @@ class AccessibilityUpvoteController(
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         givePlaceAccessibilityUpvoteUseCase.handle(
-            user = authentication.details,
+            userId = authentication.principal,
             placeAccessibilityId = request.placeAccessibilityId
         )
         return ResponseEntity

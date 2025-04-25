@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/app-server"
+    schedule:
+      interval: "weekly"
+    rebase-strategy: "disabled"
+    allow:
+      - dependency-type: direct
+    groups:
+      cv:
+        patterns:
+          - "org.bytedeco:*"
+    ignore:
+      - dependency-name: "org.jetbrains.kotlin:*"
+      - dependency-name: "org.springframework.boot"
+      - dependency-name: "io.gitlab.arturbosch.detekt"
+      - dependency-name: "org.jetbrains.kotlin:kotlin-reflect"
+      - dependency-name: "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+      - dependency-name: "com.fasterxml.jackson.module:jackson-module-kotlin"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    rebase-strategy: "disabled"

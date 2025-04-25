@@ -210,7 +210,7 @@ resource "aws_lightsail_instance_public_ports" "k3s_data_planes_v1_27_3" {
 
   lifecycle {
     replace_triggered_by = [
-      aws_lightsail_instance.k3s_data_planes[each.key].id
+      aws_lightsail_instance.k3s_data_planes_v1_27_3[each.key].id
     ]
   }
 }

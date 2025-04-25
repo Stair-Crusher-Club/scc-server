@@ -8,6 +8,7 @@ import club.staircrusher.api.spec.dto.ToiletAccessibilityDetails
 import club.staircrusher.external_accessibility.application.port.`in`.ExternalAccessibilitySearchService
 import club.staircrusher.external_accessibility.application.port.`in`.ExternalAccessibilityService
 import club.staircrusher.external_accessibility.application.port.`in`.ToiletAccessibilitySyncUseCase
+import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
 import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
@@ -46,7 +47,9 @@ class ExternalAccessibilityController(
     }
 
     @PostMapping("/admin/syncWithDataSource")
-    fun syncWithDataSource(): String {
+    fun syncWithDataSource(
+        @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication
+    ): String {
         toiletAccessibilitySyncUseCase.load()
         return "OK"
     }

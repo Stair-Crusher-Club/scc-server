@@ -15,6 +15,7 @@ import club.staircrusher.user.domain.model.UserAuthProviderType
 import club.staircrusher.user.domain.model.UserConnectionReason
 import club.staircrusher.user.domain.service.UserAuthService
 import java.time.Duration
+import java.time.Instant
 
 @Component
 class LoginWithKakaoUseCase(
@@ -25,18 +26,27 @@ class LoginWithKakaoUseCase(
     private val userAuthService: UserAuthService,
     private val userApplicationService: UserApplicationService,
 ) {
-    fun handle(kakaoRefreshToken: String, rawKakaoIdToken: String, anonymousUserId: String?): LoginResult = transactionManager.doInTransaction {
+    fun handle(
+        kakaoRefreshToken: String,
+        rawKakaoIdToken: String,
+        refreshTokenExpiresAt: Instant?,
+        anonymousUserId: String?,
+    ): LoginResult = transactionManager.doInTransaction {
         val idToken = kakaoLoginService.parseIdToken(rawKakaoIdToken)
 
         val userAuthInfo = userAuthInfoRepository.findFirstByAuthProviderTypeAndExternalId(UserAuthProviderType.KAKAO, idToken.kakaoSyncUserId)
         if (userAuthInfo != null) {
-            doLoginForExistingUser(userAuthInfo, anonymousUserId)
+            doLoginForExistingUser(userAuthInfo, kakaoRefreshToken, refreshTokenExpiresAt, anonymousUserId)
         } else {
-            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId, anonymousUserId)
+            doLoginWithSignUp(kakaoRefreshToken, idToken.kakaoSyncUserId, refreshTokenExpiresAt, anonymousUserId)
         }
     }
 
-    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, anonymousUserId: String?): LoginResult {
+    private fun doLoginForExistingUser(userAuthInfo: UserAuthInfo, kakaoRefreshToken: String, refreshTokenExpiresAt: Instant?, anonymousUserId: String?): LoginResult {
+        userAuthInfo.externalRefreshToken = kakaoRefreshToken
+        userAuthInfo.externalRefreshTokenExpiresAt = refreshTokenExpiresAt ?: (SccClock.instant() + kakaoRefreshTokenExpirationDuration)
+        userAuthInfoRepository.save(userAuthInfo)
+
         val authTokens = userAuthService.issueTokens(userAuthInfo)
         val userProfile = userProfileRepository.findFirstByUserId(userAuthInfo.userId) ?: throw SccDomainException("계정 정보를 찾을 수 없습니다")
         anonymousUserId?.let { userApplicationService.connectToIdentifiedAccount(it, userAuthInfo.userId, UserConnectionReason.LOGIN) }
@@ -47,7 +57,7 @@ class LoginWithKakaoUseCase(
         )
     }
 
-    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String, anonymousUserId: String?): LoginResult {
+    private fun doLoginWithSignUp(kakaoRefreshToken: String, kakaoSyncUserId: String, refreshTokenExpiresAt: Instant?, anonymousUserId: String?): LoginResult {
         val (user, userProfile) = userApplicationService.signUp(
             params = UserProfileRepository.CreateUserParams(
                 nickname = InitialNicknameGenerator.generate(),
@@ -66,7 +76,7 @@ class LoginWithKakaoUseCase(
                 authProviderType = UserAuthProviderType.KAKAO,
                 externalId = kakaoSyncUserId,
                 externalRefreshToken = kakaoRefreshToken,
-                externalRefreshTokenExpiresAt = SccClock.instant() + kakaoRefreshTokenExpirationDuration,
+                externalRefreshTokenExpiresAt = refreshTokenExpiresAt ?: (SccClock.instant() + kakaoRefreshTokenExpirationDuration),
             )
         )
 
@@ -78,6 +88,6 @@ class LoginWithKakaoUseCase(
     }
 
     companion object {
-        private val kakaoRefreshTokenExpirationDuration = Duration.ofDays(30)
+        val kakaoRefreshTokenExpirationDuration = Duration.ofDays(30)
     }
 }

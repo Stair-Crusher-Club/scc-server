@@ -13,12 +13,14 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/getPlaceWithBuilding",
         "/listSearchKeywordsOfPlaceCategory",
         "/getAccessibilityLeaderboard",
+
+        "/admin/accessibilityAllowedRegions",
     ).map { AntPathRequestMatcher(it) }
 
     override fun identifiedUserOnlyRequestMatchers() = listOf(
         "/createPlaceFavorite",
         "/deletePlaceFavorite",
-        "/listPlaceFavoritesByUser",
+        "/listPlaceFavorites",
         "/listConqueredPlaces",
         "/giveBuildingAccessibilityUpvote",
         "/cancelBuildingAccessibilityUpvote",
@@ -30,7 +32,5 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/reportAccessibility",
         "/getImageUploadUrls",
         "/getAccessibilityActivityReport",
-
-        "/admin/accessibilityAllowedRegions",
-        ).map { AntPathRequestMatcher(it) }
+    ).map { AntPathRequestMatcher(it) }
 }

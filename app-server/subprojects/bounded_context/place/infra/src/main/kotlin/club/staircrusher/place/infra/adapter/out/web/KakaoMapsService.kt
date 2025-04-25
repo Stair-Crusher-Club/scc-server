@@ -1,5 +1,6 @@
 package club.staircrusher.place.infra.adapter.out.web
 
+import club.staircrusher.infra.network.RateLimiterFactory
 import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.place.domain.model.place.Building
 import club.staircrusher.place.domain.model.place.BuildingAddress
@@ -7,7 +8,6 @@ import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory
-import com.google.common.util.concurrent.RateLimiter
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
@@ -34,18 +34,14 @@ import java.util.concurrent.TimeUnit
 @Component
 @Priority(Int.MAX_VALUE - 1)
 class KakaoMapsService(
-    kakaoProperties: KakaoProperties,
+    kakaoMapsProperties: KakaoMapsProperties,
+    rateLimiterFactory: RateLimiterFactory,
 ) : MapsService {
-    companion object {
-        private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
-        private val READ_TIMEOUT = Duration.ofSeconds(10)
-        private val WRITE_TIMEOUT = Duration.ofSeconds(10)
-    }
     private val logger = KotlinLogging.logger {}
-    @Suppress("UnstableApiUsage", "MagicNumber") private val rateLimiter = RateLimiter.create(20.0)
+    private val rateLimiter = rateLimiterFactory.create("kakao_maps", REQUEST_PER_SECOND_LIMIT)
 
     private val kakaoService: KakaoService by lazy {
-        // FIXME: extract configurable parameters to kakaoProperties
+        // FIXME: extract configurable parameters to kakaoMapsProperties
         val httpClient = HttpClient.create()
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT.toMillis().toInt())
             .compress(true)
@@ -62,7 +58,7 @@ class KakaoMapsService(
             .baseUrl("https://dapi.kakao.com")
             .clientConnector(ReactorClientHttpConnector(httpClient))
             .codecs { it.defaultCodecs().kotlinSerializationJsonDecoder(decoder) }
-            .defaultHeaders { it.add(HttpHeaders.AUTHORIZATION, "KakaoAK ${kakaoProperties.apiKey}") }
+            .defaultHeaders { it.add(HttpHeaders.AUTHORIZATION, "KakaoAK ${kakaoMapsProperties.restApiKey}") }
             .defaultStatusHandler(HttpStatusCode::isError) { response ->
                 response
                     .bodyToMono(KakaoError::class.java)
@@ -151,26 +147,31 @@ class KakaoMapsService(
         region: MapsService.SearchByKeywordOption.Region? = null,
         option: SearchByKeywordOption
     ): Mono<SearchResult> {
-        @Suppress("UnstableApiUsage") rateLimiter.acquire()
-        return when (region) {
-            is MapsService.SearchByKeywordOption.CircleRegion -> {
-                kakaoService.searchByKeyword(
-                    query = keyword,
-                    x = region.centerLocation.lng.toString(),
-                    y = region.centerLocation.lat.toString(),
-                    radius = region.radiusMeters,
-                    page = option.page,
-                    sort = region.sort.value
-                )
+        return if (rateLimiter.tryConsume(1)) {
+            when (region) {
+                is MapsService.SearchByKeywordOption.CircleRegion -> {
+                    kakaoService.searchByKeyword(
+                        query = keyword,
+                        x = region.centerLocation.lng.toString(),
+                        y = region.centerLocation.lat.toString(),
+                        radius = region.radiusMeters,
+                        page = option.page,
+                        sort = region.sort.value
+                    )
+                }
+                is MapsService.SearchByKeywordOption.RectangleRegion -> {
+                    kakaoService.searchByKeyword(
+                        query = keyword,
+                        rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" },
+                        page = option.page,
+                    )
+                }
+                null -> kakaoService.searchByKeyword(query = keyword, page = option.page)
             }
-            is MapsService.SearchByKeywordOption.RectangleRegion -> {
-                kakaoService.searchByKeyword(
-                    query = keyword,
-                    rect = region.let { "${it.leftTopLocation.lng},${it.leftTopLocation.lat},${it.rightBottomLocation.lng},${it.rightBottomLocation.lat}" },
-                    page = option.page,
-                )
-            }
-            null -> kakaoService.searchByKeyword(query = keyword, page = option.page)
+        } else {
+            // FIXME: if it exceeds the rate limit, it simply returns null
+            //   It might be better to throw an exception showing an error message to the user
+            Mono.empty()
         }
     }
 
@@ -183,29 +184,31 @@ class KakaoMapsService(
         region: MapsService.SearchByCategoryOption.Region,
         option: SearchByCategoryOption
     ): Mono<SearchResult> {
-        @Suppress("UnstableApiUsage") rateLimiter.acquire()
-        return when (region) {
-            is MapsService.SearchByCategoryOption.CircleRegion -> {
-                kakaoService.searchByCategory(
-                    category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
-                    x = region.centerLocation.lng.toString(),
-                    y = region.centerLocation.lat.toString(),
-                    radius = region.radiusMeters,
-                    page = option.page,
-                    sort = region.sort.value
-                )
+        return if (rateLimiter.tryConsume(1)) {
+            when (region) {
+                is MapsService.SearchByCategoryOption.CircleRegion -> {
+                    kakaoService.searchByCategory(
+                        category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
+                        x = region.centerLocation.lng.toString(),
+                        y = region.centerLocation.lat.toString(),
+                        radius = region.radiusMeters,
+                        page = option.page,
+                        sort = region.sort.value
+                    )
+                }
+                is MapsService.SearchByCategoryOption.RectangleRegion -> {
+                    kakaoService.searchByCategory(
+                        category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
+                        rect = region.let { "${it.leftBottomLocation.lng},${it.leftBottomLocation.lat},${it.rightTopLocation.lng},${it.rightTopLocation.lat}" },
+                        page = option.page,
+                    )
+                }
             }
-            is MapsService.SearchByCategoryOption.RectangleRegion -> {
-                kakaoService.searchByCategory(
-                    category_group_code = SearchResult.Document.Category.fromPlaceCategory(category).name,
-                    rect = region.let { "${it.leftBottomLocation.lng},${it.leftBottomLocation.lat},${it.rightTopLocation.lng},${it.rightTopLocation.lat}" },
-                    page = option.page,
-                )
-            }
+        } else {
+            Mono.empty()
         }
     }
 
-    @Suppress("MagicNumber") private val fetchChunkSize = 20
     @Suppress("ReturnCount")
     private suspend fun searchPlacesInParallel(fetchPageBlock: (page: Int) -> Mono<SearchResult>): List<Place> {
         val firstPageResult = fetchPageBlock(1)
@@ -221,7 +224,7 @@ class KakaoMapsService(
 
         (2..pageablePage)
             .map { page -> fetchPageBlock(page) }
-            .chunked(fetchChunkSize)
+            .chunked(FETCH_CHUNK_SIZE)
             .forEach { chunkedMonos ->
                 val searchedPlaces = Mono
                     .zip(chunkedMonos) {
@@ -450,5 +453,14 @@ class KakaoMapsService(
 
     private fun List<Place>.removeDuplicates(): List<Place> {
         return associateBy { it.id }.values.toList()
+    }
+
+    companion object {
+        private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
+        private val READ_TIMEOUT = Duration.ofSeconds(10)
+        private val WRITE_TIMEOUT = Duration.ofSeconds(10)
+
+        private const val FETCH_CHUNK_SIZE = 20
+        private const val REQUEST_PER_SECOND_LIMIT = 20L
     }
 }
