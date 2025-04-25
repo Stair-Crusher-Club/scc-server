@@ -20,7 +20,7 @@ class FallbackEnumDeserializer<T : Enum<T>>(
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): T {
         try {
             return deserializer?.deserialize(p, ctxt) as T
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             val constants = enumClass!!.enumConstants
             return (constants.firstOrNull { it.name.uppercase() == "UNKNOWN" }
                 ?: ctxt.reportInputMismatch(enumClass, "No matching enum and no UNKNOWN fallback.")) as T

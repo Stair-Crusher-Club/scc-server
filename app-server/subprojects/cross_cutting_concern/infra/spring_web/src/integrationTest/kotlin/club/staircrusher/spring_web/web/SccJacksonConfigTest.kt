@@ -28,7 +28,6 @@ data class EnumContainer(val enumValue: TestEnum?)
 data class EnumContainer2(val enumValue: TestEnum2)
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class SccJacksonConfigTest {
 
     @Autowired
