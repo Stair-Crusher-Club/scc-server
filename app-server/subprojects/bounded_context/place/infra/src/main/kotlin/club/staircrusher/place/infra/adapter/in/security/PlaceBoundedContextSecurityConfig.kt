@@ -20,7 +20,7 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
     override fun identifiedUserOnlyRequestMatchers() = listOf(
         "/createPlaceFavorite",
         "/deletePlaceFavorite",
-        "/listPlaceFavoritesByUser",
+        "/listPlaceFavorites",
         "/listConqueredPlaces",
         "/giveBuildingAccessibilityUpvote",
         "/cancelBuildingAccessibilityUpvote",

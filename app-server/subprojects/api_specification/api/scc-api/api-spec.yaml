@@ -459,6 +459,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListConqueredPlacesResponseDto'
 
+  /listPlaceFavorites:
+    post:
+      summary: 즐겨찾기한 장소 목록을 조회한다.
+      security:
+        - Identified: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListPlaceFavoritesRequestDto'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPlaceFavoritesResponseDto'
+
   /listPlacesInBuilding:
     post:
       summary: 특정 건물의 점포를 조회한다.
@@ -1610,7 +1628,7 @@ components:
         - totalNumberOfItems
         - items
 
-    ListPlaceFavoritesByUserRequestDto:
+    ListPlaceFavoritesRequestDto:
       type: object
       properties:
         nextToken:
@@ -1620,7 +1638,7 @@ components:
           type: integer
           format: int64
 
-    ListPlaceFavoritesByUserResponseDto:
+    ListPlaceFavoritesResponseDto:
       type: object
       properties:
         totalNumberOfItems:

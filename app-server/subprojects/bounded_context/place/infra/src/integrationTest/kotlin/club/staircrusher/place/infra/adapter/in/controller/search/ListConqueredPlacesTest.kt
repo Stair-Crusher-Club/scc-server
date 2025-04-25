@@ -2,13 +2,11 @@ package club.staircrusher.place.infra.adapter.`in`.controller.search
 
 import club.staircrusher.api.spec.dto.ListConqueredPlacesResponseDto
 import club.staircrusher.place.infra.adapter.`in`.controller.search.base.PlaceSearchITBase
-import com.fasterxml.jackson.core.type.TypeReference
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.Duration
-
 
 class ListConqueredPlacesTest : PlaceSearchITBase() {
 
@@ -29,7 +27,7 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
         mvc
             .sccRequest("/listConqueredPlaces", requestBody = null, userAccount = user)
             .apply {
-                val result = getResult(object : TypeReference<ListConqueredPlacesResponseDto>() {})
+                val result = getResult(ListConqueredPlacesResponseDto::class)
                 assertEquals(registeredCount.toLong(), result.totalNumberOfItems)
                 result.items.forEach { item ->
                     val place = places.find { it.id == item.place.id }!!
@@ -58,10 +56,14 @@ class ListConqueredPlacesTest : PlaceSearchITBase() {
             .sortedByDescending { it.second.createdAt }
             .map { it.first.id }
 
+        // 곧바로 request 를 날리면 마지막에 등록한 pa 가 잡히지 않는다
+        // cursor.initial 의 createdAt (즉, SccClock.instant()) 보다 작아야 한다는 조건 때문에 그런 것으로 추정
+        clock.advanceTime(Duration.ofSeconds(1))
+
         mvc
             .sccRequest("/listConqueredPlaces", requestBody = null, userAccount = user)
             .apply {
-                val result = getResult(object : TypeReference<ListConqueredPlacesResponseDto>() {})
+                val result = getResult(ListConqueredPlacesResponseDto::class)
                 assertEquals(
                     placeIdsOrderedByCreatedAtDesc,
                     result.items.map { it.place.id },
