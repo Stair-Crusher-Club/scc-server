@@ -4,9 +4,8 @@ import club.staircrusher.place.application.port.`in`.accessibility.Accessibility
 import club.staircrusher.place.application.port.`in`.place.BuildingService
 import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
 import club.staircrusher.place.application.port.out.place.web.MapsService
+import club.staircrusher.place.application.result.SearchPlacesResult
 import club.staircrusher.place.domain.model.accessibility.AccessibilityScore
-import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
-import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
@@ -18,17 +17,7 @@ class PlaceSearchService(
     private val placeApplicationService: PlaceApplicationService,
     private val buildingService: BuildingService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
-
     ) {
-    data class SearchPlacesResult(
-        val place: Place,
-        val buildingAccessibility: BuildingAccessibility?,
-        val placeAccessibility: PlaceAccessibility?,
-        val distance: Length? = null,
-        val accessibilityScore: Double? = null,
-        val isAccessibilityRegistrable: Boolean,
-        val isFavoritePlace: Boolean
-    )
 
     @Suppress("UnusedPrivateMember", "MagicNumber")
     suspend fun searchPlaces(
