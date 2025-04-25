@@ -6,7 +6,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 
 @Component
-class ListPlaceFavoritesByUserUseCase(
+class ListPlaceFavoritesUseCase(
     private val placeFavoriteRepository: PlaceFavoriteRepository,
     private val transactionManager: TransactionManager
 ) {

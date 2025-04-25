@@ -42,7 +42,7 @@ class ListPlaceFavoritesTest : PlaceITBase() {
         }
         val notFavoritePlaces = places.subList(2, 4)
         mvc
-            .sccRequest("/listPlaceFavoritesByUser", ListPlaceFavoritesRequestDto(), userAccount = user)
+            .sccRequest("/listPlaceFavorites", ListPlaceFavoritesRequestDto(), userAccount = user)
             .apply {
                 val result = getResult(ListPlaceFavoritesResponseDto::class)
                 Assertions.assertEquals(result.totalNumberOfItems, 2)

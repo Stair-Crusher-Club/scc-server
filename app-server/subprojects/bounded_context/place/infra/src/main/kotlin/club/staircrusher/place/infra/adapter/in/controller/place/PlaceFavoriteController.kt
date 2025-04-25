@@ -8,7 +8,7 @@ import club.staircrusher.api.spec.dto.ListPlaceFavoritesRequestDto
 import club.staircrusher.api.spec.dto.ListPlaceFavoritesResponseDto
 import club.staircrusher.place.application.port.`in`.place.CreatePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.place.DeletePlaceFavoriteUseCase
-import club.staircrusher.place.application.port.`in`.place.ListPlaceFavoritesByUserUseCase
+import club.staircrusher.place.application.port.`in`.place.ListPlaceFavoritesUseCase
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class PlaceFavoriteController(
     private val createPlaceFavoriteUseCase: CreatePlaceFavoriteUseCase,
     private val deletePlaceFavoriteUseCase: DeletePlaceFavoriteUseCase,
-    private val listPlaceFavoritesByUserUseCase: ListPlaceFavoritesByUserUseCase
+    private val listPlaceFavoritesUseCase: ListPlaceFavoritesUseCase
 ) {
     @PostMapping("/createPlaceFavorite")
     fun createPlaceFavorite(
@@ -59,8 +59,8 @@ class PlaceFavoriteController(
         authentication: SccAppAuthentication,
     ): ListPlaceFavoritesResponseDto {
         val userId = authentication.details.id
-        val response = listPlaceFavoritesByUserUseCase.handle(
-            ListPlaceFavoritesByUserUseCase.Request(
+        val response = listPlaceFavoritesUseCase.handle(
+            ListPlaceFavoritesUseCase.Request(
                 userId = userId,
                 limit = request.limit,
                 nextToken = request.nextToken
