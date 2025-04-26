@@ -2,10 +2,12 @@ package club.staircrusher.place.application.port.`in`.place
 
 import club.staircrusher.place.application.port.out.place.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.domain.model.place.PlaceFavorite
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.springframework.data.domain.PageRequest
+import java.time.Duration
 import java.time.Instant
 
 @Component
@@ -18,7 +20,8 @@ class ListPlaceFavoritesQuery(
         val normalizedLimit = request.limit?.toInt() ?: DEFAULT_LIMIT
         val pageRequest = PageRequest.of(0, normalizedLimit)
 
-        val favoritesPage = placeFavoriteRepository.findCursoredByUserId(request.userId, pageRequest, cursor.timestamp, cursor.id)
+        val favoritesPage =
+            placeFavoriteRepository.findCursoredByUserId(request.userId, pageRequest, cursor.timestamp, cursor.id)
 
         Response(
             totalCount = placeFavoriteRepository.countByUserIdAndDeletedAtIsNull(request.userId),
@@ -56,7 +59,7 @@ class ListPlaceFavoritesQuery(
             fun parse(cursorValue: String) = TimestampCursor.parse(cursorValue)
 
             // Use a timestamp in the far future to ensure we get all favorites
-            fun initial() = TimestampCursor.initial()
+            fun initial() = Cursor(SccClock.instant() + Duration.ofDays(1), "")
         }
     }
 
