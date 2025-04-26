@@ -36,7 +36,7 @@ class ListPlaceFavoritesQuery(
 
     data class Request(
         val userId: String,
-        val limit: Long? = 32,
+        val limit: Long?,
         val nextToken: String?
     )
 
