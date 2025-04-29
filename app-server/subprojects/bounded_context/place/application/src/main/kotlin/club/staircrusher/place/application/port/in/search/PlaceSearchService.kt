@@ -58,10 +58,13 @@ class PlaceSearchService(
             }
         }
 
-        val clusteredPlaces = filterPlacesByBoundingBox(places)
-        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(clusteredPlaces.map { it.id }, uid) } ?: emptyMap()
+        val clusteredPlaces = filterPlacesByBoundingBox(places, currentLocation)
+        val placesInPersistence = placeApplicationService.findByNameLike(searchText)
 
-        return clusteredPlaces.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
+        val combinedPlaces = (placesInPersistence + clusteredPlaces).removeDuplicates()
+        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(combinedPlaces.map { it.id }, uid) } ?: emptyMap()
+
+        return combinedPlaces.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
             .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
             .let { if (sort == "ACCESSIBILITY_SCORE") it.sortedBy { it.accessibilityScore } else it }
     }
@@ -132,7 +135,7 @@ class PlaceSearchService(
         return associateBy { it.id }.values.toList()
     }
 
-    private fun filterPlacesByBoundingBox(places: List<Place>): List<Place> {
+    private fun filterPlacesByBoundingBox(places: List<Place>, currentLocation: Location?): List<Place> {
         if (places.isEmpty()) return places
 
         val boundingBox = getBoundingBox(places)
@@ -143,8 +146,9 @@ class PlaceSearchService(
         val mutablePlaces = places.toMutableList()
         var area = boundingBox.area
         while (area > BOUNDING_BOX_AREA_THRESHOLD && mutablePlaces.size > 1) {
+            val center = currentLocation ?: boundingBox.center
             val farthestPlace = mutablePlaces.maxByOrNull { place ->
-                val distance = LocationUtils.calculateDistance(boundingBox.center, place.location)
+                val distance = LocationUtils.calculateDistance(center, place.location)
                 distance.meter
             } ?: break
             mutablePlaces.remove(farthestPlace)
