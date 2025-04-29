@@ -166,10 +166,6 @@ class PlaceApplicationService(
         return placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId)
     }
 
-   private fun List<Place>.removeDuplicates(): List<Place> {
-        return associateBy { it.id }.values.toList()
-    }
-
     private fun List<Place>.mergeLocalDatabases(): List<Place> {
         val existingPlaceById = placeRepository.findAllById(this.map { it.id })
             .associateBy { it.id }
