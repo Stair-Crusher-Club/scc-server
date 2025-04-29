@@ -17,4 +17,9 @@ open class SccJacksonConfig {
                 .failOnUnknownProperties(false)
         }
     }
+
+    @Bean
+    fun enumFallbackModule(): FallbackEnumModule {
+        return FallbackEnumModule()
+    }
 }

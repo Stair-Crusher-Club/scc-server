@@ -4,11 +4,11 @@ import club.staircrusher.api.spec.dto.CreatePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.CreatePlaceFavoriteResponseDto
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteRequestDto
 import club.staircrusher.api.spec.dto.DeletePlaceFavoriteResponseDto
-import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserRequestDto
-import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserResponseDto
+import club.staircrusher.api.spec.dto.ListPlaceFavoritesRequestDto
+import club.staircrusher.api.spec.dto.ListPlaceFavoritesResponseDto
 import club.staircrusher.place.application.port.`in`.place.CreatePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.place.DeletePlaceFavoriteUseCase
-import club.staircrusher.place.application.port.`in`.place.ListPlaceFavoritesByUserUseCase
+import club.staircrusher.place.application.port.`in`.place.ListPlaceFavoritesQuery
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 class PlaceFavoriteController(
     private val createPlaceFavoriteUseCase: CreatePlaceFavoriteUseCase,
     private val deletePlaceFavoriteUseCase: DeletePlaceFavoriteUseCase,
-    private val listPlaceFavoritesByUserUseCase: ListPlaceFavoritesByUserUseCase
+    private val listPlaceFavoritesQuery: ListPlaceFavoritesQuery
 ) {
     @PostMapping("/createPlaceFavorite")
     fun createPlaceFavorite(
         @RequestBody request: CreatePlaceFavoriteRequestDto,
-        authentication: SccAppAuthentication?,
+        authentication: SccAppAuthentication,
     ): CreatePlaceFavoriteResponseDto {
-        val userId = authentication?.details?.id ?: throw IllegalArgumentException("Unauthorized")
+        val userId = authentication.details.id
         val response = createPlaceFavoriteUseCase.handle(
             CreatePlaceFavoriteUseCase.Request(
                 userId = userId,
@@ -39,11 +39,11 @@ class PlaceFavoriteController(
     }
 
     @PostMapping("/deletePlaceFavorite")
-    fun deletePlaceFavorites(
+    fun deletePlaceFavorite(
         @RequestBody request: DeletePlaceFavoriteRequestDto,
-        authentication: SccAppAuthentication?,
+        authentication: SccAppAuthentication,
     ): DeletePlaceFavoriteResponseDto {
-        val userId = authentication?.details?.id ?: throw IllegalArgumentException("Unauthorized")
+        val userId = authentication.details.id
         val response = deletePlaceFavoriteUseCase.handle(
             DeletePlaceFavoriteUseCase.Request(
                 userId = userId,
@@ -53,20 +53,20 @@ class PlaceFavoriteController(
         return DeletePlaceFavoriteResponseDto(totalPlaceFavoriteCount = response.totalPlaceFavoriteCount)
     }
 
-    @PostMapping("/listPlaceFavoritesByUser")
+    @PostMapping("/listPlaceFavorites")
     fun listPlaceFavorites(
-        @RequestBody request: ListPlaceFavoritesByUserRequestDto,
-        authentication: SccAppAuthentication?,
-    ): ListPlaceFavoritesByUserResponseDto {
-        val userId = authentication?.details?.id ?: throw IllegalArgumentException("Unauthorized")
-        val response = listPlaceFavoritesByUserUseCase.handle(
-            ListPlaceFavoritesByUserUseCase.Request(
+        @RequestBody request: ListPlaceFavoritesRequestDto,
+        authentication: SccAppAuthentication,
+    ): ListPlaceFavoritesResponseDto {
+        val userId = authentication.details.id
+        val response = listPlaceFavoritesQuery.handle(
+            ListPlaceFavoritesQuery.Request(
                 userId = userId,
                 limit = request.limit,
                 nextToken = request.nextToken
             )
         )
-        return ListPlaceFavoritesByUserResponseDto(
+        return ListPlaceFavoritesResponseDto(
             totalNumberOfItems = response.totalCount,
             items = response.favorites.map { it.toDto() },
             nextToken = response.nextToken

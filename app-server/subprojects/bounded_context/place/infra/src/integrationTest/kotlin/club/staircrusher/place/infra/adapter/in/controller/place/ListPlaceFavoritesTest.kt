@@ -1,7 +1,7 @@
 package club.staircrusher.place.infra.adapter.`in`.controller.place
 
-import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserRequestDto
-import club.staircrusher.api.spec.dto.ListPlaceFavoritesByUserResponseDto
+import club.staircrusher.api.spec.dto.ListPlaceFavoritesRequestDto
+import club.staircrusher.api.spec.dto.ListPlaceFavoritesResponseDto
 import club.staircrusher.place.application.port.out.place.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.place.base.PlaceITBase
 import org.junit.jupiter.api.Assertions
@@ -42,9 +42,9 @@ class ListPlaceFavoritesTest : PlaceITBase() {
         }
         val notFavoritePlaces = places.subList(2, 4)
         mvc
-            .sccRequest("/listPlaceFavoritesByUser", ListPlaceFavoritesByUserRequestDto(), userAccount = user)
+            .sccRequest("/listPlaceFavorites", ListPlaceFavoritesRequestDto(), userAccount = user)
             .apply {
-                val result = getResult(ListPlaceFavoritesByUserResponseDto::class)
+                val result = getResult(ListPlaceFavoritesResponseDto::class)
                 Assertions.assertEquals(result.totalNumberOfItems, 2)
                 Assertions.assertNotNull(result.items.firstOrNull { it.placeId == favoritePlaces[0].id })
                 Assertions.assertNotNull(result.items.firstOrNull { it.placeId == favoritePlaces[1].id })

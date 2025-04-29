@@ -19,7 +19,6 @@ import club.staircrusher.user.application.port.`in`.use_case.UpdateExternalRefre
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
 import jakarta.servlet.http.HttpServletRequest
-import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -33,8 +32,6 @@ class UserController(
     private val deleteUserUseCase: DeleteUserUseCase,
     private val updateExternalRefreshTokensUseCase: UpdateExternalRefreshTokensUseCase,
 ) {
-    private val logger = KotlinLogging.logger {}
-
     @GetMapping("/getUserInfo")
     fun getUserInfo(
         authentication: SccAppAuthentication,
@@ -55,7 +52,6 @@ class UserController(
         @RequestBody request: UpdateUserInfoPostRequest,
         authentication: SccAppAuthentication,
     ): UpdateUserInfoPost200Response {
-        logger.info { "[UpdateUserInfo]: user(${authentication.principal}), $request" }
         val updatedUser = userApplicationService.updateUserInfo(
             userId = authentication.principal,
             nickname = request.nickname,
