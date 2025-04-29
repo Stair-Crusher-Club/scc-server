@@ -134,13 +134,14 @@ class PlaceSearchService(
             return places
         }
 
-        val sortedPlaces = places.sortedBy { it.location.lat + it.location.lng }
-        val mutablePlaces = sortedPlaces.toMutableList()
-
+        val mutablePlaces = places.toMutableList()
         var area = boundingBox.area
         while (area > BOUNDING_BOX_AREA_THRESHOLD && mutablePlaces.size > 1) {
-            // Remove the farthest place
-            mutablePlaces.removeLast()
+            val farthestPlace = mutablePlaces.maxByOrNull { place ->
+                val distance = LocationUtils.calculateDistance(boundingBox.center, place.location)
+                distance.meter
+            } ?: break
+            mutablePlaces.remove(farthestPlace)
             val newBoundingBox = getBoundingBox(mutablePlaces)
             area = newBoundingBox.area
         }
@@ -159,16 +160,23 @@ class PlaceSearchService(
     private data class BoundingBox(
         val minLat: Double,
         val maxLat: Double,
-        val minLon: Double,
-        val maxLon: Double
+        val minLng: Double,
+        val maxLng: Double
     ) {
-        val area = (maxLat - minLat) * (maxLon - minLon)
+        val center: Location
+            get() = Location((minLng + maxLng) / 2, (minLat + maxLat) / 2)
+
+        val area: Double
+            get() {
+                val height = LocationUtils.calculateDistance(Location(minLng, minLat), Location(minLng, maxLat))
+                val width = LocationUtils.calculateDistance(Location(minLng, minLat), Location(maxLng, minLat))
+                return height.meter * width.meter
+            }
     }
 
     companion object {
         private const val PLACE_SEARCH_MAX_RADIUS = 20000
-        // Lat Lng 1 degree ≈ 111 km
         // Threshold for ~2 km^2 area
-        private const val BOUNDING_BOX_AREA_THRESHOLD = 0.00018225
+        private const val BOUNDING_BOX_AREA_THRESHOLD = 2_000_000
     }
 }
