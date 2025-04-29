@@ -58,9 +58,10 @@ class PlaceSearchService(
             }
         }
 
-        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(places.map { it.id }, uid) } ?: emptyMap()
+        val clusteredPlaces = filterPlacesByBoundingBox(places)
+        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(clusteredPlaces.map { it.id }, uid) } ?: emptyMap()
 
-        return places.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
+        return clusteredPlaces.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
             .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
             .let { if (sort == "ACCESSIBILITY_SCORE") it.sortedBy { it.accessibilityScore } else it }
     }
@@ -125,7 +126,49 @@ class PlaceSearchService(
         return associateBy { it.id }.values.toList()
     }
 
+    private fun filterPlacesByBoundingBox(places: List<Place>): List<Place> {
+        if (places.isEmpty()) return places
+
+        val boundingBox = getBoundingBox(places)
+        if (boundingBox.area <= BOUNDING_BOX_AREA_THRESHOLD) {
+            return places
+        }
+
+        val sortedPlaces = places.sortedBy { it.location.lat + it.location.lng }
+        val mutablePlaces = sortedPlaces.toMutableList()
+
+        var area = boundingBox.area
+        while (area > BOUNDING_BOX_AREA_THRESHOLD && mutablePlaces.size > 1) {
+            // Remove the farthest place
+            mutablePlaces.removeLast()
+            val newBoundingBox = getBoundingBox(mutablePlaces)
+            area = newBoundingBox.area
+        }
+
+        return mutablePlaces.toList()
+    }
+
+    private fun getBoundingBox(places: List<Place>): BoundingBox {
+        val minLat = places.minOf { it.location.lat }
+        val maxLat = places.maxOf { it.location.lat }
+        val minLon = places.minOf { it.location.lng }
+        val maxLon = places.maxOf { it.location.lng }
+        return BoundingBox(minLat, maxLat, minLon, maxLon)
+    }
+
+    private data class BoundingBox(
+        val minLat: Double,
+        val maxLat: Double,
+        val minLon: Double,
+        val maxLon: Double
+    ) {
+        val area = (maxLat - minLat) * (maxLon - minLon)
+    }
+
     companion object {
         private const val PLACE_SEARCH_MAX_RADIUS = 20000
+        // Lat Lng 1 degree ≈ 111 km
+        // Threshold for ~2 km^2 area
+        private const val BOUNDING_BOX_AREA_THRESHOLD = 0.00018225
     }
 }
