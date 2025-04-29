@@ -186,7 +186,7 @@ class PlaceSearchService(
 
     companion object {
         private const val PLACE_SEARCH_MAX_RADIUS = 20000
-        // Threshold for ~2 km^2 area
-        private const val BOUNDING_BOX_AREA_THRESHOLD = 2_000_000
+        // Threshold for 9km^2 area
+        private const val BOUNDING_BOX_AREA_THRESHOLD = 9_000_000
     }
 }
