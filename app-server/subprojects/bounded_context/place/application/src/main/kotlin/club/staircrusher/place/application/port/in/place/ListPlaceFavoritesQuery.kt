@@ -1,6 +1,8 @@
 package club.staircrusher.place.application.port.`in`.place
 
+import club.staircrusher.place.application.port.`in`.search.PlaceSearchService
 import club.staircrusher.place.application.port.out.place.persistence.PlaceFavoriteRepository
+import club.staircrusher.place.application.result.SearchPlacesResult
 import club.staircrusher.place.domain.model.place.PlaceFavorite
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
@@ -13,6 +15,7 @@ import java.time.Instant
 @Component
 class ListPlaceFavoritesQuery(
     private val placeFavoriteRepository: PlaceFavoriteRepository,
+    private val placeSearchService: PlaceSearchService,
     private val transactionManager: TransactionManager
 ) {
     fun handle(request: Request): Response = transactionManager.doInTransaction {
@@ -20,12 +23,12 @@ class ListPlaceFavoritesQuery(
         val normalizedLimit = request.limit?.toInt() ?: DEFAULT_LIMIT
         val pageRequest = PageRequest.of(0, normalizedLimit)
 
-        val favoritesPage =
-            placeFavoriteRepository.findCursoredByUserId(request.userId, pageRequest, cursor.timestamp, cursor.id)
+        val favoritesPage = placeFavoriteRepository.findCursoredByUserId(request.userId, pageRequest, cursor.timestamp, cursor.id)
+        val places = placeSearchService.listPlaces(favoritesPage.content.map { it.placeId }, request.userId)
 
         Response(
             totalCount = placeFavoriteRepository.countByUserIdAndDeletedAtIsNull(request.userId),
-            favorites = favoritesPage.content,
+            places = places,
             nextToken = if (favoritesPage.hasNext()) {
                 Cursor(favoritesPage.content[normalizedLimit - 1]).value
             } else {
@@ -42,7 +45,7 @@ class ListPlaceFavoritesQuery(
 
     data class Response(
         val totalCount: Long,
-        val favorites: List<PlaceFavorite>,
+        val places: List<SearchPlacesResult>,
         val nextToken: String? = null
     )
 

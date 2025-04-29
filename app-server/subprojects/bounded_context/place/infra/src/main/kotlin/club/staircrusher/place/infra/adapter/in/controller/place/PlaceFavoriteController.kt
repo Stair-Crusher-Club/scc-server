@@ -9,6 +9,7 @@ import club.staircrusher.api.spec.dto.ListPlaceFavoritesResponseDto
 import club.staircrusher.place.application.port.`in`.place.CreatePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.place.DeletePlaceFavoriteUseCase
 import club.staircrusher.place.application.port.`in`.place.ListPlaceFavoritesQuery
+import club.staircrusher.place.infra.adapter.`in`.controller.search.toDTO
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -25,7 +26,7 @@ class PlaceFavoriteController(
         @RequestBody request: CreatePlaceFavoriteRequestDto,
         authentication: SccAppAuthentication,
     ): CreatePlaceFavoriteResponseDto {
-        val userId = authentication.details.id
+        val userId = authentication.principal
         val response = createPlaceFavoriteUseCase.handle(
             CreatePlaceFavoriteUseCase.Request(
                 userId = userId,
@@ -43,7 +44,7 @@ class PlaceFavoriteController(
         @RequestBody request: DeletePlaceFavoriteRequestDto,
         authentication: SccAppAuthentication,
     ): DeletePlaceFavoriteResponseDto {
-        val userId = authentication.details.id
+        val userId = authentication.principal
         val response = deletePlaceFavoriteUseCase.handle(
             DeletePlaceFavoriteUseCase.Request(
                 userId = userId,
@@ -58,7 +59,7 @@ class PlaceFavoriteController(
         @RequestBody request: ListPlaceFavoritesRequestDto,
         authentication: SccAppAuthentication,
     ): ListPlaceFavoritesResponseDto {
-        val userId = authentication.details.id
+        val userId = authentication.principal
         val response = listPlaceFavoritesQuery.handle(
             ListPlaceFavoritesQuery.Request(
                 userId = userId,
@@ -68,7 +69,7 @@ class PlaceFavoriteController(
         )
         return ListPlaceFavoritesResponseDto(
             totalNumberOfItems = response.totalCount,
-            items = response.favorites.map { it.toDto() },
+            items = response.places.map { it.toDTO() },
             nextToken = response.nextToken
         )
     }
