@@ -20,7 +20,7 @@ class ListPlaceFavoritesTest : PlaceITBase() {
     }
 
     @Test
-    fun `사용자가 즐겨찾기 리스트와 즐겨찾기한 갯수를 내려준다`() {
+    fun `사용자가 즐겨찾기 리스트와 즐겨찾기한 개수를 내려준다`() {
         val (user, places) = transactionManager.doInTransaction {
             val user = testDataGenerator.createIdentifiedUser().account
             val places = listOf(
@@ -46,10 +46,10 @@ class ListPlaceFavoritesTest : PlaceITBase() {
             .apply {
                 val result = getResult(ListPlaceFavoritesResponseDto::class)
                 Assertions.assertEquals(result.totalNumberOfItems, 2)
-                Assertions.assertNotNull(result.items.firstOrNull { it.placeId == favoritePlaces[0].id })
-                Assertions.assertNotNull(result.items.firstOrNull { it.placeId == favoritePlaces[1].id })
-                Assertions.assertNull(result.items.firstOrNull { it.placeId == notFavoritePlaces[0].id })
-                Assertions.assertNull(result.items.firstOrNull { it.placeId == notFavoritePlaces[1].id })
+                Assertions.assertNotNull(result.items.firstOrNull { it.place.id == favoritePlaces[0].id })
+                Assertions.assertNotNull(result.items.firstOrNull { it.place.id == favoritePlaces[1].id })
+                Assertions.assertNull(result.items.firstOrNull { it.place.id == notFavoritePlaces[0].id })
+                Assertions.assertNull(result.items.firstOrNull { it.place.id == notFavoritePlaces[1].id })
             }
     }
 }
