@@ -222,17 +222,17 @@ class KakaoMapsService(
             return result
         }
 
-        (2..pageablePage)
-            .map { page -> fetchPageBlock(page) }
+        val chunkedResult = (2..pageablePage).map { fetchPageBlock(it) }
             .chunked(FETCH_CHUNK_SIZE)
-            .forEach { chunkedMonos ->
-                val searchedPlaces = Mono
-                    .zip(chunkedMonos) {
-                        it.flatMap { (it as SearchResult).convertToModel() }
-                    }
-                    .awaitFirstOrNull()
-                searchedPlaces?.let { result += it }
-            }
+
+        chunkedResult.forEach { chunkedMonos ->
+            val searchedPlaces = Mono.zip(chunkedMonos) {
+                it.flatMap { (it as SearchResult).convertToModel() }
+            }.awaitFirstOrNull()
+
+            searchedPlaces?.let { result += it }
+        }
+
         return result.removeDuplicates()
     }
 

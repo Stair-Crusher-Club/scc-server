@@ -10,10 +10,12 @@ import club.staircrusher.stdlib.domain.event.DomainEventPublisher
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.WellKnownTextUtils
 import club.staircrusher.stdlib.place.PlaceCategory
+import club.staircrusher.stdlib.util.string.getSimilarityWith
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 
 @Component
@@ -39,7 +41,8 @@ class PlaceApplicationService(
             return@coroutineScope emptyList()
         }
 
-        val places = mapsService.findAllByKeyword(keyword, option)
+        val combinedSearchResult = (findFromDatabase(keyword) + mapsService.findAllByKeyword(keyword, option)).removeDuplicates()
+        val places = combinedSearchResult
             .mergeLocalDatabases()
             .filterClosed()
             .let {
@@ -63,6 +66,17 @@ class PlaceApplicationService(
             .mergeLocalDatabases()
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
+    }
+
+    private fun findFromDatabase(keyword: String): List<Place> {
+        if (keyword.isBlank() || keyword.length < MIN_KEYWORD_LENGTH) {
+            return emptyList()
+        }
+        // DB 에서 장소를 검색하는 것은 키워드와 일치하는데 지도 API 의 결과에 나오지 않는 문제를 해결하기 위한 것이다
+        // 따라서 10 개만 검색하더라도 충분하다
+        val pageRequest = PageRequest.of(0, 10)
+        return placeRepository.findAllByNameStartsWith(keyword, pageRequest)
+            .sortedBy { it.name.getSimilarityWith(keyword) }
     }
 
     private fun List<Place>.filterClosed(): List<Place> {
@@ -153,6 +167,10 @@ class PlaceApplicationService(
         return placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(placeId)
     }
 
+   private fun List<Place>.removeDuplicates(): List<Place> {
+        return associateBy { it.id }.values.toList()
+    }
+
     private fun List<Place>.mergeLocalDatabases(): List<Place> {
         val existingPlaceById = placeRepository.findAllById(this.map { it.id })
             .associateBy { it.id }
@@ -171,5 +189,9 @@ class PlaceApplicationService(
                 )
             } ?: searchedPlace
         }
+    }
+
+    companion object {
+        private const val MIN_KEYWORD_LENGTH = 3
     }
 }
