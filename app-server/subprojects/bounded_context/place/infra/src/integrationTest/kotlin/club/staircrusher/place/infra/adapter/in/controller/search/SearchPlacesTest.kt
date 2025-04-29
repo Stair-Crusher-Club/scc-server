@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +27,11 @@ class SearchPlacesTest : PlaceSearchITBase() {
 
     @SpyBean
     private lateinit var mapsService: MapsService
+
+    @BeforeEach
+    fun setup() = transactionManager.doInTransaction {
+        placeRepository.deleteAll()
+    }
 
     @Test
     fun testSearchPlaces() = runBlocking {
@@ -298,6 +304,95 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 assertEquals(result.items!![0].place.isFavorite, true)
                 assertEquals(result.items!![1].place.isFavorite, false)
             }
+        Unit
+    }
+
+    @Test
+    fun `장소가 지도 API 에 검색되지 않아도 DB 에 있다면 검색된다`() = runBlocking {
+        // given
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser().account
+        }
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32))
+        }
+        val searchText = place.name.substring(0, 4)
+        val radiusMeters = 500
+        val params = SearchPlacesPostRequest(
+            searchText = searchText,
+            distanceMetersLimit = radiusMeters,
+            currentLocation = place.location.toDTO(),
+        )
+
+        // when
+        Mockito.`when`(
+            mapsService.findAllByKeyword(
+                searchText,
+                MapsService.SearchByKeywordOption(
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = place.location,
+                        radiusMeters = radiusMeters,
+                    ),
+                ),
+            )
+        ).thenReturn(emptyList())
+
+        // then
+        mvc.sccRequest("/searchPlaces", params, user)
+            .getResult(SearchPlacesPost200Response::class)
+            .apply {
+                assertEquals(1, items!!.size)
+                assertEquals(place.id, items!![0].place.id)
+                assertNotNull(items!![0].distanceMeters)
+            }
+
+        Unit
+    }
+
+    @Test
+    fun `데이터베이스에서 조회한 장소가 여러개라면 정확도 순으로 정렬해서 보여준다`() = runBlocking {
+        // given
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser().account
+        }
+        val place1Name = "스타벅스 신촌 기차역점"
+        val place1 = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = place1Name)
+        }
+        val place2Name = "스타벅스 신촌역점"
+        val place2 = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = place2Name)
+        }
+        val searchText = "스타벅스 신촌"
+        val radiusMeters = 500
+        val params = SearchPlacesPostRequest(
+            searchText = searchText,
+            distanceMetersLimit = radiusMeters,
+            currentLocation = place1.location.toDTO(),
+        )
+
+        // when
+        Mockito.`when`(
+            mapsService.findAllByKeyword(
+                searchText,
+                MapsService.SearchByKeywordOption(
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = place1.location,
+                        radiusMeters = radiusMeters,
+                    ),
+                ),
+            )
+        ).thenReturn(emptyList())
+
+        // then
+        mvc.sccRequest("/searchPlaces", params, user)
+            .getResult(SearchPlacesPost200Response::class)
+            .apply {
+                assertEquals(2, items!!.size)
+                assertEquals(place2.id, items!![0].place.id)
+                assertEquals(place1.id, items!![1].place.id)
+            }
+
         Unit
     }
 }
