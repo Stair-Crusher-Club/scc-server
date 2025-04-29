@@ -36,7 +36,7 @@ jib {
         permissions.put("/app/run-java.sh", "755")
     }
     from {
-        image = "openjdk:19"
+        image = "eclipse-temurin:17"
         platforms {
             platform {
                 architecture = "amd64"
