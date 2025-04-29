@@ -33,9 +33,6 @@ class CreatePlaceFavoriteUseCase(
             id = EntityIdGenerator.generateRandom(),
             userId = request.userId,
             placeId = request.placeId,
-            createdAt = SccClock.instant(),
-            updatedAt = SccClock.instant(),
-            deletedAt = null
         )
         placeFavoriteRepository.save(newPlaceFavorite)
         return@doInTransaction Response(

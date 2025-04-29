@@ -1642,7 +1642,7 @@ components:
       type: object
       properties:
         totalNumberOfItems:
-          description: 즐겨찾기한 장소의 전체 갯수
+          description: 즐겨찾기한 장소의 전체 개수
           type: integer
           format: int64
         nextToken:
@@ -1651,7 +1651,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/PlaceFavorite'
+            $ref: '#/components/schemas/PlaceListItem'
       required:
         - totalNumberOfItems
         - items
