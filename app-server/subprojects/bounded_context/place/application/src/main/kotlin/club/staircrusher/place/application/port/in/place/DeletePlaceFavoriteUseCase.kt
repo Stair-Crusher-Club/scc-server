@@ -1,7 +1,6 @@
 package club.staircrusher.place.application.port.`in`.place
 
 import club.staircrusher.place.application.port.out.place.persistence.PlaceFavoriteRepository
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 
@@ -18,8 +17,10 @@ class DeletePlaceFavoriteUseCase(
             val totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(request.placeId)
             return@doInTransaction Response(totalPlaceFavoriteCount = totalPlaceFavoriteCount)
         }
-        oldPlaceFavorite.deletedAt = SccClock.instant()
+
+        oldPlaceFavorite.delete()
         placeFavoriteRepository.save(oldPlaceFavorite)
+
         return@doInTransaction Response(totalPlaceFavoriteCount = placeFavoriteRepository.countByPlaceIdAndDeletedAtIsNull(request.placeId))
     }
 

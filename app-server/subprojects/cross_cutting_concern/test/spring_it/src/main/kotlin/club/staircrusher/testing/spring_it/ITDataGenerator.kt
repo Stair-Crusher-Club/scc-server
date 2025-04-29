@@ -279,16 +279,12 @@ class ITDataGenerator {
     fun createPlaceFavorite(
         userId: String,
         placeId: String,
-        at: Instant = clock.instant()
     ): PlaceFavorite {
         return placeFavoriteRepository.save(
             PlaceFavorite(
                 id = EntityIdGenerator.generateRandom(),
                 userId = userId,
                 placeId = placeId,
-                createdAt = at,
-                updatedAt = at,
-                deletedAt = null,
             )
         )
     }

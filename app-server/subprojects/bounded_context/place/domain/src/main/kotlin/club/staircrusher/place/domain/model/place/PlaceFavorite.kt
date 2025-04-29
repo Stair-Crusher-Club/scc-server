@@ -1,5 +1,7 @@
 package club.staircrusher.place.domain.model.place
 
+import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import java.time.Instant
@@ -10,10 +12,12 @@ class PlaceFavorite(
     val id: String,
     val userId: String,
     val placeId: String,
-    var createdAt: Instant,
-    var updatedAt: Instant,
     var deletedAt: Instant? = null,
-) {
+) : TimeAuditingBaseEntity() {
+    fun delete() {
+        deletedAt = SccClock.instant()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

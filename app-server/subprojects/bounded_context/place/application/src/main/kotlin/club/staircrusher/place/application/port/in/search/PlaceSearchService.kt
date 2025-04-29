@@ -17,7 +17,7 @@ class PlaceSearchService(
     private val placeApplicationService: PlaceApplicationService,
     private val buildingService: BuildingService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
-    ) {
+) {
 
     @Suppress("UnusedPrivateMember", "MagicNumber")
     suspend fun searchPlaces(
@@ -79,12 +79,18 @@ class PlaceSearchService(
             .toSearchPlacesResult(currentLocation = null, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
     }
 
-    suspend fun getPlace(placeId: String, userId: String? = null): SearchPlacesResult {
+    fun getPlace(placeId: String, userId: String? = null): SearchPlacesResult {
         val place = placeApplicationService.findPlace(placeId) ?: throw IllegalArgumentException("Place with id $placeId does not exist.")
         val isFavorite = userId?.let { uid -> placeApplicationService.isFavoritePlace(placeId, uid) } ?: false
         return listOf(place)
             .toSearchPlacesResult(currentLocation = null, mapOf(placeId to isFavorite))
             .first()
+    }
+
+    fun listPlaces(placeIds: List<String>, userId: String? = null): List<SearchPlacesResult> {
+        val places = placeApplicationService.findAllByIds(placeIds)
+        val placeIdToIsFavoriteMap = userId?.let { placeApplicationService.isFavoritePlaces(placeIds, it) } ?: emptyMap()
+        return places.toSearchPlacesResult(currentLocation = null, placeIdToIsFavoriteMap)
     }
 
     private fun List<Place>.toSearchPlacesResult(currentLocation: Location?, placeIdToIsFavoriteMap: Map<String, Boolean>): List<SearchPlacesResult> {
