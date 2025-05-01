@@ -19,4 +19,11 @@ enum class PlaceCategory(val humanReadableName: String) {
     CAFE(humanReadableName = "카페"),
     HOSPITAL(humanReadableName = "병원"),
     PHARMACY(humanReadableName = "약국"),
+    ;
+
+    companion object {
+        fun valueOfOrNull(text: String): PlaceCategory? {
+            return values().firstOrNull { it.name == text || it.humanReadableName == text }
+        }
+    }
 }

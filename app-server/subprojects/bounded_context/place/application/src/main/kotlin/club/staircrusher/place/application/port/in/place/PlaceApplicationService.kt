@@ -63,6 +63,8 @@ class PlaceApplicationService(
     ): List<Place> {
         val places = mapsService.findAllByCategory(category, option)
             .mergeLocalDatabases()
+            .filterClosed()
+
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }
