@@ -5,10 +5,12 @@ import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.api.spec.dto.SearchPlaceFilterDto
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
+import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
 import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.place.domain.model.place.BuildingAddress
 import club.staircrusher.place.infra.adapter.`in`.controller.search.base.PlaceSearchITBase
+import club.staircrusher.stdlib.place.PlaceCategory
 import club.staircrusher.stdlib.testing.SccRandom
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,6 +20,12 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.SpyBean
 
@@ -27,6 +35,9 @@ class SearchPlacesTest : PlaceSearchITBase() {
 
     @SpyBean
     private lateinit var mapsService: MapsService
+
+    @SpyBean
+    private lateinit var placeApplicationService: PlaceApplicationService
 
     @BeforeEach
     fun setup() = transactionManager.doInTransaction {
@@ -393,6 +404,49 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 assertEquals(place1.id, items!![1].place.id)
             }
 
+        Unit
+    }
+
+    @Test
+    fun `검색어가 카테고리에 해당하는 예약어면 카테고리 검색을 진행한다`() = runBlocking {
+        // given
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser().account
+        }
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeName = SccRandom.string(32))
+        }
+        val placeCategory = PlaceCategory.CONVENIENCE_STORE
+        val searchText = placeCategory.humanReadableName
+        val radiusMeters = 500
+        val params = SearchPlacesPostRequest(
+            searchText = searchText,
+            distanceMetersLimit = radiusMeters,
+            currentLocation = place.location.toDTO(),
+        )
+
+        // when
+        val option = MapsService.SearchByCategoryOption(
+            MapsService.SearchByCategoryOption.CircleRegion(
+                centerLocation = place.location,
+                radiusMeters = radiusMeters,
+                sort = MapsService.SearchByCategoryOption.CircleRegion.Sort.DISTANCE,
+            ),
+        )
+        Mockito.`when`(
+            mapsService.findAllByCategory(PlaceCategory.CONVENIENCE_STORE, option)
+        ).thenReturn(listOf(place))
+
+        // then
+        mvc.sccRequest("/searchPlaces", params, user)
+            .getResult(SearchPlacesPost200Response::class)
+            .apply {
+                verifyBlocking(placeApplicationService, times(1)) { findAllByCategory(placeCategory, option) }
+                verify(placeApplicationService, never()).findByNameLike(eq(placeCategory.humanReadableName))
+
+                assertEquals(1, items!!.size)
+                assertEquals(place.id, items!![0].place.id)
+            }
         Unit
     }
 }
