@@ -86,6 +86,7 @@ class PlaceSearchService(
                     sort = MapsService.SearchByCategoryOption.CircleRegion.Sort.DISTANCE,
                 )
             ),
+            shouldFilterClosed = true,
         )
     }
 
