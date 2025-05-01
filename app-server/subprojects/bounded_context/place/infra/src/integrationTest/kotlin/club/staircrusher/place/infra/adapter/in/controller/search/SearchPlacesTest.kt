@@ -441,7 +441,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
         mvc.sccRequest("/searchPlaces", params, user)
             .getResult(SearchPlacesPost200Response::class)
             .apply {
-                verifyBlocking(placeApplicationService, times(1)) { findAllByCategory(placeCategory, option) }
+                verifyBlocking(placeApplicationService, times(1)) { findAllByCategory(placeCategory, option, true) }
                 verify(placeApplicationService, never()).findByNameLike(eq(placeCategory.humanReadableName))
 
                 assertEquals(1, items!!.size)
