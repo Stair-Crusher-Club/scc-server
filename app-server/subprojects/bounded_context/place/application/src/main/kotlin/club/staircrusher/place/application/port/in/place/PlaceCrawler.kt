@@ -34,6 +34,7 @@ class PlaceCrawler(
 
         return (placesByCategorySearch + placesByBuildingAddressSearch)
             .removeDuplicates { it.id }
+            .filterClosed()
     }
 
     suspend fun crawlPlacesInPolygon(points: List<Location>): List<Place> {
@@ -45,6 +46,7 @@ class PlaceCrawler(
 
         return (placesByCategorySearch + placesByBuildingAddressSearch)
             .removeDuplicates { it.id }
+            .filterClosed()
     }
 
     suspend fun crossValidatePlaces(places: List<Place>): List<Boolean> = coroutineScope {
@@ -105,7 +107,10 @@ class PlaceCrawler(
                                             leftBottomLocation = leftBottomLocation,
                                             rightTopLocation = rightTopLocation,
                                         ),
-                                    )
+                                    ),
+                                    // 여기서 획득한 장소들의 건물 주소로 키워드 검색을 하게 되는데
+                                    // 장소가 폐업한 경우에도 그 건물에 있는 다른 장소는 폐업을 하지 않았을테니까 그 장소들을 가져오기 위해
+                                    shouldFilterClosed = false,
                                 )
                             }
                         }
@@ -145,6 +150,13 @@ class PlaceCrawler(
             lng = l1.lng * (1 - l2LngRatio) + l2.lng * l2LngRatio,
             lat = l1.lat * (1 - l2LatRatio) + l2.lat * l2LatRatio,
         )
+    }
+
+    private fun List<Place>.filterClosed(): List<Place> {
+        val closedPlaceIds = placeApplicationService.findAllByIds(this.map { it.id })
+            .filter { it.isClosed }
+            .map { it.id }
+        return this.filter { it.id !in closedPlaceIds }
     }
 
     private fun <T, ID> List<T>.removeDuplicates(idGetter: (T) -> ID): List<T> {

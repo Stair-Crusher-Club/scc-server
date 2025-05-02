@@ -60,9 +60,14 @@ class PlaceApplicationService(
     suspend fun findAllByCategory(
         category: PlaceCategory,
         option: MapsService.SearchByCategoryOption,
+        shouldFilterClosed: Boolean = false,
     ): List<Place> {
         val places = mapsService.findAllByCategory(category, option)
             .mergeLocalDatabases()
+            .let {
+                if (shouldFilterClosed) it.filterClosed() else it
+            }
+
         eventPublisher.publishEvent(PlaceSearchEvent(places.map(Place::toPlaceDTO)))
         return places
     }

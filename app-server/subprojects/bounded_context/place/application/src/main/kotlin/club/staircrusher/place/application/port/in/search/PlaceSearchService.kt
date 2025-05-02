@@ -11,6 +11,7 @@ import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.LocationUtils
+import club.staircrusher.stdlib.place.PlaceCategory
 
 @Component
 class PlaceSearchService(
@@ -31,40 +32,15 @@ class PlaceSearchService(
         limit: Int?,
         userId: String? = null,
     ): List<SearchPlacesResult> {
-        val places = placeApplicationService.findAllByKeyword(
-            searchText,
-            option = MapsService.SearchByKeywordOption(
-                region = currentLocation?.let {
-                    MapsService.SearchByKeywordOption.CircleRegion(
-                        centerLocation = it,
-                        radiusMeters = minOf(distanceMetersLimit.meter.toInt(), PLACE_SEARCH_MAX_RADIUS),
-                        sort = sort
-                            ?.let { MapsService.SearchByKeywordOption.CircleRegion.Sort.valueFrom(it) }
-                            ?: MapsService.SearchByKeywordOption.CircleRegion.Sort.ACCURACY
-                    )
-                }
-            ),
-        ).let {
-            if (it.isEmpty() && currentLocation != null) {
-                // Kakao 지도 API의 경우, 최대 검색 반경이 25km밖에 되지 않는다.
-                // 그래서 서울에서 제주 스타벅스를 검색하는 경우 검색 결과가 안뜨는 등의 이슈가 있다.
-                // 이러한 문제를 우회하기 위해, 검색 결과가 없는 경우에는 currentLocation을 빼고 검색을 다시 시도해본다.
-                placeApplicationService.findAllByKeyword(
-                    keyword = searchText,
-                    option = MapsService.SearchByKeywordOption(),
-                )
-            } else {
-                it
-            }
+        val placeCategory = PlaceCategory.valueOfOrNull(searchText)
+        val places = if (placeCategory != null && currentLocation != null) {
+            findByCategory(placeCategory, currentLocation, distanceMetersLimit)
+        } else {
+            findByKeyword(searchText, currentLocation, distanceMetersLimit, sort)
         }
+        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(places.map { it.id }, uid) } ?: emptyMap()
 
-        val clusteredPlaces = filterPlacesByBoundingBox(places, currentLocation)
-        val placesInPersistence = placeApplicationService.findByNameLike(searchText)
-
-        val combinedPlaces = (placesInPersistence + clusteredPlaces).removeDuplicates()
-        val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(combinedPlaces.map { it.id }, uid) } ?: emptyMap()
-
-        return combinedPlaces.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
+        return places.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
             .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
             .let { if (sort == "ACCESSIBILITY_SCORE") it.sortedBy { it.accessibilityScore } else it }
     }
@@ -94,6 +70,61 @@ class PlaceSearchService(
         val places = placeApplicationService.findAllByIds(placeIds)
         val placeIdToIsFavoriteMap = userId?.let { placeApplicationService.isFavoritePlaces(placeIds, it) } ?: emptyMap()
         return places.toSearchPlacesResult(currentLocation = null, placeIdToIsFavoriteMap)
+    }
+
+    private suspend fun findByCategory(
+        category: PlaceCategory,
+        currentLocation: Location,
+        distanceMetersLimit: Length,
+    ): List<Place> {
+        return placeApplicationService.findAllByCategory(
+            category = category,
+            option = MapsService.SearchByCategoryOption(
+                region = MapsService.SearchByCategoryOption.CircleRegion(
+                    centerLocation = currentLocation,
+                    radiusMeters = minOf(distanceMetersLimit.meter.toInt(), PLACE_SEARCH_MAX_RADIUS),
+                    sort = MapsService.SearchByCategoryOption.CircleRegion.Sort.DISTANCE,
+                )
+            ),
+            shouldFilterClosed = true,
+        )
+    }
+
+    private suspend fun findByKeyword(
+        searchText: String,
+        currentLocation: Location?,
+        distanceMetersLimit: Length,
+        sort: String?,
+    ): List<Place> {
+        val places = placeApplicationService.findAllByKeyword(
+            searchText,
+            option = MapsService.SearchByKeywordOption(
+                region = currentLocation?.let {
+                    MapsService.SearchByKeywordOption.CircleRegion(
+                        centerLocation = it,
+                        radiusMeters = minOf(distanceMetersLimit.meter.toInt(), PLACE_SEARCH_MAX_RADIUS),
+                        sort = sort
+                            ?.let { MapsService.SearchByKeywordOption.CircleRegion.Sort.valueFrom(it) }
+                            ?: MapsService.SearchByKeywordOption.CircleRegion.Sort.ACCURACY
+                    )
+                }
+            ),
+        ).let {
+            if (it.isEmpty() && currentLocation != null) {
+                // Kakao 지도 API의 경우, 최대 검색 반경이 25km밖에 되지 않는다.
+                // 그래서 서울에서 제주 스타벅스를 검색하는 경우 검색 결과가 안뜨는 등의 이슈가 있다.
+                // 이러한 문제를 우회하기 위해, 검색 결과가 없는 경우에는 currentLocation을 빼고 검색을 다시 시도해본다.
+                placeApplicationService.findAllByKeyword(
+                    keyword = searchText,
+                    option = MapsService.SearchByKeywordOption(),
+                )
+            } else {
+                it
+            }
+        }
+        val placesInPersistence = placeApplicationService.findByNameLike(searchText)
+
+        return (placesInPersistence + places).removeDuplicates()
     }
 
     private fun List<Place>.toSearchPlacesResult(currentLocation: Location?, placeIdToIsFavoriteMap: Map<String, Boolean>): List<SearchPlacesResult> {
@@ -135,58 +166,7 @@ class PlaceSearchService(
         return associateBy { it.id }.values.toList()
     }
 
-    private fun filterPlacesByBoundingBox(places: List<Place>, currentLocation: Location?): List<Place> {
-        if (places.isEmpty()) return places
-
-        val boundingBox = getBoundingBox(places)
-        if (boundingBox.area <= BOUNDING_BOX_AREA_THRESHOLD) {
-            return places
-        }
-
-        val mutablePlaces = places.toMutableList()
-        var area = boundingBox.area
-        while (area > BOUNDING_BOX_AREA_THRESHOLD && mutablePlaces.size > 1) {
-            val center = currentLocation ?: boundingBox.center
-            val farthestPlace = mutablePlaces.maxByOrNull { place ->
-                val distance = LocationUtils.calculateDistance(center, place.location)
-                distance.meter
-            } ?: break
-            mutablePlaces.remove(farthestPlace)
-            val newBoundingBox = getBoundingBox(mutablePlaces)
-            area = newBoundingBox.area
-        }
-
-        return mutablePlaces.toList()
-    }
-
-    private fun getBoundingBox(places: List<Place>): BoundingBox {
-        val minLat = places.minOf { it.location.lat }
-        val maxLat = places.maxOf { it.location.lat }
-        val minLon = places.minOf { it.location.lng }
-        val maxLon = places.maxOf { it.location.lng }
-        return BoundingBox(minLat, maxLat, minLon, maxLon)
-    }
-
-    private data class BoundingBox(
-        val minLat: Double,
-        val maxLat: Double,
-        val minLng: Double,
-        val maxLng: Double
-    ) {
-        val center: Location
-            get() = Location((minLng + maxLng) / 2, (minLat + maxLat) / 2)
-
-        val area: Double
-            get() {
-                val height = LocationUtils.calculateDistance(Location(minLng, minLat), Location(minLng, maxLat))
-                val width = LocationUtils.calculateDistance(Location(minLng, minLat), Location(maxLng, minLat))
-                return height.meter * width.meter
-            }
-    }
-
     companion object {
         private const val PLACE_SEARCH_MAX_RADIUS = 20000
-        // Threshold for 9km^2 area
-        private const val BOUNDING_BOX_AREA_THRESHOLD = 9_000_000
     }
 }
