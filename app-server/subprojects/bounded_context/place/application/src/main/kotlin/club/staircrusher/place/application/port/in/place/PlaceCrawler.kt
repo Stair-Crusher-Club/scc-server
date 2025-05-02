@@ -107,7 +107,10 @@ class PlaceCrawler(
                                             leftBottomLocation = leftBottomLocation,
                                             rightTopLocation = rightTopLocation,
                                         ),
-                                    )
+                                    ),
+                                    // 여기서 획득한 장소들의 건물 주소로 키워드 검색을 하게 되는데
+                                    // 장소가 폐업한 경우에도 그 건물에 있는 다른 장소는 폐업을 하지 않았을테니까 그 장소들을 가져오기 위해
+                                    shouldFilterClosed = false,
                                 )
                             }
                         }
