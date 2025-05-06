@@ -6,7 +6,7 @@ springDependencyManagement = "1.1.7"
 detekt = "1.21.0"
 ksp = "1.8.20-1.0.10"
 jib = "3.4.1"
-openapiGenerator = "6.0.1"
+openapiGenerator = "7.13.0"
 
 # libraries
 kotlinLogging = "3.0.5"
