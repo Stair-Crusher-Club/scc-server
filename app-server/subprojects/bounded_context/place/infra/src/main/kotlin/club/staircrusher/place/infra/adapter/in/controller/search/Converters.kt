@@ -13,6 +13,7 @@ fun Place.toDTO(isFavorite: Boolean) = club.staircrusher.api.spec.dto.Place(
     id = id,
     name = name,
     address = address.toString(),
+    location = location.toDTO(),
     category = category?.toDto(),
     isFavorite = isFavorite
 )
