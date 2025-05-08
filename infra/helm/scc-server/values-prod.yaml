@@ -11,7 +11,7 @@ image:
   repository: public.ecr.aws/i6n1n6v2/scc-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.21.13
+  tag: 0.21.14
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
