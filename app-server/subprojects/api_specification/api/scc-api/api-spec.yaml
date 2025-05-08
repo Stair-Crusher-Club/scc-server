@@ -1703,6 +1703,9 @@ components:
         address:
           type: string
           description: 점포의 human-readable한 주소.
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 점포의 위경도.
         category:
           type: PlaceCategoryDto
           description: 점포의 카테고리
