@@ -34,9 +34,9 @@ class PlaceSearchService(
     ): List<SearchPlacesResult> {
         val placeCategory = PlaceCategory.valueOfOrNull(searchText)
         val places = if (placeCategory != null && currentLocation != null) {
-            findByCategory(placeCategory, currentLocation, distanceMetersLimit)
+            searchPlacesByCategory(placeCategory, currentLocation, distanceMetersLimit)
         } else {
-            findByKeyword(searchText, currentLocation, distanceMetersLimit, sort)
+            searchPlacesByKeyword(searchText, currentLocation, distanceMetersLimit, sort)
         }
         val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(places.map { it.id }, uid) } ?: emptyMap()
 
@@ -72,7 +72,7 @@ class PlaceSearchService(
         return places.toSearchPlacesResult(currentLocation = null, placeIdToIsFavoriteMap)
     }
 
-    private suspend fun findByCategory(
+    private suspend fun searchPlacesByCategory(
         category: PlaceCategory,
         currentLocation: Location,
         distanceMetersLimit: Length,
@@ -90,7 +90,7 @@ class PlaceSearchService(
         )
     }
 
-    private suspend fun findByKeyword(
+    private suspend fun searchPlacesByKeyword(
         searchText: String,
         currentLocation: Location?,
         distanceMetersLimit: Length,
@@ -123,8 +123,19 @@ class PlaceSearchService(
             }
         }
         val placesInPersistence = placeApplicationService.findByNameLike(searchText)
+        val combinedPlaces = (placesInPersistence + places).removeDuplicates()
+        if (combinedPlaces.size > BIG_FRANCHISE_THRESHOLD && currentLocation != null) {
+            val bigFranchisePlaceCount = combinedPlaces.count { it.name.startsWith(searchText) }
+            if (bigFranchisePlaceCount > BIG_FRANCHISE_THRESHOLD) {
+                // 주변에 있는 프랜차이즈 장소만 리턴
+                return combinedPlaces.filter { place ->
+                    val distance = LocationUtils.calculateDistance(currentLocation, place.location)
+                    distance.meter <= minOf(distanceMetersLimit.meter.toInt(), PLACE_SEARCH_MAX_RADIUS)
+                }
+            }
+        }
 
-        return (placesInPersistence + places).removeDuplicates()
+        return combinedPlaces
     }
 
     private fun List<Place>.toSearchPlacesResult(currentLocation: Location?, placeIdToIsFavoriteMap: Map<String, Boolean>): List<SearchPlacesResult> {
@@ -168,5 +179,6 @@ class PlaceSearchService(
 
     companion object {
         private const val PLACE_SEARCH_MAX_RADIUS = 20000
+        private const val BIG_FRANCHISE_THRESHOLD = 30
     }
 }
