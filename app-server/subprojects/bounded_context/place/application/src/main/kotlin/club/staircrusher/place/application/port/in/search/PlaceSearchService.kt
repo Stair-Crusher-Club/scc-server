@@ -12,6 +12,7 @@ import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.LocationUtils
 import club.staircrusher.stdlib.place.PlaceCategory
+import mu.KotlinLogging
 
 @Component
 class PlaceSearchService(
@@ -19,6 +20,7 @@ class PlaceSearchService(
     private val buildingService: BuildingService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
+    private val logger = KotlinLogging.logger {}
 
     @Suppress("UnusedPrivateMember", "MagicNumber")
     suspend fun searchPlaces(
@@ -126,6 +128,7 @@ class PlaceSearchService(
         val combinedPlaces = (placesInPersistence + places).removeDuplicates()
         if (combinedPlaces.size > BIG_FRANCHISE_THRESHOLD && currentLocation != null) {
             val bigFranchisePlaceCount = combinedPlaces.count { it.name.startsWith(searchText) }
+            logger.info { "[BigFranchise] Found $bigFranchisePlaceCount places for $searchText" }
             if (bigFranchisePlaceCount > BIG_FRANCHISE_THRESHOLD) {
                 // 주변에 있는 프랜차이즈 장소만 리턴
                 return combinedPlaces.filter { place ->
@@ -179,6 +182,6 @@ class PlaceSearchService(
 
     companion object {
         private const val PLACE_SEARCH_MAX_RADIUS = 20000
-        private const val BIG_FRANCHISE_THRESHOLD = 30
+        private const val BIG_FRANCHISE_THRESHOLD = 20
     }
 }
