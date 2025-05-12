@@ -11,7 +11,7 @@ openapiGenerator = "6.0.1"
 # libraries
 kotlinLogging = "3.0.5"
 kotlinSerialization = "1.5.1"
-coroutine = "1.6.4"
+coroutine = "1.10.2"
 geoTools = "26.5"
 jts = "1.19.0"
 proj4j = "1.4.0"
