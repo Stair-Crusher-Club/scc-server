@@ -12,7 +12,6 @@ import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.geography.LocationUtils
 import club.staircrusher.stdlib.place.PlaceCategory
-import mu.KotlinLogging
 
 @Component
 class PlaceSearchService(
@@ -20,7 +19,6 @@ class PlaceSearchService(
     private val buildingService: BuildingService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
-    private val logger = KotlinLogging.logger {}
 
     @Suppress("UnusedPrivateMember", "MagicNumber")
     suspend fun searchPlaces(
@@ -124,17 +122,16 @@ class PlaceSearchService(
                 it
             }
         }
-        val placesInPersistence = placeApplicationService.findByNameLike(searchText)
+        val placesInPersistence = placeApplicationService.findByNameLike(searchText, BIG_FRANCHISE_THRESHOLD)
         val combinedPlaces = (placesInPersistence + places).removeDuplicates()
-        if (combinedPlaces.size > BIG_FRANCHISE_THRESHOLD && currentLocation != null) {
-            val bigFranchisePlaceCount = combinedPlaces.count { it.name.startsWith(searchText) }
-            logger.info { "[BigFranchise] Found $bigFranchisePlaceCount places for $searchText" }
-            if (bigFranchisePlaceCount > BIG_FRANCHISE_THRESHOLD) {
-                // 주변에 있는 프랜차이즈 장소만 리턴
-                return combinedPlaces.filter { place ->
-                    val distance = LocationUtils.calculateDistance(currentLocation, place.location)
-                    distance.meter <= minOf(distanceMetersLimit.meter.toInt(), PLACE_SEARCH_MAX_RADIUS)
-                }
+
+        val bigFranchisePlaceCount = combinedPlaces.count { it.name.startsWith(searchText) }
+        if (bigFranchisePlaceCount >= BIG_FRANCHISE_THRESHOLD && currentLocation != null) {
+            // distance limit 이 20km 로 되어 있는 경우가 있어, 조금 어색한 경우가 발생하기에
+            // 주변에 있는 지도에서 검색된 장소만 리턴
+            return places.filter { place ->
+                val distance = LocationUtils.calculateDistance(currentLocation, place.location)
+                distance.meter < minOf(distanceMetersLimit.meter.toInt(), PLACE_SEARCH_MAX_RADIUS)
             }
         }
 
@@ -182,6 +179,6 @@ class PlaceSearchService(
 
     companion object {
         private const val PLACE_SEARCH_MAX_RADIUS = 20000
-        private const val BIG_FRANCHISE_THRESHOLD = 20
+        private const val BIG_FRANCHISE_THRESHOLD = 30
     }
 }

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -442,7 +442,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
             .getResult(SearchPlacesPost200Response::class)
             .apply {
                 verifyBlocking(placeApplicationService, times(1)) { findAllByCategory(placeCategory, option, true) }
-                verify(placeApplicationService, never()).findByNameLike(eq(placeCategory.humanReadableName))
+                verify(placeApplicationService, never()).findByNameLike(eq(placeCategory.humanReadableName), anyOrNull())
 
                 assertEquals(1, items!!.size)
                 assertEquals(place.id, items!![0].place.id)
