@@ -27,6 +27,7 @@ class AccessibilityImageProcessor : ImageProcessor {
                             blurredMat.apply(position.toMatRect())
                         } catch (t: Throwable) {
                             logger.error { "Failed to apply face region: $position for image size (${originalImageMat.size().width()}, ${originalImageMat.size().height()})" }
+                            logger.error { t.message }
                             continue
                         }
                         GaussianBlur(
