@@ -16,6 +16,10 @@ spring:
 scc:
   environment: test
 
+  jwt:
+    secret: test
+    old-secret: test
+
   notification:
     push:
       credential: test
