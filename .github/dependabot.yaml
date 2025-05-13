@@ -12,10 +12,14 @@ updates:
         patterns:
           - "org.bytedeco:*"
     ignore:
+      # kotlin + spring-boot 버전에 의해 bom 으로 관리되는 라이브러리들
       - dependency-name: "org.jetbrains.kotlin*"
       - dependency-name: "org.springframework.boot"
       - dependency-name: "io.gitlab.arturbosch.detekt"
       - dependency-name: "com.fasterxml.jackson.module:jackson-module-kotlin"
+      - dependency-name: "org.flywaydb*"
+      - dependency-name: "org.junit.jupiter*"
+      - dependency-name: "org.mockito.kotlin*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
