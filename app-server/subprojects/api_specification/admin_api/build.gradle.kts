@@ -9,7 +9,7 @@ dependencies {
 
 tasks.getByName("openApiGenerate") {
     inputs.file("${project.rootDir}/../api-admin/api-spec.yaml")
-    outputs.dir("${buildDir.path}/generated-api")
+    outputs.dir(layout.buildDirectory.dir("generated-api").get().asFile.path)
     outputs.dir("${project.projectDir.path}/src/main/kotlin")
 }
 
@@ -22,17 +22,19 @@ openApiGenerate {
     packageName.set("club.staircrusher.admin_api.spec")
     apiPackage.set("club.staircrusher.admin_api.spec")
     modelPackage.set("club.staircrusher.admin_api.spec.dto")
-    outputDir.set("${buildDir.path}/generated-api")
+    outputDir.set(layout.buildDirectory.dir("generated-api").get().asFile.path)
     generatorName.set("kotlin")
     configOptions.put("sourceFolder", "src/main/kotlin")
     configOptions.put("serializationLibrary", "jackson")
     configOptions.put("enumPropertyNaming", "UPPERCASE")
     skipValidateSpec.set(true)
+    generateApiTests.set(false)
+    generateModelTests.set(false)
 }
 val openApiGenerateTask = tasks.getByName("openApiGenerate") {
     doLast {
         copy {
-            from("${buildDir.path}/generated-api/src")
+            from(layout.buildDirectory.dir("generated-api/src").get().asFile.path)
             into("src/")
         }
     }
@@ -44,7 +46,8 @@ tasks.getByName("compileKotlin").dependsOn(openApiGenerateTask)
 dependencies {
     implementation(libs.kotlin.stdlib.jdk8)
     implementation(libs.kotlin.reflect)
-    implementation(libs.jackson.module.kotlin)
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.3")
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    // testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 }
