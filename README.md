@@ -14,7 +14,7 @@ git submodule init
 git submodule update
 ```
 
-[OpenAPI Generator](https://openapi-generator.tech/docs/generators/kotlin/)를 활용하여 api-spec 에 대응하는 코드를 생성한 후 사용합니다.
+[OpenAPI Generator](https://openapi-generator.tech/docs/generators/kotlin/)를 활용하여 api-spec 에 맞는 코드를 생성한 후 사용합니다.
 따라서 올바르게 프로젝트를 빌드하기 위해서는 OpenAPI Generator task를 실행하는 것이 필요합니다.
 
 app-server 경로에서 아래 커맨드를 입력하면 필요한 Kotlin 파일들이 만들어집니다.
