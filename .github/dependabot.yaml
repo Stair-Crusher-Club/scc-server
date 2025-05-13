@@ -12,12 +12,9 @@ updates:
         patterns:
           - "org.bytedeco:*"
     ignore:
-      - dependency-name: "org.jetbrains.kotlin:*"
+      - dependency-name: "org.jetbrains.kotlin*"
       - dependency-name: "org.springframework.boot"
-      - dependency-name: "org.jetbrains.kotlinx:kotlinx-coroutines-*"
       - dependency-name: "io.gitlab.arturbosch.detekt"
-      - dependency-name: "org.jetbrains.kotlin:kotlin-reflect"
-      - dependency-name: "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
       - dependency-name: "com.fasterxml.jackson.module:jackson-module-kotlin"
 
   - package-ecosystem: "github-actions"
