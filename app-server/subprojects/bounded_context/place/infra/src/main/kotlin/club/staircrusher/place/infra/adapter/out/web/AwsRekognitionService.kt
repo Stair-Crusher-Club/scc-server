@@ -41,7 +41,7 @@ internal class AwsRekognitionService(
             imageBytes = imageBytes,
             imageSize = imageSize,
             positions = detected.faceDetails().map {
-                calculateFacePosition(getImageSize(imageBytes), it.boundingBox())
+                calculateFacePosition(imageSize, it.boundingBox())
             },
         )
     }
@@ -60,13 +60,13 @@ internal class AwsRekognitionService(
     private fun calculateFacePosition(imageSize: Size, boundingBox: BoundingBox): DetectedFacePosition {
         val startX = (boundingBox.left() * imageSize.width).toInt()
         val startY = (boundingBox.top() * imageSize.height).toInt()
-        val endX = (startX + boundingBox.width() * imageSize.width).toInt()
-        val endY = (startY + boundingBox.height() * imageSize.height).toInt()
+        val width = (boundingBox.width() * imageSize.width).toInt()
+        val height = (boundingBox.height() * imageSize.height).toInt()
         return DetectedFacePosition(
             x = startX,
             y = startY,
-            width = endX - startX,
-            height = endY - startY,
+            width = width,
+            height = height,
         )
     }
 

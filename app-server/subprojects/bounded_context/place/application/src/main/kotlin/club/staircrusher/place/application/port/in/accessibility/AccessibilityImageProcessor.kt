@@ -3,6 +3,7 @@ package club.staircrusher.place.application.port.`in`.accessibility
 import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
 import club.staircrusher.place.domain.model.accessibility.DetectedFacePosition
 import club.staircrusher.stdlib.di.annotation.Component
+import mu.KotlinLogging
 import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_COLOR
 import org.bytedeco.opencv.global.opencv_imgcodecs.imdecode
@@ -13,24 +14,36 @@ import org.bytedeco.opencv.opencv_core.Size
 
 @Component
 class AccessibilityImageProcessor : ImageProcessor {
+    private val logger = KotlinLogging.logger {}
+
+    @Suppress("NestedBlockDepth")
     override fun blur(originalImage: ByteArray, imageExtension: String, positions: List<DetectedFacePosition>): ByteArray {
         BytePointer(*originalImage).use { imagePointer ->
-            val originalImageMat = imdecode(Mat(imagePointer), IMREAD_COLOR)
-            // Blur images
-            val blurredMat = originalImageMat.clone()
-            for (position in positions) {
-                val faceRegion = blurredMat.apply(position.toMatRect())
-                GaussianBlur(
-                    faceRegion,
-                    faceRegion,
-                    Size(0, 0), // sigmaX, sigmaY 에 의해서 결정 10.0
-                    10.0
-                )
+            imdecode(Mat(imagePointer), IMREAD_COLOR).use { originalImageMat ->
+                originalImageMat.clone().use { blurredMat ->
+                    // Blur images
+                    for (position in positions) {
+                        val faceRegion = try {
+                            blurredMat.apply(position.toMatRect())
+                        } catch (t: Throwable) {
+                            logger.error { "Failed to apply face region: $position for image size (${originalImageMat.size().width()}, ${originalImageMat.size().height()})" }
+                            continue
+                        }
+                        GaussianBlur(
+                            faceRegion,
+                            faceRegion,
+                            Size(0, 0), // sigmaX, sigmaY 에 의해서 결정 10.0
+                            10.0,
+                        )
+                    }
+
+                    // Convert the result back to byte array
+                    BytePointer().use { outputPointer ->
+                        imencode(".$imageExtension", blurredMat, outputPointer)
+                        return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
+                    }
+                }
             }
-            // Convert the result back to byte array
-            val outputPointer = BytePointer()
-            imencode(".$imageExtension", blurredMat, outputPointer)
-            return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
         }
     }
 
