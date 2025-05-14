@@ -61,6 +61,10 @@ class BuildingAccessibility(
         this.elevatorImageUrls = images.map { it.imageUrl }
     }
 
+    fun isDeletable(uid: String?): Boolean {
+        return uid != null && uid == userId
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
