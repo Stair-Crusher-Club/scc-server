@@ -25,6 +25,8 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/giveBuildingAccessibilityUpvote",
         "/cancelBuildingAccessibilityUpvote",
         "/deleteAccessibility",
+        "/deleteBuildingAccessibility",
+        "/deletePlaceAccessibility",
         "/getAccessibilityRank",
         "/getCountForNextRank",
         "/registerPlaceAccessibility",
