@@ -94,7 +94,7 @@ class PlaceApplicationService(
         // DB 에서 장소를 검색하는 것은 키워드와 일치하는데 지도 API 의 결과에 나오지 않는 문제를 해결하기 위한 것이다
         // 따라서 10 개만 검색하더라도 충분하다
         val pageRequest = PageRequest.of(0, limit ?: DEFAULT_PLACE_KEYWORD_SEARCH_LIMIT)
-        return placeRepository.findAllByNameStartsWithAndClosedIsFalse(keyword, pageRequest)
+        return placeRepository.findAllByNameStartsWithAndIsClosedFalse(keyword, pageRequest)
             .sortedBy { it.name.getSimilarityWith(keyword) }
     }
 
