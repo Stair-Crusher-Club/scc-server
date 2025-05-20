@@ -122,7 +122,7 @@ class PlaceSearchService(
                 it
             }
         }
-        val placesInPersistence = placeApplicationService.findByNameLike(searchText, BIG_FRANCHISE_THRESHOLD)
+        val placesInPersistence = placeApplicationService.findByNameLikeAndNotClosed(searchText, BIG_FRANCHISE_THRESHOLD)
         val combinedPlaces = (placesInPersistence + places).removeDuplicates()
 
         val bigFranchisePlaceCount = combinedPlaces.count { it.name.startsWith(searchText) }
@@ -151,7 +151,7 @@ class PlaceSearchService(
                     placeAccessibility = pa,
                     distance = currentLocation?.let { LocationUtils.calculateDistance(it, p.location) },
                     accessibilityScore = pa?.let { AccessibilityScore.get(pa, ba)?.coerceIn(0.0..5.0) },
-                    isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p.building),
+                    isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p),
                     isFavoritePlace = placeIdToIsFavoriteMap[p.id] ?: false
                 )
             }

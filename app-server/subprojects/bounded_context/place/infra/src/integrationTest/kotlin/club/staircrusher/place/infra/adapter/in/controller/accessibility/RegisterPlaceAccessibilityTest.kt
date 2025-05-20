@@ -484,6 +484,28 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Test
+    fun `폐업된 장소에 정보를 등록하려고 하면 에러가 난다`() {
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
+        val place = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(
+                placeName = "장소장소",
+                placeIsClosed = true,
+            )
+        }
+        mvc
+            .sccRequest(
+                "/registerPlaceAccessibility",
+                getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place),
+                userAccount = user.account
+            )
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+    }
+
     // 240401 이후 버전부터 몇층인지, 계단 높이 단위, 출입문 유형을 추가로 등록할 수 있다.
     private fun getDefaultRegisterPlaceAccessibilityRequestParamsBefore240401(place: Place): RegisterPlaceAccessibilityRequestDto {
         return RegisterPlaceAccessibilityRequestDto(

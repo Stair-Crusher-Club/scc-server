@@ -251,6 +251,28 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
             }
     }
 
+    @Test
+    fun `해당 건물에 폐업한 것으로 된 장소가 있어도 건물 정보는 잘 등록된다`() {
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser()
+        }
+        val closedPlace = transactionManager.doInTransaction {
+            testDataGenerator.createBuildingAndPlace(placeIsClosed = true)
+        }
+        val building = closedPlace.building
+        transactionManager.doInTransaction {
+            testDataGenerator.createPlace(building = building)
+        }
+
+        mvc
+            .sccRequest("/registerBuildingAccessibility", getDefaultRequestParams(building), userAccount = user.account)
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
+
     private fun getDefaultRequestParams(
         building: Building,
     ): RegisterBuildingAccessibilityRequestDto {

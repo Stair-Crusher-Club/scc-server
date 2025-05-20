@@ -36,5 +36,5 @@ interface PlaceRepository : CrudRepository<Place, String> {
     fun findAllByIdIn(ids: List<String>): List<Place>
 
     @EntityGraph(attributePaths = ["building"])
-    fun findAllByNameStartsWith(name: String, pageable: Pageable): List<Place>
+    fun findAllByNameStartsWithAndIsClosedFalse(name: String, pageable: Pageable): List<Place>
 }

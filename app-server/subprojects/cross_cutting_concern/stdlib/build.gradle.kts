@@ -7,7 +7,6 @@ dependencies {
     implementation(libs.jts.core)
     implementation(libs.proj4j.core)
     implementation(libs.proj4j.epsg)
-    implementation(libs.java.jwt)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.coroutines.core)
     implementation(libs.apache.commons.text)

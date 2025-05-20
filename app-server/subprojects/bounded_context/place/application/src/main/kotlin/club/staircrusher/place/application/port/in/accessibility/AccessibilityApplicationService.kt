@@ -56,6 +56,10 @@ class AccessibilityApplicationService(
     private val logger = KotlinLogging.logger {}
     private val taskExecutor = Executors.newCachedThreadPool()
 
+    fun isAccessibilityRegistrable(place: Place): Boolean {
+        return !place.isClosed && isAccessibilityRegistrable(place.building)
+    }
+
     fun isAccessibilityRegistrable(building: Building): Boolean {
         val addressStr = building.address.toString()
         return (addressStr.startsWith("서울") || addressStr.startsWith("경기 성남시")) ||
@@ -225,7 +229,7 @@ class AccessibilityApplicationService(
         }
         val building = buildingService.getById(buildingId)!!
         if (!isAccessibilityRegistrable(building)) {
-            throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
+            throw SccDomainException("접근성 정보를 등록할 수 없는 건물입니다.")
         }
         val buildingAccessibility = createBuildingAccessibilityParams.let {
             if (
@@ -281,8 +285,7 @@ class AccessibilityApplicationService(
             throw SccDomainException("이미 접근성 정보가 등록된 장소입니다.")
         }
         val place = placeApplicationService.findPlace(createPlaceAccessibilityParams.placeId)!!
-        val building = place.building
-        if (!isAccessibilityRegistrable(building)) {
+        if (!isAccessibilityRegistrable(place)) {
             throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
         }
         val result = placeAccessibilityRepository.save(
@@ -314,7 +317,7 @@ class AccessibilityApplicationService(
 
         val userInfo =
             createPlaceAccessibilityParams.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }?.toDomainModel()
-        val buildingId = building.id
+        val buildingId = place.building.id
 
         return RegisterPlaceAccessibilityResult(
             place = place,
@@ -322,7 +325,7 @@ class AccessibilityApplicationService(
             placeAccessibilityComment = placeAccessibilityComment,
             accessibilityRegisterer = userInfo,
             registrationOrder = placeAccessibilityRepository.countByDeletedAtIsNull(),
-            isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId) ?: false,
+            isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId),
         )
     }
 
