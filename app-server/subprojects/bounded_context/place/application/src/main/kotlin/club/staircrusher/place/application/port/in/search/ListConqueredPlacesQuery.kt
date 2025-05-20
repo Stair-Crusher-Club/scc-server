@@ -38,7 +38,7 @@ class ListConqueredPlacesQuery(
                 buildingAccessibility = ba,
                 distance = null,
                 accessibilityScore = AccessibilityScore.get(placeAccessibility, ba),
-                isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(place.building),
+                isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(place),
                 isFavoritePlace = placeIdToIsFavoriteMap[placeId] ?: false
             )
         }
