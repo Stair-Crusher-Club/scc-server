@@ -27,6 +27,7 @@ logback = "0.1.5"
 postgresql = "42.5.0"
 flyway = "9.5.1"
 jwt = "4.5.0"
+bcrypt = "0.9.0"
 mockitoKotlin = "5.1.0"
 thumbnailator = "0.4.20"
 webpImageio = "0.1.0"
@@ -70,6 +71,7 @@ logback-json-classic = { group = "ch.qos.logback.contrib", name = "logback-json-
 flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
+bcrypt = { group = "at.favre.lib", name = "bcrypt", version.ref = "bcrypt" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "thumbnailator" }
 webp-imageio = { group = "org.sejda.webp-imageio", name = "webp-imageio-sejda", version.ref = "webpImageio" }

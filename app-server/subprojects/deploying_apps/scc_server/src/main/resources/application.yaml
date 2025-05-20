@@ -49,6 +49,10 @@ management:
 scc:
   environment: local
 
+  jwt:
+    secret: test
+    old-secret: test
+
   kakao:
     rest-api-key: test
     admin-key: test

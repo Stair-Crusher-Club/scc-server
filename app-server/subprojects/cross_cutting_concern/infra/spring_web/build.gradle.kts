@@ -14,6 +14,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     api("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation(libs.java.jwt)
     implementation(libs.guava)
     implementation(libs.kotlin.logging)
     implementation(libs.jackson.module.kotlin)
