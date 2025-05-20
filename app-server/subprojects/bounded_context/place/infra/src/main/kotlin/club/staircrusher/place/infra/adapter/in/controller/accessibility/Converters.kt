@@ -40,6 +40,7 @@ fun BuildingAccessibility.toDTO(
     isUpvoted: Boolean,
     totalUpvoteCount: Int,
     registeredUserName: String?,
+    authUser: AuthUser?,
     challengeCrusherGroup: ChallengeCrusherGroup?
 ) = club.staircrusher.api.spec.dto.BuildingAccessibility(
     id = id,
@@ -58,6 +59,7 @@ fun BuildingAccessibility.toDTO(
     isUpvoted = isUpvoted,
     totalUpvoteCount = totalUpvoteCount,
     registeredUserName = registeredUserName,
+    isDeletable = isDeletable(authUser?.id),
     challengeCrusherGroup = challengeCrusherGroup?.toDTO(),
     createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
 )
@@ -69,6 +71,7 @@ fun GetAccessibilityResult.toDTO(authUser: AuthUser?) =
                 isUpvoted = buildingAccessibilityUpvoteInfo?.isUpvoted ?: false,
                 totalUpvoteCount = buildingAccessibilityUpvoteInfo?.totalUpvoteCount ?: 0,
                 registeredUserName = it.accessibilityRegisterer?.nickname,
+                authUser = authUser,
                 challengeCrusherGroup = buildingAccessibilityChallengeCrusherGroup
             )
         },
@@ -140,6 +143,7 @@ fun PlaceAccessibility.toDTO(
         hasSlope = hasSlope,
         entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
         registeredUserName = registeredAccessibilityRegisterer?.nickname,
+        isDeletable = isDeletable(authUser?.id),
         challengeCrusherGroup = challengeCrusherGroup?.toDTO(),
         deletionInfo = if (isDeletable(authUser?.id)) {
             PlaceAccessibilityDeletionInfo(

@@ -23,7 +23,6 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.springframework.boot.test.mock.mockito.SpyBean
-import java.time.Duration
 
 class GetAccessibilityTest : AccessibilityITBase() {
 
@@ -74,7 +73,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertEquals(placeAccessibility.isFirstFloor, result.placeAccessibility!!.isFirstFloor)
                 assertEquals(placeAccessibility.stairInfo, result.placeAccessibility!!.stairInfo.toModel())
                 assertEquals(placeAccessibility.hasSlope, result.placeAccessibility!!.hasSlope)
-                assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
 
                 assertEquals(user.profile.nickname, result.placeAccessibility!!.registeredUserName)
                 assertEquals(1, result.placeAccessibilityComments.size)
@@ -100,7 +98,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
             .sccRequest("/getAccessibility", params, userAccount = user.account)
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
-                assertTrue(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
                 assertTrue(result.hasOtherPlacesToRegisterInBuilding)
             }
     }
@@ -120,7 +117,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
-                assertNull(result.placeAccessibility!!.deletionInfo)
+                assertFalse(result.placeAccessibility!!.isDeletable)
             }
     }
 
@@ -143,11 +140,12 @@ class GetAccessibilityTest : AccessibilityITBase() {
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
                 assertNull(result.placeAccessibility!!.deletionInfo)
+                assertFalse(result.placeAccessibility!!.isDeletable)
             }
     }
 
     @Test
-    fun `한 건물에 두 개 이상의 장소 정보가 존재하면 삭제는 가능하지만 isLastInBuilding은 false이다`() {
+    fun `본인이 등록한 건물은 삭제가 가능하다`() {
         val (user, place1) = registerAccessibility()
         val building = place1.building
         registerAccessibility(overridingBuilding = building)
@@ -163,7 +161,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
-                assertFalse(result.placeAccessibility!!.deletionInfo!!.isLastInBuilding)
+                assertTrue(result.buildingAccessibility!!.isDeletable)
             }
     }
 
