@@ -442,7 +442,7 @@ class SearchPlacesTest : PlaceSearchITBase() {
             .getResult(SearchPlacesPost200Response::class)
             .apply {
                 verifyBlocking(placeApplicationService, times(1)) { findAllByCategory(placeCategory, option, true) }
-                verify(placeApplicationService, never()).findByNameLike(eq(placeCategory.humanReadableName), anyOrNull())
+                verify(placeApplicationService, never()).findByNameLikeAndNotClosed(eq(placeCategory.humanReadableName), anyOrNull())
 
                 assertEquals(1, items!!.size)
                 assertEquals(place.id, items!![0].place.id)
