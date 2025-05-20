@@ -122,7 +122,7 @@ class PlaceSearchService(
                 it
             }
         }
-        val placesInPersistence = placeApplicationService.findByNameLike(searchText, BIG_FRANCHISE_THRESHOLD)
+        val placesInPersistence = placeApplicationService.findByNameLikeAndNotClosed(searchText, BIG_FRANCHISE_THRESHOLD)
         val combinedPlaces = (placesInPersistence + places).removeDuplicates()
 
         val bigFranchisePlaceCount = combinedPlaces.count { it.name.startsWith(searchText) }
