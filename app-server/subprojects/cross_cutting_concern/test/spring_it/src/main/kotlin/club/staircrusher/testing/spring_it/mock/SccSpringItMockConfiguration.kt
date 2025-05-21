@@ -2,9 +2,10 @@ package club.staircrusher.testing.spring_it.mock
 
 import club.staircrusher.image.application.port.out.file_management.FileManagementService
 import club.staircrusher.notification.port.out.PushSender
-import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
-import club.staircrusher.place.application.port.`in`.accessibility.image.ThumbnailGenerator
-import club.staircrusher.place.application.port.out.accessibility.DetectFacesService
+import club.staircrusher.place.application.port.`in`.accessibility.image.ImageBlurService
+import club.staircrusher.place.application.port.`in`.accessibility.image.ImageThumbnailService
+import club.staircrusher.place.application.port.`in`.accessibility.image.ImageFaceDetectionService
+import club.staircrusher.place.application.port.`in`.accessibility.image.ImageInspectionService
 import club.staircrusher.place.application.port.out.accessibility.SlackService
 import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
@@ -59,8 +60,8 @@ open class SccSpringItMockConfiguration {
 
     @Bean
     @Primary
-    open fun mockThumbnailGenerator(): ThumbnailGenerator {
-        return MockThumbnailGenerator()
+    open fun mockThumbnailGenerator(): ImageThumbnailService {
+        return MockImageThumbnailService()
     }
 
     @Bean
@@ -77,19 +78,25 @@ open class SccSpringItMockConfiguration {
 
     @Bean
     @Primary
-    open fun mockDetectFacesService(): DetectFacesService {
-        return MockDetectFacesService()
+    open fun mockDetectFacesService(): ImageFaceDetectionService {
+        return MockImageFaceDetectionService()
     }
 
     @Bean
     @Primary
-    open fun mockImageProcessor(): ImageProcessor {
-        return MockImageProcessor()
+    open fun mockImageProcessor(): ImageBlurService {
+        return MockImageBlurService()
     }
 
     @Bean
     @Primary
     open fun mockSlackService(): SlackService {
         return MockSlackService()
+    }
+
+    @Bean
+    @Primary
+    open fun mockImageInspectionService(): ImageInspectionService {
+        return MockImageInspectionService()
     }
 }

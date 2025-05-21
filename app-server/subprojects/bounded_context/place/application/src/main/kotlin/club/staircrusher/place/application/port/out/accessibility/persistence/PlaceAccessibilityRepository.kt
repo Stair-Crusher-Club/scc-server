@@ -16,6 +16,7 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
     fun findByPlaceIdInAndDeletedAtIsNull(placeIds: Collection<String>): List<PlaceAccessibility>
     fun findFirstByPlaceIdAndDeletedAtIsNull(placeId: String): PlaceAccessibility?
     fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<PlaceAccessibility>
+    fun findByCreatedAtBetweenAndDeletedAtIsNull(from: Instant, to: Instant): List<PlaceAccessibility>
     fun findTop5ByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): List<PlaceAccessibility>
     fun countByUserIdAndDeletedAtIsNull(userId: String): Int
     fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
