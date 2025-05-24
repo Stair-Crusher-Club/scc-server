@@ -2,7 +2,7 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
-import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageService
+import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageThumbnailService
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
@@ -27,7 +27,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean
 class GetAccessibilityTest : AccessibilityITBase() {
 
     @SpyBean
-    lateinit var accessibilityImageService: AccessibilityImageService
+    lateinit var accessibilityImageThumbnailService: AccessibilityImageThumbnailService
 
     @Test
     fun getAccessibilityTest() {
@@ -166,25 +166,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `imageUrls 만 존재한다면 images 로 마이그레이션이 이뤄진다`() {
-        val imageUrl = "https://example.com/image.jpg"
-        val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
-        val params = GetAccessibilityPostRequest(
-            placeId = place.id
-        )
-        mvc
-            .sccRequest("/getAccessibility", params, userAccount = user.account)
-            .andExpect {
-                status {
-                    isOk()
-                }
-            }
-            .apply {
-                verify(accessibilityImageService, atLeastOnce()).migrateImageUrlsToImagesIfNeeded(eq(place.id))
-            }
-    }
-
-    @Test
     fun `썸네일이 존재하면 함께 내려준다`() {
         val imageUrl = "https://example.com/image.jpg"
         val thumbnailUrl = "https://example.com/thumbnail.jpg"
@@ -210,26 +191,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 assertFalse(result.placeAccessibility!!.images.isNullOrEmpty())
                 assertEquals(imageUrl, result.placeAccessibility!!.images!!.first().imageUrl)
                 assertEquals(thumbnailUrl, result.placeAccessibility!!.images!!.first().thumbnailUrl)
-            }
-    }
-
-    @Test
-    fun `썸네일이 없으면 생성한다`() {
-        val imageUrl = "resources/example.jpg"
-        val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
-        val params = GetAccessibilityPostRequest(
-            placeId = place.id
-        )
-
-        mvc
-            .sccRequest("/getAccessibility", params, userAccount = user.account)
-            .andExpect {
-                status {
-                    isOk()
-                }
-            }
-            .apply {
-                verify(accessibilityImageService, atLeastOnce()).generateThumbnailsIfNeeded(eq(place.id))
             }
     }
 

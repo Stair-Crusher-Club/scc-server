@@ -10,6 +10,7 @@ import club.staircrusher.place.application.port.`in`.place.PlaceApplicationServi
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityUpvoteRepository
+import club.staircrusher.place.application.port.out.accessibility.persistence.ImageRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.application.result.AccessibilityRegisterer
@@ -17,6 +18,7 @@ import club.staircrusher.place.application.result.toDomainModel
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
+import club.staircrusher.place.domain.model.accessibility.Image
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibilityComment
 import club.staircrusher.place.domain.model.accessibility.StairInfo
@@ -44,6 +46,7 @@ class AccessibilityApplicationService(
     private val buildingService: BuildingService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val placeAccessibilityCommentRepository: PlaceAccessibilityCommentRepository,
+    private val imageRepository: ImageRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val buildingAccessibilityCommentRepository: BuildingAccessibilityCommentRepository,
     private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,
@@ -51,7 +54,7 @@ class AccessibilityApplicationService(
     private val userApplicationService: UserApplicationService,
     private val challengeService: ChallengeService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
-    private val accessibilityImageService: AccessibilityImageService,
+    private val accessibilityImageThumbnailService: AccessibilityImageThumbnailService,
 ) {
     private val logger = KotlinLogging.logger {}
     private val taskExecutor = Executors.newCachedThreadPool()
@@ -67,8 +70,6 @@ class AccessibilityApplicationService(
     }
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
-        // TODO: get method 인데 사실 write 하는게 마음에 안든다 -> task 로 따로 분리해야 하나?
-        migrateAndGenerateThumbnailsAsync(placeId)
         return transactionManager.doInTransaction {
             doGetAccessibility(placeId, userId)
         }
@@ -139,17 +140,6 @@ class AccessibilityApplicationService(
             .toSet()
         return placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placeIds).let {
             it.size == 1 && it[0].id == this.id
-        }
-    }
-
-    private fun migrateAndGenerateThumbnailsAsync(placeId: String) {
-        taskExecutor.execute {
-            try {
-                accessibilityImageService.migrateImageUrlsToImagesIfNeeded(placeId)
-                accessibilityImageService.generateThumbnailsIfNeeded(placeId)
-            } catch (t: Throwable) {
-                logger.error(t) { "Failed to migrate images or generate thumbnails for $placeId" }
-            }
         }
     }
 
@@ -288,6 +278,7 @@ class AccessibilityApplicationService(
         if (!isAccessibilityRegistrable(place)) {
             throw SccDomainException("접근성 정보를 등록할 수 없는 장소입니다.")
         }
+
         val result = placeAccessibilityRepository.save(
             PlaceAccessibility(
                 id = EntityIdGenerator.generateRandom(),
@@ -311,6 +302,16 @@ class AccessibilityApplicationService(
                 createdAt = SccClock.instant(),
             )
         )
+        val imageResults = imageRepository.saveAll(
+            createPlaceAccessibilityParams.imageUrls.map {  img ->
+                Image(
+                    accessibilityId = result.id,
+                    accessibilityType = "Place",
+                    imageUrl = img,
+                )
+            }
+        )
+        result.newImages = imageResults.toMutableList()
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
             doRegisterPlaceAccessibilityComment(it)
         }

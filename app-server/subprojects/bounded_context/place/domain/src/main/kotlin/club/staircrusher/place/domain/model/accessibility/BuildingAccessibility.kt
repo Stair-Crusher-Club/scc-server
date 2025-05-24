@@ -1,11 +1,15 @@
 package club.staircrusher.place.domain.model.accessibility
 
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
+import org.hibernate.annotations.Where
 import java.time.Instant
 
 @Entity
@@ -32,6 +36,14 @@ class BuildingAccessibility(
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,
+
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @Where(clause = "accessibility_type = 'Building' and image_type = 'Elevator'")
+    var newElevatorImages: MutableList<Image> = mutableListOf(),
+
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @Where(clause = "accessibility_type = 'Building' and image_type = 'Entrance'")
+    var newEntranceImages: MutableList<Image> = mutableListOf(),
 ) {
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
     var entranceImages: List<AccessibilityImage> = entranceImages
@@ -80,10 +92,10 @@ class BuildingAccessibility(
 
     override fun toString(): String {
         return "BuildingAccessibility(id='$id', buildingId='$buildingId', entranceStairInfo=$entranceStairInfo, " +
-            "entranceStairHeightLevel=$entranceStairHeightLevel, entranceImageUrls=$entranceImageUrls, " +
-            "entranceImages=$entranceImages, hasSlope=$hasSlope, hasElevator=$hasElevator, " +
+            "entranceStairHeightLevel=$entranceStairHeightLevel, " +
+            "hasSlope=$hasSlope, hasElevator=$hasElevator, " +
             "entranceDoorTypes=$entranceDoorTypes, elevatorStairInfo=$elevatorStairInfo, " +
-            "elevatorStairHeightLevel=$elevatorStairHeightLevel, elevatorImageUrls=$elevatorImageUrls, " +
-            "elevatorImages=$elevatorImages, userId=$userId, createdAt=$createdAt, deletedAt=$deletedAt)"
+            "elevatorStairHeightLevel=$elevatorStairHeightLevel, " +
+            "userId=$userId, createdAt=$createdAt, deletedAt=$deletedAt)"
     }
 }

@@ -19,6 +19,7 @@ import club.staircrusher.place.domain.model.accessibility.AccessibilityRank
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
 import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
+import club.staircrusher.place.domain.model.accessibility.Image
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibilityComment
 import club.staircrusher.place.domain.model.accessibility.StairHeightLevel
@@ -46,15 +47,15 @@ fun BuildingAccessibility.toDTO(
     id = id,
     entranceStairInfo = entranceStairInfo.toDTO(),
     entranceStairHeightLevel = entranceStairHeightLevel?.toDTO(),
-    entranceImageUrls = entranceImageUrls.map { SccCdn.forAccessibilityImage(it) },
-    entranceImages = entranceImages.map { it.toDTO() },
+    entranceImageUrls = emptyList(),
+    entranceImages = newEntranceImages.map { it.toDTO() },
     hasSlope = hasSlope,
     hasElevator = hasElevator,
     entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
     elevatorStairInfo = elevatorStairInfo.toDTO(),
     elevatorStairHeightLevel = elevatorStairHeightLevel?.toDTO(),
-    elevatorImageUrls = elevatorImageUrls.map { SccCdn.forAccessibilityImage(it) },
-    elevatorImages = elevatorImages.map { it.toDTO() },
+    elevatorImageUrls = emptyList(),
+    elevatorImages = newElevatorImages.map { it.toDTO() },
     buildingId = buildingId,
     isUpvoted = isUpvoted,
     totalUpvoteCount = totalUpvoteCount,
@@ -136,8 +137,8 @@ fun PlaceAccessibility.toDTO(
         floors = floors,
         isFirstFloor = isFirstFloor,
         isStairOnlyOption = isStairOnlyOption,
-        imageUrls = imageUrls.map { SccCdn.forAccessibilityImage(it) },
-        images = images.map { it.toDTO() },
+        imageUrls = emptyList(),
+        images = newImages.map { it.toDTO() },
         stairInfo = stairInfo.toDTO(),
         stairHeightLevel = stairHeightLevel?.toDTO(),
         hasSlope = hasSlope,
@@ -228,3 +229,8 @@ fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) =
         rank = rank,
         conqueredCount = conqueredCount,
     )
+
+fun Image.toDTO() = club.staircrusher.api.spec.dto.ImageDto(
+    imageUrl = SccCdn.forAccessibilityImage(blurredImageUrl ?: imageUrl),
+    thumbnailUrl = thumbnailUrl?.let { SccCdn.forAccessibilityImage(it) },
+)

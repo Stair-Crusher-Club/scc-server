@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream
 import java.nio.file.Files
 
 @Component
-class AccessibilityImageService(
+class AccessibilityImageThumbnailService(
     private val transactionManager: TransactionManager,
     private val thumbnailGenerator: ThumbnailGenerator,
     private val fileManagementService: FileManagementService,
@@ -28,49 +28,6 @@ class AccessibilityImageService(
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
 ) {
     private val logger = KotlinLogging.logger {}
-
-    fun migrateImageUrlsToImagesIfNeeded(placeId: String) = transactionManager.doInTransaction(isolationLevel = TransactionIsolationLevel.REPEATABLE_READ) {
-        val place = placeApplicationService.findPlace(placeId) ?: return@doInTransaction
-        doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(placeId = placeId)
-        doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(buildingId = place.building.id)
-    }
-
-    fun doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(
-        placeId: String? = null,
-        placeAccessibilityId: String? = null
-    ): PlaceAccessibility? {
-        val placeAccessibility =
-            placeId?.let { placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(it) }
-                ?: placeAccessibilityId?.let { placeAccessibilityRepository.findById(it).get() }?.takeIf { it.deletedAt == null }
-                ?: return null
-        if (placeAccessibility.images.isEmpty() && placeAccessibility.imageUrls.isNotEmpty()) {
-            val placeAccessibilityImages = placeAccessibility.imageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            placeAccessibility.updateImages(placeAccessibilityImages)
-            placeAccessibilityRepository.save(placeAccessibility)
-        }
-        return placeAccessibility
-    }
-
-    fun doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(
-        buildingId: String? = null,
-        buildingAccessibilityId: String? = null,
-    ): BuildingAccessibility? {
-        val buildingAccessibility = buildingId?.let { buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(it) }
-            ?: buildingAccessibilityId?.let { buildingAccessibilityRepository.findById(it).get() }?.takeIf { it.deletedAt == null }
-            ?: return null
-        if (buildingAccessibility.entranceImages.isEmpty() && buildingAccessibility.entranceImageUrls.isNotEmpty()) {
-            val buildingEntranceImages = buildingAccessibility.entranceImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            buildingAccessibility.updateEntranceImages(buildingEntranceImages)
-        }
-
-        if (buildingAccessibility.elevatorImages.isEmpty() && buildingAccessibility.elevatorImageUrls.isNotEmpty()) {
-            val buildingElevatorImages = buildingAccessibility.elevatorImageUrls.map { AccessibilityImage(imageUrl = it, thumbnailUrl = null) }
-            buildingAccessibility.updateElevatorImages(buildingElevatorImages)
-        }
-
-        buildingAccessibilityRepository.save(buildingAccessibility)
-        return buildingAccessibility
-    }
 
     fun generateThumbnailsIfNeeded(placeId: String) {
         val thumbnailGenerationRequiredImages = getThumbnailGenerationRequiredImages(placeId)

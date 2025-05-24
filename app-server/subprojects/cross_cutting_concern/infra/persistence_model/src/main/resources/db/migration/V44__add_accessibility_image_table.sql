@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS accessibility_image (
+    id VARCHAR(36) NOT NULL,
+    accessibility_id VARCHAR(36) NOT NULL,
+    accessibility_type VARCHAR(16) NOT NULL,
+
+    image_url VARCHAR(36) NOT NULL,
+    blurred_image_url VARCHAR(36),
+    thumbnail_url VARCHAR(255),
+
+    image_type VARCHAR(16),
+
+    created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_accessibility_image_accessibility_id ON accessibility_image(accessibility_id);
+CREATE INDEX idx_accessibility_created_at ON accessibility_image(created_at);
