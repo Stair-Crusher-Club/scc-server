@@ -9,7 +9,6 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 import org.hibernate.annotations.Where
 import java.time.Instant
@@ -31,14 +30,14 @@ class PlaceAccessibility(
     @Convert(converter = EntranceDoorTypeListToTextAttributeConverter::class)
     var entranceDoorTypes: List<EntranceDoorType>?,
     imageUrls: List<String>,
-    images: List<AccessibilityImage>,
+    images: List<AccessibilityImageOld>,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @Where(clause = "accessibility_type = 'Place'")
-    var newImages: MutableList<Image> = mutableListOf(),
+    var newAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
     @Deprecated("use images instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
@@ -46,13 +45,8 @@ class PlaceAccessibility(
         protected set
 
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var images: List<AccessibilityImage> = images
+    var images: List<AccessibilityImageOld> = images
         protected set
-
-    fun updateImages(images: List<AccessibilityImage>) {
-        this.images = images
-        this.imageUrls = images.map { it.imageUrl }
-    }
 
     fun isDeletable(uid: String?): Boolean {
         return uid != null && uid == userId

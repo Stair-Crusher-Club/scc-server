@@ -8,7 +8,6 @@ import club.staircrusher.place.application.result.SearchPlacesResult
 import club.staircrusher.place.domain.model.place.Building
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.toDTO
-import club.staircrusher.place.infra.adapter.`in`.controller.common.toDTO
 
 fun Place.toDTO(isFavorite: Boolean) = club.staircrusher.api.spec.dto.Place(
     id = id,
@@ -36,7 +35,7 @@ fun SearchPlacesResult.toDTO() = PlaceListItem(
         accessibilityScore = accessibilityScore,
         floors = placeAccessibility?.floors ?: emptyList(),
         hasSlope = placeAccessibility?.hasSlope ?: false,
-        images = placeAccessibility?.newImages?.map { it.toDTO() } ?: emptyList(),
+        images = placeAccessibility?.newAccessibilityImages?.map { it.toDTO() } ?: emptyList(),
         imageUrls = emptyList(),
         createdAt = placeAccessibility?.createdAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
     ),

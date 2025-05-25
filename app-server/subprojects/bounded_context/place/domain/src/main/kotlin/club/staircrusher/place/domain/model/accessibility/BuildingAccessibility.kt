@@ -22,7 +22,7 @@ class BuildingAccessibility(
     @Enumerated(EnumType.STRING)
     var entranceStairHeightLevel: StairHeightLevel?,
     entranceImageUrls: List<String>,
-    entranceImages: List<AccessibilityImage>,
+    entranceImages: List<AccessibilityImageOld>,
     var hasSlope: Boolean,
     var hasElevator: Boolean,
     @Convert(converter = EntranceDoorTypeListToTextAttributeConverter::class)
@@ -32,21 +32,21 @@ class BuildingAccessibility(
     @Enumerated(EnumType.STRING)
     var elevatorStairHeightLevel: StairHeightLevel?,
     elevatorImageUrls: List<String>,
-    elevatorImages: List<AccessibilityImage>,
+    elevatorImages: List<AccessibilityImageOld>,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Elevator'")
-    var newElevatorImages: MutableList<Image> = mutableListOf(),
+    var newElevatorAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Entrance'")
-    var newEntranceImages: MutableList<Image> = mutableListOf(),
+    var newEntranceAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var entranceImages: List<AccessibilityImage> = entranceImages
+    var entranceImages: List<AccessibilityImageOld> = entranceImages
         protected set
 
     @Deprecated("use images with type instead")
@@ -55,23 +55,13 @@ class BuildingAccessibility(
         protected set
 
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var elevatorImages: List<AccessibilityImage> = elevatorImages
+    var elevatorImages: List<AccessibilityImageOld> = elevatorImages
         protected set
 
     @Deprecated("use images with type instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
     var elevatorImageUrls: List<String> = elevatorImageUrls
         protected set
-
-    fun updateEntranceImages(images: List<AccessibilityImage>) {
-        this.entranceImages = images
-        this.entranceImageUrls = images.map { it.imageUrl }
-    }
-
-    fun updateElevatorImages(images: List<AccessibilityImage>) {
-        this.elevatorImages = images
-        this.elevatorImageUrls = images.map { it.imageUrl }
-    }
 
     fun isDeletable(uid: String?): Boolean {
         return uid != null && uid == userId

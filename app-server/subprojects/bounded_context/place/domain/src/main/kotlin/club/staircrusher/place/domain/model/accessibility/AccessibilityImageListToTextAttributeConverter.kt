@@ -9,13 +9,13 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.persistence.Converter
 
 @Converter
-object AccessibilityImageListToTextAttributeConverter : ListToTextAttributeConverter<AccessibilityImage>() {
-    override fun convertElementToTextColumn(element: AccessibilityImage): String {
+object AccessibilityImageListToTextAttributeConverter : ListToTextAttributeConverter<AccessibilityImageOld>() {
+    override fun convertElementToTextColumn(element: AccessibilityImageOld): String {
         return objectMapper.writeValueAsString(element)
     }
 
-    override fun convertElementFromTextColumn(text: String): AccessibilityImage {
-        return objectMapper.readValue<AccessibilityImage>(text)
+    override fun convertElementFromTextColumn(text: String): AccessibilityImageOld {
+        return objectMapper.readValue<AccessibilityImageOld>(text)
     }
 
     private val objectMapper = jacksonObjectMapper()

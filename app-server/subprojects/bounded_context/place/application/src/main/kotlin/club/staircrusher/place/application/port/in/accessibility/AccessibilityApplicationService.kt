@@ -10,15 +10,15 @@ import club.staircrusher.place.application.port.`in`.place.PlaceApplicationServi
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityUpvoteRepository
-import club.staircrusher.place.application.port.out.accessibility.persistence.ImageRepository
+import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityCommentRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.application.result.AccessibilityRegisterer
 import club.staircrusher.place.application.result.toDomainModel
-import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImageOld
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
-import club.staircrusher.place.domain.model.accessibility.Image
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibilityComment
 import club.staircrusher.place.domain.model.accessibility.StairInfo
@@ -32,11 +32,9 @@ import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import mu.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.time.Instant
-import java.util.concurrent.Executors
 
 @Suppress("TooManyFunctions")
 @Component
@@ -46,7 +44,7 @@ class AccessibilityApplicationService(
     private val buildingService: BuildingService,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val placeAccessibilityCommentRepository: PlaceAccessibilityCommentRepository,
-    private val imageRepository: ImageRepository,
+    private val accessibilityImageRepository: AccessibilityImageRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val buildingAccessibilityCommentRepository: BuildingAccessibilityCommentRepository,
     private val buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository,
@@ -54,10 +52,7 @@ class AccessibilityApplicationService(
     private val userApplicationService: UserApplicationService,
     private val challengeService: ChallengeService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
-    private val accessibilityImageThumbnailService: AccessibilityImageThumbnailService,
 ) {
-    private val logger = KotlinLogging.logger {}
-    private val taskExecutor = Executors.newCachedThreadPool()
 
     fun isAccessibilityRegistrable(place: Place): Boolean {
         return !place.isClosed && isAccessibilityRegistrable(place.building)
@@ -229,9 +224,9 @@ class AccessibilityApplicationService(
                 throw SccDomainException("엘레베이터 유무 정보와 엘레베이터까지의 계단 개수 정보가 맞지 않습니다.")
             }
             val entranceImages =
-                it.entranceImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
+                it.entranceImageUrls.map { url -> AccessibilityImageOld(imageUrl = url, thumbnailUrl = null) }
             val elevatorImages =
-                it.elevatorImageUrls.map { url -> AccessibilityImage(imageUrl = url, thumbnailUrl = null) }
+                it.elevatorImageUrls.map { url -> AccessibilityImageOld(imageUrl = url, thumbnailUrl = null) }
 
             buildingAccessibilityRepository.save(
                 BuildingAccessibility(
@@ -293,7 +288,7 @@ class AccessibilityApplicationService(
                 entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
                 imageUrls = createPlaceAccessibilityParams.imageUrls,
                 images = createPlaceAccessibilityParams.imageUrls.map {
-                    AccessibilityImage(
+                    AccessibilityImageOld(
                         imageUrl = it,
                         thumbnailUrl = null
                     )
@@ -302,16 +297,16 @@ class AccessibilityApplicationService(
                 createdAt = SccClock.instant(),
             )
         )
-        val imageResults = imageRepository.saveAll(
+        val accessibilityImageResults = accessibilityImageRepository.saveAll(
             createPlaceAccessibilityParams.imageUrls.map {  img ->
-                Image(
+                AccessibilityImage(
                     accessibilityId = result.id,
-                    accessibilityType = "Place",
-                    imageUrl = img,
+                    accessibilityType = AccessibilityImage.AccessibilityType.Place,
+                    originalImageUrl = img,
                 )
             }
         )
-        result.newImages = imageResults.toMutableList()
+        result.newAccessibilityImages = accessibilityImageResults.toMutableList()
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
             doRegisterPlaceAccessibilityComment(it)
         }
