@@ -8,6 +8,7 @@ import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class AccessibilityImageMigrationService(
@@ -37,12 +38,17 @@ class AccessibilityImageMigrationService(
                     it.first == oldImageUrl // Blur 된 이미지라면 BlurURL 이 image 에 들어가있다.
                 }
                 val matchingOldImage = placeAccessibility.images.find { it.imageUrl == oldImageUrl }
+
+                // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
+                val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
+
                 AccessibilityImage(
                     accessibilityId = placeAccessibility.id,
                     accessibilityType = AccessibilityImage.AccessibilityType.Place,
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                    lastPostProcessedTime = if (isAlreadyPostProcessed) Instant.now() else null
                 )
             }
             accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
@@ -70,6 +76,10 @@ class AccessibilityImageMigrationService(
                     it.first == oldImageUrl // Blur 된 이미지라면 BlurURL 이 image 에 들어가있다.
                 }
                 val matchingOldImage = buildingAccessibility.elevatorImages.find { it.imageUrl == oldImageUrl }
+
+                // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
+                val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
+
                 AccessibilityImage(
                     accessibilityId = buildingAccessibility.id,
                     accessibilityType = AccessibilityImage.AccessibilityType.Building,
@@ -77,6 +87,7 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                    lastPostProcessedTime = if (isAlreadyPostProcessed) Instant.now() else null
                 )
             }
             val modifiedEntranceAccessibilityImages = buildingAccessibility.entranceImageUrls.map { oldImageUrl ->

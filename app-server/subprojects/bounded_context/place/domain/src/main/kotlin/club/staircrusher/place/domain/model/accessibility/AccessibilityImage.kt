@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.Instant
 import java.util.UUID
 
 @Entity
@@ -34,6 +35,9 @@ class AccessibilityImage(
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     var imageType: ImageType? = null,
+
+    @Column(nullable = true)
+    var lastPostProcessedTime: Instant? = null,
 ) : TimeAuditingBaseEntity() {
 
     override fun equals(other: Any?): Boolean {
