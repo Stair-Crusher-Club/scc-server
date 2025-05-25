@@ -7,6 +7,7 @@ import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.hibernate.query.spi.Limit
+import java.time.Instant
 
 @Component
 class AccessibilityImagePipeline(
@@ -20,6 +21,10 @@ class AccessibilityImagePipeline(
             .let { accessibilityImageFaceBlurringService.blurImages(it) }
             .let { accessibilityImageThumbnailService.generateThumbnails(it) }
         transactionManager.doInTransaction {
+            val now = Instant.now()
+            processedImages.forEach { image ->
+                image.lastPostProcessedTime = now
+            }
             accessibilityImageRepository.saveAll(processedImages)
         }
     }
