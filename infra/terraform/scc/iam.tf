@@ -52,14 +52,14 @@ data "aws_iam_policy_document" "scc_home_banners_full_access" {
   }
 }
 
-data "aws_iam_policy_document" "scc_partner_labels_full_access" {
+data "aws_iam_policy_document" "scc_crusher_labels_full_access" {
   statement {
     actions = [
       "s3:*",
     ]
     resources = [
-      aws_s3_bucket.partner_labels.arn,
-      "${aws_s3_bucket.partner_labels.arn}/*",
+      aws_s3_bucket.crusher_labels.arn,
+      "${aws_s3_bucket.crusher_labels.arn}/*",
     ]
   }
 }
@@ -93,9 +93,9 @@ resource "aws_iam_policy" "scc_home_banners_full_access" {
   policy = data.aws_iam_policy_document.scc_home_banners_full_access.json
 }
 
-resource "aws_iam_policy" "scc_partner_labels_full_access" {
-  name   = "scc-partner-labels-full-access"
-  policy = data.aws_iam_policy_document.scc_partner_labels_full_access.json
+resource "aws_iam_policy" "scc_crusher_labels_full_access" {
+  name   = "scc-crusher-labels-full-access"
+  policy = data.aws_iam_policy_document.scc_crusher_labels_full_access.json
 }
 
 resource "aws_iam_policy" "scc_rekognition_access" {
