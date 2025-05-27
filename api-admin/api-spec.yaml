@@ -962,6 +962,8 @@ components:
           format: int64
         description:
           type: string
+        crusherGroup:
+          $ref: '#/components/schemas/AdminCrusherGroupDto'
       required:
         - id
         - name

@@ -7,6 +7,7 @@ import club.staircrusher.admin_api.spec.dto.AdminChallengeConditionDTO
 import club.staircrusher.admin_api.spec.dto.AdminChallengeDTO
 import club.staircrusher.admin_api.spec.dto.AdminCreateChallengeRequestDTO
 import club.staircrusher.admin_api.spec.dto.AdminCrusherGroupDto
+import club.staircrusher.admin_api.spec.dto.AdminCrusherGroupDtoIcon
 import club.staircrusher.admin_api.spec.dto.AdminUpdateChallengeRequestDTO
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
@@ -31,6 +32,7 @@ fun Challenge.toAdminDTO() = AdminChallengeDTO(
     createdAtMillis = createdAt.toEpochMilli(),
     updatedAtMillis = updatedAt.toEpochMilli(),
     description = description,
+    crusherGroup = crusherGroup?.toAdminDTO(),
 )
 
 fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
@@ -107,6 +109,17 @@ fun AdminCrusherGroupDto.toModel() = ChallengeCrusherGroup(
     name = name,
     icon = icon?.let {
         ChallengeCrusherGroup.Icon(
+            url = it.url,
+            width = it.width,
+            height = it.height,
+        )
+    }
+)
+
+fun ChallengeCrusherGroup.toAdminDTO() = AdminCrusherGroupDto(
+    name = name,
+    icon = icon?.let {
+        AdminCrusherGroupDtoIcon(
             url = it.url,
             width = it.width,
             height = it.height,
