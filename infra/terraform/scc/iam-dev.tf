@@ -118,6 +118,11 @@ resource "aws_iam_role_policy_attachment" "scc_dev_home_banners_full_access" {
   policy_arn = aws_iam_policy.scc_dev_home_banners_full_access.arn
 }
 
+resource "aws_iam_role_policy_attachment" "scc_dev_crusher_labels_full_access" {
+  role       = aws_iam_role.scc_dev.name
+  policy_arn = aws_iam_policy.scc_dev_crusher_labels_full_access.arn
+}
+
 resource "aws_iam_role_policy_attachment" "scc_dev_rekognition_access" {
   role       = aws_iam_role.scc_dev.name
   policy_arn = aws_iam_policy.scc_dev_rekognition_access.arn
