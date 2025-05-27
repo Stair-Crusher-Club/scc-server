@@ -1473,6 +1473,7 @@ components:
       type: string
       enum:
         - BANNER
+        - CRUSHER_LABEL
 
     AdminCreateImageUploadUrlsResponseDTO:
       type: object
