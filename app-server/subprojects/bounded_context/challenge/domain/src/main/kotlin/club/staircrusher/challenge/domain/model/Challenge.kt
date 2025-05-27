@@ -1,8 +1,8 @@
 package club.staircrusher.challenge.domain.model
 
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
-import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
@@ -31,8 +31,10 @@ class Challenge(
     var milestones: List<Int>,
     @Convert(converter = ChallengeConditionListToTextAttributeConverter::class)
     var conditions: List<ChallengeCondition>,
+    val createdAt: Instant,
+    var updatedAt: Instant,
     var description: String,
-) : TimeAuditingBaseEntity() {
+) {
     fun getStatus(criteriaTime: Instant): ChallengeStatus {
         return when {
             criteriaTime < startsAt -> ChallengeStatus.UPCOMING
@@ -60,6 +62,7 @@ class Challenge(
         this.milestones = milestones
         this.conditions = updateRequest.conditions
         this.description = updateRequest.description.trim()
+        this.updatedAt = SccClock.instant()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -88,6 +91,7 @@ class Challenge(
         val MIN_TIME = Instant.EPOCH
 
         fun of(createRequest: CreateChallengeRequest): Challenge {
+            val now = SccClock.instant()
             val invitationCode = createRequest.invitationCode?.let { validateAndNormalizeString(it) }
             val passcode = createRequest.passcode?.let { validateAndNormalizeString(it) }
             val startsAt = Instant.ofEpochMilli(createRequest.startsAtMillis)
@@ -108,6 +112,8 @@ class Challenge(
                 goal = createRequest.goal,
                 milestones = milestones,
                 conditions = createRequest.conditions,
+                createdAt = now,
+                updatedAt = now,
                 description = createRequest.description.trim(),
             )
         }
