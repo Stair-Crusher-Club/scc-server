@@ -6,11 +6,15 @@ import club.staircrusher.admin_api.spec.dto.AdminChallengeAddressConditionDTO
 import club.staircrusher.admin_api.spec.dto.AdminChallengeConditionDTO
 import club.staircrusher.admin_api.spec.dto.AdminChallengeDTO
 import club.staircrusher.admin_api.spec.dto.AdminCreateChallengeRequestDTO
+import club.staircrusher.admin_api.spec.dto.AdminCrusherGroupDto
+import club.staircrusher.admin_api.spec.dto.AdminUpdateChallengeRequestDTO
 import club.staircrusher.challenge.domain.model.Challenge
 import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
 import club.staircrusher.challenge.domain.model.ChallengeCondition
+import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.CreateChallengeRequest
+import club.staircrusher.challenge.domain.model.UpdateChallengeRequest
 
 fun Challenge.toAdminDTO() = AdminChallengeDTO(
     id = id,
@@ -40,6 +44,22 @@ fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
     milestones = milestones,
     conditions = conditions.map { it.toModel() },
     description = description,
+    crusherGroup = crusherGroup?.toModel(),
+)
+
+fun AdminUpdateChallengeRequestDTO.toModel(challengeId: String) = UpdateChallengeRequest(
+    id = challengeId,
+    name = name,
+    isPublic = isPublic,
+    invitationCode = invitationCode,
+    passcode = passcode,
+    startsAtMillis = startsAtMillis,
+    endsAtMillis = endsAtMillis,
+    goal = goal,
+    milestones = milestones,
+    conditions = conditions.map { it.toModel() },
+    description = description,
+    crusherGroup = crusherGroup?.toModel(),
 )
 
 fun AdminChallengeConditionDTO.toModel() = ChallengeCondition(
@@ -82,3 +102,14 @@ fun ChallengeActionCondition.Type.toModel() = when (this) {
     ChallengeActionCondition.Type.PLACE_ACCESSIBILITY -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY
     ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT
 }
+
+fun AdminCrusherGroupDto.toModel() = ChallengeCrusherGroup(
+    name = name,
+    icon = icon?.let {
+        ChallengeCrusherGroup.Icon(
+            url = it.url,
+            width = it.width,
+            height = it.height,
+        )
+    }
+)

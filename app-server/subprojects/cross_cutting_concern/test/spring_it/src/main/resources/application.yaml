@@ -44,6 +44,7 @@ scc:
       bucketName: test
       thumbnailBucketName: test
       bannerBucketName: test
+      crusherLabelBucketName: test
       accessKey: test
       secretKey: test
 

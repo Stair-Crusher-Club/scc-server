@@ -377,6 +377,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminChallengeDTO'
 
+    put:
+      summary: 챌린지를 업데이트한다.
+      tags:
+        - challenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateChallengeRequestDTO'
+      responses:
+        '204': {}
+
     delete:
       summary: 챌린지를 삭제한다.
       tags:
@@ -1028,6 +1041,8 @@ components:
             $ref: '#/components/schemas/AdminChallengeConditionDTO'
         description:
           type: string
+        crusherGroup:
+          $ref: '#/components/schemas/AdminCrusherGroupDto'
       required:
         - name
         - isPublic
@@ -1036,6 +1051,27 @@ components:
         - milestones
         - conditions
         - description
+
+    AdminCrusherGroupDto:
+      type: object
+      properties:
+        name:
+          type: string
+        icon:
+          type: object
+          properties:
+            url:
+              type: string
+            width:
+              type: integer
+            height:
+              type: integer
+          required:
+            - url
+            - width
+            - height
+      required:
+        - name
 
     AdminSearchAccessibilitiesResultDTO:
       type: object
@@ -1049,6 +1085,48 @@ components:
           description: 없으면 다음 페이지가 없다는 의미.
       required:
         - items
+
+    AdminUpdateChallengeRequestDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        isPublic:
+          type: boolean
+        invitationCode:
+          type: string
+        passcode:
+          type: string
+        startsAtMillis:
+          type: integer
+          format: int64
+        endsAtMillis:
+          type: integer
+          format: int64
+        goal:
+          type: integer
+          format: int32
+        milestones:
+          type: array
+          items:
+            type: integer
+            format: int32
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminChallengeConditionDTO'
+        description:
+          type: string
+        crusherGroup:
+          $ref: '#/components/schemas/AdminCrusherGroupDto'
+      required:
+        - name
+        - isPublic
+        - startsAtMillis
+        - goal
+        - milestones
+        - conditions
+        - description
 
     AdminUpdatePlaceAccessibilityRequestDTO:
       type: object

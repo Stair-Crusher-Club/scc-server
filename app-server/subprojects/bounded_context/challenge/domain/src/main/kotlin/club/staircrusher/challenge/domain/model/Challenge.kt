@@ -1,8 +1,8 @@
 package club.staircrusher.challenge.domain.model
 
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
@@ -16,31 +16,50 @@ import java.time.Instant
 class Challenge(
     @Id
     val id: String,
-    val name: String,
-    val isPublic: Boolean,
-    val invitationCode: String?,
-    val passcode: String?,
+    var name: String,
+    var isPublic: Boolean,
+    var invitationCode: String?,
+    var passcode: String?,
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "TEXT")
-    val crusherGroup: ChallengeCrusherGroup?,
+    var crusherGroup: ChallengeCrusherGroup?,
     var isComplete: Boolean,
-    val startsAt: Instant,
-    val endsAt: Instant?,
-    val goal: Int,
+    var startsAt: Instant,
+    var endsAt: Instant?,
+    var goal: Int,
     @Convert(converter = IntListToTextAttributeConverter::class)
-    val milestones: List<Int>,
+    var milestones: List<Int>,
     @Convert(converter = ChallengeConditionListToTextAttributeConverter::class)
-    val conditions: List<ChallengeCondition>,
-    val createdAt: Instant,
-    val updatedAt: Instant,
-    val description: String,
-) {
+    var conditions: List<ChallengeCondition>,
+    var description: String,
+) : TimeAuditingBaseEntity() {
     fun getStatus(criteriaTime: Instant): ChallengeStatus {
         return when {
             criteriaTime < startsAt -> ChallengeStatus.UPCOMING
             endsAt != null && endsAt!! < criteriaTime -> ChallengeStatus.CLOSED
             else -> ChallengeStatus.IN_PROGRESS
         }
+    }
+
+    fun update(updateRequest: UpdateChallengeRequest) {
+        val invitationCode = updateRequest.invitationCode?.let { validateAndNormalizeString(it) }
+        val passcode = updateRequest.passcode?.let { validateAndNormalizeString(it) }
+        val startsAt = Instant.ofEpochMilli(updateRequest.startsAtMillis)
+        val endsAt = updateRequest.endsAtMillis?.let { Instant.ofEpochMilli(it) }
+        val milestones = updateRequest.milestones.sorted()
+        validate(invitationCode, updateRequest.isPublic, startsAt, endsAt, updateRequest.goal, milestones, updateRequest.conditions)
+
+        this.name = validateAndNormalizeString(updateRequest.name)
+        this.isPublic = updateRequest.isPublic
+        this.invitationCode = invitationCode
+        this.passcode = passcode
+        this.crusherGroup = updateRequest.crusherGroup
+        this.startsAt = startsAt
+        this.endsAt = endsAt
+        this.goal = updateRequest.goal
+        this.milestones = milestones
+        this.conditions = updateRequest.conditions
+        this.description = updateRequest.description.trim()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -69,12 +88,40 @@ class Challenge(
         val MIN_TIME = Instant.EPOCH
 
         fun of(createRequest: CreateChallengeRequest): Challenge {
-            val now = SccClock.instant()
-
             val invitationCode = createRequest.invitationCode?.let { validateAndNormalizeString(it) }
             val passcode = createRequest.passcode?.let { validateAndNormalizeString(it) }
+            val startsAt = Instant.ofEpochMilli(createRequest.startsAtMillis)
+            val endsAt = createRequest.endsAtMillis?.let { Instant.ofEpochMilli(it) }
+            val milestones = createRequest.milestones.sorted()
+            validate(invitationCode, createRequest.isPublic, startsAt, endsAt, createRequest.goal, milestones, createRequest.conditions)
 
-            if (createRequest.isPublic) {
+            return Challenge(
+                id = EntityIdGenerator.generateRandom(),
+                name = validateAndNormalizeString(createRequest.name),
+                isPublic = createRequest.isPublic,
+                invitationCode = invitationCode,
+                passcode = passcode,
+                crusherGroup = createRequest.crusherGroup,
+                isComplete = false,
+                startsAt = startsAt,
+                endsAt = endsAt,
+                goal = createRequest.goal,
+                milestones = milestones,
+                conditions = createRequest.conditions,
+                description = createRequest.description.trim(),
+            )
+        }
+
+        private fun validate(
+            invitationCode: String?,
+            isPublic: Boolean,
+            startsAt: Instant,
+            endsAt: Instant?,
+            goal: Int,
+            milestones: List<Int>,
+            conditions: List<ChallengeCondition>,
+        ) {
+            if (isPublic) {
                 check(invitationCode == null) {
                     "공개 챌린지는 초대 코드가 없어야 합니다."
                 }
@@ -84,20 +131,17 @@ class Challenge(
                 }
             }
 
-            val startsAt = Instant.ofEpochMilli(createRequest.startsAtMillis)
-            val endsAt = createRequest.endsAtMillis?.let { Instant.ofEpochMilli(it) }
             if (endsAt != null) {
                 check(startsAt < endsAt) { "시작 시각은 종료 시각보다 빨라야 합니다." }
             }
 
-            val milestones = createRequest.milestones.sorted()
             if (milestones.isNotEmpty()) {
-                check(milestones.last() < createRequest.goal) {
+                check(milestones.last() < goal) {
                     "목표는 마일스톤보다 커야 합니다."
                 }
             }
 
-            createRequest.conditions.forEach { condition ->
+            conditions.forEach { condition ->
                 check(condition.addressCondition?.rawEupMyeonDongs == null || condition.addressCondition.rawEupMyeonDongs.isNotEmpty()) {
                     "퀘스트 대상 지역은 전체이거나 최소 1곳 이상을 지정해야 합니다."
                 }
@@ -105,24 +149,6 @@ class Challenge(
                     "퀘스트 대상 액션은 최소 1개 이상을 지정해야 합니다."
                 }
             }
-
-            return Challenge(
-                id = EntityIdGenerator.generateRandom(),
-                name = validateAndNormalizeString(createRequest.name),
-                isPublic = createRequest.isPublic,
-                invitationCode = invitationCode,
-                passcode = passcode,
-                crusherGroup = null,
-                isComplete = false,
-                startsAt = startsAt,
-                endsAt = endsAt,
-                goal = createRequest.goal,
-                milestones = milestones,
-                conditions = createRequest.conditions,
-                createdAt = now,
-                updatedAt = now,
-                description = createRequest.description.trim(),
-            )
         }
 
         private fun validateAndNormalizeString(value: String): String {

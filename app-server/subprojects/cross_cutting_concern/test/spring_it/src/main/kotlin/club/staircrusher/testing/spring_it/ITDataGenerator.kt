@@ -268,8 +268,6 @@ class ITDataGenerator {
                 goal = goal,
                 milestones = milestones,
                 conditions = conditions,
-                createdAt = clock.instant(),
-                updatedAt = clock.instant(),
                 description = description,
                 crusherGroup = crusherGroup
             )
