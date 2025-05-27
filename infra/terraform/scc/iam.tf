@@ -52,6 +52,18 @@ data "aws_iam_policy_document" "scc_home_banners_full_access" {
   }
 }
 
+data "aws_iam_policy_document" "scc_partner_labels_full_access" {
+  statement {
+    actions = [
+      "s3:*",
+    ]
+    resources = [
+      aws_s3_bucket.partner_labels.arn,
+      "${aws_s3_bucket.partner_labels.arn}/*",
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "scc_rekognition_access" {
   statement {
     actions = [
@@ -79,6 +91,11 @@ resource "aws_iam_policy" "scc_accessibility_thumbnails_full_access" {
 resource "aws_iam_policy" "scc_home_banners_full_access" {
   name   = "scc-home-banners-full-access"
   policy = data.aws_iam_policy_document.scc_home_banners_full_access.json
+}
+
+resource "aws_iam_policy" "scc_partner_labels_full_access" {
+  name   = "scc-partner-labels-full-access"
+  policy = data.aws_iam_policy_document.scc_partner_labels_full_access.json
 }
 
 resource "aws_iam_policy" "scc_rekognition_access" {
