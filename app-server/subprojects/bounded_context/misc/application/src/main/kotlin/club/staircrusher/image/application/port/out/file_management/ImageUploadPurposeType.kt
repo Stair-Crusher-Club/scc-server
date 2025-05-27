@@ -4,4 +4,5 @@ enum class ImageUploadPurposeType {
     ACCESSIBILITY,
     ACCESSIBILITY_THUMBNAIL,
     BANNER,
+    CRUSHER_LABEL,
 }

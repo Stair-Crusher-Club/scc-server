@@ -2,14 +2,17 @@ package club.staircrusher.challenge.infra.adapter.`in`.controller
 
 import club.staircrusher.admin_api.spec.dto.AdminChallengeDTO
 import club.staircrusher.admin_api.spec.dto.AdminCreateChallengeRequestDTO
+import club.staircrusher.admin_api.spec.dto.AdminUpdateChallengeRequestDTO
 import club.staircrusher.challenge.application.port.`in`.use_case.CreateChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.DeleteChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.GetChallengeUseCase
 import club.staircrusher.challenge.application.port.`in`.use_case.ListAllChallengesUseCase
+import club.staircrusher.challenge.application.port.`in`.use_case.UpdateChallengeUseCase
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
@@ -18,6 +21,7 @@ class AdminChallengeController(
     private val listAllChallengesUseCase: ListAllChallengesUseCase,
     private val getChallengeUseCase: GetChallengeUseCase,
     private val createChallengeUseCase: CreateChallengeUseCase,
+    private val updateChallengeUseCase: UpdateChallengeUseCase,
     private val deleteChallengeUseCase: DeleteChallengeUseCase,
 ) {
     @GetMapping("/admin/challenges")
@@ -34,6 +38,11 @@ class AdminChallengeController(
     @PostMapping("/admin/challenges")
     fun createChallenge(@RequestBody request: AdminCreateChallengeRequestDTO) {
         createChallengeUseCase.handle(request.toModel())
+    }
+
+    @PutMapping("/admin/challenges/{challengeId}")
+    fun updateChallenge(@PathVariable challengeId: String, @RequestBody request: AdminUpdateChallengeRequestDTO) {
+        updateChallengeUseCase.handle(request.toModel(challengeId))
     }
 
     @DeleteMapping("/admin/challenges/{challengeId}")

@@ -9,6 +9,9 @@ class ChallengeBoundedContextSecurityConfig : SccSecurityConfig {
     override fun requestMatchers() = listOf(
         "/getChallenge",
         "/listChallenges",
+
+        "/admin/challenges",
+        "/admin/challenges/{challengeId}",
     ).map { AntPathRequestMatcher(it) }
 
     override fun identifiedUserOnlyRequestMatchers() = listOf(
