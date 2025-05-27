@@ -8,6 +8,7 @@ import club.staircrusher.image.application.port.out.file_management.UploadUrl
 
 fun AdminImageUploadPurposeTypeDTO.toModel() = when (this) {
     AdminImageUploadPurposeTypeDTO.BANNER -> ImageUploadPurposeType.BANNER
+    AdminImageUploadPurposeTypeDTO.CRUSHER_LABEL -> ImageUploadPurposeType.CRUSHER_LABEL
 }
 
 fun UploadUrl.toAdminDTO() = AdminImageUploadUrlDTO(
