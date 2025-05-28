@@ -13,7 +13,7 @@ import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.Size
 
 @Component
-class AccessibilityImageProcessor : ImageProcessor {
+class AccessibilityImageBlurProcessor : ImageProcessor {
     private val logger = KotlinLogging.logger {}
 
     @Suppress("NestedBlockDepth")

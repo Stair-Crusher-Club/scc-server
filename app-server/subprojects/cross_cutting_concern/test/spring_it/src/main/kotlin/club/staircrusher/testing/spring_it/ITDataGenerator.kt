@@ -19,7 +19,7 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Pl
 import club.staircrusher.place.application.port.out.place.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.place.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository
-import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImageOld
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityUpvote
@@ -345,7 +345,7 @@ class ITDataGenerator {
         hasSlope: Boolean = true,
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         imageUrls: List<String> = emptyList(),
-        images: List<AccessibilityImage> = emptyList(),
+        images: List<AccessibilityImageOld> = emptyList(),
         userAccount: UserAccount? = null,
         at: Instant = clock.instant(),
     ): PlaceAccessibility {
@@ -373,13 +373,13 @@ class ITDataGenerator {
         entranceStairInfo: StairInfo = StairInfo.NONE,
         entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.THUMB,
         entranceImageUrls: List<String> = emptyList(),
-        entranceImages: List<AccessibilityImage> = emptyList(),
+        entranceImages: List<AccessibilityImageOld> = emptyList(),
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         hasSlope: Boolean = true,
         hasElevator: Boolean = true,
         elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
         elevatorImageUrls: List<String> = emptyList(),
-        elevatorImages: List<AccessibilityImage> = emptyList(),
+        elevatorImages: List<AccessibilityImageOld> = emptyList(),
         userAccount: UserAccount? = null,
         at: Instant = clock.instant(),
     ): BuildingAccessibility {
@@ -408,7 +408,7 @@ class ITDataGenerator {
         place: Place,
         userAccount: UserAccount? = null,
         imageUrls: List<String> = emptyList(),
-        images: List<AccessibilityImage> = emptyList(),
+        images: List<AccessibilityImageOld> = emptyList(),
         at: Instant = clock.instant(),
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(

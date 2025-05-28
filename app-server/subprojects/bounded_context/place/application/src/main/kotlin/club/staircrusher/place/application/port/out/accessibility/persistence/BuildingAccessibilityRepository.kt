@@ -4,6 +4,7 @@ import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
 import club.staircrusher.place.domain.model.accessibility.StairHeightLevel
 import club.staircrusher.place.domain.model.accessibility.StairInfo
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.time.Instant
 
@@ -14,6 +15,13 @@ interface BuildingAccessibilityRepository : CrudRepository<BuildingAccessibility
     fun findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): List<BuildingAccessibility>
     fun findTop5ByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): List<BuildingAccessibility>
     fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
+    @Query("""
+        SELECT ba.id
+        FROM BuildingAccessibility ba
+        WHERE ba.deletedAt IS NULL AND ba.createdAt > :createdAt
+        ORDER BY ba.createdAt
+    """)
+    fun findMigrationTargets(createdAt: Instant): List<String>
 
     data class CreateParams(
         val buildingId: String,
