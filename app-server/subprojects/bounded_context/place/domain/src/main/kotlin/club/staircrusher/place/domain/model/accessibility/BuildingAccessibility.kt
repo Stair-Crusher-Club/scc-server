@@ -47,21 +47,17 @@ class BuildingAccessibility(
 ) {
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
     var entranceImages: List<AccessibilityImageOld> = entranceImages
-        protected set
 
     @Deprecated("use images with type instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
     var entranceImageUrls: List<String> = entranceImageUrls
-        protected set
 
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
     var elevatorImages: List<AccessibilityImageOld> = elevatorImages
-        protected set
 
     @Deprecated("use images with type instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
     var elevatorImageUrls: List<String> = elevatorImageUrls
-        protected set
 
     fun isDeletable(uid: String?): Boolean {
         return uid != null && uid == userId

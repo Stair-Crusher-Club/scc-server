@@ -42,11 +42,9 @@ class PlaceAccessibility(
     @Deprecated("use images instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
     var imageUrls: List<String> = imageUrls
-        protected set
 
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
     var images: List<AccessibilityImageOld> = images
-        protected set
 
     fun isDeletable(uid: String?): Boolean {
         return uid != null && uid == userId

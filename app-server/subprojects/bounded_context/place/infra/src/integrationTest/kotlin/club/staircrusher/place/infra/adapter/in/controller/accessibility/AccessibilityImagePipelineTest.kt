@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class AccessibilityImagePostProcessTest : AccessibilityITBase() {
+class AccessibilityImagePipelineTest : AccessibilityITBase() {
 
     @Autowired
     private lateinit var imageRepository: AccessibilityImageRepository
