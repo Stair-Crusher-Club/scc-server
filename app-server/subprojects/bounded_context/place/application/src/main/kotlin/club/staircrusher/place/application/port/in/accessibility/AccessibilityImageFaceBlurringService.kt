@@ -68,7 +68,7 @@ class AccessibilityImageFaceBlurringService(
             logger.error(e) { "Detecting and blurring faces in the image($imageUrl) failed." }
             return BlurResult(
                 originalImageUrl = imageUrl,
-                blurredImageUrl = imageUrl,
+                blurredImageUrl = null,
                 detectedPeopleCount = 0
             )
         }
@@ -76,7 +76,7 @@ class AccessibilityImageFaceBlurringService(
 
     data class BlurResult(
         val originalImageUrl: String,
-        val blurredImageUrl: String,
+        val blurredImageUrl: String?,
         val detectedPeopleCount: Int,
     ) {
         fun isBlurred() = originalImageUrl != blurredImageUrl
