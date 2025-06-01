@@ -89,3 +89,27 @@ spec:
                 - "-XPOST"
                 - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/updateExternalRefreshTokens"
           restartPolicy: OnFailure
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scc-batch-postprocess-images
+  labels:
+    {{- include "scc-server.labels" . | nindent 4 }}
+spec:
+  # In 23:00 ~ 05:00 for every 10 minutes (KST) every day
+  schedule: "*/10 14-20 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: curl-container
+              image: appropriate/curl
+              args:
+                - "--fail"
+                - "-XPOST"
+                - "http://scc-server.{{ .Release.Namespace }}.svc.cluster.local/batchProcessUnprocessedAccessibilityImages"
+          restartPolicy: OnFailure
