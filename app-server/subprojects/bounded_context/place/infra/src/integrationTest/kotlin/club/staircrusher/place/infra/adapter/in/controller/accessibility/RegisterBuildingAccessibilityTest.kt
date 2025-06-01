@@ -5,6 +5,7 @@ import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityUpvoteRepository
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
 import club.staircrusher.place.domain.model.accessibility.StairHeightLevel
 import club.staircrusher.place.domain.model.accessibility.StairInfo
@@ -56,9 +57,13 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
                 // 입구계단2-5칸,경사로O,엘리베이터O,엘리베이터계단1칸,자동미닫이
                 testDataGenerator.createBuilding().let { building ->
                     building to getRequestParams(
-                        building, entranceStairInfo = StairInfo.TWO_TO_FIVE, entranceStairHeightLevel = null,
+                        building,
+                        entranceStairInfo = StairInfo.TWO_TO_FIVE,
+                        entranceStairHeightLevel = null,
                         hasSlope = true,
-                        hasElevator = true, elevatorStairInfo = StairInfo.ONE, elevatorStairHeightLevel = StairHeightLevel.OVER_THUMB,
+                        hasElevator = true,
+                        elevatorStairInfo = StairInfo.ONE,
+                        elevatorStairHeightLevel = StairHeightLevel.OVER_THUMB,
                         entranceDoorTypes = listOf(EntranceDoorType.Automatic, EntranceDoorType.Sliding)
                     )
                 },
@@ -75,7 +80,8 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
         }
         buildingsAndParams.forEachIndexed { idx, (building, params) ->
             val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
-            val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
+            val place =
+                transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace(placeName = "장소장소") }
 
             val params = getDefaultRequestParams(place.building)
             mvc.sccRequest("/registerBuildingAccessibility", params, userAccount = user.account)
@@ -87,16 +93,19 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
                     assertEquals(place.building.id, buildingAccessibility.buildingId)
                     assertEquals(params.entranceStairInfo, buildingAccessibility.entranceStairInfo)
                     assertEquals(params.entranceStairHeightLevel, buildingAccessibility.entranceStairHeightLevel)
-                    assertEquals(params.entranceImageUrls.size, buildingAccessibility.entranceImageUrls.size)
-                    assertEquals(params.entranceImageUrls[0], buildingAccessibility.entranceImageUrls[0])
+                    assertEquals(params.entranceImageUrls.size, buildingAccessibility.entranceImages?.size)
+                    assertEquals(params.entranceImageUrls[0], buildingAccessibility.entranceImages?.get(0)?.imageUrl)
                     assertEquals(params.hasSlope, buildingAccessibility.hasSlope)
                     assertEquals(params.hasElevator, buildingAccessibility.hasElevator)
-                    assertArrayEquals(params.entranceDoorTypes?.toTypedArray(), buildingAccessibility.entranceDoorTypes?.toTypedArray())
+                    assertArrayEquals(
+                        params.entranceDoorTypes?.toTypedArray(),
+                        buildingAccessibility.entranceDoorTypes?.toTypedArray()
+                    )
                     assertEquals(params.elevatorStairInfo, buildingAccessibility.elevatorStairInfo)
                     assertEquals(params.elevatorStairHeightLevel, buildingAccessibility.elevatorStairHeightLevel)
-                    assertEquals(2, buildingAccessibility.elevatorImageUrls.size)
-                    assertEquals(params.elevatorImageUrls[0], buildingAccessibility.elevatorImageUrls[0])
-                    assertEquals(params.elevatorImageUrls[1], buildingAccessibility.elevatorImageUrls[1])
+                    assertEquals(2, buildingAccessibility.elevatorImages?.size)
+                    assertEquals(params.elevatorImageUrls[0], buildingAccessibility.elevatorImages?.get(0)?.imageUrl)
+                    assertEquals(params.elevatorImageUrls[1], buildingAccessibility.elevatorImages?.get(1)?.imageUrl)
                     assertFalse(buildingAccessibility.isUpvoted)
                     assertEquals(0, buildingAccessibility.totalUpvoteCount)
 
@@ -166,16 +175,18 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
                     assertEquals(place.building.id, buildingAccessibility.buildingId)
                     assertEquals(params.entranceStairInfo, buildingAccessibility.entranceStairInfo)
                     assertEquals(params.entranceStairHeightLevel, null)
-                    assertEquals(params.entranceImageUrls.size, buildingAccessibility.entranceImageUrls.size)
-                    assertEquals(params.entranceImageUrls[0], buildingAccessibility.entranceImageUrls[0])
+
+                    assertEquals(params.entranceImageUrls.size, buildingAccessibility.entranceImages?.size)
+                    assertEquals(params.entranceImageUrls[0], buildingAccessibility.entranceImages?.get(0)?.imageUrl)
                     assertEquals(params.hasSlope, buildingAccessibility.hasSlope)
                     assertEquals(params.hasElevator, buildingAccessibility.hasElevator)
                     assertEquals(params.entranceDoorTypes, null)
                     assertEquals(params.elevatorStairInfo, buildingAccessibility.elevatorStairInfo)
                     assertEquals(params.elevatorStairHeightLevel, null)
-                    assertEquals(2, buildingAccessibility.elevatorImageUrls.size)
-                    assertEquals(params.elevatorImageUrls[0], buildingAccessibility.elevatorImageUrls[0])
-                    assertEquals(params.elevatorImageUrls[1], buildingAccessibility.elevatorImageUrls[1])
+
+                    assertEquals(2, buildingAccessibility.elevatorImages?.size)
+                    assertEquals(params.elevatorImageUrls[0], buildingAccessibility.elevatorImages?.get(0)?.imageUrl)
+                    assertEquals(params.elevatorImageUrls[1], buildingAccessibility.elevatorImages?.get(1)?.imageUrl)
                     assertFalse(buildingAccessibility.isUpvoted)
                     assertEquals(0, buildingAccessibility.totalUpvoteCount)
 
@@ -243,7 +254,11 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
             )
         }
         mvc
-            .sccRequest("/registerBuildingAccessibility", getDefaultRequestParams(place.building), userAccount = user.account)
+            .sccRequest(
+                "/registerBuildingAccessibility",
+                getDefaultRequestParams(place.building),
+                userAccount = user.account
+            )
             .andExpect {
                 status {
                     isBadRequest()
@@ -269,6 +284,38 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
             .andExpect {
                 status {
                     isOk()
+                }
+            }
+    }
+
+    @Test
+    fun `빌딩 정보 등록 시 접근성 이미지가 저장된다`() {
+        val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
+        val building = place.building
+        val param = getDefaultRequestParams(building)
+
+        mvc.sccRequest("/registerBuildingAccessibility", param, userAccount = user.account)
+            .andExpect {
+                status {
+                    isOk()
+                }
+                transactionManager.doInTransaction {
+                    val buildingEntity =
+                        buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id)
+                    val elevImages = buildingEntity!!.newElevatorAccessibilityImages
+                    assertEquals(2, elevImages.size)
+                    elevImages.forEach { image ->
+                        assertEquals(AccessibilityImage.AccessibilityType.Building, image.accessibilityType)
+                        assertEquals(AccessibilityImage.ImageType.Elevator, image.imageType)
+                    }
+
+                    val entImages = buildingEntity.newEntranceAccessibilityImages
+                    assertEquals(1, entImages.size)
+                    entImages.forEach { image ->
+                        assertEquals(AccessibilityImage.AccessibilityType.Building, image.accessibilityType)
+                        assertEquals(AccessibilityImage.ImageType.Entrance, image.imageType)
+                    }
                 }
             }
     }

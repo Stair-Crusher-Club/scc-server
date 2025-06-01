@@ -48,7 +48,7 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedTime = if (isAlreadyPostProcessed) Instant.now() else null
+                    lastPostProcessedAt = if (isAlreadyPostProcessed) Instant.now() else null
                 )
             }
             accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
@@ -87,7 +87,7 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedTime = if (isAlreadyPostProcessed) Instant.now() else null
+                    lastPostProcessedAt = if (isAlreadyPostProcessed) Instant.now() else null
                 )
             }
             val modifiedEntranceAccessibilityImages = buildingAccessibility.entranceImageUrls.map { oldImageUrl ->

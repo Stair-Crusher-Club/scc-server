@@ -72,12 +72,15 @@ class AccessibilityApplicationService(
 
     internal fun doGetAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         val place = placeApplicationService.findPlace(placeId) ?: error("Cannot find place with $placeId")
-        val buildingAccessibility = buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(place.building.id)
+        val buildingAccessibility =
+            buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(place.building.id)
         val buildingAccessibilityComments = buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
-        val buildingAccessibilityChallengeCrusherGroup = buildingAccessibility?.id?.let { challengeService.getBuildingAccessibilityCrusherGroup(it) }
+        val buildingAccessibilityChallengeCrusherGroup =
+            buildingAccessibility?.id?.let { challengeService.getBuildingAccessibilityCrusherGroup(it) }
         val placeAccessibility = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(placeId)
         val placeAccessibilityComments = placeAccessibilityCommentRepository.findByPlaceId(placeId)
-        val placeAccessibilityChallengeCrusherGroup = placeAccessibility?.id?.let { challengeService.getPlaceAccessibilityCrusherGroup(it) }
+        val placeAccessibilityChallengeCrusherGroup =
+            placeAccessibility?.id?.let { challengeService.getPlaceAccessibilityCrusherGroup(it) }
         val userInfoById = userApplicationService.getProfilesByUserIds(
             listOfNotNull(buildingAccessibility?.userId)
                 + buildingAccessibilityComments.mapNotNull { it.userId }
@@ -92,7 +95,9 @@ class AccessibilityApplicationService(
                         buildingAccessibility.id,
                     )
                 } != null,
-                totalUpvoteCount = buildingAccessibilityUpvoteRepository.countByBuildingAccessibilityId(buildingAccessibility.id),
+                totalUpvoteCount = buildingAccessibilityUpvoteRepository.countByBuildingAccessibilityId(
+                    buildingAccessibility.id
+                ),
             )
         }
 
@@ -124,8 +129,9 @@ class AccessibilityApplicationService(
 
     private fun hasOtherPlacesToRegisterInSameBuilding(building: Building): Boolean {
         val placesInBuilding = placeApplicationService.findByBuildingId(building.id)
-        val placeAccessibilityExistingPlaceIds = placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placesInBuilding.map { it.id })
-            .map { it.placeId }
+        val placeAccessibilityExistingPlaceIds =
+            placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placesInBuilding.map { it.id })
+                .map { it.placeId }
         return placesInBuilding.any { it.id !in placeAccessibilityExistingPlaceIds }
     }
 
@@ -146,7 +152,8 @@ class AccessibilityApplicationService(
         // 현재 place 당 pa, ba 는 정책상 1개 이므로 단순 associateBy 해준다.
         val pas = placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placeIds).associateBy { it.placeId }
         val buildingIds = places.map { it.building.id }.toSet()
-        val bas = buildingAccessibilityRepository.findByBuildingIdInAndDeletedAtIsNull(buildingIds).associateBy { it.buildingId }
+        val bas = buildingAccessibilityRepository.findByBuildingIdInAndDeletedAtIsNull(buildingIds)
+            .associateBy { it.buildingId }
         return places.map {
             pas[it.id] to bas[it.building.id]
         }
@@ -228,7 +235,7 @@ class AccessibilityApplicationService(
             val elevatorImages =
                 it.elevatorImageUrls.map { url -> AccessibilityImageOld(imageUrl = url, thumbnailUrl = null) }
 
-            buildingAccessibilityRepository.save(
+            val buildingAccessibility = buildingAccessibilityRepository.save(
                 BuildingAccessibility(
                     id = EntityIdGenerator.generateRandom(),
                     buildingId = it.buildingId,
@@ -247,12 +254,32 @@ class AccessibilityApplicationService(
                     createdAt = SccClock.instant(),
                 )
             )
+
+            val accessibilityImageResults = accessibilityImageRepository.saveAll(
+                it.entranceImageUrls.map { img ->
+                    AccessibilityImage(
+                        accessibilityId = buildingAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Entrance,
+                        originalImageUrl = img,
+                    )
+                } + it.elevatorImageUrls.map { img ->
+                    AccessibilityImage(
+                        accessibilityId = buildingAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Elevator,
+                        originalImageUrl = img,
+                    )
+                }
+            )
+            buildingAccessibility
         }
         val buildingAccessibilityComment = createBuildingAccessibilityCommentParams?.let {
             doRegisterBuildingAccessibilityComment(it)
         }
         val userInfo =
-            createBuildingAccessibilityParams.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }?.toDomainModel()
+            createBuildingAccessibilityParams.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }
+                ?.toDomainModel()
         return RegisterBuildingAccessibilityResult(
             building = building,
             buildingAccessibility = buildingAccessibility,
@@ -298,7 +325,7 @@ class AccessibilityApplicationService(
             )
         )
         val accessibilityImageResults = accessibilityImageRepository.saveAll(
-            createPlaceAccessibilityParams.imageUrls.map {  img ->
+            createPlaceAccessibilityParams.imageUrls.map { img ->
                 AccessibilityImage(
                     accessibilityId = result.id,
                     accessibilityType = AccessibilityImage.AccessibilityType.Place,
@@ -312,7 +339,8 @@ class AccessibilityApplicationService(
         }
 
         val userInfo =
-            createPlaceAccessibilityParams.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }?.toDomainModel()
+            createPlaceAccessibilityParams.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }
+                ?.toDomainModel()
         val buildingId = place.building.id
 
         return RegisterPlaceAccessibilityResult(
@@ -332,7 +360,8 @@ class AccessibilityApplicationService(
             val comment = doRegisterBuildingAccessibilityComment(params)
             WithUserInfo(
                 value = comment,
-                accessibilityRegisterer = params.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }?.toDomainModel(),
+                accessibilityRegisterer = params.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }
+                    ?.toDomainModel(),
             )
         }
 
@@ -361,7 +390,8 @@ class AccessibilityApplicationService(
             val comment = doRegisterPlaceAccessibilityComment(params)
             WithUserInfo(
                 value = comment,
-                accessibilityRegisterer = params.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }?.toDomainModel(),
+                accessibilityRegisterer = params.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }
+                    ?.toDomainModel(),
             )
         }
 
@@ -391,8 +421,13 @@ class AccessibilityApplicationService(
         }
     }
 
-    fun findCursoredByUserId(userId: String, pageable: Pageable, cursor: TimestampCursor): Pair<Page<PlaceAccessibility>, List<BuildingAccessibility>> {
-        val placeAccessibilityPage = placeAccessibilityRepository.findCursoredByUserId(userId, pageable, cursor.timestamp, cursor.id)
+    fun findCursoredByUserId(
+        userId: String,
+        pageable: Pageable,
+        cursor: TimestampCursor
+    ): Pair<Page<PlaceAccessibility>, List<BuildingAccessibility>> {
+        val placeAccessibilityPage =
+            placeAccessibilityRepository.findCursoredByUserId(userId, pageable, cursor.timestamp, cursor.id)
         if (placeAccessibilityPage.content.isEmpty()) return Pair(Page.empty(), emptyList())
 
         val buildingIds = placeApplicationService.findAllByIds(placeAccessibilityPage.content.map { it.placeId })
@@ -422,8 +457,10 @@ class AccessibilityApplicationService(
         from: Instant,
         to: Instant
     ): Pair<List<PlaceAccessibility>, List<BuildingAccessibility>> {
-        val placeAccessibilities = placeAccessibilityRepository.findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId, from, to)
-        val buildingAccessibilities = buildingAccessibilityRepository.findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId, from, to)
+        val placeAccessibilities =
+            placeAccessibilityRepository.findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId, from, to)
+        val buildingAccessibilities =
+            buildingAccessibilityRepository.findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId, from, to)
         return Pair(placeAccessibilities, buildingAccessibilities)
     }
 }

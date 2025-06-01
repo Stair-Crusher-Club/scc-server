@@ -2,11 +2,9 @@ package club.staircrusher.place.application.port.`in`.accessibility
 
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
-import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
-import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
-import org.hibernate.query.spi.Limit
 import java.time.Instant
 
 @Component
@@ -20,12 +18,19 @@ class AccessibilityImagePipeline(
         val processedImages = images
             .let { accessibilityImageFaceBlurringService.blurImages(it) }
             .let { accessibilityImageThumbnailService.generateThumbnails(it) }
+            .also { it.forEach { img -> img.lastPostProcessedAt = SccClock.instant() } }
         transactionManager.doInTransaction {
-            val now = Instant.now()
-            processedImages.forEach { image ->
-                image.lastPostProcessedTime = now
-            }
             accessibilityImageRepository.saveAll(processedImages)
         }
+    }
+
+    fun getTargetImages(): List<AccessibilityImage> {
+        return transactionManager.doInTransaction {
+            accessibilityImageRepository.findBatchTargetsBefore(썸네일_블러_최초마이그레이션시점)
+        }
+    }
+
+    companion object {
+        val 썸네일_블러_최초마이그레이션시점 = Instant.parse("2025-06-01T00:00:00Z")
     }
 }

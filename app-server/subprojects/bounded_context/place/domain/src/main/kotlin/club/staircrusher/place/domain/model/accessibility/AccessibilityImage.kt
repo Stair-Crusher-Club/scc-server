@@ -37,7 +37,7 @@ class AccessibilityImage(
     var imageType: ImageType? = null,
 
     @Column(nullable = true)
-    var lastPostProcessedTime: Instant? = null,
+    var lastPostProcessedAt: Instant? = null,
 ) : TimeAuditingBaseEntity() {
 
     override fun equals(other: Any?): Boolean {
