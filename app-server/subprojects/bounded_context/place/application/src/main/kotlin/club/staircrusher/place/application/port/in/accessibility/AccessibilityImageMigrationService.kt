@@ -5,6 +5,7 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Bu
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
@@ -48,7 +49,7 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) Instant.now() else null
+                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null
                 )
             }
             accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
@@ -87,7 +88,7 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) Instant.now() else null
+                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null
                 )
             }
             val modifiedEntranceAccessibilityImages = buildingAccessibility.entranceImageUrls.map { oldImageUrl ->

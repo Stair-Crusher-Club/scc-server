@@ -5,6 +5,7 @@ import club.staircrusher.place.application.port.`in`.accessibility.Accessibility
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.spring_web.security.InternalIpAddressChecker
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.servlet.http.HttpServletRequest
 import kotlinx.coroutines.runBlocking
@@ -31,9 +32,7 @@ class AccessibilityImagePostProcessController(
     fun blurFacesInLatestPlaceAccessibilityImages(request: HttpServletRequest) {
         InternalIpAddressChecker.check(request)
 
-        val targetImages = transactionManager.doInTransaction {
-            accessibilityImageRepository.findBatchTargetsBefore(Instant.now())
-        }
+        val targetImages = accessibilityImagePipeline.getTargetImages()
         taskExecutor1.submit {
             runBlocking {
                 accessibilityImagePipeline.postProcessImages(targetImages)
@@ -50,7 +49,7 @@ class AccessibilityImagePostProcessController(
         InternalIpAddressChecker.check(request)
 
         taskExecutor2.submit {
-            val from = start ?: (Instant.now() - Duration.ofDays(2000))
+            val from = start ?: (SccClock.instant() - Duration.ofDays(2000))
             if (target == "place" || target == null) {
                 val placeAccessibilityIds =
                     transactionManager.doInTransaction { placeAccessibilityRepository.findMigrationTargets(from) }
