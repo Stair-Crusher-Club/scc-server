@@ -32,8 +32,10 @@ import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Instant
 
 @Suppress("TooManyFunctions")
@@ -52,6 +54,7 @@ class AccessibilityApplicationService(
     private val userApplicationService: UserApplicationService,
     private val challengeService: ChallengeService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
+    private val entityManager: EntityManager,
 ) {
 
     fun isAccessibilityRegistrable(place: Place): Boolean {
@@ -254,24 +257,29 @@ class AccessibilityApplicationService(
                     createdAt = SccClock.instant(),
                 )
             )
-
-            val accessibilityImageResults = accessibilityImageRepository.saveAll(
-                it.entranceImageUrls.map { img ->
-                    AccessibilityImage(
-                        accessibilityId = buildingAccessibility.id,
-                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
-                        imageType = AccessibilityImage.ImageType.Entrance,
-                        originalImageUrl = img,
+                .apply {
+                    val savedImages = accessibilityImageRepository.saveAll(
+                        it.entranceImageUrls.map { img ->
+                            AccessibilityImage(
+                                accessibilityId = id,
+                                accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                                imageType = AccessibilityImage.ImageType.Entrance,
+                                originalImageUrl = img,
+                            )
+                        } + it.elevatorImageUrls.map { img ->
+                            AccessibilityImage(
+                                accessibilityId = id,
+                                accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                                imageType = AccessibilityImage.ImageType.Elevator,
+                                originalImageUrl = img,
+                            )
+                        }
                     )
-                } + it.elevatorImageUrls.map { img ->
-                    AccessibilityImage(
-                        accessibilityId = buildingAccessibility.id,
-                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
-                        imageType = AccessibilityImage.ImageType.Elevator,
-                        originalImageUrl = img,
-                    )
+                    newEntranceAccessibilityImages =
+                        savedImages.filter { it.imageType == AccessibilityImage.ImageType.Entrance }.toMutableList()
+                    newElevatorAccessibilityImages =
+                        savedImages.filter { it.imageType == AccessibilityImage.ImageType.Elevator }.toMutableList()
                 }
-            )
             buildingAccessibility
         }
         val buildingAccessibilityComment = createBuildingAccessibilityCommentParams?.let {
@@ -323,17 +331,17 @@ class AccessibilityApplicationService(
                 userId = createPlaceAccessibilityParams.userId,
                 createdAt = SccClock.instant(),
             )
-        )
-        val accessibilityImageResults = accessibilityImageRepository.saveAll(
-            createPlaceAccessibilityParams.imageUrls.map { img ->
-                AccessibilityImage(
-                    accessibilityId = result.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Place,
-                    originalImageUrl = img,
-                )
-            }
-        )
-        result.newAccessibilityImages = accessibilityImageResults.toMutableList()
+        ).also {
+            it.newAccessibilityImages = accessibilityImageRepository.saveAll(
+                createPlaceAccessibilityParams.imageUrls.map { img ->
+                    AccessibilityImage(
+                        accessibilityId = it.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Place,
+                        originalImageUrl = img,
+                    )
+                }
+            ).toMutableList()
+        }
         val placeAccessibilityComment = createPlaceAccessibilityCommentParams?.let {
             doRegisterPlaceAccessibilityComment(it)
         }
