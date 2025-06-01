@@ -14,6 +14,7 @@ import club.staircrusher.challenge.domain.model.ChallengeAddressCondition
 import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.StairInfo
 import club.staircrusher.place.domain.model.place.BuildingAddress
 import club.staircrusher.place.domain.model.place.Place
@@ -506,6 +507,31 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 }
             }
     }
+
+    @Test
+    fun `장소 정보 등록 시 접근성 이미지가 저장된다`() {
+        val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace() }
+        val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
+        val params = getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place)
+
+        mvc
+            .sccRequest("/registerPlaceAccessibility", params, userAccount = user.account)
+            .andExpect {
+                status {
+                    isOk()
+                }
+                transactionManager.doInTransaction {
+                    val placeEntity = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(place.id)
+                    val images = placeEntity!!.newAccessibilityImages
+                    assertEquals(1, images.size)
+                    images.forEach { image ->
+                        assertEquals(AccessibilityImage.AccessibilityType.Place, image.accessibilityType)
+                        assertNull(image.imageType)
+                    }
+                }
+            }
+    }
+
 
     // 240401 이후 버전부터 몇층인지, 계단 높이 단위, 출입문 유형을 추가로 등록할 수 있다.
     private fun getDefaultRegisterPlaceAccessibilityRequestParamsBefore240401(place: Place): RegisterPlaceAccessibilityRequestDto {
