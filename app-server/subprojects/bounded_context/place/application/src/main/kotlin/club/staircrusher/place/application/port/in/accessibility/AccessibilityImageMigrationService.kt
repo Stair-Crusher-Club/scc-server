@@ -9,7 +9,6 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.TransactionManager
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 @Component
 class AccessibilityImageMigrationService(

@@ -1,7 +1,6 @@
 package club.staircrusher.place.application.port.out.accessibility.persistence
 
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
-import org.hibernate.query.spi.Limit
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.time.Instant

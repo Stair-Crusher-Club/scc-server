@@ -2,7 +2,6 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageMigrationService
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImagePipeline
-import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.spring_web.security.InternalIpAddressChecker
 import club.staircrusher.stdlib.clock.SccClock
@@ -19,7 +18,6 @@ import java.util.concurrent.Executors
 @RestController
 class AccessibilityImagePostProcessController(
     private val accessibilityImagePipeline: AccessibilityImagePipeline,
-    private val accessibilityImageRepository: AccessibilityImageRepository,
     private val accessibilityImageMigrationService: AccessibilityImageMigrationService,
     private val transactionManager: TransactionManager,
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
