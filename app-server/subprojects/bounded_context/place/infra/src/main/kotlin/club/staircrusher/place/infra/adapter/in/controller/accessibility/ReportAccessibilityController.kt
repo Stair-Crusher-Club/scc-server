@@ -19,9 +19,9 @@ class ReportAccessibilityController(
         authentication: SccAppAuthentication,
     ): ResponseEntity<Unit> {
         val reason = when (request.reason) {
-            "INACCURATE_INFO", "틀린 정보가 있어요" -> AccessibilityReportReason.InaccurateInfo
-            "CLOSED", "폐점된 곳이에요" -> AccessibilityReportReason.Closed
-            "BAD_USER", "이 정복자를 차단할래요" -> AccessibilityReportReason.BadUser
+            "INACCURATE_INFO" -> AccessibilityReportReason.InaccurateInfo
+            "CLOSED" -> AccessibilityReportReason.Closed
+            "BAD_USER" -> AccessibilityReportReason.BadUser
             else -> AccessibilityReportReason.None
         }
         reportAccessibilityUseCase.handle(

@@ -5,6 +5,7 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 import club.staircrusher.api.converter.toDTO
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.AccessibilityRegistererDto
+import club.staircrusher.api.spec.dto.AccessibilityReportReason
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
@@ -228,3 +229,9 @@ fun AccessibilityRank.toDTO(accessibilityRegisterer: AccessibilityRegisterer) =
         rank = rank,
         conqueredCount = conqueredCount,
     )
+
+fun AccessibilityReportReason.toModel() = when (this) {
+    AccessibilityReportReason.INACCURATE_INFO -> club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason.InaccurateInfo
+    AccessibilityReportReason.CLOSED -> club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason.Closed
+    AccessibilityReportReason.BAD_USER -> club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason.BadUser
+}
