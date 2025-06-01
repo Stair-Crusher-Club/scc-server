@@ -37,11 +37,11 @@ class BuildingAccessibility(
     val createdAt: Instant,
     val deletedAt: Instant? = null,
 
-    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Elevator'")
     var newElevatorAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
 
-    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Entrance'")
     var newEntranceAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
