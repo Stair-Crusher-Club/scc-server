@@ -9,9 +9,10 @@ import club.staircrusher.admin_api.spec.dto.AdminPlaceAccessibilityDTO
 import club.staircrusher.admin_api.spec.dto.AdminStairHeightLevel
 import club.staircrusher.admin_api.spec.dto.AdminStairInfoDTO
 import club.staircrusher.place.domain.model.accessibility.AccessibilityAllowedRegion
-import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImageOld
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.accessibility.StairHeightLevel
 import club.staircrusher.place.domain.model.accessibility.StairInfo
@@ -35,7 +36,7 @@ fun PlaceAccessibility.toAdminDTO(
     stairHeightLevel = stairHeightLevel?.toAdminDTO(),
     hasSlope = hasSlope,
     entranceDoorTypes = entranceDoorTypes?.map { it.toAdminDTO() },
-    imageUrls = imageUrls,
+    imageUrls = emptyList(),
     images = images.map { it.toAdminDTO() },
     placeName = placeName,
     registeredUserName = registeredUserName,
@@ -49,14 +50,14 @@ fun BuildingAccessibility.toAdminDTO(
     id = id,
     entranceStairInfo = entranceStairInfo.toAdminDTO(),
     entranceStairHeightLevel = entranceStairHeightLevel?.toAdminDTO(),
-    entranceImageUrls = entranceImageUrls,
+    entranceImageUrls = emptyList(),
     entranceImages = entranceImages.map { it.toAdminDTO() },
     hasSlope = hasSlope,
     hasElevator = hasElevator,
     entranceDoorTypes = entranceDoorTypes?.map { it.toAdminDTO() },
     elevatorStairInfo = elevatorStairInfo.toAdminDTO(),
     elevatorStairHeightLevel = elevatorStairHeightLevel?.toAdminDTO(),
-    elevatorImageUrls = elevatorImageUrls,
+    elevatorImageUrls = emptyList(),
     elevatorImages = elevatorImages.map { it.toAdminDTO() },
     buildingName = buildingName,
     registeredUserName = registeredUserName,
@@ -109,7 +110,12 @@ fun AdminEntranceDoorType.toModel() = when (this) {
     AdminEntranceDoorType.ETC -> EntranceDoorType.ETC
 }
 
-fun AccessibilityImage.toAdminDTO() = AdminImageDTO(
+fun AccessibilityImageOld.toAdminDTO() = AdminImageDTO(
     imageUrl = SccCdn.forAccessibilityImage(imageUrl),
+    thumbnailUrl = thumbnailUrl?.let { SccCdn.forAccessibilityImage(it) },
+)
+
+fun AccessibilityImage.toAdminDTO() = AdminImageDTO(
+    imageUrl = SccCdn.forAccessibilityImage(blurredImageUrl ?: originalImageUrl),
     thumbnailUrl = thumbnailUrl?.let { SccCdn.forAccessibilityImage(it) },
 )

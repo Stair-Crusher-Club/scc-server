@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 
 @Component
-class AccessibilityThumbnailGenerator : ThumbnailGenerator {
+class AccessibilityImageThumbnailGenerator : ThumbnailGenerator {
 
     override fun generate(originalImageFile: File, outputFormat: String): ByteArrayOutputStream {
         val byteArrayOutputStream = ByteArrayOutputStream()

@@ -16,6 +16,7 @@ class RegisterPlaceAccessibilityUseCase(
     private val transactionManager: TransactionManager,
     private val accessibilityApplicationService: AccessibilityApplicationService,
     private val challengeService: ChallengeService,
+    private val accessibilityImagePipeline: AccessibilityImagePipeline,
 ) {
     data class RegisterPlaceAccessibilityUseCaseResult(
         val registerPlaceAccessibilityResult: RegisterPlaceAccessibilityResult,
@@ -29,7 +30,10 @@ class RegisterPlaceAccessibilityUseCase(
         createPlaceAccessibilityCommentParams: PlaceAccessibilityCommentRepository.CreateParams?,
     ): RegisterPlaceAccessibilityUseCaseResult {
         if (createPlaceAccessibilityParams.isValid().not()) {
-            throw SccDomainException("잘못된 접근성 정보입니다. 필수 입력을 빠트렸거나 조건을 다시 한 번 확인해주세요.", SccDomainException.ErrorCode.INVALID_ARGUMENTS)
+            throw SccDomainException(
+                "잘못된 접근성 정보입니다. 필수 입력을 빠트렸거나 조건을 다시 한 번 확인해주세요.",
+                SccDomainException.ErrorCode.INVALID_ARGUMENTS
+            )
         }
         return transactionManager.doInTransaction {
             val registerResult = accessibilityApplicationService.doRegisterPlaceAccessibility(
@@ -45,6 +49,7 @@ class RegisterPlaceAccessibilityUseCase(
             )
             val getAccessibilityResult =
                 accessibilityApplicationService.doGetAccessibility(createPlaceAccessibilityParams.placeId, userId)
+            accessibilityImagePipeline.asyncPostProcessImages(registerResult.placeAccessibility.images)
 
             return@doInTransaction RegisterPlaceAccessibilityUseCaseResult(
                 registerPlaceAccessibilityResult = registerResult,

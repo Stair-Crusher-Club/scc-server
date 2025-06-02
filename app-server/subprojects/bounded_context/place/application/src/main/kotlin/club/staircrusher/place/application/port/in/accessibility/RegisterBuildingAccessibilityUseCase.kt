@@ -13,7 +13,8 @@ import club.staircrusher.stdlib.persistence.TransactionManager
 class RegisterBuildingAccessibilityUseCase(
     private val transactionManager: TransactionManager,
     private val accessibilityApplicationService: AccessibilityApplicationService,
-    private val challengeService: ChallengeService
+    private val challengeService: ChallengeService,
+    private val accessibilityImagePipeline: AccessibilityImagePipeline,
 ) {
     data class RegisterBuildingAccessibilityUseCaseResult(
         val registerBuildingAccessibilityResult: RegisterBuildingAccessibilityResult,
@@ -28,6 +29,9 @@ class RegisterBuildingAccessibilityUseCase(
         val registerResult = accessibilityApplicationService.doRegisterBuildingAccessibility(
             createBuildingAccessibilityParams,
             createBuildingAccessibilityCommentParams
+        )
+        accessibilityImagePipeline.asyncPostProcessImages(
+            registerResult.buildingAccessibility.entranceImages + registerResult.buildingAccessibility.elevatorImages
         )
         val challengeContributions =
             challengeService.contributeToSatisfiedChallenges(
