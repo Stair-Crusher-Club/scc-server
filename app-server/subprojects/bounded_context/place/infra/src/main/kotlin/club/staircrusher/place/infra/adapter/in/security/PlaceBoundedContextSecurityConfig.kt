@@ -15,6 +15,8 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/getAccessibilityLeaderboard",
 
         "/admin/accessibilityAllowedRegions",
+        "/admin/place-accessibilities/{id}",
+        "/admin/building-accessibilities/{id}",
     ).map { AntPathRequestMatcher(it) }
 
     override fun identifiedUserOnlyRequestMatchers() = listOf(

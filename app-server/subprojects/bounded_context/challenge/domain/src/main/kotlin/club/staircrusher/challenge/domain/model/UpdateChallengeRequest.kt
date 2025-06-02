@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.domain.model
 
-data class CreateChallengeRequest(
+data class UpdateChallengeRequest(
+    val id: String,
     val name: String,
     val isPublic: Boolean,
     val invitationCode: String?,

@@ -10,6 +10,7 @@ internal data class S3ImageUploadProperties @ConstructorBinding constructor(
     val bucketName: String,
     val thumbnailBucketName: String,
     val bannerBucketName: String,
+    val crusherLabelBucketName: String,
     val accessKey: String?,
     val secretKey: String?,
 ) {
