@@ -7,6 +7,7 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Pl
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.TransactionManager
+import jakarta.persistence.EntityManager
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
@@ -17,6 +18,7 @@ class AccessibilityImageMigrationService(
     private val accessibilityImageRepository: AccessibilityImageRepository,
     private val transactionManager: TransactionManager,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
+    private val entityManager: EntityManager,
 ) {
 
     fun migratePlaceAccessibility(placeAccessibilityId: String) {
@@ -53,6 +55,8 @@ class AccessibilityImageMigrationService(
             }
             accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
         }
+        entityManager.flush()
+        entityManager.clear()
     }
 
     fun migrateBuildingAccessibility(buildingAccessibilityId: String) {
@@ -109,5 +113,7 @@ class AccessibilityImageMigrationService(
             accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages)
             accessibilityImageRepository.saveAll(modifiedEntranceAccessibilityImages)
         }
+        entityManager.flush()
+        entityManager.clear()
     }
 }

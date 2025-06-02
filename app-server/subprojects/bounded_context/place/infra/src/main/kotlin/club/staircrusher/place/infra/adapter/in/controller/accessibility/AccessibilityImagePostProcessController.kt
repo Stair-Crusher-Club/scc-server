@@ -8,12 +8,14 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.servlet.http.HttpServletRequest
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.Executors
+import kotlin.math.log
 
 @RestController
 class AccessibilityImagePostProcessController(
@@ -25,6 +27,7 @@ class AccessibilityImagePostProcessController(
 ) {
     private val taskExecutor1 = Executors.newSingleThreadExecutor()
     private val taskExecutor2 = Executors.newSingleThreadExecutor()
+    private val logger = KotlinLogging.logger {}
 
     @PostMapping("/batchProcessUnprocessedAccessibilityImages")
     fun blurFacesInLatestPlaceAccessibilityImages(request: HttpServletRequest) {
@@ -48,19 +51,42 @@ class AccessibilityImagePostProcessController(
 
         taskExecutor2.submit {
             val from = start ?: (SccClock.instant() - Duration.ofDays(2000))
+
+            fun logMemoryUsage(label: String) {
+                val runtime = Runtime.getRuntime()
+                val used = (runtime.totalMemory() - runtime.freeMemory()) / (1024.0 * 1024.0)
+                logger.info("[$label] Memory used: $used MB")
+            }
+
+            val logInterval = 1000
+
             if (target == "place" || target == null) {
                 val placeAccessibilityIds =
                     transactionManager.doInTransaction { placeAccessibilityRepository.findMigrationTargets(from) }
-                placeAccessibilityIds.forEach {
-                    accessibilityImageMigrationService.migratePlaceAccessibility(it)
+                logger.info("[place] Start migration for ${placeAccessibilityIds.size} migrations")
+                logMemoryUsage("place start")
+                placeAccessibilityIds.forEachIndexed { index, id ->
+                    accessibilityImageMigrationService.migratePlaceAccessibility(id)
+                    if ((index + 1) % logInterval == 0) {
+                        logger.info("[place] Progress: ${index + 1} processed")
+                        logMemoryUsage("place $id")
+                    }
                 }
+                logger.info("[place] Finished migration for ${placeAccessibilityIds.size} migrations")
             }
             if (target == "building" || target == null) {
                 val buildingAccessibilityIds =
                     transactionManager.doInTransaction { buildingAccessibilityRepository.findMigrationTargets(from) }
-                buildingAccessibilityIds.forEach {
-                    accessibilityImageMigrationService.migrateBuildingAccessibility(it)
+                logger.info("[building] Start migration for ${buildingAccessibilityIds.size} migrations")
+                logMemoryUsage("building start")
+                buildingAccessibilityIds.forEachIndexed { index, id ->
+                    accessibilityImageMigrationService.migrateBuildingAccessibility(id)
+                    if ((index + 1) % logInterval == 0) {
+                        logger.info("[building] Progress: ${index + 1} processed")
+                        logMemoryUsage("building $id")
+                    }
                 }
+                logger.info("[building] Finished migration for ${buildingAccessibilityIds.size} migrations")
             }
         }
     }
