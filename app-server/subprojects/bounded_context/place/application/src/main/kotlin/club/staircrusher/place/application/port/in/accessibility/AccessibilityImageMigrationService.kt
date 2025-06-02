@@ -7,6 +7,7 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Pl
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.TransactionManager
+import jakarta.persistence.EntityManager
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
@@ -17,6 +18,7 @@ class AccessibilityImageMigrationService(
     private val accessibilityImageRepository: AccessibilityImageRepository,
     private val transactionManager: TransactionManager,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
+    private val entityManager: EntityManager,
 ) {
 
     fun migratePlaceAccessibility(placeAccessibilityId: String) {
@@ -26,10 +28,16 @@ class AccessibilityImageMigrationService(
                 AccessibilityImage.AccessibilityType.Place
             )
             if (alreadyExists.isNotEmpty()) {
+                entityManager.flush()
+                entityManager.clear()
                 return@doInTransaction
             }
-            val placeAccessibility =
-                placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId) ?: return@doInTransaction
+            val placeAccessibility = placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)
+            if (placeAccessibility == null) {
+                entityManager.flush()
+                entityManager.clear()
+                return@doInTransaction
+            }
             val blurHistories = blurringHistoryRepository.findByPlaceAccessibilityId(placeAccessibilityId).firstOrNull()
             val modifiedAccessibilityImages = placeAccessibility.oldImageUrls.map { oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
@@ -52,6 +60,8 @@ class AccessibilityImageMigrationService(
                 )
             }
             accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
+            entityManager.flush()
+            entityManager.clear()
         }
     }
 
@@ -63,10 +73,16 @@ class AccessibilityImageMigrationService(
                     AccessibilityImage.AccessibilityType.Building
                 )
             if (alreadyExists.isNotEmpty()) {
+                entityManager.flush()
+                entityManager.clear()
                 return@doInTransaction
             }
-            val buildingAccessibility =
-                buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId) ?: return@doInTransaction
+            val buildingAccessibility = buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId)
+            if (buildingAccessibility == null) {
+                entityManager.flush()
+                entityManager.clear()
+                return@doInTransaction
+            }
             val blurHistories =
                 blurringHistoryRepository.findByBuildingAccessibilityId(buildingAccessibilityId).firstOrNull()
             val modifiedElevatorAccessibilityImages = buildingAccessibility.oldElevatorImageUrls.map { oldImageUrl ->
@@ -108,6 +124,8 @@ class AccessibilityImageMigrationService(
             }
             accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages)
             accessibilityImageRepository.saveAll(modifiedEntranceAccessibilityImages)
+            entityManager.flush()
+            entityManager.clear()
         }
     }
 }
