@@ -19,30 +19,28 @@ class AccessibilityImageBlurProcessor : ImageProcessor {
     @Suppress("NestedBlockDepth")
     override fun blur(originalImage: ByteArray, imageExtension: String, positions: List<DetectedFacePosition>): ByteArray {
         BytePointer(*originalImage).use { imagePointer ->
-            imdecode(Mat(imagePointer), IMREAD_COLOR).use { originalImageMat ->
-                originalImageMat.clone().use { blurredMat ->
-                    // Blur images
-                    for (position in positions) {
-                        val faceRegion = try {
-                            blurredMat.apply(position.toMatRect())
-                        } catch (t: Throwable) {
-                            logger.error { "Failed to apply face region: $position for image size (${originalImageMat.size().width()}, ${originalImageMat.size().height()})" }
-                            logger.error { t.message }
-                            continue
-                        }
-                        GaussianBlur(
-                            faceRegion,
-                            faceRegion,
-                            Size(0, 0), // sigmaX, sigmaY 에 의해서 결정 10.0
-                            10.0,
-                        )
+            imdecode(Mat(imagePointer), IMREAD_COLOR).use { imageMat ->
+                // Blur images
+                for (position in positions) {
+                    val faceRegion = try {
+                        imageMat.apply(position.toMatRect())
+                    } catch (t: Throwable) {
+                        logger.error { "Failed to apply face region: $position for image size (${imageMat.size().width()}, ${imageMat.size().height()})" }
+                        logger.error { t.message }
+                        continue
                     }
+                    GaussianBlur(
+                        faceRegion,
+                        faceRegion,
+                        Size(0, 0), // sigmaX, sigmaY 에 의해서 결정 10.0
+                        10.0,
+                    )
+                }
 
-                    // Convert the result back to byte array
-                    BytePointer().use { outputPointer ->
-                        imencode(".$imageExtension", blurredMat, outputPointer)
-                        return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
-                    }
+                // Convert the result back to byte array
+                BytePointer().use { outputPointer ->
+                    imencode(".$imageExtension", imageMat, outputPointer)
+                    return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
                 }
             }
         }
