@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.Executors
-import kotlin.math.log
 
 @RestController
 class AccessibilityImagePostProcessController(
