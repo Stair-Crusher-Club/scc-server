@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS accessibility_image (
     accessibility_id VARCHAR(36) NOT NULL,
     accessibility_type VARCHAR(16) NOT NULL,
 
-    image_url VARCHAR(36) NOT NULL,
-    blurred_image_url VARCHAR(36),
+    image_url VARCHAR(255) NOT NULL,
+    blurred_image_url VARCHAR(255),
     thumbnail_url VARCHAR(255),
 
     image_type VARCHAR(16),
