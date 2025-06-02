@@ -88,7 +88,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
                         accessibilityId = "temp",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/processed_example.png",
-                        lastPostProcessedAt = SccClock.instant(),
+                        lastPostProcessedAt = SccClock.instant() + Duration.ofDays(400),
                     ),
                     AccessibilityImage(
                         accessibilityId = "temp",
