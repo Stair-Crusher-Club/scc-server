@@ -40,6 +40,9 @@ class AccessibilityImageBlurProcessor : ImageProcessor {
                 // Convert the result back to byte array
                 BytePointer().use { outputPointer ->
                     imencode(".$imageExtension", imageMat, outputPointer)
+                    // JVM 입장에서 보면 Mat은 20byte 짜리 object 이지만, native C++ 코드 상에서 잡고 있는 메모리는 훨씬 크다
+                    // use block 안에서 돌고 있지만 더욱 확실하게 Mat을 release 해줘서 메모리 leak을 방지한다.
+                    imageMat.release()
                     return ByteArray(outputPointer.limit().toInt()).apply { outputPointer.get(this) }
                 }
             }
