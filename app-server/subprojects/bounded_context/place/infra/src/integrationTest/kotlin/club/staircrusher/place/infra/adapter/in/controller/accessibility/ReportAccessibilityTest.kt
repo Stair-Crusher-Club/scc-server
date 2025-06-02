@@ -1,5 +1,6 @@
 package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
+import club.staircrusher.api.spec.dto.AccessibilityReportReason
 import club.staircrusher.api.spec.dto.ReportAccessibilityPostRequest
 import club.staircrusher.place.application.port.out.accessibility.SlackService
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityReportRepository
@@ -28,7 +29,7 @@ class ReportAccessibilityTest : AccessibilityITBase() {
         val user = accessibilityResult.user
 
         val params =
-            ReportAccessibilityPostRequest(placeId = place.id, reason = "INACCURATE_INFO")
+            ReportAccessibilityPostRequest(placeId = place.id, reason = AccessibilityReportReason.INACCURATE_INFO)
         mvc
             .sccRequest("/reportAccessibility", params, user)
             .andExpect {
@@ -48,7 +49,7 @@ class ReportAccessibilityTest : AccessibilityITBase() {
         val place = accessibilityResult.place
         val user = accessibilityResult.user
 
-        val reason = "BAD_USER"
+        val reason = AccessibilityReportReason.BAD_USER
         val detail = "상세 내용"
         val params = ReportAccessibilityPostRequest(placeId = place.id, reason = reason, detail = detail)
 
