@@ -11,6 +11,7 @@ import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.external_accessibility.domain.model.ExternalAccessibility
 import club.staircrusher.external_accessibility.domain.model.ToiletAccessibilityDetails
+import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityUpvoteRepository
@@ -103,6 +104,9 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var externalAccessibilityRepository: ExternalAccessibilityRepository
+
+    @Autowired
+    private lateinit var accessibilityImageRepository: AccessibilityImageRepository
 
     fun createIdentifiedUser(
         nickname: String = SccRandom.string(12),
@@ -374,6 +378,7 @@ class ITDataGenerator {
                     originalImageUrl = img,
                 )
             }.toMutableList()
+            accessibilityImageRepository.saveAll(it.newAccessibilityImages)
         }
     }
 
@@ -411,7 +416,8 @@ class ITDataGenerator {
                     userId = userAccount?.id,
                     createdAt = at,
                 ),
-            )).also {
+            ))
+            .also {
                 it.newEntranceAccessibilityImages = entranceImages.map { img ->
                     AccessibilityImage(
                         accessibilityId = it.id,
@@ -420,15 +426,16 @@ class ITDataGenerator {
                         originalImageUrl = img,
                     )
                 }.toMutableList()
-            it.newElevatorAccessibilityImages = elevatorImages.map { img ->
-                AccessibilityImage(
-                    accessibilityId = it.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Building,
-                    imageType = AccessibilityImage.ImageType.Elevator,
-                    originalImageUrl = img,
-                )
-            }.toMutableList()
-        }
+                it.newElevatorAccessibilityImages = elevatorImages.map { img ->
+                    AccessibilityImage(
+                        accessibilityId = it.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Elevator,
+                        originalImageUrl = img,
+                    )
+                }.toMutableList()
+                accessibilityImageRepository.saveAll(it.newEntranceAccessibilityImages + it.newElevatorAccessibilityImages)
+            }
     }
 
     fun registerBuildingAndPlaceAccessibility(

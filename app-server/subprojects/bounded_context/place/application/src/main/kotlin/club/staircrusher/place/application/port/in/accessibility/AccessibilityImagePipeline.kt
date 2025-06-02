@@ -5,7 +5,9 @@ import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
+import java.util.concurrent.Executors
 
 @Component
 class AccessibilityImagePipeline(
@@ -14,6 +16,7 @@ class AccessibilityImagePipeline(
     private val accessibilityImageRepository: AccessibilityImageRepository,
     private val transactionManager: TransactionManager,
 ) {
+    private val taskExecutor = Executors.newCachedThreadPool()
     suspend fun postProcessImages(images: List<AccessibilityImage>) {
         val processedImages = images
             .let { accessibilityImageFaceBlurringService.blurImages(it) }
@@ -21,6 +24,16 @@ class AccessibilityImagePipeline(
             .also { it.forEach { img -> img.lastPostProcessedAt = SccClock.instant() } }
         transactionManager.doInTransaction {
             accessibilityImageRepository.saveAll(processedImages)
+        }
+    }
+
+    fun asyncPostProcessImages(images: List<AccessibilityImage>) {
+        transactionManager.doAfterCommit {
+            taskExecutor.submit {
+                runBlocking {
+                    postProcessImages(images)
+                }
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageThumbnailService
+import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImageOld
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
@@ -20,12 +21,16 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.SpyBean
 
 class GetAccessibilityTest : AccessibilityITBase() {
 
     @SpyBean
     lateinit var accessibilityImageThumbnailService: AccessibilityImageThumbnailService
+
+    @Autowired
+    private lateinit var accessibilityImageRepository: AccessibilityImageRepository
 
     @Test
     fun getAccessibilityTest() {
@@ -311,6 +316,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             placeAccessibility.newAccessibilityImages.forEachIndexed { index, img ->
                 img.thumbnailUrl = thumbnailUrls.getOrNull(index)
             }
+            accessibilityImageRepository.saveAll(placeAccessibility.newAccessibilityImages)
 
             val buildingAccessibilityComment =
                 testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")

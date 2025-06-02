@@ -32,11 +32,9 @@ import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
-import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.time.Instant
-import java.util.concurrent.Executors
 
 @Suppress("TooManyFunctions")
 @Component
@@ -54,9 +52,7 @@ class AccessibilityApplicationService(
     private val userApplicationService: UserApplicationService,
     private val challengeService: ChallengeService,
     private val accessibilityAllowedRegionService: AccessibilityAllowedRegionService,
-    private val accessibilityImagePipeline: AccessibilityImagePipeline,
 ) {
-    private val taskExecutor = Executors.newCachedThreadPool()
 
     fun isAccessibilityRegistrable(place: Place): Boolean {
         return !place.isClosed && isAccessibilityRegistrable(place.building)
@@ -70,20 +66,7 @@ class AccessibilityApplicationService(
 
     fun getAccessibility(placeId: String, userId: String?): GetAccessibilityResult {
         return transactionManager.doInTransaction {
-            val result = doGetAccessibility(placeId, userId)
-            val imagesToProcess = listOfNotNull(
-                result.placeAccessibility?.value?.newAccessibilityImages,
-                result.buildingAccessibility?.value?.newElevatorAccessibilityImages,
-                result.buildingAccessibility?.value?.newEntranceAccessibilityImages,
-            ).flatten()
-            transactionManager.doAfterCommit {
-                taskExecutor.submit {
-                    runBlocking {
-                        accessibilityImagePipeline.postProcessImages(imagesToProcess)
-                    }
-                }
-            }
-            result
+            doGetAccessibility(placeId, userId)
         }
     }
 
