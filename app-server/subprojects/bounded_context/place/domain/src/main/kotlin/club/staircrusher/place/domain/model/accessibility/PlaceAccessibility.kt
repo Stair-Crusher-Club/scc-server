@@ -35,7 +35,7 @@ class PlaceAccessibility(
     val createdAt: Instant,
     val deletedAt: Instant? = null,
 
-    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Place'")
     var newAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
