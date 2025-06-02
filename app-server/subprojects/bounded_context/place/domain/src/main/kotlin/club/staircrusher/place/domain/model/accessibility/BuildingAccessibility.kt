@@ -1,11 +1,15 @@
 package club.staircrusher.place.domain.model.accessibility
 
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
+import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
+import org.hibernate.annotations.Where
 import java.time.Instant
 
 @Entity
@@ -17,8 +21,8 @@ class BuildingAccessibility(
     var entranceStairInfo: StairInfo,
     @Enumerated(EnumType.STRING)
     var entranceStairHeightLevel: StairHeightLevel?,
-    entranceImageUrls: List<String>,
-    entranceImages: List<AccessibilityImage>,
+    oldEntranceImageUrls: List<String>,
+    oldEntranceImages: List<AccessibilityImageOld>,
     var hasSlope: Boolean,
     var hasElevator: Boolean,
     @Convert(converter = EntranceDoorTypeListToTextAttributeConverter::class)
@@ -27,39 +31,37 @@ class BuildingAccessibility(
     var elevatorStairInfo: StairInfo,
     @Enumerated(EnumType.STRING)
     var elevatorStairHeightLevel: StairHeightLevel?,
-    elevatorImageUrls: List<String>,
-    elevatorImages: List<AccessibilityImage>,
+    oldElevatorImageUrls: List<String>,
+    oldElevatorImages: List<AccessibilityImageOld>,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,
+
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
+    @Where(clause = "accessibility_type = 'Building' and image_type = 'Elevator'")
+    var elevatorImages: MutableList<AccessibilityImage> = mutableListOf(),
+
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
+    @Where(clause = "accessibility_type = 'Building' and image_type = 'Entrance'")
+    var entranceImages: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var entranceImages: List<AccessibilityImage> = entranceImages
-        protected set
+    @Column(name = "entrance_images")
+    var oldEntranceImages: List<AccessibilityImageOld> = oldEntranceImages
 
     @Deprecated("use images with type instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
-    var entranceImageUrls: List<String> = entranceImageUrls
-        protected set
+    @Column(name = "entrance_image_urls")
+    var oldEntranceImageUrls: List<String> = oldEntranceImageUrls
 
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var elevatorImages: List<AccessibilityImage> = elevatorImages
-        protected set
+    @Column(name = "elevator_images")
+    var oldElevatorImages: List<AccessibilityImageOld> = oldElevatorImages
 
     @Deprecated("use images with type instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
-    var elevatorImageUrls: List<String> = elevatorImageUrls
-        protected set
-
-    fun updateEntranceImages(images: List<AccessibilityImage>) {
-        this.entranceImages = images
-        this.entranceImageUrls = images.map { it.imageUrl }
-    }
-
-    fun updateElevatorImages(images: List<AccessibilityImage>) {
-        this.elevatorImages = images
-        this.elevatorImageUrls = images.map { it.imageUrl }
-    }
+    @Column(name = "elevator_image_urls")
+    var oldElevatorImageUrls: List<String> = oldElevatorImageUrls
 
     fun isDeletable(uid: String?): Boolean {
         return uid != null && uid == userId
@@ -80,10 +82,10 @@ class BuildingAccessibility(
 
     override fun toString(): String {
         return "BuildingAccessibility(id='$id', buildingId='$buildingId', entranceStairInfo=$entranceStairInfo, " +
-            "entranceStairHeightLevel=$entranceStairHeightLevel, entranceImageUrls=$entranceImageUrls, " +
-            "entranceImages=$entranceImages, hasSlope=$hasSlope, hasElevator=$hasElevator, " +
+            "entranceStairHeightLevel=$entranceStairHeightLevel, " +
+            "hasSlope=$hasSlope, hasElevator=$hasElevator, " +
             "entranceDoorTypes=$entranceDoorTypes, elevatorStairInfo=$elevatorStairInfo, " +
-            "elevatorStairHeightLevel=$elevatorStairHeightLevel, elevatorImageUrls=$elevatorImageUrls, " +
-            "elevatorImages=$elevatorImages, userId=$userId, createdAt=$createdAt, deletedAt=$deletedAt)"
+            "elevatorStairHeightLevel=$elevatorStairHeightLevel, " +
+            "userId=$userId, createdAt=$createdAt, deletedAt=$deletedAt)"
     }
 }

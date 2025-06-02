@@ -3,48 +3,32 @@ package club.staircrusher.place.application.port.`in`.accessibility
 import club.staircrusher.image.application.port.out.file_management.FileManagementService
 import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
 import club.staircrusher.place.application.port.out.accessibility.DetectFacesService
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.di.annotation.Component
-import club.staircrusher.stdlib.persistence.TransactionManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 
 @Component
 class AccessibilityImageFaceBlurringService(
-    private val accessibilityImageService: AccessibilityImageService,
     private val imageProcessor: ImageProcessor,
     private val detectFacesService: DetectFacesService,
     private val fileManagementService: FileManagementService,
-    private val transactionManager: TransactionManager,
 ) {
     private val logger = KotlinLogging.logger {}
 
-    suspend fun blurFacesInPlaceAccessibility(placeAccessibilityId: String): PlaceAccessibilityBlurResult? {
-        val placeAccessibility = transactionManager.doInTransaction {
-            accessibilityImageService.doMigratePlaceAccessibilityImageUrlsToImagesIfNeeded(placeAccessibilityId = placeAccessibilityId)
-        }
-        if (placeAccessibility == null) {
-            logger.error("PlaceAccessibility(${placeAccessibilityId}) not found.")
-            return null
-        }
-        val imageUrls = placeAccessibility.images.map { it.imageUrl }
-        val result = detectAndBlurFaces(imageUrls)
-        return PlaceAccessibilityBlurResult(result)
-    }
-
-    suspend fun blurFacesInBuildingAccessibility(buildingAccessibilityId: String): BuildingAccessibilityBlurResult? {
-        val buildingAccessibility = transactionManager.doInTransaction {
-            accessibilityImageService.doMigrateBuildingAccessibilityImageUrlsToImagesIfNeeded(buildingAccessibilityId = buildingAccessibilityId)
-        }
-        if (buildingAccessibility == null) return null
-        val entranceResult = detectAndBlurFaces(buildingAccessibility.entranceImages.map { it.imageUrl })
-        val elevatorResult = detectAndBlurFaces(buildingAccessibility.elevatorImages.map { it.imageUrl })
-        return BuildingAccessibilityBlurResult(entranceResult, elevatorResult)
-    }
-
-    private suspend fun detectAndBlurFaces(imageUrls: List<String>): List<BlurResult> = coroutineScope {
-        imageUrls.map { async { detectAndBlurFaces(it) } }.awaitAll()
+    suspend fun blurImages(accessibilityImages: List<AccessibilityImage>): List<AccessibilityImage> = coroutineScope {
+        accessibilityImages
+            .filter { it.blurredImageUrl == null }
+            .map { async { detectAndBlurFaces(it.originalImageUrl) to it } }
+            .awaitAll()
+            .map { (blurResult, image) ->
+                image.blurredImageUrl = blurResult.blurredImageUrl
+                return@map image
+            }
     }
 
     @Suppress("ReturnCount")
@@ -59,7 +43,7 @@ class AccessibilityImageFaceBlurringService(
                     detectedPeopleCount = 0
                 )
             }
-            val detected = detectFacesService.detect(imageUrl)
+            val detected = withContext(Dispatchers.IO) { detectFacesService.detect(imageUrl) }
             val imageBytes = detected.imageBytes
             if (detected.positions.isEmpty()) return BlurResult(
                 originalImageUrl = imageUrl,
@@ -67,8 +51,12 @@ class AccessibilityImageFaceBlurringService(
                 detectedPeopleCount = 0
             )
             val (blurredImageUrl, detectedPositions) = run {
-                val outputByteArray = imageProcessor.blur(imageBytes, extension, detected.positions)
-                val blurredImageUrl = fileManagementService.uploadAccessibilityImage("${name}_b.$extension", outputByteArray)
+                val outputByteArray = withContext(Dispatchers.Default) {
+                    imageProcessor.blur(imageBytes, extension, detected.positions)
+                }
+                val blurredImageUrl = withContext(Dispatchers.IO) {
+                    fileManagementService.uploadAccessibilityImage("${name}_b.$extension", outputByteArray)
+                }
                 blurredImageUrl to detected.positions
             }
             return BlurResult(
@@ -80,7 +68,7 @@ class AccessibilityImageFaceBlurringService(
             logger.error(e) { "Detecting and blurring faces in the image($imageUrl) failed." }
             return BlurResult(
                 originalImageUrl = imageUrl,
-                blurredImageUrl = imageUrl,
+                blurredImageUrl = null,
                 detectedPeopleCount = 0
             )
         }
@@ -88,18 +76,9 @@ class AccessibilityImageFaceBlurringService(
 
     data class BlurResult(
         val originalImageUrl: String,
-        val blurredImageUrl: String,
+        val blurredImageUrl: String?,
         val detectedPeopleCount: Int,
     ) {
         fun isBlurred() = originalImageUrl != blurredImageUrl
     }
-
-    data class PlaceAccessibilityBlurResult(
-        val entranceResults: List<BlurResult>,
-    )
-
-    data class BuildingAccessibilityBlurResult(
-        val entranceResults: List<BlurResult>,
-        val elevatorResults: List<BlurResult>,
-    )
 }

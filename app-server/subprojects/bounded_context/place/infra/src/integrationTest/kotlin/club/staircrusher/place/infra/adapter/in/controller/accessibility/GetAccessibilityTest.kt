@@ -2,8 +2,8 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
-import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageService
-import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
+import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageThumbnailService
+import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
@@ -19,15 +19,16 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.atLeastOnce
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.SpyBean
 
 class GetAccessibilityTest : AccessibilityITBase() {
 
     @SpyBean
-    lateinit var accessibilityImageService: AccessibilityImageService
+    lateinit var accessibilityImageThumbnailService: AccessibilityImageThumbnailService
+
+    @Autowired
+    private lateinit var accessibilityImageRepository: AccessibilityImageRepository
 
     @Test
     fun getAccessibilityTest() {
@@ -166,33 +167,15 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `imageUrls 만 존재한다면 images 로 마이그레이션이 이뤄진다`() {
-        val imageUrl = "https://example.com/image.jpg"
-        val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
-        val params = GetAccessibilityPostRequest(
-            placeId = place.id
-        )
-        mvc
-            .sccRequest("/getAccessibility", params, userAccount = user.account)
-            .andExpect {
-                status {
-                    isOk()
-                }
-            }
-            .apply {
-                verify(accessibilityImageService, atLeastOnce()).migrateImageUrlsToImagesIfNeeded(eq(place.id))
-            }
-    }
-
-    @Test
     fun `썸네일이 존재하면 함께 내려준다`() {
         val imageUrl = "https://example.com/image.jpg"
         val thumbnailUrl = "https://example.com/thumbnail.jpg"
-        // 하위 호환성
-        val imageUrls = listOf(imageUrl)
-        val images = listOf(AccessibilityImage(imageUrl, thumbnailUrl))
 
-        val (user, place) = registerAccessibilityWithImages(imageUrls = imageUrls, images = images)
+        val (user, place) = registerAccessibilityWithImages(
+            imageUrls = listOf(imageUrl),
+            thumbnailUrls = listOf(thumbnailUrl)
+        )
+
         val params = GetAccessibilityPostRequest(
             placeId = place.id
         )
@@ -214,31 +197,20 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `썸네일이 없으면 생성한다`() {
-        val imageUrl = "resources/example.jpg"
-        val (user, place) = registerAccessibilityWithImages(imageUrls = listOf(imageUrl))
-        val params = GetAccessibilityPostRequest(
-            placeId = place.id
-        )
-
-        mvc
-            .sccRequest("/getAccessibility", params, userAccount = user.account)
-            .andExpect {
-                status {
-                    isOk()
-                }
-            }
-            .apply {
-                verify(accessibilityImageService, atLeastOnce()).generateThumbnailsIfNeeded(eq(place.id))
-            }
-    }
-
-    @Test
     fun `즐겨찾기 등록한 유저에게는 즐겨찾기 등록했는지 정보를 내려준다`() {
         val (hasFavoriteUser, place) = registerAccessibility()
-        transactionManager.doInTransaction { testDataGenerator.createPlaceFavorite(hasFavoriteUser.account.id, place.id) }
+        transactionManager.doInTransaction {
+            testDataGenerator.createPlaceFavorite(
+                hasFavoriteUser.account.id,
+                place.id
+            )
+        }
         mvc
-            .sccRequest("/getAccessibility", GetAccessibilityPostRequest(placeId = place.id), userAccount = hasFavoriteUser.account)
+            .sccRequest(
+                "/getAccessibility",
+                GetAccessibilityPostRequest(placeId = place.id),
+                userAccount = hasFavoriteUser.account
+            )
             .andExpect {
                 status {
                     isOk()
@@ -286,10 +258,10 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
-                assertEquals(2, result.placeAccessibility!!.imageUrls.size)
-                assertNotEquals(imageUrlFromActiveBucket, result.placeAccessibility!!.imageUrls[0])
-                assertTrue(result.placeAccessibility!!.imageUrls[0].startsWith(cdnDomain))
-                assertEquals(imageUrlFromOldBucket, result.placeAccessibility!!.imageUrls[1])
+                assertEquals(2, result.placeAccessibility!!.images!!.size)
+                assertNotEquals(imageUrlFromActiveBucket, result.placeAccessibility!!.images!![0].imageUrl)
+                assertTrue(result.placeAccessibility!!.images!![0].imageUrl.startsWith(cdnDomain))
+                assertEquals(imageUrlFromOldBucket, result.placeAccessibility!!.images!![1].imageUrl)
             }
     }
 
@@ -311,7 +283,8 @@ class GetAccessibilityTest : AccessibilityITBase() {
 
             val buildingAccessibilityComment =
                 testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
-            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user.account)
+            val placeAccessibilityComment =
+                testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user.account)
 
             RegisterAccessibilityResult(
                 user,
@@ -325,8 +298,8 @@ class GetAccessibilityTest : AccessibilityITBase() {
     }
 
     private fun registerAccessibilityWithImages(
-        imageUrls: List<String>? = null,
-        images: List<AccessibilityImage>? = null
+        imageUrls: List<String> = emptyList(),
+        thumbnailUrls: List<String> = emptyList()
     ): RegisterAccessibilityResult {
         val identifiedUser = transactionManager.doInTransaction {
             testDataGenerator.createIdentifiedUser()
@@ -336,13 +309,17 @@ class GetAccessibilityTest : AccessibilityITBase() {
             val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(
                 place,
                 identifiedUser.account,
-                imageUrls ?: emptyList(),
-                images ?: emptyList()
+                images = imageUrls,
             )
+            placeAccessibility.images.forEachIndexed { index, img ->
+                img.thumbnailUrl = thumbnailUrls.getOrNull(index)
+            }
+            accessibilityImageRepository.saveAll(placeAccessibility.images)
 
             val buildingAccessibilityComment =
                 testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
-            val placeAccessibilityComment = testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", identifiedUser.account)
+            val placeAccessibilityComment =
+                testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", identifiedUser.account)
 
             RegisterAccessibilityResult(
                 identifiedUser,

@@ -17,7 +17,7 @@ class MockFileManagementService : FileManagementService {
         )
     }
 
-    override fun downloadFile(url: String, destination: Path): File {
+    override suspend fun downloadFile(url: String, destination: Path): File {
         return ClassPathResource("example.png").file
     }
 

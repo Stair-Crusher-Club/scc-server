@@ -59,6 +59,14 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
 
     fun countByDeletedAtIsNull(): Int
 
+    @Query("""
+        SELECT pa.id
+        FROM PlaceAccessibility pa
+        WHERE pa.deletedAt IS NULL AND pa.createdAt > :createdAt
+        ORDER BY pa.createdAt
+    """)
+    fun findMigrationTargets(createdAt: Instant): List<String>
+
     data class CreateParams(
         val placeId: String,
         val userId: String?,

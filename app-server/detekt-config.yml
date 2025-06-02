@@ -25,6 +25,8 @@ naming:
     active: false
   ConstructorParameterNaming:
     active: false
+  ObjectPropertyNaming:
+    active: false
 performance:
   SpreadOperator:
     active: false
