@@ -28,10 +28,16 @@ class AccessibilityImageMigrationService(
                 AccessibilityImage.AccessibilityType.Place
             )
             if (alreadyExists.isNotEmpty()) {
+                entityManager.flush()
+                entityManager.clear()
                 return@doInTransaction
             }
-            val placeAccessibility =
-                placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId) ?: return@doInTransaction
+            val placeAccessibility = placeAccessibilityRepository.findByIdOrNull(placeAccessibilityId)
+            if (placeAccessibility == null) {
+                entityManager.flush()
+                entityManager.clear()
+                return@doInTransaction
+            }
             val blurHistories = blurringHistoryRepository.findByPlaceAccessibilityId(placeAccessibilityId).firstOrNull()
             val modifiedAccessibilityImages = placeAccessibility.oldImageUrls.map { oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
@@ -54,9 +60,9 @@ class AccessibilityImageMigrationService(
                 )
             }
             accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
+            entityManager.flush()
+            entityManager.clear()
         }
-        entityManager.flush()
-        entityManager.clear()
     }
 
     fun migrateBuildingAccessibility(buildingAccessibilityId: String) {
@@ -67,10 +73,16 @@ class AccessibilityImageMigrationService(
                     AccessibilityImage.AccessibilityType.Building
                 )
             if (alreadyExists.isNotEmpty()) {
+                entityManager.flush()
+                entityManager.clear()
                 return@doInTransaction
             }
-            val buildingAccessibility =
-                buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId) ?: return@doInTransaction
+            val buildingAccessibility = buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId)
+            if (buildingAccessibility == null) {
+                entityManager.flush()
+                entityManager.clear()
+                return@doInTransaction
+            }
             val blurHistories =
                 blurringHistoryRepository.findByBuildingAccessibilityId(buildingAccessibilityId).firstOrNull()
             val modifiedElevatorAccessibilityImages = buildingAccessibility.oldElevatorImageUrls.map { oldImageUrl ->
@@ -112,8 +124,8 @@ class AccessibilityImageMigrationService(
             }
             accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages)
             accessibilityImageRepository.saveAll(modifiedEntranceAccessibilityImages)
+            entityManager.flush()
+            entityManager.clear()
         }
-        entityManager.flush()
-        entityManager.clear()
     }
 }
