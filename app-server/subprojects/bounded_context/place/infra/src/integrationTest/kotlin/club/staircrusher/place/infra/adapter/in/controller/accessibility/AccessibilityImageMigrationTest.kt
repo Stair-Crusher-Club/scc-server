@@ -45,8 +45,8 @@ class AccessibilityImageMigrationTest : AccessibilityITBase() {
         val (pa, ba) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
         transactionManager.doInTransaction {
             pa.oldImageUrls = listOf("pa.png")
-            ba.elevatorImageUrls = listOf("baelev.png")
-            ba.entranceImageUrls = listOf("baentrance.png")
+            ba.oldElevatorImageUrls = listOf("baelev.png")
+            ba.oldEntranceImageUrls = listOf("baentrance.png")
             placeAccessibilityRepository.save(pa)
             buildingAccessibilityRepository.save(ba)
         }
@@ -95,10 +95,10 @@ class AccessibilityImageMigrationTest : AccessibilityITBase() {
         transactionManager.doInTransaction {
             pa.oldImageUrls = listOf("pa.png")
             pa.oldImages = listOf(AccessibilityImageOld("pa.png", "thumbnail.png"))
-            ba.elevatorImageUrls = listOf("baelev.png")
-            ba.elevatorImages = listOf(AccessibilityImageOld("baelev.png", "thumbnail.png"))
-            ba.entranceImageUrls = listOf("baentrance.png")
-            ba.entranceImages = listOf(AccessibilityImageOld("baentrance.png", "thumbnail.png"))
+            ba.oldElevatorImageUrls = listOf("baelev.png")
+            ba.oldElevatorImages = listOf(AccessibilityImageOld("baelev.png", "thumbnail.png"))
+            ba.oldEntranceImageUrls = listOf("baentrance.png")
+            ba.oldEntranceImages = listOf(AccessibilityImageOld("baentrance.png", "thumbnail.png"))
             placeAccessibilityRepository.save(pa)
             buildingAccessibilityRepository.save(ba)
         }
@@ -157,10 +157,10 @@ class AccessibilityImageMigrationTest : AccessibilityITBase() {
                     detectedPeopleCounts = listOf(1),
                 )
             )
-            ba.elevatorImageUrls = listOf("baelevblur.png")
-            ba.elevatorImages = listOf(AccessibilityImageOld("baelevblur.png", "thumbnail.png"))
-            ba.entranceImageUrls = listOf("baentranceblur.png")
-            ba.entranceImages = listOf(AccessibilityImageOld("baentranceblur.png", "thumbnail.png"))
+            ba.oldElevatorImageUrls = listOf("baelevblur.png")
+            ba.oldElevatorImages = listOf(AccessibilityImageOld("baelevblur.png", "thumbnail.png"))
+            ba.oldEntranceImageUrls = listOf("baentranceblur.png")
+            ba.oldEntranceImages = listOf(AccessibilityImageOld("baentranceblur.png", "thumbnail.png"))
             accessibilityImageFaceBlurringHistoryRepository.save(
                 AccessibilityImageFaceBlurringHistory(
                     id = UUID.randomUUID().toString(),

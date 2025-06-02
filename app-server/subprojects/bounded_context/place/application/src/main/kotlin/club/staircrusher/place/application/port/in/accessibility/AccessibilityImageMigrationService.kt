@@ -69,13 +69,13 @@ class AccessibilityImageMigrationService(
                 buildingAccessibilityRepository.findByIdOrNull(buildingAccessibilityId) ?: return@doInTransaction
             val blurHistories =
                 blurringHistoryRepository.findByBuildingAccessibilityId(buildingAccessibilityId).firstOrNull()
-            val modifiedElevatorAccessibilityImages = buildingAccessibility.elevatorImageUrls.map { oldImageUrl ->
+            val modifiedElevatorAccessibilityImages = buildingAccessibility.oldElevatorImageUrls.map { oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
                     it.first == oldImageUrl // Blur 된 이미지라면 BlurURL 이 image 에 들어가있다.
                 }
-                val matchingOldImage = buildingAccessibility.elevatorImages.find { it.imageUrl == oldImageUrl }
+                val matchingOldImage = buildingAccessibility.oldElevatorImages.find { it.imageUrl == oldImageUrl }
 
                 // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
                 val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
@@ -90,13 +90,13 @@ class AccessibilityImageMigrationService(
                     lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null
                 )
             }
-            val modifiedEntranceAccessibilityImages = buildingAccessibility.entranceImageUrls.map { oldImageUrl ->
+            val modifiedEntranceAccessibilityImages = buildingAccessibility.oldEntranceImageUrls.map { oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
                     it.first == oldImageUrl // Blur 된 이미지라면 BlurURL 이 image 에 들어가있다.
                 }
-                val matchingOldImage = buildingAccessibility.entranceImages.find { it.imageUrl == oldImageUrl }
+                val matchingOldImage = buildingAccessibility.oldEntranceImages.find { it.imageUrl == oldImageUrl }
                 AccessibilityImage(
                     accessibilityId = buildingAccessibility.id,
                     accessibilityType = AccessibilityImage.AccessibilityType.Building,

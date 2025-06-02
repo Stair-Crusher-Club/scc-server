@@ -1,6 +1,7 @@
 package club.staircrusher.place.domain.model.accessibility
 
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
+import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -20,8 +21,8 @@ class BuildingAccessibility(
     var entranceStairInfo: StairInfo,
     @Enumerated(EnumType.STRING)
     var entranceStairHeightLevel: StairHeightLevel?,
-    entranceImageUrls: List<String>,
-    entranceImages: List<AccessibilityImageOld>,
+    oldEntranceImageUrls: List<String>,
+    oldEntranceImages: List<AccessibilityImageOld>,
     var hasSlope: Boolean,
     var hasElevator: Boolean,
     @Convert(converter = EntranceDoorTypeListToTextAttributeConverter::class)
@@ -30,33 +31,37 @@ class BuildingAccessibility(
     var elevatorStairInfo: StairInfo,
     @Enumerated(EnumType.STRING)
     var elevatorStairHeightLevel: StairHeightLevel?,
-    elevatorImageUrls: List<String>,
-    elevatorImages: List<AccessibilityImageOld>,
+    oldElevatorImageUrls: List<String>,
+    oldElevatorImages: List<AccessibilityImageOld>,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Elevator'")
-    var newElevatorAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
+    var elevatorImages: MutableList<AccessibilityImage> = mutableListOf(),
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Entrance'")
-    var newEntranceAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
+    var entranceImages: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var entranceImages: List<AccessibilityImageOld> = entranceImages
+    @Column(name = "entrance_images")
+    var oldEntranceImages: List<AccessibilityImageOld> = oldEntranceImages
 
     @Deprecated("use images with type instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
-    var entranceImageUrls: List<String> = entranceImageUrls
+    @Column(name = "entrance_image_urls")
+    var oldEntranceImageUrls: List<String> = oldEntranceImageUrls
 
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var elevatorImages: List<AccessibilityImageOld> = elevatorImages
+    @Column(name = "elevator_images")
+    var oldElevatorImages: List<AccessibilityImageOld> = oldElevatorImages
 
     @Deprecated("use images with type instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
-    var elevatorImageUrls: List<String> = elevatorImageUrls
+    @Column(name = "elevator_image_urls")
+    var oldElevatorImageUrls: List<String> = oldElevatorImageUrls
 
     fun isDeletable(uid: String?): Boolean {
         return uid != null && uid == userId

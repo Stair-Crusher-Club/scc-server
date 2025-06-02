@@ -31,7 +31,7 @@ class RegisterBuildingAccessibilityUseCase(
             createBuildingAccessibilityCommentParams
         )
         accessibilityImagePipeline.asyncPostProcessImages(
-            registerResult.buildingAccessibility.newEntranceAccessibilityImages + registerResult.buildingAccessibility.newElevatorAccessibilityImages
+            registerResult.buildingAccessibility.entranceImages + registerResult.buildingAccessibility.elevatorImages
         )
         val challengeContributions =
             challengeService.contributeToSatisfiedChallenges(

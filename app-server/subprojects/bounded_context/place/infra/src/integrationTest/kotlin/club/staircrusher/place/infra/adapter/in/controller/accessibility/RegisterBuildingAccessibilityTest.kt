@@ -303,14 +303,14 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
                 transactionManager.doInTransaction {
                     val buildingEntity =
                         buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id)
-                    val elevImages = buildingEntity!!.newElevatorAccessibilityImages
+                    val elevImages = buildingEntity!!.elevatorImages
                     assertEquals(2, elevImages.size)
                     elevImages.forEach { image ->
                         assertEquals(AccessibilityImage.AccessibilityType.Building, image.accessibilityType)
                         assertEquals(AccessibilityImage.ImageType.Elevator, image.imageType)
                     }
 
-                    val entImages = buildingEntity.newEntranceAccessibilityImages
+                    val entImages = buildingEntity.entranceImages
                     assertEquals(1, entImages.size)
                     entImages.forEach { image ->
                         assertEquals(AccessibilityImage.AccessibilityType.Building, image.accessibilityType)

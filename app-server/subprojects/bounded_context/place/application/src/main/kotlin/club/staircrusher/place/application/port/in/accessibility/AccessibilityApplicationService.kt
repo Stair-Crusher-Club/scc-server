@@ -241,15 +241,15 @@ class AccessibilityApplicationService(
                     buildingId = it.buildingId,
                     entranceStairInfo = it.entranceStairInfo,
                     entranceStairHeightLevel = it.entranceStairHeightLevel,
-                    entranceImageUrls = it.entranceImageUrls,
-                    entranceImages = entranceImages,
+                    oldEntranceImageUrls = it.entranceImageUrls,
+                    oldEntranceImages = entranceImages,
                     hasSlope = it.hasSlope,
                     hasElevator = it.hasElevator,
                     entranceDoorTypes = it.entranceDoorTypes,
                     elevatorStairInfo = it.elevatorStairInfo,
                     elevatorStairHeightLevel = it.elevatorStairHeightLevel,
-                    elevatorImageUrls = it.elevatorImageUrls,
-                    elevatorImages = elevatorImages,
+                    oldElevatorImageUrls = it.elevatorImageUrls,
+                    oldElevatorImages = elevatorImages,
                     userId = it.userId,
                     createdAt = SccClock.instant(),
                 )
@@ -272,9 +272,9 @@ class AccessibilityApplicationService(
                             )
                         }
                     )
-                    newEntranceAccessibilityImages =
+                    this.entranceImages =
                         savedImages.filter { it.imageType == AccessibilityImage.ImageType.Entrance }.toMutableList()
-                    newElevatorAccessibilityImages =
+                    this.elevatorImages =
                         savedImages.filter { it.imageType == AccessibilityImage.ImageType.Elevator }.toMutableList()
                 }
             buildingAccessibility

@@ -402,8 +402,8 @@ class ITDataGenerator {
                     buildingId = building.id,
                     entranceStairInfo = entranceStairInfo,
                     entranceStairHeightLevel = entranceStairHeightLevel,
-                    entranceImageUrls = entranceImages,
-                    entranceImages = entranceImages.map {
+                    oldEntranceImageUrls = entranceImages,
+                    oldEntranceImages = entranceImages.map {
                         AccessibilityImageOld(it)
                     },
                     hasSlope = hasSlope,
@@ -411,14 +411,14 @@ class ITDataGenerator {
                     entranceDoorTypes = entranceDoorTypes,
                     elevatorStairInfo = StairInfo.NONE,
                     elevatorStairHeightLevel = elevatorStairHeightLevel,
-                    elevatorImageUrls = elevatorImages,
-                    elevatorImages = elevatorImages.map { AccessibilityImageOld(it) },
+                    oldElevatorImageUrls = elevatorImages,
+                    oldElevatorImages = elevatorImages.map { AccessibilityImageOld(it) },
                     userId = userAccount?.id,
                     createdAt = at,
                 ),
             ))
             .also {
-                it.newEntranceAccessibilityImages = entranceImages.map { img ->
+                it.entranceImages = entranceImages.map { img ->
                     AccessibilityImage(
                         accessibilityId = it.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
@@ -426,7 +426,7 @@ class ITDataGenerator {
                         originalImageUrl = img,
                     )
                 }.toMutableList()
-                it.newElevatorAccessibilityImages = elevatorImages.map { img ->
+                it.elevatorImages = elevatorImages.map { img ->
                     AccessibilityImage(
                         accessibilityId = it.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
@@ -434,7 +434,7 @@ class ITDataGenerator {
                         originalImageUrl = img,
                     )
                 }.toMutableList()
-                accessibilityImageRepository.saveAll(it.newEntranceAccessibilityImages + it.newElevatorAccessibilityImages)
+                accessibilityImageRepository.saveAll(it.entranceImages + it.elevatorImages)
             }
     }
 
