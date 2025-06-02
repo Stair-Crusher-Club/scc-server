@@ -33,8 +33,10 @@ class AccessibilityImageThumbnailService(
             .awaitAll()
             .filterNotNull()
             .map { (image, thumbnailUrl) ->
-                image.thumbnailUrl = thumbnailUrl
-                image
+                if (thumbnailUrl != null) {
+                    image.thumbnailUrl = thumbnailUrl
+                }
+                return@map image
             }
     }
 
