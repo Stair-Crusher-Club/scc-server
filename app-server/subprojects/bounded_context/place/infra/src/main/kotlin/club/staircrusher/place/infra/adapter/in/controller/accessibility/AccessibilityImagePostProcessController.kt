@@ -69,6 +69,7 @@ class AccessibilityImagePostProcessController(
                     if ((index + 1) % logInterval == 0) {
                         logger.info("[place] Progress: ${index + 1} processed")
                         logMemoryUsage("place $id")
+                        System.gc()
                     }
                 }
                 logger.info("[place] Finished migration for ${placeAccessibilityIds.size} migrations")
@@ -83,6 +84,7 @@ class AccessibilityImagePostProcessController(
                     if ((index + 1) % logInterval == 0) {
                         logger.info("[building] Progress: ${index + 1} processed")
                         logMemoryUsage("building $id")
+                        System.gc()
                     }
                 }
                 logger.info("[building] Finished migration for ${buildingAccessibilityIds.size} migrations")
