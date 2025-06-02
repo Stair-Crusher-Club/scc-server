@@ -11,7 +11,6 @@ import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.external_accessibility.domain.model.ExternalAccessibility
 import club.staircrusher.external_accessibility.domain.model.ToiletAccessibilityDetails
-import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityUpvoteRepository
@@ -104,9 +103,6 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var externalAccessibilityRepository: ExternalAccessibilityRepository
-
-    @Autowired
-    private lateinit var accessibilityImageRepository: AccessibilityImageRepository
 
     fun createIdentifiedUser(
         nickname: String = SccRandom.string(12),
