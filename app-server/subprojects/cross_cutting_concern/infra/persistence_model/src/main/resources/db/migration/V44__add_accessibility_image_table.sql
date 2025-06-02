@@ -16,4 +16,5 @@ CREATE TABLE IF NOT EXISTS accessibility_image (
 );
 
 CREATE INDEX idx_accessibility_image_accessibility_id ON accessibility_image(accessibility_id);
-CREATE INDEX idx_accessibility_created_at ON accessibility_image(created_at);
+CREATE INDEX idx_accessibility_image_created_at ON accessibility_image(created_at);
+CREATE INDEX idx_accessibility_last_post_processed_at ON accessibility_image(last_post_processed_at);
