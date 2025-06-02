@@ -44,6 +44,7 @@ class AccessibilityImagePipeline(
     }
 
     companion object {
-        val 썸네일_블러_최초마이그레이션시점 = Instant.parse("2025-06-01T00:00:00Z")
+        // 실섭 배포 시점에 맞추어 업데이트할 예정
+        val 썸네일_블러_최초마이그레이션시점 = Instant.parse("2025-06-30T00:00:00Z")
     }
 }
