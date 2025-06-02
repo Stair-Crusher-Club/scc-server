@@ -28,7 +28,6 @@ class ReportAccessibilityUseCase(
                 accessibilityApplicationService.doGetAccessibility(placeId, null).placeAccessibility
             val userProfile = userProfileRepository.findFirstByUserId(userId)
 
-            // Create and save the accessibility report
             val report = AccessibilityReport.create(
                 id = EntityIdGenerator.generateRandom(),
                 placeId = placeId,
@@ -46,7 +45,7 @@ class ReportAccessibilityUseCase(
             - 접근성 정보 Id: ${placeAccessibility?.value?.id}
             - 장소명: ${place?.name}
             - 주소: ${place?.address}
-            - 신고 사유: $reason
+            - 신고 사유: ${reason.humanReadableName}
             - 상세 내용: ${detail ?: "상세 내용 없음"}
             - 신고자: ${userProfile?.nickname ?: "익명"}
         """.trimIndent()
