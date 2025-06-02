@@ -35,7 +35,7 @@ fun SearchPlacesResult.toDTO() = PlaceListItem(
         accessibilityScore = accessibilityScore,
         floors = placeAccessibility?.floors ?: emptyList(),
         hasSlope = placeAccessibility?.hasSlope ?: false,
-        images = placeAccessibility?.newAccessibilityImages?.map { it.toDTO() } ?: emptyList(),
+        images = placeAccessibility?.images?.map { it.toDTO() } ?: emptyList(),
         imageUrls = emptyList(),
         createdAt = placeAccessibility?.createdAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
     ),

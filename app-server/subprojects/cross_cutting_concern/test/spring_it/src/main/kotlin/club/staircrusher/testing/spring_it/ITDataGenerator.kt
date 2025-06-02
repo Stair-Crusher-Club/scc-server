@@ -365,20 +365,20 @@ class ITDataGenerator {
                 stairHeightLevel = stairHeightLevel,
                 hasSlope = hasSlope,
                 entranceDoorTypes = entranceDoorTypes,
-                imageUrls = images.map { it },
-                images = images.map { AccessibilityImageOld(it) },
+                oldImageUrls = images.map { it },
+                oldImages = images.map { AccessibilityImageOld(it) },
                 userId = userAccount?.id,
                 createdAt = at,
             ),
         ).also {
-            it.newAccessibilityImages = images.map { img ->
+            it.images = images.map { img ->
                 AccessibilityImage(
                     accessibilityId = it.id,
                     accessibilityType = AccessibilityImage.AccessibilityType.Place,
                     originalImageUrl = img,
                 )
             }.toMutableList()
-            accessibilityImageRepository.saveAll(it.newAccessibilityImages)
+            accessibilityImageRepository.saveAll(it.images)
         }
     }
 

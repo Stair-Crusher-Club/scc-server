@@ -318,8 +318,8 @@ class AccessibilityApplicationService(
                 stairHeightLevel = createPlaceAccessibilityParams.stairHeightLevel,
                 hasSlope = createPlaceAccessibilityParams.hasSlope,
                 entranceDoorTypes = createPlaceAccessibilityParams.entranceDoorTypes,
-                imageUrls = createPlaceAccessibilityParams.imageUrls,
-                images = createPlaceAccessibilityParams.imageUrls.map {
+                oldImageUrls = createPlaceAccessibilityParams.imageUrls,
+                oldImages = createPlaceAccessibilityParams.imageUrls.map {
                     AccessibilityImageOld(
                         imageUrl = it,
                         thumbnailUrl = null
@@ -329,7 +329,7 @@ class AccessibilityApplicationService(
                 createdAt = SccClock.instant(),
             )
         ).also {
-            it.newAccessibilityImages = accessibilityImageRepository.saveAll(
+            it.images = accessibilityImageRepository.saveAll(
                 createPlaceAccessibilityParams.imageUrls.map { img ->
                     AccessibilityImage(
                         accessibilityId = it.id,

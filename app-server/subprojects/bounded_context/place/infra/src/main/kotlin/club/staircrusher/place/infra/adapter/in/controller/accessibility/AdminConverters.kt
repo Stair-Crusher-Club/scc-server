@@ -37,7 +37,7 @@ fun PlaceAccessibility.toAdminDTO(
     hasSlope = hasSlope,
     entranceDoorTypes = entranceDoorTypes?.map { it.toAdminDTO() },
     imageUrls = emptyList(),
-    images = newAccessibilityImages.map { it.toAdminDTO() },
+    images = images.map { it.toAdminDTO() },
     placeName = placeName,
     registeredUserName = registeredUserName,
     createdAtMillis = createdAt.toEpochMilli(),

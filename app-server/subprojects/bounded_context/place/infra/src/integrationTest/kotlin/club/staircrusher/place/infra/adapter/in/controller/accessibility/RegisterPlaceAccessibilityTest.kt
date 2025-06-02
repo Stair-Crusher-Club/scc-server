@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 
 class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     @Autowired
@@ -522,7 +521,7 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 }
                 transactionManager.doInTransaction {
                     val placeEntity = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(place.id)
-                    val images = placeEntity!!.newAccessibilityImages
+                    val images = placeEntity!!.images
                     assertEquals(1, images.size)
                     images.forEach { image ->
                         assertEquals(AccessibilityImage.AccessibilityType.Place, image.accessibilityType)

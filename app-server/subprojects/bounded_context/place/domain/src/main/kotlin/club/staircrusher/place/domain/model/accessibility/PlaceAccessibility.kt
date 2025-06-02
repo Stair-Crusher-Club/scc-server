@@ -2,6 +2,7 @@ package club.staircrusher.place.domain.model.accessibility
 
 import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
+import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -28,22 +29,24 @@ class PlaceAccessibility(
     var hasSlope: Boolean,
     @Convert(converter = EntranceDoorTypeListToTextAttributeConverter::class)
     var entranceDoorTypes: List<EntranceDoorType>?,
-    imageUrls: List<String>,
-    images: List<AccessibilityImageOld>,
+    oldImageUrls: List<String>,
+    oldImages: List<AccessibilityImageOld>,
     val userId: String?,
     val createdAt: Instant,
     val deletedAt: Instant? = null,
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Place'")
-    var newAccessibilityImages: MutableList<AccessibilityImage> = mutableListOf(),
+    var images: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
     @Deprecated("use images instead")
     @Convert(converter = StringListToTextAttributeConverter::class)
-    var imageUrls: List<String> = imageUrls
+    @Column(name = "image_urls")
+    var oldImageUrls: List<String> = oldImageUrls
 
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)
-    var images: List<AccessibilityImageOld> = images
+    @Column(name = "images")
+    var oldImages: List<AccessibilityImageOld> = oldImages
 
     fun isDeletable(uid: String?): Boolean {
         return uid != null && uid == userId

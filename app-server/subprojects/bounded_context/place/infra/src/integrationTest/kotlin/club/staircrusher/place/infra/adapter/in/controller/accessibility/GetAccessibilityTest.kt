@@ -4,8 +4,6 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageThumbnailService
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
-import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
-import club.staircrusher.place.domain.model.accessibility.AccessibilityImageOld
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
 import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
@@ -313,10 +311,10 @@ class GetAccessibilityTest : AccessibilityITBase() {
                 identifiedUser.account,
                 images = imageUrls,
             )
-            placeAccessibility.newAccessibilityImages.forEachIndexed { index, img ->
+            placeAccessibility.images.forEachIndexed { index, img ->
                 img.thumbnailUrl = thumbnailUrls.getOrNull(index)
             }
-            accessibilityImageRepository.saveAll(placeAccessibility.newAccessibilityImages)
+            accessibilityImageRepository.saveAll(placeAccessibility.images)
 
             val buildingAccessibilityComment =
                 testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")

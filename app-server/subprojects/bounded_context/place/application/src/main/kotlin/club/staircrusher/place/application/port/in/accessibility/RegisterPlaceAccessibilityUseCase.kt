@@ -49,7 +49,7 @@ class RegisterPlaceAccessibilityUseCase(
             )
             val getAccessibilityResult =
                 accessibilityApplicationService.doGetAccessibility(createPlaceAccessibilityParams.placeId, userId)
-            accessibilityImagePipeline.asyncPostProcessImages(registerResult.placeAccessibility.newAccessibilityImages)
+            accessibilityImagePipeline.asyncPostProcessImages(registerResult.placeAccessibility.images)
 
             return@doInTransaction RegisterPlaceAccessibilityUseCaseResult(
                 registerPlaceAccessibilityResult = registerResult,

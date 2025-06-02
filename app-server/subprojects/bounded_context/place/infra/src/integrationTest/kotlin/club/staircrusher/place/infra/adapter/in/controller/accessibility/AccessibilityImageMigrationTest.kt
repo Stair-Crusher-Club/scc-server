@@ -44,7 +44,7 @@ class AccessibilityImageMigrationTest : AccessibilityITBase() {
         val user = testDataGenerator.createIdentifiedUser().account
         val (pa, ba) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
         transactionManager.doInTransaction {
-            pa.imageUrls = listOf("pa.png")
+            pa.oldImageUrls = listOf("pa.png")
             ba.elevatorImageUrls = listOf("baelev.png")
             ba.entranceImageUrls = listOf("baentrance.png")
             placeAccessibilityRepository.save(pa)
@@ -93,8 +93,8 @@ class AccessibilityImageMigrationTest : AccessibilityITBase() {
         val user = testDataGenerator.createIdentifiedUser().account
         val (pa, ba) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
         transactionManager.doInTransaction {
-            pa.imageUrls = listOf("pa.png")
-            pa.images = listOf(AccessibilityImageOld("pa.png", "thumbnail.png"))
+            pa.oldImageUrls = listOf("pa.png")
+            pa.oldImages = listOf(AccessibilityImageOld("pa.png", "thumbnail.png"))
             ba.elevatorImageUrls = listOf("baelev.png")
             ba.elevatorImages = listOf(AccessibilityImageOld("baelev.png", "thumbnail.png"))
             ba.entranceImageUrls = listOf("baentrance.png")
@@ -145,8 +145,8 @@ class AccessibilityImageMigrationTest : AccessibilityITBase() {
         val user = testDataGenerator.createIdentifiedUser().account
         val (pa, ba) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
         transactionManager.doInTransaction {
-            pa.imageUrls = listOf("pablur.png")
-            pa.images = listOf(AccessibilityImageOld("pablur.png", "thumbnail.png"))
+            pa.oldImageUrls = listOf("pablur.png")
+            pa.oldImages = listOf(AccessibilityImageOld("pablur.png", "thumbnail.png"))
             accessibilityImageFaceBlurringHistoryRepository.save(
                 AccessibilityImageFaceBlurringHistory(
                     id = UUID.randomUUID().toString(),
