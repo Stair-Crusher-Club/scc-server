@@ -8,7 +8,7 @@ dependencies {
 }
 
 tasks.getByName("openApiGenerate") {
-    inputs.file("${project.rootDir}/../api-admin/api-spec.yaml")
+    inputs.file("${project.projectDir.path}/../scc-api/admin-api-spec.yaml")
     outputs.dir(layout.buildDirectory.dir("generated-api").get().asFile.path)
     outputs.dir("${project.projectDir.path}/src/main/kotlin")
 }
@@ -18,7 +18,7 @@ tasks.getByName("compileKotlin") {
 }
 
 openApiGenerate {
-    inputSpec.set("${project.rootDir}/../api-admin/api-spec.yaml")
+    inputSpec.set("${project.projectDir.path}/../scc-api/admin-api-spec.yaml")
     packageName.set("club.staircrusher.admin_api.spec")
     apiPackage.set("club.staircrusher.admin_api.spec")
     modelPackage.set("club.staircrusher.admin_api.spec.dto")
