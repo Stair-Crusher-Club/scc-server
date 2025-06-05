@@ -33,9 +33,7 @@ class AccessibilityImagePostProcessController(
     fun blurFacesInLatestPlaceAccessibilityImages(request: HttpServletRequest) {
         InternalIpAddressChecker.check(request)
 
-        logger.info { "Starting batch post process accessibility images" }
         val targetImages = accessibilityImagePipeline.getTargetImages()
-        logger.info { "Post process target images acquired, size: ${targetImages.size}" }
         taskExecutor1.submit {
             runBlocking {
                 accessibilityImagePipeline.postProcessImages(targetImages)
