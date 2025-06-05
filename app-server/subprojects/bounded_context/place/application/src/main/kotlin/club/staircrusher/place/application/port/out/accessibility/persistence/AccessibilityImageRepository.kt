@@ -16,7 +16,7 @@ interface AccessibilityImageRepository : CrudRepository<AccessibilityImage, Stri
             OR
             images.lastPostProcessedAt < :at
         ORDER BY images.createdAt DESC
-        LIMIT 10
+        LIMIT 3
     """)
     fun findBatchTargetsBefore(at: Instant): List<AccessibilityImage>
 }

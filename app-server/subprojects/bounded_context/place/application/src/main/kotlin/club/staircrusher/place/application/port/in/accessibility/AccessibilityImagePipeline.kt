@@ -11,15 +11,16 @@ import java.util.concurrent.Executors
 
 @Component
 class AccessibilityImagePipeline(
-    @Suppress("UnusedPrivateMember") private val accessibilityImageFaceBlurringService: AccessibilityImageFaceBlurringService,
+    private val accessibilityImageFaceBlurringService: AccessibilityImageFaceBlurringService,
     private val accessibilityImageThumbnailService: AccessibilityImageThumbnailService,
     private val accessibilityImageRepository: AccessibilityImageRepository,
     private val transactionManager: TransactionManager,
 ) {
     private val taskExecutor = Executors.newCachedThreadPool()
+
     suspend fun postProcessImages(images: List<AccessibilityImage>) {
         val processedImages = images
-//            .let { accessibilityImageFaceBlurringService.blurImages(it) }
+            .let { accessibilityImageFaceBlurringService.blurImages(it) }
             .let { accessibilityImageThumbnailService.generateThumbnails(it) }
             .also { it.forEach { img -> img.lastPostProcessedAt = SccClock.instant() } }
         transactionManager.doInTransaction {
