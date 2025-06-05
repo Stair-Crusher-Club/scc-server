@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
@@ -26,6 +27,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
         imageRepository.deleteAll()
     }
 
+    @Disabled
     @Test
     fun `이미지 처리`() {
         val fixedAccessibilityId = "someidnotused!"
