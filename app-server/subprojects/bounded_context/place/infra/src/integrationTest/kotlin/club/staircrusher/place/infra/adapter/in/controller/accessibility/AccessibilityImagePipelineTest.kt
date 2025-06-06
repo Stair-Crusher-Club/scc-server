@@ -27,7 +27,6 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
         imageRepository.deleteAll()
     }
 
-    @Disabled
     @Test
     fun `이미지 처리`() {
         val fixedAccessibilityId = "someidnotused!"
@@ -43,8 +42,10 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             )
         }.toList()
 
-        runBlocking {
-            accessibilityImagePipeline.postProcessImages(savedImages)
+        savedImages.forEach {
+            runBlocking {
+                accessibilityImagePipeline.postProcessImage(it)
+            }
         }
 
         transactionManager.doInTransaction {

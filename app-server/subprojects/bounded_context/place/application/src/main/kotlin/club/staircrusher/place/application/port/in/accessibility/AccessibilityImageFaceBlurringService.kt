@@ -6,8 +6,6 @@ import club.staircrusher.place.application.port.out.accessibility.DetectFacesSer
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.di.annotation.Component
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
@@ -20,15 +18,13 @@ class AccessibilityImageFaceBlurringService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    suspend fun blurImages(accessibilityImages: List<AccessibilityImage>): List<AccessibilityImage> = coroutineScope {
-        accessibilityImages
-            .filter { it.blurredImageUrl == null }
-            .map { async { detectAndBlurFaces(it.originalImageUrl) to it } }
-            .awaitAll()
-            .map { (blurResult, image) ->
-                image.blurredImageUrl = blurResult.blurredImageUrl
-                return@map image
-            }
+    suspend fun blurImage(accessibilityImage: AccessibilityImage): AccessibilityImage = coroutineScope {
+        if (accessibilityImage.blurredImageUrl != null) return@coroutineScope accessibilityImage
+
+        val blurResult = detectAndBlurFaces(accessibilityImage.originalImageUrl)
+        accessibilityImage.blurredImageUrl = blurResult.blurredImageUrl
+
+        return@coroutineScope accessibilityImage
     }
 
     @Suppress("ReturnCount")

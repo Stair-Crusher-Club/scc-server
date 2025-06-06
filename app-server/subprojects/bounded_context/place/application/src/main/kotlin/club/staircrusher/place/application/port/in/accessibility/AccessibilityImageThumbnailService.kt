@@ -4,8 +4,6 @@ import club.staircrusher.image.application.port.out.file_management.FileManageme
 import club.staircrusher.place.application.port.`in`.accessibility.image.ThumbnailGenerator
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.di.annotation.Component
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
 import java.io.ByteArrayOutputStream
@@ -18,29 +16,20 @@ class AccessibilityImageThumbnailService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    suspend fun generateThumbnails(accessibilityImages: List<AccessibilityImage>) = coroutineScope {
-        accessibilityImages
-            .map {
-                async {
-                    val thumbnail = generateThumbnails(it) ?: return@async null
-                    val thumbnailUrl = fileManagementService.uploadThumbnailImage(
-                        thumbnail.thumbnailFileName,
-                        thumbnail.outputStream
-                    )
-                    it to thumbnailUrl
-                }
-            }
-            .awaitAll()
-            .filterNotNull()
-            .map { (image, thumbnailUrl) ->
-                if (thumbnailUrl != null) {
-                    image.thumbnailUrl = thumbnailUrl
-                }
-                return@map image
-            }
+    suspend fun generateThumbnail(accessibilityImage: AccessibilityImage) = coroutineScope {
+        val thumbnail = doGenerateThumbnail(accessibilityImage) ?: return@coroutineScope accessibilityImage
+        val thumbnailUrl = fileManagementService.uploadThumbnailImage(
+            thumbnail.thumbnailFileName,
+            thumbnail.outputStream
+        )
+
+        if (thumbnailUrl != null) {
+            accessibilityImage.thumbnailUrl = thumbnailUrl
+        }
+        return@coroutineScope accessibilityImage
     }
 
-    private suspend fun generateThumbnails(originalAccessibilityImage: AccessibilityImage): Thumbnail? {
+    private suspend fun doGenerateThumbnail(originalAccessibilityImage: AccessibilityImage): Thumbnail? {
         val originalImageUrl = originalAccessibilityImage.blurredImageUrl ?: originalAccessibilityImage.originalImageUrl
         val destinationPath = thumbnailPath.resolve(originalAccessibilityImage.id)
         if (Files.notExists(destinationPath)) {

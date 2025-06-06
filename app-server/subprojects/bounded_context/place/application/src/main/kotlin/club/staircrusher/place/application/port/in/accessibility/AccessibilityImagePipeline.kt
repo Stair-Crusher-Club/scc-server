@@ -18,21 +18,24 @@ class AccessibilityImagePipeline(
 ) {
     private val taskExecutor = Executors.newCachedThreadPool()
 
-    suspend fun postProcessImages(images: List<AccessibilityImage>) {
-        val processedImages = images
-            .let { accessibilityImageFaceBlurringService.blurImages(it) }
-            .let { accessibilityImageThumbnailService.generateThumbnails(it) }
-            .also { it.forEach { img -> img.lastPostProcessedAt = SccClock.instant() } }
+    suspend fun postProcessImage(image: AccessibilityImage) {
+        val processedImage = image
+            .let { accessibilityImageFaceBlurringService.blurImage(it) }
+            .let { accessibilityImageThumbnailService.generateThumbnail(it) }
+            .also { img -> img.lastPostProcessedAt = SccClock.instant() }
+
         transactionManager.doInTransaction {
-            accessibilityImageRepository.saveAll(processedImages)
+            accessibilityImageRepository.save(processedImage)
         }
     }
 
     fun asyncPostProcessImages(images: List<AccessibilityImage>) {
         transactionManager.doAfterCommit {
             taskExecutor.submit {
-                runBlocking {
-                    postProcessImages(images)
+                images.forEach {
+                    runBlocking {
+                        postProcessImage(it)
+                    }
                 }
             }
         }
