@@ -35,8 +35,10 @@ class AccessibilityImagePostProcessController(
 
         val targetImages = accessibilityImagePipeline.getTargetImages()
         taskExecutor1.submit {
-            runBlocking {
-                accessibilityImagePipeline.postProcessImages(targetImages)
+            targetImages.forEach {
+                runBlocking {
+                    accessibilityImagePipeline.postProcessImages(listOf(it))
+                }
             }
         }
     }

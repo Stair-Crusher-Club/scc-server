@@ -43,8 +43,10 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             )
         }.toList()
 
-        runBlocking {
-            accessibilityImagePipeline.postProcessImages(savedImages)
+        savedImages.forEach {
+            runBlocking {
+                accessibilityImagePipeline.postProcessImages(listOf(it))
+            }
         }
 
         transactionManager.doInTransaction {
