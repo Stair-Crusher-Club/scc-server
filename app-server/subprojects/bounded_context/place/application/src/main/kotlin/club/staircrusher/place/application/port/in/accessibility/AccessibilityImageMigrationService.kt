@@ -39,7 +39,7 @@ class AccessibilityImageMigrationService(
                 return@doInTransaction
             }
             val blurHistories = blurringHistoryRepository.findByPlaceAccessibilityId(placeAccessibilityId).firstOrNull()
-            val modifiedAccessibilityImages = placeAccessibility.oldImageUrls.map { oldImageUrl ->
+            val modifiedAccessibilityImages = placeAccessibility.oldImageUrls.mapIndexed { index, oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
@@ -56,7 +56,8 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null
+                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                    displayOrder = index,
                 )
             }
             accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
@@ -85,7 +86,7 @@ class AccessibilityImageMigrationService(
             }
             val blurHistories =
                 blurringHistoryRepository.findByBuildingAccessibilityId(buildingAccessibilityId).firstOrNull()
-            val modifiedElevatorAccessibilityImages = buildingAccessibility.oldElevatorImageUrls.map { oldImageUrl ->
+            val modifiedElevatorAccessibilityImages = buildingAccessibility.oldElevatorImageUrls.mapIndexed { index, oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
@@ -103,16 +104,20 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null
+                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                    displayOrder = index,
                 )
             }
-            val modifiedEntranceAccessibilityImages = buildingAccessibility.oldEntranceImageUrls.map { oldImageUrl ->
+            val modifiedEntranceAccessibilityImages = buildingAccessibility.oldEntranceImageUrls.mapIndexed { index, oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
                     it.first == oldImageUrl // Blur 된 이미지라면 BlurURL 이 image 에 들어가있다.
                 }
                 val matchingOldImage = buildingAccessibility.oldEntranceImages.find { it.imageUrl == oldImageUrl }
+
+                // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
+                val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
                 AccessibilityImage(
                     accessibilityId = buildingAccessibility.id,
                     accessibilityType = AccessibilityImage.AccessibilityType.Building,
@@ -120,6 +125,8 @@ class AccessibilityImageMigrationService(
                     originalImageUrl = matchingHistory?.second ?: oldImageUrl,
                     blurredImageUrl = matchingHistory?.first,
                     thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                    displayOrder = index,
                 )
             }
             accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages)

@@ -256,19 +256,21 @@ class AccessibilityApplicationService(
             )
                 .apply {
                     val savedImages = accessibilityImageRepository.saveAll(
-                        it.entranceImageUrls.map { img ->
+                        it.entranceImageUrls.mapIndexed { index, img ->
                             AccessibilityImage(
                                 accessibilityId = id,
                                 accessibilityType = AccessibilityImage.AccessibilityType.Building,
                                 imageType = AccessibilityImage.ImageType.Entrance,
                                 originalImageUrl = img,
+                                displayOrder = index,
                             )
-                        } + it.elevatorImageUrls.map { img ->
+                        } + it.elevatorImageUrls.mapIndexed { index, img ->
                             AccessibilityImage(
                                 accessibilityId = id,
                                 accessibilityType = AccessibilityImage.AccessibilityType.Building,
                                 imageType = AccessibilityImage.ImageType.Elevator,
                                 originalImageUrl = img,
+                                displayOrder = index,
                             )
                         }
                     )
@@ -330,11 +332,12 @@ class AccessibilityApplicationService(
             )
         ).also {
             it.images = accessibilityImageRepository.saveAll(
-                createPlaceAccessibilityParams.imageUrls.map { img ->
+                createPlaceAccessibilityParams.imageUrls.mapIndexed { index, img ->
                     AccessibilityImage(
                         accessibilityId = it.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Place,
                         originalImageUrl = img,
+                        displayOrder = index,
                     )
                 }
             ).toMutableList()
