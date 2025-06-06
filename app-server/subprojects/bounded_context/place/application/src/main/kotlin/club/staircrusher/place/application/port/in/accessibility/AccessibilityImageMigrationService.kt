@@ -27,7 +27,8 @@ class AccessibilityImageMigrationService(
                 placeAccessibilityId,
                 AccessibilityImage.AccessibilityType.Place
             )
-            if (alreadyExists.isNotEmpty()) {
+            val hasDisplayOrder = alreadyExists.any { it.displayOrder != null }
+            if (alreadyExists.isNotEmpty() && hasDisplayOrder) {
                 entityManager.flush()
                 entityManager.clear()
                 return@doInTransaction
@@ -50,17 +51,23 @@ class AccessibilityImageMigrationService(
                 // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
                 val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
 
-                AccessibilityImage(
-                    accessibilityId = placeAccessibility.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Place,
-                    originalImageUrl = matchingHistory?.second ?: oldImageUrl,
-                    blurredImageUrl = matchingHistory?.first,
-                    thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
-                    displayOrder = index,
-                )
+                val alreadyExistingImage = alreadyExists.find { it.originalImageUrl == (matchingHistory?.second ?: oldImageUrl) }
+                if (alreadyExistingImage != null) {
+                    alreadyExistingImage.displayOrder = index
+                    alreadyExistingImage
+                } else {
+                    AccessibilityImage(
+                        accessibilityId = placeAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Place,
+                        originalImageUrl = matchingHistory?.second ?: oldImageUrl,
+                        blurredImageUrl = matchingHistory?.first,
+                        thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                        lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                        displayOrder = index,
+                    )
+                }
             }
-            accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
+            accessibilityImageRepository.saveAll(modifiedAccessibilityImages.filterNotNull())
             entityManager.flush()
             entityManager.clear()
         }
@@ -73,7 +80,8 @@ class AccessibilityImageMigrationService(
                     buildingAccessibilityId,
                     AccessibilityImage.AccessibilityType.Building
                 )
-            if (alreadyExists.isNotEmpty()) {
+            val hasDisplayOrder = alreadyExists.any { it.displayOrder != null }
+            if (alreadyExists.isNotEmpty() && hasDisplayOrder) {
                 entityManager.flush()
                 entityManager.clear()
                 return@doInTransaction
@@ -97,16 +105,22 @@ class AccessibilityImageMigrationService(
                 // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
                 val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
 
-                AccessibilityImage(
-                    accessibilityId = buildingAccessibility.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Building,
-                    imageType = AccessibilityImage.ImageType.Elevator,
-                    originalImageUrl = matchingHistory?.second ?: oldImageUrl,
-                    blurredImageUrl = matchingHistory?.first,
-                    thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
-                    displayOrder = index,
-                )
+                val alreadyExistingImage = alreadyExists.find { it.originalImageUrl == (matchingHistory?.second ?: oldImageUrl) }
+                if (alreadyExistingImage != null) {
+                    alreadyExistingImage.displayOrder = index
+                    alreadyExistingImage
+                } else {
+                    AccessibilityImage(
+                        accessibilityId = buildingAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Elevator,
+                        originalImageUrl = matchingHistory?.second ?: oldImageUrl,
+                        blurredImageUrl = matchingHistory?.first,
+                        thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                        lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                        displayOrder = index,
+                    )
+                }
             }
             val modifiedEntranceAccessibilityImages = buildingAccessibility.oldEntranceImageUrls.mapIndexed { index, oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
@@ -118,19 +132,26 @@ class AccessibilityImageMigrationService(
 
                 // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
                 val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
-                AccessibilityImage(
-                    accessibilityId = buildingAccessibility.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Building,
-                    imageType = AccessibilityImage.ImageType.Entrance,
-                    originalImageUrl = matchingHistory?.second ?: oldImageUrl,
-                    blurredImageUrl = matchingHistory?.first,
-                    thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
-                    displayOrder = index,
-                )
+
+                val alreadyExistingImage = alreadyExists.find { it.originalImageUrl == (matchingHistory?.second ?: oldImageUrl) }
+                if (alreadyExistingImage != null) {
+                    alreadyExistingImage.displayOrder = index
+                    alreadyExistingImage
+                } else {
+                    AccessibilityImage(
+                        accessibilityId = buildingAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Entrance,
+                        originalImageUrl = matchingHistory?.second ?: oldImageUrl,
+                        blurredImageUrl = matchingHistory?.first,
+                        thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                        lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                        displayOrder = index,
+                    )
+                }
             }
-            accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages)
-            accessibilityImageRepository.saveAll(modifiedEntranceAccessibilityImages)
+            accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages.filterNotNull())
+            accessibilityImageRepository.saveAll(modifiedEntranceAccessibilityImages.filterNotNull())
             entityManager.flush()
             entityManager.clear()
         }
