@@ -31,8 +31,10 @@ class AccessibilityImagePipeline(
     fun asyncPostProcessImages(images: List<AccessibilityImage>) {
         transactionManager.doAfterCommit {
             taskExecutor.submit {
-                runBlocking {
-                    postProcessImages(images)
+                images.forEach { image ->
+                    runBlocking {
+                        postProcessImages(listOf(image))
+                    }
                 }
             }
         }
