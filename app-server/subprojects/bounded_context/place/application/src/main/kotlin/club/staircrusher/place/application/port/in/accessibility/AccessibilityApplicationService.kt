@@ -258,6 +258,7 @@ class AccessibilityApplicationService(
                     val savedImages = accessibilityImageRepository.saveAll(
                         it.entranceImageUrls.mapIndexed { index, img ->
                             AccessibilityImage(
+                                id = EntityIdGenerator.generateRandom(),
                                 accessibilityId = id,
                                 accessibilityType = AccessibilityImage.AccessibilityType.Building,
                                 imageType = AccessibilityImage.ImageType.Entrance,
@@ -266,6 +267,7 @@ class AccessibilityApplicationService(
                             )
                         } + it.elevatorImageUrls.mapIndexed { index, img ->
                             AccessibilityImage(
+                                id = EntityIdGenerator.generateRandom(),
                                 accessibilityId = id,
                                 accessibilityType = AccessibilityImage.AccessibilityType.Building,
                                 imageType = AccessibilityImage.ImageType.Elevator,
@@ -334,6 +336,7 @@ class AccessibilityApplicationService(
             it.images = accessibilityImageRepository.saveAll(
                 createPlaceAccessibilityParams.imageUrls.mapIndexed { index, img ->
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = it.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Place,
                         originalImageUrl = img,

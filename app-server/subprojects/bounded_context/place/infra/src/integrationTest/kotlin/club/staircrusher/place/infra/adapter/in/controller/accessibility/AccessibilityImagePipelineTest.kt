@@ -5,6 +5,7 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Ac
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -35,6 +36,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             imageRepository.saveAll(
                 (0 until 10).map {
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = fixedAccessibilityId,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/example$it.png",
@@ -69,6 +71,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             imageRepository.saveAll(
                 (0 until 20).map {
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp$it",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/example$it.png",
@@ -89,12 +92,14 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             imageRepository.saveAll(
                 listOf(
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/processed_example.png",
                         lastPostProcessedAt = SccClock.instant() + Duration.ofDays(400),
                     ),
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/unprocessed_old_example.png",
@@ -102,6 +107,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
                         it.createdAt = now
                     },
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/unprocessed_new_example.png",

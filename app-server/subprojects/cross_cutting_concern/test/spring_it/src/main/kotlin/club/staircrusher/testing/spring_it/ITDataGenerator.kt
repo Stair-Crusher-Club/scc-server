@@ -373,6 +373,7 @@ class ITDataGenerator {
         ).also {
             it.images = images.map { img ->
                 AccessibilityImage(
+                    id = EntityIdGenerator.generateRandom(),
                     accessibilityId = it.id,
                     accessibilityType = AccessibilityImage.AccessibilityType.Place,
                     originalImageUrl = img,
@@ -420,6 +421,7 @@ class ITDataGenerator {
             .also {
                 it.entranceImages = entranceImages.map { img ->
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = it.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         imageType = AccessibilityImage.ImageType.Entrance,
@@ -428,6 +430,7 @@ class ITDataGenerator {
                 }.toMutableList()
                 it.elevatorImages = elevatorImages.map { img ->
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = it.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         imageType = AccessibilityImage.ImageType.Elevator,
