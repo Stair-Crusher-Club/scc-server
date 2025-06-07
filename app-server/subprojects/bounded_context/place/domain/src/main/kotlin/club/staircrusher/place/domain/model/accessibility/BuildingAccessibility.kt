@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import org.hibernate.annotations.Where
 import java.time.Instant
 
@@ -39,10 +40,12 @@ class BuildingAccessibility(
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Elevator'")
+    @OrderBy("displayOrder asc")
     var elevatorImages: MutableList<AccessibilityImage> = mutableListOf(),
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Building' and image_type = 'Entrance'")
+    @OrderBy("displayOrder asc")
     var entranceImages: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
     @Convert(converter = AccessibilityImageListToTextAttributeConverter::class)

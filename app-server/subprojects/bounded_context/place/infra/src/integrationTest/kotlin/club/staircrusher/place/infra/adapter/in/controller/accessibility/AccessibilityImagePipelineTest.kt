@@ -64,7 +64,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
     }
 
     @Test
-    fun `배치는 최대 10개의 이미지를 가져온다`() {
+    fun `배치는 최대 3개의 이미지를 가져온다`() {
         val savedImages = transactionManager.doInTransaction {
             imageRepository.saveAll(
                 (0 until 20).map {
@@ -79,7 +79,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
         val retrievedImages = transactionManager.doInTransaction {
             accessibilityImagePipeline.getTargetImages()
         }
-        assertEquals(10, retrievedImages.size)
+        assertEquals(3, retrievedImages.size)
     }
 
     @Test
