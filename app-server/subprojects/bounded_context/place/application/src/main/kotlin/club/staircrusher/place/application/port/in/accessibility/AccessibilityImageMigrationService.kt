@@ -12,6 +12,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 @Component
+@Suppress("LongMethod", "ComplexMethod")
 class AccessibilityImageMigrationService(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val blurringHistoryRepository: AccessibilityImageFaceBlurringHistoryRepository,
