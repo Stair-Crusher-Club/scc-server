@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import org.hibernate.annotations.Where
 import java.time.Instant
 
@@ -37,6 +38,7 @@ class PlaceAccessibility(
 
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'Place'")
+    @OrderBy("displayOrder asc")
     var images: MutableList<AccessibilityImage> = mutableListOf(),
 ) {
     @Deprecated("use images instead")
