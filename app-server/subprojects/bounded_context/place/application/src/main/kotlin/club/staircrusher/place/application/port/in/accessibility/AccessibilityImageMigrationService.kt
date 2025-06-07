@@ -6,6 +6,7 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Ac
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.persistence.EntityManager
 import org.springframework.data.repository.findByIdOrNull
@@ -58,6 +59,7 @@ class AccessibilityImageMigrationService(
                     alreadyExistingImage
                 } else {
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = placeAccessibility.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Place,
                         originalImageUrl = matchingHistory?.second ?: oldImageUrl,
@@ -112,6 +114,7 @@ class AccessibilityImageMigrationService(
                     alreadyExistingImage
                 } else {
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = buildingAccessibility.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         imageType = AccessibilityImage.ImageType.Elevator,
@@ -140,6 +143,7 @@ class AccessibilityImageMigrationService(
                     alreadyExistingImage
                 } else {
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = buildingAccessibility.id,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         imageType = AccessibilityImage.ImageType.Entrance,
