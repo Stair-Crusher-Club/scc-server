@@ -6,12 +6,14 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Ac
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.persistence.EntityManager
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 @Component
+@Suppress("LongMethod", "ComplexMethod")
 class AccessibilityImageMigrationService(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val blurringHistoryRepository: AccessibilityImageFaceBlurringHistoryRepository,
@@ -27,7 +29,8 @@ class AccessibilityImageMigrationService(
                 placeAccessibilityId,
                 AccessibilityImage.AccessibilityType.Place
             )
-            if (alreadyExists.isNotEmpty()) {
+            val hasDisplayOrder = alreadyExists.any { it.displayOrder != null }
+            if (alreadyExists.isNotEmpty() && hasDisplayOrder) {
                 entityManager.flush()
                 entityManager.clear()
                 return@doInTransaction
@@ -39,7 +42,7 @@ class AccessibilityImageMigrationService(
                 return@doInTransaction
             }
             val blurHistories = blurringHistoryRepository.findByPlaceAccessibilityId(placeAccessibilityId).firstOrNull()
-            val modifiedAccessibilityImages = placeAccessibility.oldImageUrls.map { oldImageUrl ->
+            val modifiedAccessibilityImages = placeAccessibility.oldImageUrls.mapIndexed { index, oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
@@ -50,16 +53,24 @@ class AccessibilityImageMigrationService(
                 // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
                 val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
 
-                AccessibilityImage(
-                    accessibilityId = placeAccessibility.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Place,
-                    originalImageUrl = matchingHistory?.second ?: oldImageUrl,
-                    blurredImageUrl = matchingHistory?.first,
-                    thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null
-                )
+                val alreadyExistingImage = alreadyExists.find { it.originalImageUrl == (matchingHistory?.second ?: oldImageUrl) }
+                if (alreadyExistingImage != null) {
+                    alreadyExistingImage.displayOrder = index
+                    alreadyExistingImage
+                } else {
+                    AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
+                        accessibilityId = placeAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Place,
+                        originalImageUrl = matchingHistory?.second ?: oldImageUrl,
+                        blurredImageUrl = matchingHistory?.first,
+                        thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                        lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                        displayOrder = index,
+                    )
+                }
             }
-            accessibilityImageRepository.saveAll(modifiedAccessibilityImages)
+            accessibilityImageRepository.saveAll(modifiedAccessibilityImages.filterNotNull())
             entityManager.flush()
             entityManager.clear()
         }
@@ -72,7 +83,8 @@ class AccessibilityImageMigrationService(
                     buildingAccessibilityId,
                     AccessibilityImage.AccessibilityType.Building
                 )
-            if (alreadyExists.isNotEmpty()) {
+            val hasDisplayOrder = alreadyExists.any { it.displayOrder != null }
+            if (alreadyExists.isNotEmpty() && hasDisplayOrder) {
                 entityManager.flush()
                 entityManager.clear()
                 return@doInTransaction
@@ -85,7 +97,7 @@ class AccessibilityImageMigrationService(
             }
             val blurHistories =
                 blurringHistoryRepository.findByBuildingAccessibilityId(buildingAccessibilityId).firstOrNull()
-            val modifiedElevatorAccessibilityImages = buildingAccessibility.oldElevatorImageUrls.map { oldImageUrl ->
+            val modifiedElevatorAccessibilityImages = buildingAccessibility.oldElevatorImageUrls.mapIndexed { index, oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
@@ -96,34 +108,55 @@ class AccessibilityImageMigrationService(
                 // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
                 val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
 
-                AccessibilityImage(
-                    accessibilityId = buildingAccessibility.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Building,
-                    imageType = AccessibilityImage.ImageType.Elevator,
-                    originalImageUrl = matchingHistory?.second ?: oldImageUrl,
-                    blurredImageUrl = matchingHistory?.first,
-                    thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                    lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null
-                )
+                val alreadyExistingImage = alreadyExists.find { it.originalImageUrl == (matchingHistory?.second ?: oldImageUrl) }
+                if (alreadyExistingImage != null) {
+                    alreadyExistingImage.displayOrder = index
+                    alreadyExistingImage
+                } else {
+                    AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
+                        accessibilityId = buildingAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Elevator,
+                        originalImageUrl = matchingHistory?.second ?: oldImageUrl,
+                        blurredImageUrl = matchingHistory?.first,
+                        thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                        lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                        displayOrder = index,
+                    )
+                }
             }
-            val modifiedEntranceAccessibilityImages = buildingAccessibility.oldEntranceImageUrls.map { oldImageUrl ->
+            val modifiedEntranceAccessibilityImages = buildingAccessibility.oldEntranceImageUrls.mapIndexed { index, oldImageUrl ->
                 val matchingHistory = blurHistories?.let {
                     it.blurredImageUrls.zip(it.originalImageUrls)
                 }?.find {
                     it.first == oldImageUrl // Blur 된 이미지라면 BlurURL 이 image 에 들어가있다.
                 }
                 val matchingOldImage = buildingAccessibility.oldEntranceImages.find { it.imageUrl == oldImageUrl }
-                AccessibilityImage(
-                    accessibilityId = buildingAccessibility.id,
-                    accessibilityType = AccessibilityImage.AccessibilityType.Building,
-                    imageType = AccessibilityImage.ImageType.Entrance,
-                    originalImageUrl = matchingHistory?.second ?: oldImageUrl,
-                    blurredImageUrl = matchingHistory?.first,
-                    thumbnailUrl = matchingOldImage?.thumbnailUrl,
-                )
+
+                // 썸네일이 블러되지 않은 값으로 들어가 있을 수도 있지만, 우선은 이렇게만 처리해둔다.
+                val isAlreadyPostProcessed = blurHistories != null && matchingOldImage?.thumbnailUrl != null
+
+                val alreadyExistingImage = alreadyExists.find { it.originalImageUrl == (matchingHistory?.second ?: oldImageUrl) }
+                if (alreadyExistingImage != null) {
+                    alreadyExistingImage.displayOrder = index
+                    alreadyExistingImage
+                } else {
+                    AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
+                        accessibilityId = buildingAccessibility.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Entrance,
+                        originalImageUrl = matchingHistory?.second ?: oldImageUrl,
+                        blurredImageUrl = matchingHistory?.first,
+                        thumbnailUrl = matchingOldImage?.thumbnailUrl,
+                        lastPostProcessedAt = if (isAlreadyPostProcessed) SccClock.instant() else null,
+                        displayOrder = index,
+                    )
+                }
             }
-            accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages)
-            accessibilityImageRepository.saveAll(modifiedEntranceAccessibilityImages)
+            accessibilityImageRepository.saveAll(modifiedElevatorAccessibilityImages.filterNotNull())
+            accessibilityImageRepository.saveAll(modifiedEntranceAccessibilityImages.filterNotNull())
             entityManager.flush()
             entityManager.clear()
         }

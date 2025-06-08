@@ -8,13 +8,12 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.Instant
-import java.util.UUID
 
 @Entity
 @Table(name = "accessibility_image")
 class AccessibilityImage(
     @Id
-    val id: String = UUID.randomUUID().toString(),
+    val id: String,
 
     @Column(nullable = false)
     val accessibilityId: String,
@@ -38,6 +37,9 @@ class AccessibilityImage(
 
     @Column(nullable = true)
     var lastPostProcessedAt: Instant? = null,
+
+    @Column(nullable = true)
+    var displayOrder: Int? = null,
 ) : TimeAuditingBaseEntity() {
 
     override fun equals(other: Any?): Boolean {

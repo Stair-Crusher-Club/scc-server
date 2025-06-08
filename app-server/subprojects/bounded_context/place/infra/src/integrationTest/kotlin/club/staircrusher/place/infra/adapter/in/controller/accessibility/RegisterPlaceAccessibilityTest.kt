@@ -295,7 +295,13 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 )
             )
         }
-        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user.account, challenge, SccClock.instant()) }
+        transactionManager.doInTransaction {
+            testDataGenerator.participateChallenge(
+                user.account,
+                challenge,
+                SccClock.instant()
+            )
+        }
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
@@ -470,7 +476,13 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 )
             )
         }
-        transactionManager.doInTransaction { testDataGenerator.participateChallenge(user.account, challenge, clock.instant()) }
+        transactionManager.doInTransaction {
+            testDataGenerator.participateChallenge(
+                user.account,
+                challenge,
+                clock.instant()
+            )
+        }
         mvc
             .sccRequest(
                 "/registerPlaceAccessibility",
@@ -511,7 +523,16 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
     fun `장소 정보 등록 시 접근성 이미지가 저장된다`() {
         val place = transactionManager.doInTransaction { testDataGenerator.createBuildingAndPlace() }
         val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
-        val params = getDefaultRegisterPlaceAccessibilityRequestParamsAfter240401(place)
+        val params = getRegisterPlaceAccessibilityRequestParamsAfter240401(
+            place = place,
+            floors = listOf(1),
+            isStairOnlyOption = null,
+            stairInfo = StairInfo.TWO_TO_FIVE,
+            stairHeightLevel = StairHeightLevel.THUMB,
+            hasSlope = true,
+            entranceDoorTypes = listOf(EntranceDoorType.HINGED, EntranceDoorType.AUTOMATIC),
+            imageUrls = listOf("image url1", "image url2"),
+        )
 
         mvc
             .sccRequest("/registerPlaceAccessibility", params, userAccount = user.account)
@@ -522,9 +543,10 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
                 transactionManager.doInTransaction {
                     val placeEntity = placeAccessibilityRepository.findFirstByPlaceIdAndDeletedAtIsNull(place.id)
                     val images = placeEntity!!.images
-                    assertEquals(1, images.size)
-                    images.forEach { image ->
+                    assertEquals(2, images.size)
+                    images.forEachIndexed { index, image ->
                         assertEquals(AccessibilityImage.AccessibilityType.Place, image.accessibilityType)
+                        assertEquals(index, image.displayOrder)
                         assertNull(image.imageType)
                     }
                 }
@@ -563,13 +585,14 @@ class RegisterPlaceAccessibilityTest : AccessibilityITBase() {
         stairInfo: StairInfo,
         stairHeightLevel: StairHeightLevel?,
         hasSlope: Boolean,
-        entranceDoorTypes: List<EntranceDoorType>
+        entranceDoorTypes: List<EntranceDoorType>,
+        imageUrls: List<String> = listOf("image url1"),
     ): RegisterPlaceAccessibilityRequestDto {
         return RegisterPlaceAccessibilityRequestDto(
             placeId = place.id,
             floors = floors,
             isStairOnlyOption = isStairOnlyOption,
-            imageUrls = listOf("image url1"),
+            imageUrls = imageUrls,
             stairInfo = stairInfo.toDTO(),
             stairHeightLevel = stairHeightLevel,
             hasSlope = hasSlope,

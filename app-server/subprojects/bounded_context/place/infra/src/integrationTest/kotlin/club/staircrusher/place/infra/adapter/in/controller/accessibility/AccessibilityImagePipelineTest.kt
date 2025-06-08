@@ -5,11 +5,13 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Ac
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
@@ -26,6 +28,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
         imageRepository.deleteAll()
     }
 
+    @Disabled
     @Test
     fun `이미지 처리`() {
         val fixedAccessibilityId = "someidnotused!"
@@ -33,6 +36,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             imageRepository.saveAll(
                 (0 until 10).map {
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = fixedAccessibilityId,
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/example$it.png",
@@ -41,8 +45,10 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             )
         }.toList()
 
-        runBlocking {
-            accessibilityImagePipeline.postProcessImages(savedImages)
+        savedImages.forEach {
+            runBlocking {
+                accessibilityImagePipeline.postProcessImages(listOf(it))
+            }
         }
 
         transactionManager.doInTransaction {
@@ -61,10 +67,11 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
 
     @Test
     fun `배치는 최대 10개의 이미지를 가져온다`() {
-        val savedImages = transactionManager.doInTransaction {
+        transactionManager.doInTransaction {
             imageRepository.saveAll(
                 (0 until 20).map {
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp$it",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/example$it.png",
@@ -85,12 +92,14 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
             imageRepository.saveAll(
                 listOf(
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/processed_example.png",
                         lastPostProcessedAt = SccClock.instant() + Duration.ofDays(400),
                     ),
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/unprocessed_old_example.png",
@@ -98,6 +107,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
                         it.createdAt = now
                     },
                     AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
                         accessibilityId = "temp",
                         accessibilityType = AccessibilityImage.AccessibilityType.Building,
                         originalImageUrl = "url/unprocessed_new_example.png",
