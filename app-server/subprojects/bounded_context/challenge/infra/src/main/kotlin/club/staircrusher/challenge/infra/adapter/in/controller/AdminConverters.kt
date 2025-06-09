@@ -16,6 +16,7 @@ import club.staircrusher.challenge.domain.model.ChallengeCondition
 import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
 import club.staircrusher.challenge.domain.model.CreateChallengeRequest
 import club.staircrusher.challenge.domain.model.UpdateChallengeRequest
+import java.time.Instant
 
 fun Challenge.toAdminDTO() = AdminChallengeDTO(
     id = id,
@@ -55,8 +56,8 @@ fun AdminUpdateChallengeRequestDTO.toModel(challengeId: String) = UpdateChalleng
     isPublic = isPublic,
     invitationCode = invitationCode,
     passcode = passcode,
-    startsAtMillis = startsAtMillis,
-    endsAtMillis = endsAtMillis,
+    startsAt = Instant.ofEpochMilli(startsAtMillis),
+    endsAt = endsAtMillis?.let { Instant.ofEpochMilli(it) },
     goal = goal,
     milestones = milestones,
     conditions = conditions.map { it.toModel() },

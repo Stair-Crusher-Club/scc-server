@@ -46,18 +46,24 @@ class Challenge(
     fun update(updateRequest: UpdateChallengeRequest) {
         val invitationCode = updateRequest.invitationCode?.let { validateAndNormalizeString(it) }
         val passcode = updateRequest.passcode?.let { validateAndNormalizeString(it) }
-        val startsAt = Instant.ofEpochMilli(updateRequest.startsAtMillis)
-        val endsAt = updateRequest.endsAtMillis?.let { Instant.ofEpochMilli(it) }
         val milestones = updateRequest.milestones.sorted()
-        validate(invitationCode, updateRequest.isPublic, startsAt, endsAt, updateRequest.goal, milestones, updateRequest.conditions)
+        validate(
+            invitationCode,
+            updateRequest.isPublic,
+            updateRequest.startsAt,
+            updateRequest.endsAt,
+            updateRequest.goal,
+            milestones,
+            updateRequest.conditions,
+        )
 
         this.name = validateAndNormalizeString(updateRequest.name)
         this.isPublic = updateRequest.isPublic
         this.invitationCode = invitationCode
         this.passcode = passcode
         this.crusherGroup = updateRequest.crusherGroup
-        this.startsAt = startsAt
-        this.endsAt = endsAt
+        this.startsAt = updateRequest.startsAt
+        this.endsAt = updateRequest.endsAt
         this.goal = updateRequest.goal
         this.milestones = milestones
         this.conditions = updateRequest.conditions
