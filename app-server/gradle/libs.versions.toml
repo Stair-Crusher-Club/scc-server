@@ -33,10 +33,10 @@ thumbnailator = "0.4.20"
 webpImageio = "0.1.0"
 bucket4j = "8.10.1"
 # 아래 4개의 버전은 함께 관리
-javaCv = "1.5.9"
-javaCpp = "1.5.9"
-openCv = "4.7.0-1.5.9"
-openBlas = "0.3.23-1.5.9"
+javaCv = "1.5.11"
+javaCpp = "1.5.11"
+openCv = "4.10.0-1.5.11"
+openBlas = "0.3.28-1.5.11"
 
 [libraries]
 kotlin-logging = { group = "io.github.microutils", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
