@@ -12,6 +12,8 @@ class PushNotificationSchedule(
     @Id
     val id: String,
 
+    val groupId: String,
+
     var scheduledAt: Instant,
 
     var sentAt: Instant?,
@@ -23,9 +25,9 @@ class PushNotificationSchedule(
     var deepLink: String?,
 
     @Convert(converter = StringListToTextAttributeConverter::class)
-    var userIds: List<String>,
+    var userIds: List<String>
+) : TimeAuditingBaseEntity() {
 
-    ) : TimeAuditingBaseEntity() {
     fun isSent(): Boolean {
         return sentAt != null
     }

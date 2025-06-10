@@ -4,6 +4,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import java.time.Instant
+import java.util.concurrent.Executors
 
 @Component
 class SendOrSchedulePushNotificationUseCase(
@@ -11,6 +12,8 @@ class SendOrSchedulePushNotificationUseCase(
     private val pushService: PushService,
     private val pushScheduleService: PushScheduleService,
 ) {
+    private val executor = Executors.newSingleThreadExecutor()
+
     fun handle(
         scheduledAt: Instant?,
         title: String?,
@@ -49,7 +52,7 @@ class SendOrSchedulePushNotificationUseCase(
         targetUserIds: List<String>,
     ) = transactionManager.doInTransaction {
         val now = SccClock.instant()
-        val schedule = pushScheduleService.create(
+        val schedules = pushScheduleService.create(
             scheduledAt = now,
             title = title,
             body = body,
@@ -59,13 +62,17 @@ class SendOrSchedulePushNotificationUseCase(
         )
 
         transactionManager.doAfterCommit {
-            pushService.sendPushNotification(
-                userIds = targetUserIds,
-                title = title,
-                body = body,
-                deepLink = deepLink,
-                collapseKey = schedule.id,
-            )
+            executor.submit {
+                schedules.forEach {
+                    pushService.sendPushNotification(
+                        userIds = it.userIds,
+                        title = it.title,
+                        body = it.body,
+                        deepLink = it.deepLink,
+                        collapseKey = it.id,
+                    )
+                }
+            }
         }
     }
 }

@@ -76,16 +76,24 @@ class PushScheduleService(
         userIds: List<String>,
         sentAt: Instant? = null,
     ) = transactionManager.doInTransaction {
-        val pushNotificationSchedule = PushNotificationSchedule(
-            id = EntityIdGenerator.generateRandom(),
-            scheduledAt = scheduledAt,
-            sentAt = sentAt,
-            title = title,
-            body = body,
-            deepLink = deepLink,
-            userIds = userIds
-        )
-        pushNotificationScheduleRepository.save(pushNotificationSchedule)
+        val groupId = EntityIdGenerator.generateRandom()
+
+        val chunkedUserIds = userIds.chunked(CHUNK_SIZE)
+        val pushNotificationSchedules = chunkedUserIds.mapNotNull {
+            if (it.isEmpty()) return@mapNotNull null
+
+            PushNotificationSchedule(
+                id = EntityIdGenerator.generateRandom(),
+                groupId = groupId,
+                scheduledAt = scheduledAt,
+                sentAt = sentAt,
+                title = title,
+                body = body,
+                deepLink = deepLink,
+                userIds = it,
+            )
+        }
+        pushNotificationScheduleRepository.saveAll(pushNotificationSchedules).toList()
     }
 
     fun update(
@@ -153,5 +161,6 @@ class PushScheduleService(
         // 스케쥴링 된 푸시 알림을 보내는 주기
         private val scheduledPushNotificationInterval = Duration.ofMinutes(10L)
         private const val DEFAULT_LIMIT = 50
+        private const val CHUNK_SIZE = 1000
     }
 }
