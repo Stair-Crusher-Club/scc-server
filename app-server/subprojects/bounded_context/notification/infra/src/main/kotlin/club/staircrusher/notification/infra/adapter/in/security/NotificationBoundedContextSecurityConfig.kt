@@ -1,4 +1,4 @@
-package club.staircrusher.notification.adapter.`in`.security
+package club.staircrusher.notification.infra.adapter.`in`.security
 
 import club.staircrusher.spring_web.security.SccSecurityConfig
 import club.staircrusher.stdlib.di.annotation.Component

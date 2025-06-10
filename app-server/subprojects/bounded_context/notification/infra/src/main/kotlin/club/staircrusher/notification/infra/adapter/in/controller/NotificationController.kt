@@ -1,4 +1,4 @@
-package club.staircrusher.notification.adapter.`in`.controller
+package club.staircrusher.notification.infra.adapter.`in`.controller
 
 import club.staircrusher.notification.port.`in`.SendScheduledPushNotificationsUseCase
 import club.staircrusher.spring_web.security.InternalIpAddressChecker

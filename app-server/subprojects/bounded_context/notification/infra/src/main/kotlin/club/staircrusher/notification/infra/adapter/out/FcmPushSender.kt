@@ -1,4 +1,4 @@
-package club.staircrusher.notification.adapter.out
+package club.staircrusher.notification.infra.adapter.out
 
 import club.staircrusher.notification.port.`in`.PushService
 import club.staircrusher.notification.port.out.PushSender
