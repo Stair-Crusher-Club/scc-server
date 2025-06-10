@@ -34,7 +34,8 @@ class SendScheduledPushNotificationsUseCase(
                     userIds = schedule.userIds,
                     title = schedule.title,
                     body = schedule.body,
-                    deepLink = schedule.deepLink
+                    deepLink = schedule.deepLink,
+                    collapseKey = schedule.id,
                 )
 
                 transactionManager.doInTransaction {

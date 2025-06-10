@@ -49,7 +49,7 @@ class SendOrSchedulePushNotificationUseCase(
         targetUserIds: List<String>,
     ) = transactionManager.doInTransaction {
         val now = SccClock.instant()
-        pushScheduleService.create(
+        val schedule = pushScheduleService.create(
             scheduledAt = now,
             title = title,
             body = body,
@@ -64,6 +64,7 @@ class SendOrSchedulePushNotificationUseCase(
                 title = title,
                 body = body,
                 deepLink = deepLink,
+                collapseKey = schedule.id,
             )
         }
     }

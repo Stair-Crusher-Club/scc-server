@@ -19,7 +19,7 @@ import mu.KotlinLogging
 import java.util.UUID
 
 @Component
-class PushSender(
+class FcmPushSender(
     properties: PushSenderProperties,
 ) : PushSender {
     private val logger = KotlinLogging.logger { }

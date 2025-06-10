@@ -28,6 +28,7 @@ class PushService(
         title: String?,
         body: String,
         deepLink: String?,
+        collapseKey: String? = null,
     ) = transactionManager.doInTransaction(isReadOnly = true) {
         val userProfiles = userProfileRepository.findAllByUserIdIn(userIds)
         val notifications = userProfiles.mapNotNull { userProfile ->
@@ -37,7 +38,7 @@ class PushService(
                 title = title?.replace("{{nickname}}", userProfile.nickname),
                 body = body.replace("{{nickname}}", userProfile.nickname),
                 link = deepLink,
-                collapseKey = null,
+                collapseKey = collapseKey,
             )
         }
 
