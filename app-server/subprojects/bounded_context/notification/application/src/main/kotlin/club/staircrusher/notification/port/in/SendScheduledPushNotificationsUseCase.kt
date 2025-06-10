@@ -30,16 +30,18 @@ class SendScheduledPushNotificationsUseCase(
         logger.info { "Sending ${targetSchedules.size} scheduled push notifications" }
         val failedScheduleIds = targetSchedules.mapNotNull { schedule ->
             try {
-                pushService.sendPushNotification(
-                    userIds = schedule.userIds,
-                    title = schedule.title,
-                    body = schedule.body,
-                    deepLink = schedule.deepLink,
-                    collapseKey = schedule.id,
-                )
-
                 transactionManager.doInTransaction {
                     pushScheduleService.updateSentAt(schedule.id, SccClock.instant())
+
+                    transactionManager.doAfterCommit {
+                        pushService.sendPushNotification(
+                            userIds = schedule.userIds,
+                            title = schedule.title,
+                            body = schedule.body,
+                            deepLink = schedule.deepLink,
+                            collapseKey = schedule.id,
+                        )
+                    }
                 }
                 null
             } catch (e: Exception) {
