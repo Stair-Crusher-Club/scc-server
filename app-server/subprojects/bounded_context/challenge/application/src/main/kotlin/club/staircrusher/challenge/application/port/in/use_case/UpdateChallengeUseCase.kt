@@ -15,15 +15,6 @@ class UpdateChallengeUseCase(
 ) {
     fun handle(updateRequest: UpdateChallengeRequest): Challenge = transactionManager.doInTransaction {
         val updatingChallenge = challengeRepository.findByIdOrNull(updateRequest.id) ?: throw SccDomainException("챌린지를 찾을 수 없습니다.")
-        val challengeFromInvitationCode = updateRequest.invitationCode?.let {
-            challengeRepository.findFirstByInvitationCode(it)
-        }
-        if (challengeFromInvitationCode != null && challengeFromInvitationCode.id != updatingChallenge.id) {
-            throw SccDomainException(
-                "해당 참여코드로 만든 챌린지가 이미 존재합니다.(${updateRequest.invitationCode})",
-                errorCode = SccDomainException.ErrorCode.INVALID_ARGUMENTS
-            )
-        }
 
         updatingChallenge.update(updateRequest)
         challengeRepository.save(updatingChallenge)
