@@ -12,15 +12,15 @@ resource "aws_sqs_queue" "dev_common_dead_letter_queue" {
 resource "aws_sqs_queue_redrive_policy" "dev_common_queue_redrive_policy" {
   queue_url = aws_sqs_queue.dev_common_queue.id
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.dev_common_dead_letter_queue.arn,
+    deadLetterTargetArn = aws_sqs_queue.dev_common_dead_letter_queue.arn
     maxReceiveCount = 3
   })
 }
 
-resource "aws_sqs_queue_redrive_allow_policy" "dev_common_queue_redrive_allow_policy" {
+resource "aws_sqs_queue_redrive_allow_policy" "dev_common_dead_letter_queue_redrive_allow_policy" {
   queue_url = aws_sqs_queue.dev_common_dead_letter_queue.id
-  redrive_allow_policy = jsondecode({
-    redrivePermission = "byQueue",
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue"
     sourceQueueArns = [aws_sqs_queue.dev_common_queue.arn]
   })
 }
@@ -38,16 +38,16 @@ resource "aws_sqs_queue" "common_dead_letter_queue" {
 
 resource "aws_sqs_queue_redrive_policy" "common_queue_redrive_policy" {
   queue_url = aws_sqs_queue.common_queue.id
-  redrive_policy = jsondecode({
-    deadLetterTargetArn = aws_sqs_queue.common_dead_letter_queue.arn,
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.common_dead_letter_queue.arn
     maxReceiveCount = 3
   })
 }
 
-resource "aws_sqs_queue_redrive_allow_policy" "common_queue_redrive_allow_policy" {
+resource "aws_sqs_queue_redrive_allow_policy" "common_dead_letter_queue_redrive_allow_policy" {
   queue_url = aws_sqs_queue.common_dead_letter_queue.id
-  redrive_allow_policy = jsondecode({
-    redrivePermission = "byQueue",
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue"
     sourceQueueArns = [aws_sqs_queue.common_queue.arn]
   })
 }

@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "scc_common_queue_full_access" {
     actions = [
       "sqs:*",
     ]
-    resources = [aws_sqs_queue.common_queue]
+    resources = [aws_sqs_queue.common_queue.arn]
   }
 }
 
