@@ -30,7 +30,7 @@ class AdminNotificationControllerTest : NotificationITBase() {
         val schedules = pushNotificationScheduleRepository.findAll().toList()
         Assertions.assertEquals(1, schedules.size)
         Assertions.assertEquals("test message", schedules[0].body)
-        Assertions.assertNotNull(schedules[0].sentAt)
+        Assertions.assertTrue(schedules[0].isSent())
     }
 
     fun `유저의 수가 많으면 청킹해서 스케줄을 생성한다`() {
