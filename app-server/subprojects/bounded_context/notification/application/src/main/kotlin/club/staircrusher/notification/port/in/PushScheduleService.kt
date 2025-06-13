@@ -58,12 +58,15 @@ class PushScheduleService(
         val now = SccClock.instant()
         val schedules = pushNotificationScheduleRepository.findAllByScheduledAtBeforeAndSentAtIsNull(now)
 
-        if (schedules.any { it.scheduledAt.isBefore(now - scheduledPushNotificationInterval) }) {
-            val outdatedSchedules = schedules.filter { it.scheduledAt.isBefore(now - scheduledPushNotificationInterval) }
-            logger.warn {
-                "${outdatedSchedules.size} push notification schedules are outdated longer than $scheduledPushNotificationInterval (${outdatedSchedules.joinToString { it.id }})"
+        schedules
+            .filter { it.scheduledAt.isBefore(now - scheduledPushNotificationInterval) }
+            .let { outdatedSchedules ->
+                if (outdatedSchedules.isNotEmpty()) {
+                    logger.warn {
+                        "${outdatedSchedules.size} push notification schedules are outdated longer than $scheduledPushNotificationInterval (${outdatedSchedules.joinToString { it.id }})"
+                    }
+                }
             }
-        }
 
         schedules
     }
