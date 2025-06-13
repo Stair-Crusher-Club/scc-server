@@ -1,4 +1,4 @@
-package club.staircrusher.notification.adapter.out
+package club.staircrusher.notification.infra.adapter.out
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
