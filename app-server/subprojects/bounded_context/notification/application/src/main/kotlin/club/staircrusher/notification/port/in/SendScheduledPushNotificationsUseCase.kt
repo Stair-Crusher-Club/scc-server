@@ -32,16 +32,13 @@ class SendScheduledPushNotificationsUseCase(
             try {
                 transactionManager.doInTransaction {
                     pushScheduleService.updateSentAt(schedule.id, SccClock.instant())
-
-                    transactionManager.doAfterCommit {
-                        pushService.sendPushNotification(
-                            userIds = schedule.userIds,
-                            title = schedule.title,
-                            body = schedule.body,
-                            deepLink = schedule.deepLink,
-                            collapseKey = schedule.id,
-                        )
-                    }
+                    pushService.sendPushNotification(
+                        userIds = schedule.userIds,
+                        title = schedule.title,
+                        body = schedule.body,
+                        deepLink = schedule.deepLink,
+                        collapseKey = schedule.id,
+                    )
                 }
                 null
             } catch (e: Exception) {

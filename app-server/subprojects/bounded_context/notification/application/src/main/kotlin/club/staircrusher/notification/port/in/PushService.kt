@@ -42,12 +42,10 @@ class PushService(
             )
         }
 
-        transactionManager.doAfterCommit {
-            CoroutineScope(Dispatchers.IO).launch {
-                notifications.map { (t, n) ->
-                    async { pushSender.send(t, emptyMap(), n) }
-                }.joinAll()
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            notifications.map { (t, n) ->
+                async { pushSender.send(t, emptyMap(), n) }
+            }.joinAll()
         }
     }
 }
