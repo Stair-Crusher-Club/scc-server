@@ -1,14 +1,12 @@
 package club.staircrusher.place.application.port.`in`.accessibility
 
 import club.staircrusher.image.application.port.out.file_management.FileManagementService
-
 import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
 import club.staircrusher.place.application.port.out.accessibility.DetectFacesService
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.coroutine.SccDispatchers
 import club.staircrusher.stdlib.di.annotation.Component
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -54,7 +52,6 @@ class AccessibilityImageFaceBlurringService(
                 detectedPeopleCount = 0
             )
             val (blurredImageUrl, detectedPositions) = run {
-
                 val outputByteArray = withContext(SccDispatchers.ImageProcess) {
                     imageProcessor.blur(imageBytes, extension, detected.positions)
                 }
