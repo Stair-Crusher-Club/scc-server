@@ -1,6 +1,5 @@
 package club.staircrusher.notification.port.`in`
 
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 import java.time.Instant
@@ -41,7 +40,6 @@ class SendOrSchedulePushNotificationUseCase(
             body = body,
             deepLink = deepLink,
             userIds = targetUserIds,
-            sentAt = null,
         )
     }
 
@@ -50,29 +48,15 @@ class SendOrSchedulePushNotificationUseCase(
         body: String,
         deepLink: String?,
         targetUserIds: List<String>,
-    ) = transactionManager.doInTransaction {
-        val now = SccClock.instant()
-        val schedules = pushScheduleService.create(
-            scheduledAt = now,
-            title = title,
-            body = body,
-            deepLink = deepLink,
-            userIds = targetUserIds,
-            sentAt = now,
-        )
-
-        transactionManager.doAfterCommit {
-            executor.submit {
-                schedules.forEach {
-                    pushService.sendPushNotification(
-                        userIds = it.userIds,
-                        title = it.title,
-                        body = it.body,
-                        deepLink = it.deepLink,
-                        collapseKey = it.id,
-                    )
-                }
-            }
+    ) {
+        executor.submit {
+            pushService.sendPushNotification(
+                userIds = targetUserIds,
+                title = title,
+                body = body,
+                deepLink = deepLink,
+                collapseKey = null,
+            )
         }
     }
 }

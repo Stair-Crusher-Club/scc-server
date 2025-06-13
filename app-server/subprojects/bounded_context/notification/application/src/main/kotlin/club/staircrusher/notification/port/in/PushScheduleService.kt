@@ -74,7 +74,6 @@ class PushScheduleService(
         body: String,
         deepLink: String?,
         userIds: List<String>,
-        sentAt: Instant? = null,
     ) = transactionManager.doInTransaction {
         val groupId = EntityIdGenerator.generateRandom()
 
@@ -86,7 +85,6 @@ class PushScheduleService(
                 id = EntityIdGenerator.generateRandom(),
                 groupId = groupId,
                 scheduledAt = scheduledAt,
-                sentAt = sentAt,
                 title = title,
                 body = body,
                 deepLink = deepLink,
@@ -126,7 +124,7 @@ class PushScheduleService(
         val pushNotificationSchedule = pushNotificationScheduleRepository.findByIdOrNull(id)
             ?: throw SccDomainException("$id 에 해당하는 푸시 알림 스케줄이 존재하지 않습니다.")
 
-        pushNotificationSchedule.sentAt = sentAt
+        pushNotificationSchedule.updateSentAt(sentAt)
         pushNotificationScheduleRepository.save(pushNotificationSchedule)
     }
 
