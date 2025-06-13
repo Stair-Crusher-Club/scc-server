@@ -78,6 +78,8 @@ class PushScheduleService(
         deepLink: String?,
         userIds: List<String>,
     ) = transactionManager.doInTransaction {
+        checkDuplicateSchedule(scheduledAt, title, body, deepLink, userIds)
+
         val groupId = EntityIdGenerator.generateRandom()
 
         val chunkedUserIds = userIds.chunked(CHUNK_SIZE)
@@ -140,6 +142,31 @@ class PushScheduleService(
         if (pushNotificationSchedule.scheduledAt.isBefore(now)) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
 
         pushNotificationScheduleRepository.deleteById(id)
+    }
+
+    private fun checkDuplicateSchedule(
+        scheduledAt: Instant,
+        title: String?,
+        body: String,
+        deepLink: String?,
+        userIds: List<String>,
+    ) {
+        val now = SccClock.instant()
+        val recentlyCreatedSchedules = pushNotificationScheduleRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(
+            now.minusSeconds(60L),
+        )
+
+        val existsDuplicate = recentlyCreatedSchedules.any {
+            it.scheduledAt == scheduledAt &&
+            it.title == title &&
+            it.body == body &&
+            it.deepLink == deepLink &&
+            it.userIds == userIds
+        }
+
+        if (existsDuplicate) {
+            throw SccDomainException("이미 동일한 시간에 동일한 사용자에게 동일한 내용의 푸시 알림이 스케줄링 되어 있습니다.")
+        }
     }
 
     private data class Cursor(

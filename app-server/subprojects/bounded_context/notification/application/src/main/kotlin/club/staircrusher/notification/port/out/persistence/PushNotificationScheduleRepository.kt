@@ -25,4 +25,6 @@ interface PushNotificationScheduleRepository : CrudRepository<PushNotificationSc
     ): Page<PushNotificationSchedule>
 
     fun findAllByScheduledAtBeforeAndSentAtIsNull(scheduledAt: Instant): List<PushNotificationSchedule>
+
+    fun findAllByCreatedAtAfterOrderByCreatedAtDesc(createdAt: Instant): List<PushNotificationSchedule>
 }
