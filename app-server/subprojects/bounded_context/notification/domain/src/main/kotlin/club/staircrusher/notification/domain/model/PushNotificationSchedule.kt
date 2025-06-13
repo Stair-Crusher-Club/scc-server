@@ -1,5 +1,6 @@
 package club.staircrusher.notification.domain.model
 
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.persistence.jpa.StringListToTextAttributeConverter
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Convert
@@ -16,8 +17,6 @@ class PushNotificationSchedule(
 
     var scheduledAt: Instant,
 
-    var sentAt: Instant?,
-
     var title: String?,
 
     var body: String,
@@ -27,9 +26,18 @@ class PushNotificationSchedule(
     @Convert(converter = StringListToTextAttributeConverter::class)
     var userIds: List<String>
 ) : TimeAuditingBaseEntity() {
+    init {
+        check(scheduledAt.isAfter(SccClock.instant()))
+    }
+
+    private var sentAt: Instant? = null
 
     fun isSent(): Boolean {
         return sentAt != null
+    }
+
+    fun updateSentAt(sentAt: Instant) {
+        this.sentAt = sentAt
     }
 
     override fun equals(other: Any?): Boolean {
@@ -43,5 +51,9 @@ class PushNotificationSchedule(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    override fun toString(): String {
+        return "PushNotificationSchedule(id='$id', groupId='$groupId', scheduledAt=$scheduledAt, sentAt=$sentAt, title=$title, body='$body', deepLink=$deepLink, userIds=$userIds, createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }
