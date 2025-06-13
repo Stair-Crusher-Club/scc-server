@@ -22,9 +22,7 @@ class SendScheduledPushNotificationsUseCase(
     }
 
     private fun doHandle() {
-        val targetSchedules = transactionManager.doInTransaction(isReadOnly = true) {
-            pushScheduleService.getOutstandingSchedules()
-        }
+        val targetSchedules = pushScheduleService.getOutstandingSchedules()
         if (targetSchedules.isEmpty()) return
 
         logger.info { "Sending ${targetSchedules.size} scheduled push notifications" }
