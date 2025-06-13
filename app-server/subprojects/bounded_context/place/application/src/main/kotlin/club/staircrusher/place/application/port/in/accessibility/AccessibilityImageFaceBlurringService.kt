@@ -4,6 +4,7 @@ import club.staircrusher.image.application.port.out.file_management.FileManageme
 import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
 import club.staircrusher.place.application.port.out.accessibility.DetectFacesService
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
+import club.staircrusher.stdlib.coroutine.SccDispatchers
 import club.staircrusher.stdlib.di.annotation.Component
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -51,7 +52,7 @@ class AccessibilityImageFaceBlurringService(
                 detectedPeopleCount = 0
             )
             val (blurredImageUrl, detectedPositions) = run {
-                val outputByteArray = withContext(Dispatchers.Default) {
+                val outputByteArray = withContext(SccDispatchers.ImageProcess) {
                     imageProcessor.blur(imageBytes, extension, detected.positions)
                 }
                 val blurredImageUrl = withContext(Dispatchers.IO) {
@@ -78,7 +79,5 @@ class AccessibilityImageFaceBlurringService(
         val originalImageUrl: String,
         val blurredImageUrl: String?,
         val detectedPeopleCount: Int,
-    ) {
-        fun isBlurred() = originalImageUrl != blurredImageUrl
-    }
+    )
 }
