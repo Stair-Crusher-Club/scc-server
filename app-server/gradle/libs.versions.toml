@@ -32,6 +32,7 @@ mockitoKotlin = "5.1.0"
 thumbnailator = "0.4.20"
 webpImageio = "0.1.0"
 bucket4j = "8.10.1"
+googleGenai = "1.0.0"
 # 아래 4개의 버전은 함께 관리
 javaCv = "1.5.11"
 javaCpp = "1.5.11"
@@ -80,6 +81,7 @@ java-cv = { group = "org.bytedeco", name = "javacv", version.ref = "javaCv" }
 java-cpp = { group = "org.bytedeco", name = "javacpp", version.ref = "javaCpp"}
 open-cv = { group = "org.bytedeco", name = "opencv", version.ref = "openCv" }
 open-blas = { group = "org.bytedeco", name = "openblas", version.ref = "openBlas" }
+google-genai = { group = "com.google.genai", name = "google-genai", version.ref = "googleGenai" }
 
 [bundles]
 kotlin-subproject = ["kotlin-logging", "kotlin-serialization-json", "kotlin-reflect"]

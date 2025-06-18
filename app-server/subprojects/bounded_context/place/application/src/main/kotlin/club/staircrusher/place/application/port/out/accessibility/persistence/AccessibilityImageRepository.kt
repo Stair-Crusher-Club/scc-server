@@ -19,4 +19,28 @@ interface AccessibilityImageRepository : CrudRepository<AccessibilityImage, Stri
         LIMIT 10
     """)
     fun findBatchTargetsBefore(at: Instant): List<AccessibilityImage>
+
+    @Query("""
+        SELECT ai.*
+        FROM accessibility_image ai
+        WHERE
+            (:inspectionResultType IS NULL OR
+                (
+                    (:inspectionResultType = 'Visible' AND ai.inspection_result LIKE '%"Visible"%') OR
+                    (:inspectionResultType = 'NotVisible' AND ai.inspection_result LIKE '%"NotVisible"%')
+                )
+            )
+            AND (
+                (ai.created_at = :cursorCreatedAt AND ai.id < :cursorId)
+                OR (ai.created_at < :cursorCreatedAt)
+            )
+        ORDER BY ai.created_at DESC, ai.id DESC
+        LIMIT :limit
+    """, nativeQuery = true)
+    fun searchForAdmin(
+        inspectionResultType: String?,
+        cursorCreatedAt: Instant,
+        cursorId: String,
+        limit: Int,
+    ): List<AccessibilityImage>
 }

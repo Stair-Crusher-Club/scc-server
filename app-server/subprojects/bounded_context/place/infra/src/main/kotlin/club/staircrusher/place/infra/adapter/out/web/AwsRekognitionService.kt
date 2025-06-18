@@ -1,7 +1,6 @@
 package club.staircrusher.place.infra.adapter.out.web
 
-import club.staircrusher.place.application.port.out.accessibility.DetectFacesResponse
-import club.staircrusher.place.application.port.out.accessibility.DetectFacesService
+import club.staircrusher.place.application.port.`in`.accessibility.image.ImageFaceDetectionService
 import club.staircrusher.place.domain.model.accessibility.DetectedFacePosition
 import club.staircrusher.stdlib.Size
 import club.staircrusher.stdlib.di.annotation.Component
@@ -21,7 +20,7 @@ import javax.imageio.ImageIO
 @Component
 internal class AwsRekognitionService(
     private val properties: RekognitionProperties,
-) : DetectFacesService {
+) : ImageFaceDetectionService {
     private val rekognitionClient = RekognitionAsyncClient.builder()
         .region(Region.AP_NORTHEAST_2)
         .apply {
@@ -29,15 +28,15 @@ internal class AwsRekognitionService(
         }
         .build()
 
-    override suspend fun detect(imageUrl: String): DetectFacesResponse {
+    override suspend fun detect(imageUrl: String): ImageFaceDetectionService.Result {
         val imageBytes = downloadImage(imageUrl)
         return detect(imageBytes)
     }
 
-    override suspend fun detect(imageBytes: ByteArray): DetectFacesResponse {
+    override suspend fun detect(imageBytes: ByteArray): ImageFaceDetectionService.Result {
         val imageSize = getImageSize(imageBytes)
         val detected = detectFacesFromBytes(imageBytes)
-        return DetectFacesResponse(
+        return ImageFaceDetectionService.Result(
             imageBytes = imageBytes,
             imageSize = imageSize,
             positions = detected.faceDetails().map {

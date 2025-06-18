@@ -61,6 +61,7 @@ class AccessibilityImagePipelineTest : AccessibilityITBase() {
                 assertNotNull(it.lastPostProcessedAt)
                 assertNotNull(it.thumbnailUrl)
                 assertNotNull(it.blurredImageUrl)
+                assertNotNull(it.inspectionResult)
             }
         }
     }

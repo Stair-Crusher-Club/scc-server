@@ -1,7 +1,7 @@
 package club.staircrusher.place.application.port.`in`.accessibility
 
 import club.staircrusher.image.application.port.out.file_management.FileManagementService
-import club.staircrusher.place.application.port.`in`.accessibility.image.ThumbnailGenerator
+import club.staircrusher.place.application.port.`in`.accessibility.image.ImageThumbnailService
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.di.annotation.Component
 import kotlinx.coroutines.async
@@ -13,13 +13,16 @@ import java.nio.file.Files
 
 @Component
 class AccessibilityImageThumbnailService(
-    private val thumbnailGenerator: ThumbnailGenerator,
+    private val imageThumbnailService: ImageThumbnailService,
     private val fileManagementService: FileManagementService,
 ) {
     private val logger = KotlinLogging.logger {}
 
     suspend fun generateThumbnails(accessibilityImages: List<AccessibilityImage>) = coroutineScope {
-        accessibilityImages
+        val (processed, unprocessed) = accessibilityImages
+            .partition { it.thumbnailUrl != null }
+
+        unprocessed
             .map {
                 async {
                     val thumbnail = generateThumbnails(it) ?: return@async null
@@ -37,7 +40,7 @@ class AccessibilityImageThumbnailService(
                     image.thumbnailUrl = thumbnailUrl
                 }
                 return@map image
-            }
+            } + processed
     }
 
     private suspend fun generateThumbnails(originalAccessibilityImage: AccessibilityImage): Thumbnail? {
@@ -55,7 +58,7 @@ class AccessibilityImageThumbnailService(
         try {
             val imageFile = fileManagementService.downloadFile(originalImageUrl, destinationPath)
             val thumbnailFileName = "thumbnail_${imageFile.nameWithoutExtension}.$THUMBNAIL_FORMAT"
-            val thumbnailOutputStream = thumbnailGenerator.generate(imageFile, THUMBNAIL_FORMAT)
+            val thumbnailOutputStream = imageThumbnailService.generate(imageFile, THUMBNAIL_FORMAT)
 
             return Thumbnail(originalImageUrl, thumbnailFileName, thumbnailOutputStream)
         } catch (t: Throwable) {

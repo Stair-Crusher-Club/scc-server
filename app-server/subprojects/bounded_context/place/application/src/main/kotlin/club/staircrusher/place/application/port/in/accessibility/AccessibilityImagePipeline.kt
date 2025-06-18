@@ -1,5 +1,6 @@
 package club.staircrusher.place.application.port.`in`.accessibility
 
+import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageInspectionService
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.clock.SccClock
@@ -15,6 +16,7 @@ class AccessibilityImagePipeline(
     private val accessibilityImageThumbnailService: AccessibilityImageThumbnailService,
     private val accessibilityImageRepository: AccessibilityImageRepository,
     private val transactionManager: TransactionManager,
+    private val accessibilityImageInspectionService: AccessibilityImageInspectionService,
 ) {
     private val taskExecutor = Executors.newCachedThreadPool()
 
@@ -22,6 +24,7 @@ class AccessibilityImagePipeline(
         val processedImages = images
             .let { accessibilityImageFaceBlurringService.blurImages(it) }
             .let { accessibilityImageThumbnailService.generateThumbnails(it) }
+            .let { accessibilityImageInspectionService.inspect(it) }
             .also { it.forEach { img -> img.lastPostProcessedAt = SccClock.instant() } }
         transactionManager.doInTransaction {
             accessibilityImageRepository.saveAll(processedImages)
