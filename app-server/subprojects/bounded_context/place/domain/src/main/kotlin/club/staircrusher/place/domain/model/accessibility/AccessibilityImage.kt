@@ -1,7 +1,10 @@
 package club.staircrusher.place.domain.model.accessibility
 
+import club.staircrusher.place.domain.model.check.ImageInspectionAttributeConverter
+import club.staircrusher.place.domain.model.check.ImageInspectionResult
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import jakarta.persistence.Column
+import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -40,6 +43,10 @@ class AccessibilityImage(
 
     @Column(nullable = true)
     var displayOrder: Int? = null,
+
+    @Column(nullable = true)
+    @Convert(converter = ImageInspectionAttributeConverter::class)
+    var inspectionResult: ImageInspectionResult? = null,
 ) : TimeAuditingBaseEntity() {
 
     override fun equals(other: Any?): Boolean {
