@@ -33,9 +33,7 @@ class SearchPlacesController(
             currentLocation = request.currentLocation?.toModel(),
             distanceMetersLimit = Length.ofMeters(request.distanceMetersLimit.toDouble()),
             sort = request.sort?.value,
-            maxAccessibilityScore = request.filters?.maxAccessibilityScore,
-            hasSlope = request.filters?.hasSlope,
-            isAccessibilityRegistered = request.filters?.isRegistered,
+            filter = request.filters?.toModel(),
             limit = null,
             userId = userId
         )
