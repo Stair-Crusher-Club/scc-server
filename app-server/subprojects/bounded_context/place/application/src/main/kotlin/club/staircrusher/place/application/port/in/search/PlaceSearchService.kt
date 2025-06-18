@@ -7,6 +7,7 @@ import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.place.application.result.SearchPlacesResult
 import club.staircrusher.place.domain.model.accessibility.AccessibilityScore
 import club.staircrusher.place.domain.model.place.Place
+import club.staircrusher.place.domain.model.search.SearchPlaceFilter
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Length
 import club.staircrusher.stdlib.geography.Location
@@ -26,9 +27,7 @@ class PlaceSearchService(
         currentLocation: Location?,
         distanceMetersLimit: Length,
         sort: String?,
-        maxAccessibilityScore: Double?,
-        hasSlope: Boolean?,
-        isAccessibilityRegistered: Boolean?,
+        filter: SearchPlaceFilter?,
         limit: Int?,
         userId: String? = null,
     ): List<SearchPlacesResult> {
@@ -41,7 +40,7 @@ class PlaceSearchService(
         val placeIdToIsFavoriteMap = userId?.let { uid -> placeApplicationService.isFavoritePlaces(places.map { it.id }, uid) } ?: emptyMap()
 
         return places.toSearchPlacesResult(currentLocation = currentLocation, placeIdToIsFavoriteMap = placeIdToIsFavoriteMap)
-            .filterWith(maxAccessibilityScore, hasSlope, isAccessibilityRegistered, limit)
+            .filterWith(filter, limit)
             .let { if (sort == "ACCESSIBILITY_SCORE") it.sortedBy { it.accessibilityScore } else it }
     }
 
@@ -158,15 +157,13 @@ class PlaceSearchService(
     }
 
     private fun List<SearchPlacesResult>.filterWith(
-        maxAccessibilityScore: Double?,
-        hasSlope: Boolean?,
-        isAccessibilityRegistered: Boolean?,
+        searchPlaceFilter: SearchPlaceFilter?,
         limit: Int?,
     ): List<SearchPlacesResult> {
         return this.filter { result ->
-            val scoreChecked = maxAccessibilityScore?.let { (result.accessibilityScore ?: Double.MAX_VALUE) <= it } ?: true
-            val slopeChecked = hasSlope?.let { result.placeAccessibility?.hasSlope == it } ?: true
-            val accessibilityRegisteredChecked = isAccessibilityRegistered?.let { (result.placeAccessibility !== null) == it } ?: true
+            val scoreChecked = searchPlaceFilter?.maxAccessibilityScore?.let { (result.accessibilityScore ?: Double.MAX_VALUE) <= it } ?: true
+            val slopeChecked = searchPlaceFilter?.hasSlope?.let { result.placeAccessibility?.hasSlope == it } ?: true
+            val accessibilityRegisteredChecked = searchPlaceFilter?.isAccessibilityRegistered?.let { (result.placeAccessibility !== null) == it } ?: true
             scoreChecked && slopeChecked && accessibilityRegisteredChecked
         }.let {
             if (limit != null) it.take(limit) else it
