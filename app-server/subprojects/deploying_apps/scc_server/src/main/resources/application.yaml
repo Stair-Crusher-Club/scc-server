@@ -95,6 +95,7 @@ scc:
   slack:
     token: test
     channel:
+      alert: "#scc-server-alert"
       reportAccessibility: "#scc-accessibility-report-test"
 
   open-data:

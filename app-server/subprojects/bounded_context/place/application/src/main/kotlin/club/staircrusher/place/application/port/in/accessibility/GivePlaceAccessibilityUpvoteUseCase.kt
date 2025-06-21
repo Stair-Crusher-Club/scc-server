@@ -1,6 +1,6 @@
 package club.staircrusher.place.application.port.`in`.accessibility
 
-import club.staircrusher.place.application.port.out.accessibility.SlackService
+import club.staircrusher.slack.application.port.out.web.SlackService
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityUpvoteRepository
 import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository

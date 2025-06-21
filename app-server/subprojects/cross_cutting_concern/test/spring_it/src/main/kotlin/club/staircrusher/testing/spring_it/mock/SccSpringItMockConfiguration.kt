@@ -5,7 +5,7 @@ import club.staircrusher.notification.port.out.PushSender
 import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
 import club.staircrusher.place.application.port.`in`.accessibility.image.ThumbnailGenerator
 import club.staircrusher.place.application.port.out.accessibility.DetectFacesService
-import club.staircrusher.place.application.port.out.accessibility.SlackService
+import club.staircrusher.slack.application.port.out.web.SlackService
 import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
 import club.staircrusher.stdlib.clock.SccClock

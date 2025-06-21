@@ -1,6 +1,6 @@
 package club.staircrusher.testing.spring_it.mock
 
-import club.staircrusher.place.application.port.out.accessibility.SlackService
+import club.staircrusher.slack.application.port.out.web.SlackService
 
 
 class MockSlackService : SlackService {

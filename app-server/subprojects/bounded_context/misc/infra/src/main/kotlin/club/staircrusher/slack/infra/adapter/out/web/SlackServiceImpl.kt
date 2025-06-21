@@ -1,7 +1,7 @@
-package club.staircrusher.place.infra.adapter.out.web
+package club.staircrusher.slack.infra.adapter.out.web
 
 import club.staircrusher.infra.network.createExternalApiService
-import club.staircrusher.place.application.port.out.accessibility.SlackService
+import club.staircrusher.slack.application.port.out.web.SlackService
 import club.staircrusher.stdlib.di.annotation.Component
 import mu.KotlinLogging
 import org.springframework.http.HttpHeaders

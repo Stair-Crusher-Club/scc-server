@@ -1,4 +1,4 @@
-package club.staircrusher.place.infra.adapter.out.web
+package club.staircrusher.slack.infra.adapter.out.web
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
