@@ -2,13 +2,15 @@ package club.staircrusher.notification.port.`in`
 
 import club.staircrusher.notification.domain.model.PushNotificationSchedule
 import club.staircrusher.notification.port.out.persistence.PushNotificationScheduleRepository
+import club.staircrusher.slack.application.port.out.web.SlackService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionManager
-import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import java.time.Duration
@@ -18,9 +20,9 @@ import java.time.Instant
 class PushScheduleService(
     private val transactionManager: TransactionManager,
     private val pushNotificationScheduleRepository: PushNotificationScheduleRepository,
+    private val slackService: SlackService,
+    @Value("\${scc.slack.channel.alert:#scc-server-alert}") val alertChannel: String,
 ) {
-    private val logger = KotlinLogging.logger {}
-
     fun list(
         limit: Int?,
         cursorValue: String?,
@@ -62,9 +64,7 @@ class PushScheduleService(
             .filter { it.scheduledAt.isBefore(now - scheduledPushNotificationInterval) }
             .let { outdatedSchedules ->
                 if (outdatedSchedules.isNotEmpty()) {
-                    logger.warn {
-                        "${outdatedSchedules.size} push notification schedules are outdated longer than $scheduledPushNotificationInterval (${outdatedSchedules.joinToString { it.id }})"
-                    }
+                    alertOutdatedPushSchedules(outdatedSchedules)
                 }
             }
 
@@ -167,6 +167,13 @@ class PushScheduleService(
         if (existsDuplicate) {
             throw SccDomainException("이미 동일한 시간에 동일한 사용자에게 동일한 내용의 푸시 알림이 스케줄링 되어 있습니다.")
         }
+    }
+
+    private fun alertOutdatedPushSchedules(outdatedSchedules: List<PushNotificationSchedule>) {
+        val message = "[${SccEnv.getEnv().name}]\n${outdatedSchedules.size} push notification schedules are outdated longer than " +
+            "$scheduledPushNotificationInterval (${outdatedSchedules.joinToString { it.id }})"
+
+        slackService.send(alertChannel, message)
     }
 
     private data class Cursor(
