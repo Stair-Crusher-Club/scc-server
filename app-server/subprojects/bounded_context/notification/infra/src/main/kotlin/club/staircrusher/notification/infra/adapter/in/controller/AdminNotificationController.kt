@@ -1,10 +1,13 @@
 package club.staircrusher.notification.infra.adapter.`in`.controller
 
-import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
+import club.staircrusher.admin_api.spec.dto.AdminListPushNotificationSchedulesResponseDTO
+import club.staircrusher.admin_api.spec.dto.AdminPushNotificationScheduleDTO
+import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDTO
+import club.staircrusher.admin_api.spec.dto.AdminUpdatePushNotificationScheduleRequestDTO
 import club.staircrusher.notification.port.`in`.PushScheduleService
 import club.staircrusher.notification.port.`in`.SendOrSchedulePushNotificationUseCase
 import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
-import club.staircrusher.stdlib.clock.SccClock
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
 
 @RestController
 class AdminNotificationController(
@@ -21,58 +25,62 @@ class AdminNotificationController(
 ) {
     @PostMapping("/admin/notifications/sendPush")
     fun adminSendPushNotification(
-        @RequestBody request: AdminSendPushNotificationRequestDto,
+        @RequestBody request: AdminSendPushNotificationRequestDTO,
         @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
     ) {
         sendOrSchedulePushNotificationUseCase.handle(
-            scheduledAt = null,
+            scheduledAt = request.scheduledAt?.let { Instant.ofEpochMilli(it.value) },
             targetUserIds = request.userIds,
-            title = request.notification.title,
-            body = request.notification.body,
-            deepLink = request.notification.deepLink,
+            title = request.title,
+            body = request.body,
+            deepLink = request.deepLink,
         )
     }
 
-    @GetMapping("/admin/notifications/pushSchedule")
+    @GetMapping("/admin/notifications/pushSchedules")
     fun adminListPushNotificationSchedules(
         @RequestParam(required = false) limit: Int?,
         @RequestParam(required = false) cursor: String?,
         @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
-    ) {
+    ): AdminListPushNotificationSchedulesResponseDTO {
         val (items, nextCursor) = pushScheduleService.list(limit, cursor)
-        return
-    }
-
-    @GetMapping("/admin/notifications/pushSchedule/{scheduleId}")
-    fun adminGetPushNotificationSchedule(
-        @PathVariable scheduleId: String,
-        @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
-    ) {
-        pushScheduleService.get(scheduleId)
-    }
-
-    @PutMapping("/admin/notifications/pushSchedule/{scheduleId}")
-    fun updatePushNotificationSchedule(
-        @PathVariable scheduleId: String,
-        @RequestBody request: AdminSendPushNotificationRequestDto,
-        @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
-    ) {
-        // TODO: fix using api-spec
-        pushScheduleService.update(
-            scheduleId,
-            userIds = request.userIds,
-            title = request.notification.title,
-            body = request.notification.body,
-            deepLink = request.notification.deepLink,
-            scheduledAt = SccClock.instant()
+        return AdminListPushNotificationSchedulesResponseDTO(
+            list = items.map { it.toAdminDTO() },
+            cursor = nextCursor,
         )
     }
 
-    @DeleteMapping("/admin/notifications/pushSchedule/{scheduleId}")
-    fun deletePushNotificationSchedule(
-        @PathVariable scheduleId: String,
+    @GetMapping("/admin/notifications/pushSchedules/{scheduleGroupId}")
+    fun adminGetPushNotificationSchedule(
+        @PathVariable scheduleGroupId: String,
         @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
-    ) {
-        return pushScheduleService.delete(scheduleId)
+    ) : AdminPushNotificationScheduleDTO {
+        return pushScheduleService.get(scheduleGroupId).toAdminDTO()
+    }
+
+    @PutMapping("/admin/notifications/pushSchedules/{scheduleGroupId}")
+    fun updatePushNotificationSchedule(
+        @PathVariable scheduleGroupId: String,
+        @RequestBody request: AdminUpdatePushNotificationScheduleRequestDTO,
+        @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
+    ) : ResponseEntity<Unit> {
+        pushScheduleService.update(
+            groupId = scheduleGroupId,
+            title = request.title,
+            body = request.body,
+            deepLink = request.deepLink,
+            scheduledAt = Instant.ofEpochMilli(request.scheduledAt.value),
+        )
+
+        return ResponseEntity.noContent().build()
+    }
+
+    @DeleteMapping("/admin/notifications/pushSchedules/{scheduleGroupId}")
+    fun deletePushNotificationSchedule(
+        @PathVariable scheduleGroupId: String,
+        @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
+    ) : ResponseEntity<Unit> {
+        pushScheduleService.delete(scheduleGroupId)
+        return ResponseEntity.noContent().build()
     }
 }

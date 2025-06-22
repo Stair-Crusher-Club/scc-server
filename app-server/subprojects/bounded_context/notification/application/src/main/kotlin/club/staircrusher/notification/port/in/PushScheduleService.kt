@@ -2,6 +2,7 @@ package club.staircrusher.notification.port.`in`
 
 import club.staircrusher.notification.domain.model.PushNotificationSchedule
 import club.staircrusher.notification.port.out.persistence.PushNotificationScheduleRepository
+import club.staircrusher.notification.port.`in`.result.FlattenedPushSchedule
 import club.staircrusher.slack.application.port.out.web.SlackService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
@@ -30,28 +31,59 @@ class PushScheduleService(
         val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.initial()
         val normalizedLimit = limit ?: DEFAULT_LIMIT
 
+        // chunking 을 고려하여 limit 를 두배로 설정
+        val overFetchLimit = normalizedLimit * 2
         val pageRequest = PageRequest.of(
             0,
-            normalizedLimit,
+            overFetchLimit,
         )
+        println(cursor.timestamp)
         val result = pushNotificationScheduleRepository.findCursored(
             cursorCreatedAt = cursor.timestamp,
             cursorId = cursor.id,
             pageable = pageRequest,
         )
+        val grouped = result.content
+            .groupBy { it.groupId }
+            .map { (groupId, schedules) ->
+                FlattenedPushSchedule(
+                    groupId = groupId,
+                    scheduledAt = schedules.first().scheduledAt,
+                    sentAt = schedules.first().sentAt,
+                    title = schedules.first().title,
+                    body = schedules.first().body,
+                    deepLink = schedules.first().deepLink,
+                    userIds = schedules.flatMap { it.userIds },
+                    createdAt = schedules.first().createdAt,
+                )
+            }
+        val selected = grouped.take(normalizedLimit)
 
         val nextCursor = if (result.hasNext()) {
-            Cursor(result.content[normalizedLimit - 1])
+            Cursor(selected[normalizedLimit - 1])
         } else {
             null
         }
 
-        return@doInTransaction result.content.toList() to nextCursor?.value
+        return@doInTransaction selected to nextCursor?.value
     }
 
-    fun get(id: String) = transactionManager.doInTransaction(isReadOnly = true) {
-        pushNotificationScheduleRepository.findByIdOrNull(id)
-            ?: throw SccDomainException("$id 에 해당하는 푸시 알림 스케줄이 존재하지 않습니다.")
+    fun get(groupId: String) = transactionManager.doInTransaction(isReadOnly = true) {
+        val pushNotificationSchedules = pushNotificationScheduleRepository.findByGroupId(groupId)
+        if (pushNotificationSchedules.isEmpty()) {
+            throw SccDomainException("$groupId 에 해당하는 푸시 알림 스케줄이 존재하지 않습니다.")
+        }
+
+        FlattenedPushSchedule(
+            groupId = pushNotificationSchedules.first().groupId,
+            scheduledAt = pushNotificationSchedules.first().scheduledAt,
+            sentAt = pushNotificationSchedules.first().sentAt,
+            title = pushNotificationSchedules.first().title,
+            body = pushNotificationSchedules.first().body,
+            deepLink = pushNotificationSchedules.first().deepLink,
+            userIds = pushNotificationSchedules.flatMap { it.userIds },
+            createdAt = pushNotificationSchedules.first().createdAt,
+        )
     }
 
     fun getOutstandingSchedules() = transactionManager.doInTransaction(isReadOnly = true) {
@@ -78,7 +110,9 @@ class PushScheduleService(
         deepLink: String?,
         userIds: List<String>,
     ) = transactionManager.doInTransaction {
-        checkDuplicateSchedule(scheduledAt, title, body, deepLink, userIds)
+        val now = SccClock.instant()
+        if (scheduledAt.isBefore(now)) throw SccDomainException("스케줄링 시간은 현재 시간 이후여야 합니다.")
+        checkDuplicateSchedule(now, scheduledAt, title, body, deepLink, userIds)
 
         val groupId = EntityIdGenerator.generateRandom()
 
@@ -100,29 +134,31 @@ class PushScheduleService(
     }
 
     fun update(
-        id: String,
+        groupId: String,
         scheduledAt: Instant,
         title: String?,
         body: String,
         deepLink: String?,
-        userIds: List<String>,
     ) = transactionManager.doInTransaction {
         val now = SccClock.instant()
-        val pushNotificationSchedule = pushNotificationScheduleRepository.findByIdOrNull(id)
-            ?: throw SccDomainException("$id 에 해당하는 푸시 알림 스케줄이 존재하지 않습니다.")
+        val pushNotificationSchedules = pushNotificationScheduleRepository.findByGroupId(groupId)
+        if (pushNotificationSchedules.isEmpty()) {
+            throw SccDomainException("$groupId 에 해당하는 푸시 알림 스케줄이 존재하지 않습니다.")
+        }
 
-        if (pushNotificationSchedule.isSent()) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 수정할 수 없습니다.")
-        if (pushNotificationSchedule.scheduledAt.isBefore(now)) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 수정할 수 없습니다.")
+        if (pushNotificationSchedules.any { it.isSent() }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 수정할 수 없습니다.")
+        if (pushNotificationSchedules.any { it.scheduledAt.isBefore(now) }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 수정할 수 없습니다.")
         if (scheduledAt.isBefore(now)) throw SccDomainException("스케줄링 시간은 현재 시간 이후여야 합니다.")
 
-        pushNotificationSchedule.apply {
-            this.scheduledAt = scheduledAt
-            this.title = title
-            this.body = body
-            this.deepLink = deepLink
-            this.userIds = userIds
+        pushNotificationSchedules.forEach {
+            it.apply {
+                this.scheduledAt = scheduledAt
+                this.title = title
+                this.body = body
+                this.deepLink = deepLink
+            }
         }
-        pushNotificationScheduleRepository.save(pushNotificationSchedule)
+        pushNotificationScheduleRepository.saveAll(pushNotificationSchedules)
     }
 
     fun updateSentAt(id: String, sentAt: Instant) = transactionManager.doInTransaction {
@@ -133,25 +169,27 @@ class PushScheduleService(
         pushNotificationScheduleRepository.save(pushNotificationSchedule)
     }
 
-    fun delete(id: String) = transactionManager.doInTransaction {
+    fun delete(groupId: String) = transactionManager.doInTransaction {
         val now = SccClock.instant()
-        val pushNotificationSchedule = pushNotificationScheduleRepository.findByIdOrNull(id)
-            ?: throw SccDomainException("$id 에 해당하는 푸시 알림 스케줄이 존재하지 않습니다.")
+        val pushNotificationSchedules = pushNotificationScheduleRepository.findByGroupId(groupId)
+        if (pushNotificationSchedules.isEmpty()) {
+            throw SccDomainException("$groupId 에 해당하는 푸시 알림 스케줄이 존재하지 않습니다.")
+        }
 
-        if (pushNotificationSchedule.isSent()) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
-        if (pushNotificationSchedule.scheduledAt.isBefore(now)) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
+        if (pushNotificationSchedules.any { it.isSent() }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
+        if (pushNotificationSchedules.any { it.scheduledAt.isBefore(now) }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
 
-        pushNotificationScheduleRepository.deleteById(id)
+        pushNotificationScheduleRepository.deleteAllByGroupId(groupId)
     }
 
     private fun checkDuplicateSchedule(
+        now: Instant,
         scheduledAt: Instant,
         title: String?,
         body: String,
         deepLink: String?,
         userIds: List<String>,
     ) {
-        val now = SccClock.instant()
         val recentlyCreatedSchedules = pushNotificationScheduleRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(
             now.minusSeconds(60L),
         )
@@ -178,11 +216,11 @@ class PushScheduleService(
 
     private data class Cursor(
         val createdAt: Instant,
-        val scheduleId: String,
-    ) : TimestampCursor(createdAt, scheduleId) {
-        constructor(schedule: PushNotificationSchedule) : this(
+        val groupId: String,
+    ) : TimestampCursor(createdAt, groupId) {
+        constructor(schedule: FlattenedPushSchedule) : this(
             createdAt = schedule.createdAt,
-            scheduleId = schedule.id,
+            groupId = schedule.groupId,
         )
 
         companion object {

@@ -35,7 +35,7 @@ class PushNotificationSchedule(
         check(scheduledAt.isAfter(SccClock.instant()))
     }
 
-    private var sentAt: Instant? = null
+    var sentAt: Instant? = null
 
     fun isSent(): Boolean {
         return sentAt != null

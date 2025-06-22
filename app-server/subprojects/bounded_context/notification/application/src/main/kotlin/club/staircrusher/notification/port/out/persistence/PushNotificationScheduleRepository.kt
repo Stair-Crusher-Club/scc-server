@@ -13,10 +13,10 @@ interface PushNotificationScheduleRepository : CrudRepository<PushNotificationSc
         FROM PushNotificationSchedule s
         WHERE
             (
-                (s.createdAt = :cursorCreatedAt AND s.id < :cursorId)
+                (s.createdAt = :cursorCreatedAt AND s.groupId < :cursorId)
                 OR (s.createdAt < :cursorCreatedAt)
             )
-        ORDER BY s.createdAt DESC, s.id DESC
+        ORDER BY s.createdAt DESC, s.groupId DESC
     """)
     fun findCursored(
         cursorCreatedAt: Instant,
@@ -24,7 +24,11 @@ interface PushNotificationScheduleRepository : CrudRepository<PushNotificationSc
         pageable: Pageable
     ): Page<PushNotificationSchedule>
 
+    fun findByGroupId(groupId: String): List<PushNotificationSchedule>
+
     fun findAllByScheduledAtBeforeAndSentAtIsNull(scheduledAt: Instant): List<PushNotificationSchedule>
 
     fun findAllByCreatedAtAfterOrderByCreatedAtDesc(createdAt: Instant): List<PushNotificationSchedule>
+
+    fun deleteAllByGroupId(groupId: String)
 }

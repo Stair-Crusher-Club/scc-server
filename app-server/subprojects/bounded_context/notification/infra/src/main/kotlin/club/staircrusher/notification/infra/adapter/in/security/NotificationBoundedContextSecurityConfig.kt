@@ -9,8 +9,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher
 class NotificationBoundedContextSecurityConfig : SccSecurityConfig {
     override fun requestMatchers() = listOf(
         "/admin/notifications/sendPush",
-        "/admin/notifications/pushSchedule",
-        "/admin/notifications/pushSchedule/{scheduleId}",
+        "/admin/notifications/pushSchedules",
+        "/admin/notifications/pushSchedules/{scheduleGroupId}",
     ).map { AntPathRequestMatcher(it) }
 
     override fun identifiedUserOnlyRequestMatchers() = emptyList<RequestMatcher>()
