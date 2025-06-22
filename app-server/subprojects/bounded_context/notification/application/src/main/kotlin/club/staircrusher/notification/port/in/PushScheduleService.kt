@@ -37,7 +37,6 @@ class PushScheduleService(
             0,
             overFetchLimit,
         )
-        println(cursor.timestamp)
         val result = pushNotificationScheduleRepository.findCursored(
             cursorCreatedAt = cursor.timestamp,
             cursorId = cursor.id,
