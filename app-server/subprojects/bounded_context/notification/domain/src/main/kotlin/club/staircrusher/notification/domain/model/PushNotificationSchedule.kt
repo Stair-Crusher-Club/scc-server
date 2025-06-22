@@ -16,6 +16,7 @@ class PushNotificationSchedule(
     /**
      * 스케줄 생성시 user id 를 1000개씩 갖도록 청킹
      * 그렇게 한번에 생성됐지만 row 가 여러개 있는 경우를 묶기 위한 id
+     * 어드민과의 상호작용은 이 값을 통해 이뤄진다
      */
     val groupId: String,
 
