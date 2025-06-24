@@ -1,7 +1,7 @@
 package club.staircrusher.place.application.port.`in`.accessibility
 
 import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
-import club.staircrusher.place.application.port.out.accessibility.SlackService
+import club.staircrusher.slack.application.port.out.web.SlackService
 import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityReportRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityReport
 import club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason
