@@ -3,7 +3,6 @@ package club.staircrusher.user.application.port.`in`
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
 import club.staircrusher.domain.server_event.NewsletterSubscribedPayload
 import club.staircrusher.domain.server_event.NewsletterUnsubscribedPayload
-import club.staircrusher.notification.port.`in`.PushService
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -27,11 +26,6 @@ import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.model.UserConnectionReason
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -46,7 +40,6 @@ class UserApplicationService(
     private val passwordEncryptor: PasswordEncryptor,
     private val stibeeSubscriptionService: StibeeSubscriptionService,
     private val sccServerEventRecorder: SccServerEventRecorder,
-    private val pushService: PushService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -137,33 +130,6 @@ class UserApplicationService(
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
         userProfile.pushToken = pushToken
         userProfileRepository.save(userProfile)
-    }
-
-    fun sendPushNotification(
-        userIds: List<String>,
-        title: String?,
-        body: String,
-        deepLink: String?,
-    ) = transactionManager.doInTransaction {
-        val userProfiles = userProfileRepository.findAllByUserIdIn(userIds)
-        val notifications = userProfiles.mapNotNull { userProfile ->
-            userProfile.pushToken ?: return@mapNotNull null
-            userProfile.pushToken!! to PushService.Notification(
-                // just poc for now, but not sure this substitution needs to be placed here
-                title = title?.replace("{{nickname}}", userProfile.nickname),
-                body = body.replace("{{nickname}}", userProfile.nickname),
-                link = deepLink,
-                collapseKey = null,
-            )
-        }
-
-        transactionManager.doAfterCommit {
-            CoroutineScope(Dispatchers.IO).launch {
-                notifications.map { (t, n) ->
-                    async { pushService.send(t, emptyMap(), n) }
-                }.joinAll()
-            }
-        }
     }
 
     private fun validateAndNormalizeNickname(nickname: String, currentUserId: String? = null): String {
