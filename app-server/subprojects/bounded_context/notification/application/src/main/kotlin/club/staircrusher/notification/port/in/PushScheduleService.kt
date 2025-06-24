@@ -38,7 +38,7 @@ class PushScheduleService(
             overFetchLimit,
         )
         val result = pushNotificationScheduleRepository.findCursored(
-            cursorCreatedAt = cursor.timestamp,
+            cursorScheduledAt = cursor.timestamp,
             cursorId = cursor.id,
             pageable = pageRequest,
         )
@@ -53,7 +53,6 @@ class PushScheduleService(
                     body = schedules.first().body,
                     deepLink = schedules.first().deepLink,
                     userIds = schedules.flatMap { it.userIds },
-                    createdAt = schedules.first().createdAt,
                 )
             }
         val selected = grouped.take(normalizedLimit)
@@ -81,7 +80,6 @@ class PushScheduleService(
             body = pushNotificationSchedules.first().body,
             deepLink = pushNotificationSchedules.first().deepLink,
             userIds = pushNotificationSchedules.flatMap { it.userIds },
-            createdAt = pushNotificationSchedules.first().createdAt,
         )
     }
 
@@ -214,11 +212,11 @@ class PushScheduleService(
     }
 
     private data class Cursor(
-        val createdAt: Instant,
+        val scheduledAt: Instant,
         val groupId: String,
-    ) : TimestampCursor(createdAt, groupId) {
+    ) : TimestampCursor(scheduledAt, groupId) {
         constructor(schedule: FlattenedPushSchedule) : this(
-            createdAt = schedule.createdAt,
+            scheduledAt = schedule.scheduledAt,
             groupId = schedule.groupId,
         )
 
