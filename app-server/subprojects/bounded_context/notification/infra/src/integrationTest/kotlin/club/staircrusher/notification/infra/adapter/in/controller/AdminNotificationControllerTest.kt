@@ -4,7 +4,6 @@ import club.staircrusher.admin_api.converter.toDTO
 import club.staircrusher.admin_api.spec.dto.AdminListPushNotificationSchedulesResponseDTO
 import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDTO
 import club.staircrusher.notification.infra.adapter.`in`.controller.base.NotificationITBase
-import club.staircrusher.notification.port.`in`.PushScheduleService
 import club.staircrusher.notification.port.out.persistence.PushNotificationScheduleRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -16,9 +15,6 @@ import java.time.Duration
 class AdminNotificationControllerTest : NotificationITBase() {
     @Autowired
     private lateinit var pushNotificationScheduleRepository: PushNotificationScheduleRepository
-
-    @Autowired
-    private lateinit var pushScheduleService: PushScheduleService
 
     @BeforeEach
     fun cleanUp() {
@@ -68,12 +64,51 @@ class AdminNotificationControllerTest : NotificationITBase() {
     }
 
     @Test
+    fun `이미 scheduledAt 이 지났으면 어드민에서 안보인다`() {
+        // given
+        val scheduledAt = clock.instant().plusSeconds(60)
+        val body = AdminSendPushNotificationRequestDTO(
+            scheduledAt = scheduledAt.toDTO(),
+            title = "test title",
+            body = "test message",
+            deepLink = null,
+            userIds = listOf("user1", "user2"),
+        )
+
+        // when
+        mvc.sccAdminRequest("/admin/notifications/sendPush", HttpMethod.POST, body)
+            .andExpect {
+                status { isOk() }
+            }
+
+        mvc.sccAdminRequest("/admin/notifications/pushSchedules", HttpMethod.GET, null)
+            .andExpect {
+                status { isOk() }
+            }
+            .apply {
+                val result = getResult(AdminListPushNotificationSchedulesResponseDTO::class)
+                Assertions.assertEquals(1, result.list.size)
+            }
+
+        clock.advanceTime(Duration.ofMinutes(5L))
+
+        mvc.sccAdminRequest("/admin/notifications/pushSchedules", HttpMethod.GET, null)
+            .andExpect {
+                status { isOk() }
+            }
+            .apply {
+                val result = getResult(AdminListPushNotificationSchedulesResponseDTO::class)
+                Assertions.assertEquals(0, result.list.size)
+            }
+    }
+
+    @Test
     fun `유저의 수가 많으면 청킹해서 스케줄을 생성한다`() {
         // given
-        val now = clock.instant().plusSeconds(60)
+        val scheduledAt = clock.instant().plusSeconds(60)
         val userIds = (1..1010).map { "user$it" }
         val body = AdminSendPushNotificationRequestDTO(
-            scheduledAt = now.toDTO(),
+            scheduledAt = scheduledAt.toDTO(),
             title = "test title",
             body = "test message",
             deepLink = null,

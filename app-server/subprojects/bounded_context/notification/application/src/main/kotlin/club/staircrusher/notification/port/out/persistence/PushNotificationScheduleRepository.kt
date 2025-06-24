@@ -13,13 +13,13 @@ interface PushNotificationScheduleRepository : CrudRepository<PushNotificationSc
         FROM PushNotificationSchedule s
         WHERE
             (
-                (s.createdAt = :cursorCreatedAt AND s.groupId < :cursorId)
-                OR (s.createdAt < :cursorCreatedAt)
+                (s.scheduledAt = :cursorScheduledAt AND s.groupId < :cursorId)
+                OR (s.scheduledAt > :cursorScheduledAt)
             )
-        ORDER BY s.createdAt DESC, s.groupId DESC
+        ORDER BY s.scheduledAt ASC, s.groupId DESC
     """)
     fun findCursored(
-        cursorCreatedAt: Instant,
+        cursorScheduledAt: Instant,
         cursorId: String,
         pageable: Pageable
     ): Page<PushNotificationSchedule>
