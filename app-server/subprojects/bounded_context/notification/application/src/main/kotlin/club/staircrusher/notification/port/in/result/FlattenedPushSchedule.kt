@@ -10,5 +10,4 @@ class FlattenedPushSchedule(
     val body: String,
     val deepLink: String?,
     val userIds: List<String>,
-    val createdAt: Instant,
 )
