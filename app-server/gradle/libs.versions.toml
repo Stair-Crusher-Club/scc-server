@@ -61,6 +61,7 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 aws-sdk-s3 = { group = "software.amazon.awssdk", name = "s3", version.ref = "awsSdk" }
 aws-sdk-rekognition = { group = "software.amazon.awssdk", name = "rekognition", version.ref = "awsSdk" }
+aws-sdk-sqs = { group = "software.amazon.awssdk", name = "sqs", version.ref = "awsSdk" }
 aws-sdk-sts = { group = "software.amazon.awssdk", name = "sts", version.ref = "awsSdk" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 firebase-admin = { group = "com.google.firebase", name = "firebase-admin", version.ref = "firebaseAdmin" }
