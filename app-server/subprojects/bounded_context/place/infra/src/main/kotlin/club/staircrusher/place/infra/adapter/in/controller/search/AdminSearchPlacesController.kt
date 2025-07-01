@@ -39,12 +39,12 @@ class AdminSearchPlacesController(
         return ResponseEntity.noContent().build()
     }
 
-    @DeleteMapping("/admin/places/searchPreset/{presetId}")
+    @DeleteMapping("/admin/places/searchPreset/{id}")
     fun deleteSearchPreset(
-        @PathVariable presetId: String,
+        @PathVariable id: String,
         @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
     ) : ResponseEntity<Unit> {
-        searchPlacePresetService.deleteById(presetId)
+        searchPlacePresetService.deleteById(id)
 
         return ResponseEntity.noContent().build()
     }
