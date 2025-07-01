@@ -62,7 +62,6 @@ class SqsMessageListener(
             } catch (e: Exception) {
                 logger.error(e) { "Error while receiving messages from SQS, will back off and retry" }
                 delay(DELAY_ON_POLLING_ERROR_MILLIS)
-                // Optionally, you can add a delay here to avoid tight loop in case of errors
             }
         }
     }

@@ -1,4 +1,4 @@
 dependencies {
+    api(projects.crossCuttingConcern.domain.messageQueue)
     implementation(projects.crossCuttingConcern.stdlib)
-    implementation(projects.crossCuttingConcern.domain.messageQueue)
 }
