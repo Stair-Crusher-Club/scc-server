@@ -10,7 +10,6 @@ dependencies {
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
     implementation(projects.crossCuttingConcern.application.serverEvent)
     implementation(projects.crossCuttingConcern.infra.network)
-    implementation(projects.crossCuttingConcern.application.messageQueue)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
