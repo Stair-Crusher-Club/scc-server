@@ -1,5 +1,6 @@
 package club.staircrusher.testing.spring_it.mock
 
+import club.staircrusher.application.message_queue.port.out.MessagePublisher
 import club.staircrusher.image.application.port.out.file_management.FileManagementService
 import club.staircrusher.notification.port.out.PushSender
 import club.staircrusher.place.application.port.`in`.accessibility.image.ImageProcessor
@@ -91,5 +92,11 @@ open class SccSpringItMockConfiguration {
     @Primary
     open fun mockSlackService(): SlackService {
         return MockSlackService()
+    }
+
+    @Bean
+    @Primary
+    open fun mockMessagePublisher(): MessagePublisher {
+        return MockMessagePublisher()
     }
 }
