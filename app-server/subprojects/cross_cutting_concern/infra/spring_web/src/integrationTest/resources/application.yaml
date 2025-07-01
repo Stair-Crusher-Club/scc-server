@@ -75,3 +75,6 @@ scc:
 
   open-data:
     api-key: test
+
+  sqs:
+    commonQueueName: test

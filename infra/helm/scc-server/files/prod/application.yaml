@@ -66,3 +66,5 @@ scc:
     channel:
       alert: "#scc-server-alert"
       reportAccessibility: "#scc-accessibility-report"
+  sqs:
+    commonQueueName: scc-common-queue
