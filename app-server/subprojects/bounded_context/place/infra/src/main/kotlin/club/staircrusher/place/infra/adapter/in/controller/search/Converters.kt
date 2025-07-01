@@ -9,6 +9,7 @@ import club.staircrusher.place.application.result.SearchPlacesResult
 import club.staircrusher.place.domain.model.place.Building
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.place.domain.model.search.SearchPlaceFilter
+import club.staircrusher.place.domain.model.search.SearchPlacePreset
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.toDTO
 
 fun Place.toDTO(isFavorite: Boolean) = club.staircrusher.api.spec.dto.Place(
@@ -69,4 +70,10 @@ fun SearchPlaceFilterDto.toModel() = SearchPlaceFilter(
     maxAccessibilityScore = maxAccessibilityScore,
     hasSlope = hasSlope,
     isAccessibilityRegistered = isRegistered,
+)
+
+fun SearchPlacePreset.toDTO() = club.staircrusher.api.spec.dto.SearchPlacePresetDto(
+    id = id,
+    description = description,
+    searchText = searchText,
 )

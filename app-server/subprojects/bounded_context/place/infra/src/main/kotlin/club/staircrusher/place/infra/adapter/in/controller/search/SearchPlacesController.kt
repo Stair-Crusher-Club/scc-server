@@ -4,12 +4,14 @@ import club.staircrusher.api.converter.toModel
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.ListPlacesInBuildingPostRequest
 import club.staircrusher.api.spec.dto.ListSearchKeywordsOfPlaceCategoryPost200Response
+import club.staircrusher.api.spec.dto.ListSearchPlacePresetsResponseDto
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.api.spec.dto.SearchKeywordOfPlaceCategoryDto
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
 import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place.application.port.`in`.search.ListSearchKeywordOfPlaceCategoryUseCase
 import club.staircrusher.place.application.port.`in`.search.PlaceSearchService
+import club.staircrusher.place.application.port.`in`.search.SearchPlacePresetService
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.geography.Length
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class SearchPlacesController(
     private val placeSearchService: PlaceSearchService,
+    private val searchPlacePresetService: SearchPlacePresetService,
     private val listSearchKeywordOfPlaceCategoryUseCase: ListSearchKeywordOfPlaceCategoryUseCase
 ) {
     @Suppress("MagicNumber")
@@ -72,6 +75,14 @@ class SearchPlacesController(
         return ListSearchKeywordsOfPlaceCategoryPost200Response(
             items = listSearchKeywordOfPlaceCategoryUseCase.handle()
                 .map { SearchKeywordOfPlaceCategoryDto(it.first.toDto(), it.second) }
+        )
+    }
+
+    @PostMapping("/listSearchPlacePresets")
+    fun listSearchPlacePresets(): ListSearchPlacePresetsResponseDto {
+        val searchPresets = searchPlacePresetService.list()
+        return ListSearchPlacePresetsResponseDto(
+            keywordPresets = searchPresets.map { it.toDTO() }
         )
     }
 }

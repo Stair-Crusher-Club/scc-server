@@ -13,6 +13,8 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/getPlaceWithBuilding",
         "/listSearchKeywordsOfPlaceCategory",
         "/getAccessibilityLeaderboard",
+        "/getNearbyAccessibilityStatus",
+        "/listSearchPlacePresets",
 
         "/admin/accessibilityAllowedRegions",
         "/admin/place-accessibilities/{id}",

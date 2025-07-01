@@ -20,6 +20,7 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.Pl
 import club.staircrusher.place.application.port.out.place.persistence.BuildingRepository
 import club.staircrusher.place.application.port.out.place.persistence.PlaceFavoriteRepository
 import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository
+import club.staircrusher.place.application.port.out.search.persistence.SearchPlacePresetRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImageOld
 import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
@@ -34,6 +35,8 @@ import club.staircrusher.place.domain.model.place.Building
 import club.staircrusher.place.domain.model.place.BuildingAddress
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.place.domain.model.place.PlaceFavorite
+import club.staircrusher.place.domain.model.search.PresetType
+import club.staircrusher.place.domain.model.search.SearchPlacePreset
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
@@ -107,6 +110,9 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var accessibilityImageRepository: AccessibilityImageRepository
+
+    @Autowired
+    private lateinit var searchPlacePresetRepository: SearchPlacePresetRepository
 
     fun createIdentifiedUser(
         nickname: String = SccRandom.string(12),
@@ -502,6 +508,22 @@ class ITDataGenerator {
                 buildingAccessibilityId = buildingAccessibility.id,
                 createdAt = clock.instant(),
             ),
+        )
+    }
+
+    fun createSearchPlacePreset(
+        description: String = "장소 검색 프리셋",
+        searchText: String = "장소",
+    ) : SearchPlacePreset {
+        return searchPlacePresetRepository.save(
+            SearchPlacePreset(
+                id = EntityIdGenerator.generateRandom(),
+                type = PresetType.KEYWORD,
+                description = description,
+                searchText = searchText,
+                filter = null,
+                sort = null,
+            )
         )
     }
 }
