@@ -2,7 +2,7 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
 import club.staircrusher.api.spec.dto.CancelPlaceAccessibilityUpvoteRequestDto
 import club.staircrusher.api.spec.dto.GivePlaceAccessibilityUpvoteRequestDto
-import club.staircrusher.place.application.port.out.accessibility.SlackService
+import club.staircrusher.slack.application.port.out.web.SlackService
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityUpvoteRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
 import org.junit.jupiter.api.Assertions.assertNotNull
