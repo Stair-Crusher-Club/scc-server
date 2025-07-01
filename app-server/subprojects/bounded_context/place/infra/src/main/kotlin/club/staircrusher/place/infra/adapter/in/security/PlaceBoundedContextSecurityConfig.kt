@@ -13,10 +13,14 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/getPlaceWithBuilding",
         "/listSearchKeywordsOfPlaceCategory",
         "/getAccessibilityLeaderboard",
+        "/getNearbyAccessibilityStatus",
+        "/listSearchPlacePresets",
 
         "/admin/accessibilityAllowedRegions",
         "/admin/place-accessibilities/{id}",
         "/admin/building-accessibilities/{id}",
+        "/admin/places/searchPresets",
+        "/admin/places/searchPresets/{id}",
     ).map { AntPathRequestMatcher(it) }
 
     override fun identifiedUserOnlyRequestMatchers() = listOf(

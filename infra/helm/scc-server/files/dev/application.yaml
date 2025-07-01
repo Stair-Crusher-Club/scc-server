@@ -64,4 +64,5 @@ scc:
     domain: d3vmj65l82owxs.cloudfront.net
   slack:
     channel:
+      alert: "#scc-server-alert"
       reportAccessibility: "#scc-accessibility-report-test"
