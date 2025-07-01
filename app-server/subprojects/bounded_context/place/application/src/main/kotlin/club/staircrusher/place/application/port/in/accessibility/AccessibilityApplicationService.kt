@@ -28,6 +28,7 @@ import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -473,5 +474,16 @@ class AccessibilityApplicationService(
         val buildingAccessibilities =
             buildingAccessibilityRepository.findByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId, from, to)
         return Pair(placeAccessibilities, buildingAccessibilities)
+    }
+
+    fun countNearby(currentLocation: Location, limit: Int): Int {
+        val maxLimit = maxOf(limit, MAX_DISTANCE_METERS)
+        val placeIds = placeApplicationService.searchPlaceIdsInCircle(currentLocation, maxLimit)
+
+        return placeAccessibilityRepository.countByPlaceIdIn(placeIds)
+    }
+
+    companion object {
+        private const val MAX_DISTANCE_METERS = 20_000 // 20km
     }
 }

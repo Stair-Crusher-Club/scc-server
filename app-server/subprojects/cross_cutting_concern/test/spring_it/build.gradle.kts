@@ -25,4 +25,5 @@ dependencies {
     implementation(projects.crossCuttingConcern.infra.springMessage)
     implementation(projects.crossCuttingConcern.stdlib)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
+    implementation(projects.crossCuttingConcern.application.messageQueue)
 }

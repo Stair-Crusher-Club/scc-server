@@ -19,6 +19,7 @@ interface PlaceAccessibilityRepository : CrudRepository<PlaceAccessibility, Stri
     fun findTop5ByCreatedAtAfterAndDeletedAtIsNullOrderByCreatedAtAscIdDesc(createdAt: Instant): List<PlaceAccessibility>
     fun countByUserIdAndDeletedAtIsNull(userId: String): Int
     fun countByUserIdAndCreatedAtBetweenAndDeletedAtIsNull(userId: String, from: Instant, to: Instant): Int
+    fun countByPlaceIdIn(placeIds: Collection<String>): Int
     @Query("""
         SELECT pa.*
         FROM place_accessibility pa

@@ -104,3 +104,6 @@ scc:
   notification:
     push:
       credential: test
+
+  sqs:
+    commonQueueName: test
