@@ -17,7 +17,7 @@ class AdminSearchPlacesController(
     private val searchPlacePresetService: SearchPlacePresetService,
 ) {
 
-    @GetMapping("/admin/places/searchPreset")
+    @GetMapping("/admin/places/searchPresets")
     fun getSearchPresets(
         @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
     ) : GetSearchPreset200Response {
@@ -26,7 +26,7 @@ class AdminSearchPlacesController(
         )
     }
 
-    @PostMapping("/admin/places/searchPreset")
+    @PostMapping("/admin/places/searchPresets")
     fun createSearchPreset(
         @RequestBody request: AdminCreateSearchPlacePresetRequestDTO,
         @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
@@ -39,7 +39,7 @@ class AdminSearchPlacesController(
         return ResponseEntity.noContent().build()
     }
 
-    @DeleteMapping("/admin/places/searchPreset/{id}")
+    @DeleteMapping("/admin/places/searchPresets/{id}")
     fun deleteSearchPreset(
         @PathVariable id: String,
         @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
