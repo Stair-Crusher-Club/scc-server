@@ -51,7 +51,7 @@ class UpdateUserInfoTest : UserITBase() {
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
         )
-        val changedBirthYear = SccRandom.int(1900, 2025)
+        val changedBirthYear = SccRandom.int(1905, 2025)
         assertNotEquals(user.profile.nickname, changedNickname)
         assertNotEquals(user.profile.instagramId, changedInstagramId)
         assertNotEquals(user.profile.email, changedEmail)
@@ -423,7 +423,7 @@ class UpdateUserInfoTest : UserITBase() {
 
         val email = "${SccRandom.string(32)}@staircrusher.club"
         val nickname = SccRandom.string(32)
-        
+
         // First subscribe to newsletter
         val subscribeParams = UpdateUserInfoPostRequest(
             nickname = nickname,
