@@ -13,6 +13,7 @@ import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.application.port.`in`.use_case.DeleteUserUseCase
 import club.staircrusher.user.application.port.`in`.use_case.GetUserProfileUseCase
+import club.staircrusher.user.application.port.`in`.use_case.TestSqsUseCase
 import club.staircrusher.user.application.port.`in`.use_case.UpdateExternalRefreshTokensUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
@@ -29,6 +30,7 @@ class UserController(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     private val updateExternalRefreshTokensUseCase: UpdateExternalRefreshTokensUseCase,
+    private val testSqsUseCase: TestSqsUseCase,
 ) {
     @GetMapping("/getUserInfo")
     fun getUserInfo(
@@ -101,6 +103,12 @@ class UserController(
     fun updateExternalRefreshTokens(request: HttpServletRequest) {
         InternalIpAddressChecker.check(request)
         updateExternalRefreshTokensUseCase.handle()
+    }
+
+    @PostMapping("/testSqs")
+    suspend fun testSqs(request: HttpServletRequest) {
+        InternalIpAddressChecker.check(request)
+        testSqsUseCase.handle()
     }
 
     companion object {
