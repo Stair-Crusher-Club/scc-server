@@ -1,6 +1,7 @@
 package club.staircrusher.place.infra.adapter.`in`.controller.search
 
 import club.staircrusher.api.converter.toDTO
+import club.staircrusher.api.spec.dto.ListSearchPlacePresetsResponseDto
 import club.staircrusher.api.spec.dto.PlaceListItem
 import club.staircrusher.api.spec.dto.SearchPlaceFilterDto
 import club.staircrusher.api.spec.dto.SearchPlacesPost200Response
@@ -448,5 +449,25 @@ class SearchPlacesTest : PlaceSearchITBase() {
                 assertEquals(place.id, items!![0].place.id)
             }
         Unit
+    }
+
+    @Test
+    fun `추천 검색어가 있다면 내려준다`() {
+        // given
+        val user = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser().account
+        }
+        val presetText = "명동역 편의점"
+        transactionManager.doInTransaction {
+            testDataGenerator.createSearchPlacePreset(presetText, presetText)
+        }
+
+        // then
+        mvc.sccRequest("/listSearchPlacePresets", null, user)
+            .getResult(ListSearchPlacePresetsResponseDto::class)
+            .apply {
+                assertEquals(1, keywordPresets.size)
+                assertEquals(presetText, keywordPresets[0].searchText)
+            }
     }
 }
