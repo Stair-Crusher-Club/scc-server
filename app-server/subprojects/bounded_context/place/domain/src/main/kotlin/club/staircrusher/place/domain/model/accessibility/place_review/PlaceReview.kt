@@ -51,4 +51,21 @@ class PlaceReview(
     @Type(JsonType::class)
     @Column(columnDefinition = "json")
     val features: List<String>,
-) : TimeAuditingBaseEntity()
+) : TimeAuditingBaseEntity() {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is PlaceReview) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    override fun toString(): String {
+        return "PlaceReview(id='$id', placeId='$placeId', recommendedMobilityTypes=$recommendedMobilityTypes, spaciousType=$spaciousType, images=$images, comment='$comment', mobilityTool=$mobilityTool, seatTypes=$seatTypes, orderMethods=$orderMethods, features=$features)"
+    }
+}

@@ -36,4 +36,21 @@ class ToiletReview(
             ToiletLocationType.ETC -> { /* Do nothing */ }
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ToiletReview) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    override fun toString(): String {
+        return "ToiletReview(id='$id', toiletLocationType=$toiletLocationType, targetId='$targetId', detail=$detail, comment='$comment')"
+    }
 }
