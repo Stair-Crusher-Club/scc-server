@@ -3,6 +3,8 @@ dependencies {
     implementation(libs.jts.core)
     implementation(libs.jackson.module.kotlin)
 
+    implementation(projects.boundedContext.user.domain)
+
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
