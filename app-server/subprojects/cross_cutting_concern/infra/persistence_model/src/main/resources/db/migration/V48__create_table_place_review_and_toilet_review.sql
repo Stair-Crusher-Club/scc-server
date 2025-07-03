@@ -3,13 +3,13 @@ CREATE TABLE IF NOT EXISTS place_review (
     place_id                     VARCHAR(36) NOT NULL,
     recommended_mobility_types   JSON        NOT NULL,
     spacious_type                VARCHAR(32) NOT NULL,
-    image_urls                   JSON        NOT NULL,
     comment                      TEXT        NOT NULL,
     mobility_tool                VARCHAR(64) NOT NULL,
     seat_types                   JSON        NOT NULL,
     order_methods                JSON        NOT NULL,
     features                     JSON        NOT NULL,
-    created_at                   TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at                   TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                   TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_place_review_place_id   ON place_review (place_id);
@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS toilet_review (
     target_id              VARCHAR(36) NOT NULL,
     floor                  INT         NULL,
     entrance_door_types    JSON        NULL,
-    image_urls             JSON        NULL,
     comment                TEXT        NULL,
-    created_at             TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at             TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at             TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Recommended indexes
