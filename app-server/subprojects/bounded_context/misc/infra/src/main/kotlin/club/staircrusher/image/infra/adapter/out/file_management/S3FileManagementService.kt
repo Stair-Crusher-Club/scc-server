@@ -135,6 +135,8 @@ internal class S3FileManagementService(
             ImageUploadPurposeType.ACCESSIBILITY_THUMBNAIL -> properties.thumbnailBucketName
             ImageUploadPurposeType.BANNER -> properties.bannerBucketName
             ImageUploadPurposeType.CRUSHER_LABEL -> properties.crusherLabelBucketName
+            ImageUploadPurposeType.PLACE_REVIEW -> properties.reviewBucketName
+            ImageUploadPurposeType.TOILET_REVIEW -> properties.reviewBucketName
         }
 
     companion object {

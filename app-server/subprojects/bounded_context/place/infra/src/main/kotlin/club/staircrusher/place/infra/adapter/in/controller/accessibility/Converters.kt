@@ -7,6 +7,7 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.AccessibilityRegistererDto
 import club.staircrusher.api.spec.dto.AccessibilityReportReason
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
+import club.staircrusher.api.spec.dto.ImageUploadPurpose
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
 import club.staircrusher.api.spec.dto.RegisterPlaceAccessibilityRequestDto
@@ -239,4 +240,10 @@ fun AccessibilityReportReason.toModel() = when (this) {
     AccessibilityReportReason.INACCURATE_INFO -> club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason.InaccurateInfo
     AccessibilityReportReason.CLOSED -> club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason.Closed
     AccessibilityReportReason.BAD_USER -> club.staircrusher.place.domain.model.accessibility.AccessibilityReportReason.BadUser
+}
+
+fun ImageUploadPurpose.toModel() = when (this) {
+    ImageUploadPurpose.ACCESSIBILITY -> club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType.ACCESSIBILITY
+    ImageUploadPurpose.PLACE_REVIEW -> club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType.PLACE_REVIEW
+    ImageUploadPurpose.TOILET_REVIEW -> club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType.TOILET_REVIEW
 }

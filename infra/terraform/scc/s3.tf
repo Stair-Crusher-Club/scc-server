@@ -82,6 +82,48 @@ resource "aws_s3_bucket_public_access_block" "accessibility_thumbnails" {
   restrict_public_buckets = false
 }
 
+resource "aws_s3_bucket" "dev_review_images" {
+  bucket = "scc-dev-review-images"
+}
+
+resource "aws_s3_bucket_ownership_controls" "dev_review_images" {
+  bucket = aws_s3_bucket.dev_review_images.id
+
+  rule {
+    object_ownership = "ObjectWriter"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "dev_review_images" {
+  bucket = aws_s3_bucket.dev_review_images.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket" "review_images" {
+  bucket = "scc-prod-accessibility-thumbnails"
+}
+
+resource "aws_s3_bucket_ownership_controls" "review_images" {
+  bucket = aws_s3_bucket.review_images.id
+
+  rule {
+    object_ownership = "ObjectWriter"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "review_images" {
+  bucket = aws_s3_bucket.accessibility_thumbnails.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
 resource "aws_s3_bucket" "dev_home_banners" {
   bucket = "scc-dev-home-banners"
 }

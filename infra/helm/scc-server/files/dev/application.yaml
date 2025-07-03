@@ -60,6 +60,7 @@ scc:
       thumbnailBucketName: scc-dev-accessibility-thumbnails
       bannerBucketName: scc-dev-home-banners
       crusherLabelBucketName: scc-dev-crusher-labels
+      reviewBucketName: scc-dev-review-images
   cloudfront:
     domain: d3vmj65l82owxs.cloudfront.net
   slack:
