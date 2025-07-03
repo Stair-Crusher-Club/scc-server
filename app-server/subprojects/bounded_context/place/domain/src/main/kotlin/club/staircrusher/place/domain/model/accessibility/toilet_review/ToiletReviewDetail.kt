@@ -17,7 +17,4 @@ data class ToiletReviewDetail(
     @Type(JsonType::class)
     @Column(columnDefinition = "json")
     val imageUrls: List<String>,
-
-    @Column(columnDefinition = "text")
-    val comment: String,
 )

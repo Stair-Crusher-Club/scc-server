@@ -1,16 +1,20 @@
 package club.staircrusher.place.domain.model.accessibility.place_review
 
-import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
 import club.staircrusher.user.domain.model.UserMobilityTool
 import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import org.hibernate.annotations.Type
-import java.time.Instant
+import org.hibernate.annotations.Where
 
 @Entity
 class PlaceReview(
@@ -26,9 +30,10 @@ class PlaceReview(
     @Enumerated(EnumType.STRING)
     val spaciousType: PlaceReviewSpaciousType,
 
-    @Type(JsonType::class)
-    @Column(columnDefinition = "json")
-    val imageUrls: List<String>,
+    @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
+    @Where(clause = "accessibility_type = 'PlaceReview'")
+    @OrderBy("displayOrder asc")
+    val images: List<AccessibilityImage>,
 
     val comment: String,
 
@@ -46,6 +51,4 @@ class PlaceReview(
     @Type(JsonType::class)
     @Column(columnDefinition = "json")
     val features: List<String>,
-) {
-    val createdAt: Instant = SccClock.instant()
-}
+) : TimeAuditingBaseEntity()

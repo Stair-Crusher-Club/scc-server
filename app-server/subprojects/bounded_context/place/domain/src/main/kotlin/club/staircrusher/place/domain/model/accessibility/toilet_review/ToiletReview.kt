@@ -1,13 +1,13 @@
 package club.staircrusher.place.domain.model.accessibility.toilet_review
 
-import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
+import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
-import java.time.Instant
 
 @Entity
 class ToiletReview(
@@ -21,7 +21,10 @@ class ToiletReview(
 
     @Embedded
     val detail: ToiletReviewDetail?,
-) {
+
+    @Column(columnDefinition = "text")
+    val comment: String,
+) : TimeAuditingBaseEntity() {
     init {
         when (toiletLocationType) {
             ToiletLocationType.PLACE,
@@ -33,6 +36,4 @@ class ToiletReview(
             ToiletLocationType.ETC -> { /* Do nothing */ }
         }
     }
-
-    val createdAt: Instant = SccClock.instant()
 }
