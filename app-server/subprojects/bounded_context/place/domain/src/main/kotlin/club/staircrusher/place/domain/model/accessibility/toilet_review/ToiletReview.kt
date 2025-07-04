@@ -14,16 +14,20 @@ class ToiletReview(
     @Id
     val id: String = EntityIdGenerator.generateRandom(),
 
+    @Column(name = "user_id", nullable = false)
+    val userId: String,
+
     @Enumerated(EnumType.STRING)
     val toiletLocationType: ToiletLocationType,
 
+    @Column(name = "target_id", nullable = false)
     val targetId: String,
 
     @Embedded
     val detail: ToiletReviewDetail?,
 
     @Column(columnDefinition = "text")
-    val comment: String,
+    val comment: String?,
 ) : TimeAuditingBaseEntity() {
     init {
         when (toiletLocationType) {
@@ -32,8 +36,10 @@ class ToiletReview(
                 checkNotNull(detail) { "매장 내 있음 혹은 건물 내 있음을 선택한 경우, 장애인 화장실에 대한 상세 정보가 있어야 합니다." }
             }
             ToiletLocationType.NONE,
-            ToiletLocationType.NOT_SURE,
-            ToiletLocationType.ETC -> { /* Do nothing */ }
+            ToiletLocationType.NOT_SURE -> { /* Do nothing */ }
+            ToiletLocationType.ETC -> {
+                checkNotNull(comment) { "기타를 선택한 경우, 장애인 화장실에 대한 설명이 있어야 합니다." }
+            }
         }
     }
 

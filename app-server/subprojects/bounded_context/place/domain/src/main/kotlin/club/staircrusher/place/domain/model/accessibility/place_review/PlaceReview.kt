@@ -21,7 +21,11 @@ class PlaceReview(
     @Id
     val id: String = EntityIdGenerator.generateRandom(),
 
+    @Column(name = "place_id", nullable = false)
     val placeId: String,
+
+    @Column(name = "user_id", nullable = false)
+    val userId: String,
 
     @Type(JsonType::class)
     @Column(columnDefinition = "json")
@@ -33,9 +37,10 @@ class PlaceReview(
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'PlaceReview'")
     @OrderBy("displayOrder asc")
-    val images: List<AccessibilityImage>,
+    var images: MutableList<AccessibilityImage> = mutableListOf(),
 
-    val comment: String,
+    @Column(columnDefinition = "text")
+    val comment: String?,
 
     @Enumerated(EnumType.STRING)
     val mobilityTool: UserMobilityTool,

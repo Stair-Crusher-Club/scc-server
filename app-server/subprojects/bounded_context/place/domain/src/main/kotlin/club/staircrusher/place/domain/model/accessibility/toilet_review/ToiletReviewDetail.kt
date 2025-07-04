@@ -22,5 +22,5 @@ data class ToiletReviewDetail(
     @OneToMany(mappedBy = "accessibilityId", fetch = FetchType.EAGER)
     @Where(clause = "accessibility_type = 'ToiletReview'")
     @OrderBy("displayOrder asc")
-    val images: List<AccessibilityImage>,
+    var images: MutableList<AccessibilityImage>,
 )
