@@ -41,4 +41,8 @@ class PlaceReviewService(
 
         return placeReview
     }
+
+    fun list(placeId: String): List<PlaceReview> {
+        return placeReviewRepository.findAllByPlaceIdOrderByCreatedAtDesc(placeId)
+    }
 }

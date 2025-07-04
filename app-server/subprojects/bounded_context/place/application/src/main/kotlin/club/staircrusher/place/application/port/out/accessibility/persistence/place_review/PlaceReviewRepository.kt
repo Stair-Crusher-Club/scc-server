@@ -7,6 +7,7 @@ import club.staircrusher.user.domain.model.UserMobilityTool
 import org.springframework.data.repository.CrudRepository
 
 interface PlaceReviewRepository : CrudRepository<PlaceReview, String> {
+    fun findAllByPlaceIdOrderByCreatedAtDesc(placeId: String): List<PlaceReview>
 
     data class CreateParams(
         val placeId: String,

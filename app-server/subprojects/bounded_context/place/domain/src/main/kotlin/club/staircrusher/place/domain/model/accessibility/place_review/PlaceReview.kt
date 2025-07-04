@@ -57,6 +57,10 @@ class PlaceReview(
     @Column(columnDefinition = "json")
     val features: List<String>,
 ) : TimeAuditingBaseEntity() {
+    fun isDeletable(uid: String?): Boolean {
+        return uid != null && uid == userId
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is PlaceReview) return false
