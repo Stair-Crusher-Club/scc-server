@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository
 
 interface PlaceReviewRepository : CrudRepository<PlaceReview, String> {
     fun findAllByPlaceIdOrderByCreatedAtDesc(placeId: String): List<PlaceReview>
+    fun countByPlaceId(placeId: String): Int
 
     data class CreateParams(
         val placeId: String,

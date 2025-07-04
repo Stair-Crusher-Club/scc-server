@@ -12,5 +12,6 @@ data class SearchPlacesResult(
     val distance: Length? = null,
     val accessibilityScore: Double? = null,
     val isAccessibilityRegistrable: Boolean,
-    val isFavoritePlace: Boolean
+    val isFavoritePlace: Boolean,
+    val placeReviewCount: Int?,
 )
