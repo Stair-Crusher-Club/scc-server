@@ -48,6 +48,10 @@ class PlaceReviewService(
         return placeReviewRepository.findAllByPlaceIdOrderByCreatedAtDesc(placeId)
     }
 
+    fun countByPlaceId(placeId: String): Int {
+        return placeReviewRepository.countByPlaceId(placeId)
+    }
+
     fun get(placeReviewId: String): PlaceReview {
         return placeReviewRepository.findByIdOrNull(placeReviewId)
             ?: throw SccDomainException("장소 리뷰를 찾을 수 없습니다")
