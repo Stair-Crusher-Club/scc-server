@@ -9,6 +9,7 @@ import club.staircrusher.api.spec.dto.SearchPlacesPostRequest
 import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
 import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository
 import club.staircrusher.place.application.port.out.place.web.MapsService
+import club.staircrusher.place.application.port.out.search.persistence.SearchPlacePresetRepository
 import club.staircrusher.place.domain.model.place.BuildingAddress
 import club.staircrusher.place.infra.adapter.`in`.controller.search.base.PlaceSearchITBase
 import club.staircrusher.stdlib.place.PlaceCategory
@@ -40,9 +41,13 @@ class SearchPlacesTest : PlaceSearchITBase() {
     @SpyBean
     private lateinit var placeApplicationService: PlaceApplicationService
 
+    @Autowired
+    private lateinit var searchPlacePresetRepository: SearchPlacePresetRepository
+
     @BeforeEach
     fun setup() = transactionManager.doInTransaction {
         placeRepository.deleteAll()
+        searchPlacePresetRepository.deleteAll()
     }
 
     @Test
