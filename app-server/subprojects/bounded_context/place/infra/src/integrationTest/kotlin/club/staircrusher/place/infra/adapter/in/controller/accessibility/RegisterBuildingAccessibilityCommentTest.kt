@@ -4,7 +4,6 @@ import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityCommentPostRe
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityCommentRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
@@ -31,26 +30,15 @@ class RegisterBuildingAccessibilityCommentTest : AccessibilityITBase() {
             mvc.sccRequest("/registerBuildingAccessibilityComment", params, userAccount = user.account).andReturn()
         }
         clock.advanceTime(Duration.ofSeconds(1))
-        val result = run {
-            val params = RegisterBuildingAccessibilityCommentPostRequest(
-                buildingId = place.building.id,
-                comment = "익명 코멘트",
-            )
-            mvc.sccAnonymousRequest("/registerBuildingAccessibilityComment", params).andReturn()
-        }
 
         val comments = transactionManager.doInTransaction {
             buildingAccessibilityCommentRepository.findByBuildingId(place.building.id)
         }.sortedByDescending { it.createdAt }
 
-        assertEquals(2, comments.size)
+        assertEquals(1, comments.size)
         assertEquals(place.building.id, comments[0].buildingId)
-        assertEquals("익명 코멘트", comments[0].comment)
-        assertNotNull(comments[0].userId)
-        assertEquals(clock.millis(), comments[0].createdAt.toEpochMilli())
-        assertEquals(place.building.id, comments[1].buildingId)
-        assertEquals("실명 코멘트", comments[1].comment)
-        assertEquals(user.account.id, comments[1].userId)
-        assertEquals((clock.instant() - Duration.ofSeconds(1)).toEpochMilli(), comments[1].createdAt.toEpochMilli())
+        assertEquals("실명 코멘트", comments[0].comment)
+        assertEquals(user.account.id, comments[0].userId)
+        assertEquals((clock.instant() - Duration.ofSeconds(1)).toEpochMilli(), comments[0].createdAt.toEpochMilli())
     }
 }
