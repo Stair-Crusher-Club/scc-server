@@ -45,4 +45,8 @@ class PlaceReviewService(
     fun list(placeId: String): List<PlaceReview> {
         return placeReviewRepository.findAllByPlaceIdOrderByCreatedAtDesc(placeId)
     }
+
+    fun countByPlaceId(placeId: String): Int {
+        return placeReviewRepository.countByPlaceId(placeId)
+    }
 }
