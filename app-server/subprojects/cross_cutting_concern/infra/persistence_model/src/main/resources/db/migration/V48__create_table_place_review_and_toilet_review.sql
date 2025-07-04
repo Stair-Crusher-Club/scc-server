@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS place_review (
     updated_at                   TIMESTAMP(6) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_place_review_place_id   ON place_review (place_id);
+CREATE INDEX idx_place_review_place_id_created_at ON place_review (place_id, created_at DESC);
 CREATE INDEX idx_place_review_created_at ON place_review (created_at DESC);
 
 CREATE TABLE IF NOT EXISTS toilet_review (
@@ -27,5 +27,5 @@ CREATE TABLE IF NOT EXISTS toilet_review (
 );
 
 -- Recommended indexes
-CREATE INDEX idx_toilet_review_target_id   ON toilet_review (target_id);
+CREATE INDEX idx_toilet_review_target_id_created_at   ON toilet_review (target_id, created_at DESC);
 CREATE INDEX idx_toilet_review_created_at  ON toilet_review (created_at DESC);
