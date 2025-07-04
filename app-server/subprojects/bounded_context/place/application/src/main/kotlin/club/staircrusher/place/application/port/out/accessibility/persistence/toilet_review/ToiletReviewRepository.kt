@@ -6,6 +6,7 @@ import club.staircrusher.place.domain.model.accessibility.toilet_review.ToiletRe
 import org.springframework.data.repository.CrudRepository
 
 interface ToiletReviewRepository : CrudRepository<ToiletReview, String> {
+    fun findAllByTargetIdOrderByCreatedAtDesc(targetId: String): List<ToiletReview>
 
     data class CreateParams(
         val placeId: String,

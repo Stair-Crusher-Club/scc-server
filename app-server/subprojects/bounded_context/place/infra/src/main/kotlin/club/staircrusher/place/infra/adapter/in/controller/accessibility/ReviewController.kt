@@ -1,10 +1,15 @@
 package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
+import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
+import club.staircrusher.api.spec.dto.PlaceReviewDto
 import club.staircrusher.api.spec.dto.RegisterPlaceReviewPost200Response
 import club.staircrusher.api.spec.dto.RegisterPlaceReviewRequestDto
 import club.staircrusher.api.spec.dto.RegisterToiletReviewPost200Response
 import club.staircrusher.api.spec.dto.RegisterToiletReviewRequestDto
+import club.staircrusher.api.spec.dto.ToiletReviewDto
+import club.staircrusher.place.application.port.`in`.accessibility.place_review.ListPlaceReviewsUseCase
 import club.staircrusher.place.application.port.`in`.accessibility.place_review.RegisterPlaceReviewUseCase
+import club.staircrusher.place.application.port.`in`.accessibility.toilet_review.ListToiletReviewsUseCase
 import club.staircrusher.place.application.port.`in`.accessibility.toilet_review.RegisterToiletReviewUseCase
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 class ReviewController(
     private val registerPlaceReviewUseCase: RegisterPlaceReviewUseCase,
     private val registerToiletReviewUseCase: RegisterToiletReviewUseCase,
+    private val listPlaceReviewsUseCase: ListPlaceReviewsUseCase,
+    private val listToiletReviewsUseCase: ListToiletReviewsUseCase,
 ) {
     @PostMapping("/registerPlaceReview")
     fun registerPlaceReview(
@@ -25,8 +32,18 @@ class ReviewController(
         val result = registerPlaceReviewUseCase.handle(request.toModel(userId))
 
         return RegisterPlaceReviewPost200Response(
-            placeReview = result.value.toDTO(result.accessibilityRegisterer),
+            placeReview = result.value.toDTO(userId, result.accessibilityRegisterer),
         )
+    }
+
+    @PostMapping("/listPlaceReviews")
+    fun listPlaceReviews(
+        @RequestBody request: GetAccessibilityPostRequest,
+        authentication: SccAppAuthentication,
+    ): List<PlaceReviewDto> {
+        val userId = authentication.principal
+        return listPlaceReviewsUseCase.handle(request.placeId)
+            .map { it.value.toDTO(userId, it.accessibilityRegisterer) }
     }
 
     @PostMapping("/registerToiletReview")
@@ -38,7 +55,17 @@ class ReviewController(
         val result = registerToiletReviewUseCase.handle(request.toModel(userId))
 
         return RegisterToiletReviewPost200Response(
-            toiletReview = result.value.toDTO(result.accessibilityRegisterer),
+            toiletReview = result.value.toDTO(userId, result.accessibilityRegisterer),
         )
+    }
+
+    @PostMapping("/listToiletReviews")
+    fun listToiletReviews(
+        @RequestBody request: GetAccessibilityPostRequest,
+        authentication: SccAppAuthentication,
+    ): List<ToiletReviewDto> {
+        val userId = authentication.principal
+        return listToiletReviewsUseCase.handle(request.placeId)
+            .map { it.value.toDTO(userId, it.accessibilityRegisterer) }
     }
 }

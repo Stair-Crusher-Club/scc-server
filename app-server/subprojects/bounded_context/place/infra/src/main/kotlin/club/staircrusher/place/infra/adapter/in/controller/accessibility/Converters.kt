@@ -329,7 +329,7 @@ fun UserMobilityTool.toDTO() = when (this) {
     UserMobilityTool.FRIEND_OF_TOOL_USER -> UserMobilityToolDto.FRIEND_OF_TOOL_USER
 }
 
-fun PlaceReview.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = PlaceReviewDto(
+fun PlaceReview.toDTO(userId: String?, accessibilityRegisterer: AccessibilityRegisterer?) = PlaceReviewDto(
     id = id,
     recommendedMobilityTypes = recommendedMobilityTypes.map { it.toDTO() },
     spaciousType = spaciousType.toDTO(),
@@ -340,7 +340,8 @@ fun PlaceReview.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = Place
     comment = comment,
     features = features,
     createdAt = createdAt.toDTO(),
-    user = accessibilityRegisterer?.toDTO(),
+    user = accessibilityRegisterer!!.toDTO(),
+    isDeletable = isDeletable(userId)
 )
 
 fun RegisterToiletReviewRequestDto.toModel(userId: String) =
@@ -370,7 +371,7 @@ fun ToiletLocationTypeDto.toModel() = when (this) {
     ToiletLocationTypeDto.ETC -> ToiletLocationType.ETC
 }
 
-fun ToiletReview.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = ToiletReviewDto(
+fun ToiletReview.toDTO(userId: String?, accessibilityRegisterer: AccessibilityRegisterer?) = ToiletReviewDto(
     id = id,
     toiletLocationType = toiletLocationType.toDTO(),
     floor = detail?.floor,
@@ -378,5 +379,6 @@ fun ToiletReview.toDTO(accessibilityRegisterer: AccessibilityRegisterer?) = Toil
     images = detail?.images?.map { it.toDTO() },
     comment = comment,
     createdAt = createdAt.toDTO(),
-    user = accessibilityRegisterer?.toDTO(),
+    user = accessibilityRegisterer!!.toDTO(),
+    isDeletable = isDeletable(userId),
 )
