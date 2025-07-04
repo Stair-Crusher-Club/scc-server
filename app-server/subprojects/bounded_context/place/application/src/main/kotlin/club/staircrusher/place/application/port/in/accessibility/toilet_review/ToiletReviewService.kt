@@ -5,7 +5,9 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.to
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.toilet_review.ToiletReview
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class ToiletReviewService(
@@ -40,11 +42,20 @@ class ToiletReviewService(
         return toiletReview
     }
 
+    fun get(toiletReviewId: String): ToiletReview {
+        return toiletReviewRepository.findByIdOrNull(toiletReviewId)
+            ?: throw SccDomainException("화장실 리뷰를 찾을 수 없습니다")
+    }
+
     fun listByPlaceId(placeId: String): List<ToiletReview> {
         return toiletReviewRepository.findAllByTargetIdOrderByCreatedAtDesc(placeId)
     }
 
     fun listByBuildingId(buildingId: String): List<ToiletReview> {
         return toiletReviewRepository.findAllByTargetIdOrderByCreatedAtDesc(buildingId)
+    }
+
+    fun delete(toiletReviewId: String) {
+        return toiletReviewRepository.deleteById(toiletReviewId)
     }
 }
