@@ -11,6 +11,7 @@ import club.staircrusher.stdlib.persistence.TimestampCursor
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.domain.model.UserProfile
+import org.hibernate.Hibernate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -54,6 +55,11 @@ class AdminSearchAccessibilitiesUseCase(
             cursorId = cursor.id,
             limit = normalizedLimit + 1, // 다음 페이지가 존재하는지 확인하기 위해 한 개를 더 조회한다.
         )
+        // https://agnica-coworkingspace.slack.com/archives/C093K16MQK1/p1751607055114659?thread_ts=1751593608.379319&cid=C093K16MQK1
+        // https://hibernate.atlassian.net/browse/HHH-16191 <- 이 이슈...
+        // FIXME: Spring Boot 3.1로 올리면서 hibernate 버전도 6.2로 올라가면 아래 줄 삭제하기
+        placeAccessibilities.forEach { Hibernate.initialize(it) }
+
         val placeById = placeApplicationService.findAllByIds(placeAccessibilities.map { it.placeId })
             .associateBy { it.id }
         val buildingAccessibilityByBuildingId = buildingAccessibilityRepository
