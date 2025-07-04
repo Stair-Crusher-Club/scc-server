@@ -3,4 +3,4 @@ ALTER TABLE place_review
     ALTER COLUMN comment DROP NOT NULL;
 
 ALTER TABLE toilet_review
-    ADD COLUMN user_id VARCHAR(36) NOT NULL,
+    ADD COLUMN user_id VARCHAR(36) NOT NULL;
