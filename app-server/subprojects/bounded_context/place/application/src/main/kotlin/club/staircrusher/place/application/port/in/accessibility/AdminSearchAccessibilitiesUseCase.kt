@@ -8,6 +8,7 @@ import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TimestampCursor
+import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.domain.model.UserProfile
 import java.time.Instant
@@ -20,6 +21,7 @@ class AdminSearchAccessibilitiesUseCase(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val userAplService: UserApplicationService,
+    private val transactionManager: TransactionManager,
 ) {
     data class Result(
         val items: List<Item>,
@@ -40,7 +42,7 @@ class AdminSearchAccessibilitiesUseCase(
         createdAtToLocalDate: LocalDate?,
         cursorValue: String?,
         limit: Int?,
-    ): Result {
+    ): Result = transactionManager.doInTransaction(isReadOnly = true) {
         val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.initial()
         val normalizedLimit = limit ?: DEFAULT_LIMIT
 
@@ -68,7 +70,7 @@ class AdminSearchAccessibilitiesUseCase(
             null
         }
 
-        return Result(
+        return@doInTransaction Result(
             items = placeAccessibilities.take(normalizedLimit).map { placeAccessibility ->
                 val place = placeById[placeAccessibility.placeId]!!
                 val buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id]
