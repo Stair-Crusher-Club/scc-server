@@ -360,7 +360,6 @@ fun ToiletLocationType.toDTO() = when (this) {
     ToiletLocationType.PLACE -> ToiletLocationTypeDto.PLACE
     ToiletLocationType.BUILDING -> ToiletLocationTypeDto.BUILDING
     ToiletLocationType.NONE -> ToiletLocationTypeDto.NONE
-    ToiletLocationType.NOT_SURE -> ToiletLocationTypeDto.NOT_SURE
     ToiletLocationType.ETC -> ToiletLocationTypeDto.ETC
 }
 
@@ -368,7 +367,6 @@ fun ToiletLocationTypeDto.toModel() = when (this) {
     ToiletLocationTypeDto.PLACE -> ToiletLocationType.PLACE
     ToiletLocationTypeDto.BUILDING -> ToiletLocationType.BUILDING
     ToiletLocationTypeDto.NONE -> ToiletLocationType.NONE
-    ToiletLocationTypeDto.NOT_SURE -> ToiletLocationType.NOT_SURE
     ToiletLocationTypeDto.ETC -> ToiletLocationType.ETC
 }
 

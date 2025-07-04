@@ -53,8 +53,7 @@ class ToiletReview(
                     floor != null && entranceDoorTypes != null
                 ) { "매장 내 있음 혹은 건물 내 있음을 선택한 경우, 장애인 화장실에 대한 상세 정보가 있어야 합니다." }
             }
-            ToiletLocationType.NONE,
-            ToiletLocationType.NOT_SURE -> { /* Do nothing */ }
+            ToiletLocationType.NONE -> { /* Do nothing */ }
             ToiletLocationType.ETC -> {
                 checkNotNull(comment) { "기타를 선택한 경우, 장애인 화장실에 대한 설명이 있어야 합니다." }
             }
