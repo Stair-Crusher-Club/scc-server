@@ -8,6 +8,7 @@ import club.staircrusher.api.spec.dto.AccessibilityRankDto
 import club.staircrusher.api.spec.dto.AccessibilityRegistererDto
 import club.staircrusher.api.spec.dto.AccessibilityReportReason
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
+import club.staircrusher.api.spec.dto.ImageUploadPurpose
 import club.staircrusher.api.spec.dto.ImageDto
 import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.PlaceReviewDto
@@ -382,3 +383,9 @@ fun ToiletReview.toDTO(userId: String?, accessibilityRegisterer: AccessibilityRe
     user = accessibilityRegisterer!!.toDTO(),
     isDeletable = isDeletable(userId),
 )
+
+fun ImageUploadPurpose.toModel() = when (this) {
+    ImageUploadPurpose.ACCESSIBILITY -> club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType.ACCESSIBILITY
+    ImageUploadPurpose.PLACE_REVIEW -> club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType.PLACE_REVIEW
+    ImageUploadPurpose.TOILET_REVIEW -> club.staircrusher.image.application.port.out.file_management.ImageUploadPurposeType.TOILET_REVIEW
+}
