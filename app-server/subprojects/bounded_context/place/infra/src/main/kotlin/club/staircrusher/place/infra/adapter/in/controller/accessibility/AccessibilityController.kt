@@ -44,7 +44,7 @@ class AccessibilityController(
         return getImageUploadUrlsUseCase.handle(
             urlCount = request.count,
             filenameExtension = request.filenameExtension,
-            imageUploadPurposeType = ImageUploadPurposeType.ACCESSIBILITY,
+            imageUploadPurposeType = request.purposeType?.toModel() ?: ImageUploadPurposeType.ACCESSIBILITY,
         ).map {
             GetImageUploadUrlsPost200ResponseInner(
                 it.url,
