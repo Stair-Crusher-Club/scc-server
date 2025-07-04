@@ -15,6 +15,8 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/getAccessibilityLeaderboard",
         "/getNearbyAccessibilityStatus",
         "/listSearchPlacePresets",
+        "/listPlaceReviews",
+        "/listToiletReviews",
 
         "/admin/accessibilityAllowedRegions",
         "/admin/place-accessibilities/{id}",
@@ -40,5 +42,9 @@ class PlaceBoundedContextSecurityConfig : SccSecurityConfig {
         "/reportAccessibility",
         "/getImageUploadUrls",
         "/getAccessibilityActivityReport",
+        "/registerPlaceReview",
+        "/deletePlaceReview",
+        "/registerToiletReview",
+        "/deleteToiletReview",
     ).map { AntPathRequestMatcher(it) }
 }

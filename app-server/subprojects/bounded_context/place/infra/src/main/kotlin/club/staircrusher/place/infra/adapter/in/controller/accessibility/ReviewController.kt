@@ -46,9 +46,9 @@ class ReviewController(
     @PostMapping("/listPlaceReviews")
     fun listPlaceReviews(
         @RequestBody request: GetAccessibilityPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): List<PlaceReviewDto> {
-        val userId = authentication.principal
+        val userId = authentication?.principal
         return listPlaceReviewsUseCase.handle(request.placeId)
             .map { it.value.toDTO(userId, it.accessibilityRegisterer) }
     }
@@ -80,9 +80,9 @@ class ReviewController(
     @PostMapping("/listToiletReviews")
     fun listToiletReviews(
         @RequestBody request: GetAccessibilityPostRequest,
-        authentication: SccAppAuthentication,
+        authentication: SccAppAuthentication?,
     ): List<ToiletReviewDto> {
-        val userId = authentication.principal
+        val userId = authentication?.principal
         return listToiletReviewsUseCase.handle(request.placeId)
             .map { it.value.toDTO(userId, it.accessibilityRegisterer) }
     }
