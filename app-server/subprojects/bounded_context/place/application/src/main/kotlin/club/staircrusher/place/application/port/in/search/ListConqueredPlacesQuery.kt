@@ -1,6 +1,7 @@
 package club.staircrusher.place.application.port.`in`.search
 
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityApplicationService
+import club.staircrusher.place.application.port.`in`.accessibility.place_review.PlaceReviewService
 import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
 import club.staircrusher.place.application.result.SearchPlacesResult
 import club.staircrusher.place.domain.model.accessibility.AccessibilityScore
@@ -16,6 +17,7 @@ class ListConqueredPlacesQuery(
     private val transactionManager: TransactionManager,
     private val placeApplicationService: PlaceApplicationService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
+    private val placeReviewService: PlaceReviewService,
 ) {
     fun listConqueredPlaces(userId: String, limit: Long?, cursorValue: String?): Result = transactionManager.doInTransaction {
         val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.initial()
@@ -39,6 +41,7 @@ class ListConqueredPlacesQuery(
                 distance = null,
                 accessibilityScore = AccessibilityScore.get(placeAccessibility, ba),
                 isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(place),
+                placeReviewCount = placeReviewService.countByPlaceId(placeId),
                 isFavoritePlace = placeIdToIsFavoriteMap[placeId] ?: false
             )
         }
