@@ -3,6 +3,18 @@ plugins {
     alias(libs.plugins.spring.dependency.management)
 }
 
+tasks.register<Copy>("copySccOpenApiSpecs") {
+    from(
+        "${rootProject.projectDir}/subprojects/api_specification/scc-api/api-spec.yaml",
+        "${rootProject.projectDir}/subprojects/api_specification/scc-api/admin-api-spec.yaml"
+    )
+    into(layout.buildDirectory.dir("resources/main"))
+}
+
+tasks.named("processResources") {
+    dependsOn("copySccOpenApiSpecs")
+}
+
 dependencies {
     api(projects.apiSpecification.adminApi)
     api(projects.apiSpecification.api)
@@ -19,6 +31,9 @@ dependencies {
     implementation(libs.kotlin.logging)
     implementation(libs.jackson.module.kotlin)
     runtimeOnly(libs.coroutines.reactor)
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     integrationTestImplementation(projects.crossCuttingConcern.test.springIt)
     integrationTestImplementation(libs.jackson.module.kotlin)

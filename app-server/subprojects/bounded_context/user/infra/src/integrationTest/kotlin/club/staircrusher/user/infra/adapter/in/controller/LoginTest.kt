@@ -19,7 +19,7 @@ class LoginTest : UserITBase() {
             password = password,
         )
         mvc
-            .sccRequest("/login", params)
+            .sccAnonymousRequest("/login", params)
             .andExpect {
                 header {
                     exists(SccSecurityFilterChainConfig.accessTokenHeader)

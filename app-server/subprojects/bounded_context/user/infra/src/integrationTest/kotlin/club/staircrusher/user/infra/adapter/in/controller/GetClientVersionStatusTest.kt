@@ -28,7 +28,7 @@ class GetClientVersionStatusTest : SccSpringITBase() {
 
     @Test
     fun `클라이언트 버전이 너무 낮으면 강제 업데이트를 안내한다`() {
-        val status = mvc.sccRequest(
+        val status = mvc.sccAnonymousRequest(
             "/getClientVersionStatus",
             GetClientVersionStatusRequestDto(version = "0.0.9")
         )
@@ -39,7 +39,7 @@ class GetClientVersionStatusTest : SccSpringITBase() {
 
     @Test
     fun `클라이언트 버전이 낮으면 업데이트 추천을 안내한다`() {
-        val status = mvc.sccRequest(
+        val status = mvc.sccAnonymousRequest(
             "/getClientVersionStatus",
             GetClientVersionStatusRequestDto(version = "0.1.5")
         )
