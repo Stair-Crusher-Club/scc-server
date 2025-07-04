@@ -5,7 +5,9 @@ import club.staircrusher.place.application.port.out.accessibility.persistence.pl
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.place_review.PlaceReview
 import club.staircrusher.stdlib.di.annotation.Component
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
+import org.springframework.data.repository.findByIdOrNull
 
 @Component
 class PlaceReviewService(
@@ -48,5 +50,14 @@ class PlaceReviewService(
 
     fun countByPlaceId(placeId: String): Int {
         return placeReviewRepository.countByPlaceId(placeId)
+    }
+
+    fun get(placeReviewId: String): PlaceReview {
+        return placeReviewRepository.findByIdOrNull(placeReviewId)
+            ?: throw SccDomainException("장소 리뷰를 찾을 수 없습니다")
+    }
+
+    fun delete(placeReviewId: String) {
+        placeReviewRepository.deleteById(placeReviewId)
     }
 }

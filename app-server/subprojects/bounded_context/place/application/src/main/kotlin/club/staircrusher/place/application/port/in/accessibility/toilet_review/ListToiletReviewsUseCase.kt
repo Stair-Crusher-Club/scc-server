@@ -18,11 +18,13 @@ class ListToiletReviewsUseCase(
         val buildingId = placeApplicationService.findPlace(placeId)?.building?.id
         val toiletReviews = toiletReviewService.listByPlaceId(placeId) +
                 (buildingId?.let { toiletReviewService.listByBuildingId(it) } ?: emptyList())
-        val idToReviewerMap = toiletReviews.map { it.userId }.distinct()
+        val sortedToiletReviews = toiletReviews.sortedByDescending { it.createdAt }
+
+        val idToReviewerMap = sortedToiletReviews.map { it.userId }.distinct()
             .let { userApplicationService.getProfilesByUserIds(it) }
             .associate { it.id to it.toDomainModel() }
 
-        toiletReviews.map {
+        sortedToiletReviews.map {
             WithUserInfo(
                 value = it,
                 accessibilityRegisterer = idToReviewerMap[it.userId],
