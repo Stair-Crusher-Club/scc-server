@@ -75,7 +75,6 @@ scc:
       thumbnailBucketName: test
       bannerBucketName: test
       crusherLabelBucketName: test
-      reviewBucketName: test
 
   rekognition:
 

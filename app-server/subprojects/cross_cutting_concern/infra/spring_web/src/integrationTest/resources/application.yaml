@@ -39,7 +39,6 @@ scc:
       thumbnailBucketName: test
       bannerBucketName: test
       crusherLabelBucketName: test
-      reviewBucketName: test
       accessKey: test
       secretKey: test
 

@@ -10,7 +10,6 @@ internal data class S3ImageUploadProperties(
     val thumbnailBucketName: String,
     val bannerBucketName: String,
     val crusherLabelBucketName: String,
-    val reviewBucketName: String,
     val accessKey: String?,
     val secretKey: String?,
 ) {

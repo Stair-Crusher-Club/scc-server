@@ -40,18 +40,6 @@ data "aws_iam_policy_document" "scc_dev_accessibility_thumbnails_full_access" {
   }
 }
 
-data "aws_iam_policy_document" "scc_dev_review_images_full_access" {
-  statement {
-    actions = [
-      "s3:*",
-    ]
-    resources = [
-      aws_s3_bucket.dev_review_images.arn,
-      "${aws_s3_bucket.dev_review_images.arn}/*",
-    ]
-  }
-}
-
 data "aws_iam_policy_document" "scc_dev_home_banners_full_access" {
   statement {
     actions = [
@@ -109,11 +97,6 @@ resource "aws_iam_policy" "scc_dev_accessibility_thumbnails_full_access" {
   policy = data.aws_iam_policy_document.scc_dev_accessibility_thumbnails_full_access.json
 }
 
-resource "aws_iam_policy" "scc_dev_review_images_full_access" {
-  name   = "scc-dev-review-images-full-access"
-  policy = data.aws_iam_policy_document.scc_dev_review_images_full_access.json
-}
-
 resource "aws_iam_policy" "scc_dev_home_banners_full_access" {
   name   = "scc-dev-home-banners-full-access"
   policy = data.aws_iam_policy_document.scc_dev_home_banners_full_access.json
@@ -142,11 +125,6 @@ resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_images_full_acc
 resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_thumbnails_full_access" {
   role       = aws_iam_role.scc_dev.name
   policy_arn = aws_iam_policy.scc_dev_accessibility_thumbnails_full_access.arn
-}
-
-resource "aws_iam_role_policy_attachment" "scc_dev_review_images_full_access" {
-  role       = aws_iam_role.scc_dev.name
-  policy_arn = aws_iam_policy.scc_dev_review_images_full_access.arn
 }
 
 resource "aws_iam_role_policy_attachment" "scc_dev_home_banners_full_access" {
