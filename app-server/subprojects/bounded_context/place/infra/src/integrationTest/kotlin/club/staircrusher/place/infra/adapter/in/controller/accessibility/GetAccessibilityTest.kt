@@ -110,7 +110,7 @@ class GetAccessibilityTest : AccessibilityITBase() {
             placeId = place.id
         )
         mvc
-            .sccRequest("/getAccessibility", params) // 인증 없이 요청한다.
+            .sccAnonymousRequest("/getAccessibility", params) // 인증 없이 요청한다.
             .andExpect {
                 status {
                     isOk()

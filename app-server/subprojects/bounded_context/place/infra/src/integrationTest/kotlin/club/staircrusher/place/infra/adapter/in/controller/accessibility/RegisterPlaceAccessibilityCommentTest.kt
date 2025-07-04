@@ -35,7 +35,7 @@ class RegisterPlaceAccessibilityCommentTest : AccessibilityITBase() {
                 placeId = place.id,
                 comment = "익명 코멘트",
             )
-            mvc.sccRequest("/registerPlaceAccessibilityComment", params).andReturn()
+            mvc.sccAnonymousRequest("/registerPlaceAccessibilityComment", params).andReturn()
         }
 
         val comments = transactionManager.doInTransaction {
@@ -45,7 +45,7 @@ class RegisterPlaceAccessibilityCommentTest : AccessibilityITBase() {
         Assertions.assertEquals(2, comments.size)
         Assertions.assertEquals(place.id, comments[0].placeId)
         Assertions.assertEquals("익명 코멘트", comments[0].comment)
-        Assertions.assertNull(comments[0].userId)
+        Assertions.assertNotNull(comments[0].userId)
         Assertions.assertEquals(clock.millis(), comments[0].createdAt.toEpochMilli())
         Assertions.assertEquals(place.id, comments[1].placeId)
         Assertions.assertEquals("실명 코멘트", comments[1].comment)
