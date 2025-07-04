@@ -43,4 +43,8 @@ class ToiletReviewService(
     fun listByPlaceId(placeId: String): List<ToiletReview> {
         return toiletReviewRepository.findAllByTargetIdOrderByCreatedAtDesc(placeId)
     }
+
+    fun listByBuildingId(buildingId: String): List<ToiletReview> {
+        return toiletReviewRepository.findAllByTargetIdOrderByCreatedAtDesc(buildingId)
+    }
 }
