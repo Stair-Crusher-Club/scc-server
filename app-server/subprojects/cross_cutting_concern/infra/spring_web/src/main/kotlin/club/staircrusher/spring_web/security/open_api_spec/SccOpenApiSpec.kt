@@ -36,11 +36,15 @@ class SccOpenApiSpec(
                 ?: emptyList()
         }
 
-        fun fromResourcePath(openApiSpecYamlResourcePath: String) = SccOpenApiSpec(
+        fun fromResourcePath(
+            openApiSpecYamlResourcePath: String,
+            urlPrefix: String = "",
+        ) = SccOpenApiSpec(
             openApiSpecYaml = this::class.java
                 .getResourceAsStream(openApiSpecYamlResourcePath)!!
                 .bufferedReader()
                 .use { it.readText() },
+            urlPrefix = urlPrefix,
         )
 
         private val logger = KotlinLogging.logger {}
