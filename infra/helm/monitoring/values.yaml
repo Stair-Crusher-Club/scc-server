@@ -218,9 +218,6 @@ alloy:
       eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring
   alloy:
     enableReporting: false
-    securityContext:
-      runAsUser: 0
-      runAsGroup: 0
     mounts:
       varlog: true
     configMap:
