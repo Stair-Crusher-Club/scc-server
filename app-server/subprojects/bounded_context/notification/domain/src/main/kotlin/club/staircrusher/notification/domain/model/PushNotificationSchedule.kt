@@ -32,7 +32,7 @@ class PushNotificationSchedule(
     var userIds: List<String>
 ) : TimeAuditingBaseEntity() {
     init {
-        check(scheduledAt.isAfter(SccClock.instant()))
+        require(scheduledAt.isAfter(SccClock.instant()))
     }
 
     var sentAt: Instant? = null

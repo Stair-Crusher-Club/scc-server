@@ -52,28 +52,28 @@ class ClubQuestCreateAplService(
         val places = if (useAlreadyCrawledPlace) {
             when (regionType) {
                 null, ClubQuestCreateRegionType.CIRCLE -> {
-                    check(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
-                    check(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
+                    require(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
+                    require(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
                     placeApplicationService.searchPlacesInCircle(centerLocation, radiusMeters)
                 }
 
                 ClubQuestCreateRegionType.POLYGON -> {
-                    check(points != null) { "`points` should not be null if regionType is `POLYGON`." }
-                    check(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
+                    require(points != null) { "`points` should not be null if regionType is `POLYGON`." }
+                    require(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
                     placeApplicationService.searchPlacesInPolygon(points)
                 }
             }
         } else {
             when (regionType) {
                 null, ClubQuestCreateRegionType.CIRCLE -> {
-                    check(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
-                    check(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
+                    require(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
+                    require(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
                     placeCrawler.crawlPlacesInCircle(centerLocation, radiusMeters)
                 }
 
                 ClubQuestCreateRegionType.POLYGON -> {
-                    check(points != null) { "`points` should not be null if regionType is `POLYGON`." }
-                    check(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
+                    require(points != null) { "`points` should not be null if regionType is `POLYGON`." }
+                    require(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
                     placeCrawler.crawlPlacesInPolygon(points)
                 }
             }
