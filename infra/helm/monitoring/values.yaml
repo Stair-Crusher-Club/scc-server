@@ -227,16 +227,14 @@ alloy:
       content: |-
         discovery.kubernetes "kubernetes_pods" {
           role = "pod"
+
+          namespaces {
+            names = ["scc", "dev"]
+          }
         }
         
         discovery.relabel "kubernetes_pods" {
           targets = discovery.kubernetes.kubernetes_pods.targets
-        
-          rule {
-            source_labels = ["__meta_kubernetes_namespace"]
-            regex         = "scc|dev"
-            action        = "keep"
-          }
 
           rule {
             source_labels = ["__meta_kubernetes_pod_controller_name"]
@@ -309,6 +307,7 @@ alloy:
         }
 
         loki.process "kubernetes_pods" {
+          stage.cri {}
           forward_to = [loki.write.default.receiver]
         }
 
