@@ -27,7 +27,7 @@ class SccOpenApiSpecSecurityConfigConfiguration {
     @Bean
     fun sccAdminOpenApiSpecSecurityConfig(): SccSecurityConfig {
         return object : SccSecurityConfig {
-            val openApiSpec = SccOpenApiSpec.fromResourcePath("/admin-api-spec.yaml")
+            val openApiSpec = SccOpenApiSpec.fromResourcePath("/admin-api-spec.yaml", "/admin")
 
             override fun requestMatchers(): List<RequestMatcher> {
                 return openApiSpec.paths.filter { it.isAdminAllowed }

@@ -1,5 +1,6 @@
 package club.staircrusher.spring_web.security.open_api_spec
 
+import mu.KotlinLogging
 import org.springframework.http.HttpMethod
 import org.yaml.snakeyaml.Yaml
 
@@ -26,6 +27,7 @@ class SccOpenApiSpec(
                 )
             }
         }
+        .also { logger.info("SccOpenApiSpec paths detected: $it") }
 
     companion object {
         private fun Map<String, *>.parseSecurityTypes(): List<SccOpenApiSpecSecurityType> {
@@ -34,11 +36,17 @@ class SccOpenApiSpec(
                 ?: emptyList()
         }
 
-        fun fromResourcePath(openApiSpecYamlResourcePath: String) = SccOpenApiSpec(
+        fun fromResourcePath(
+            openApiSpecYamlResourcePath: String,
+            urlPrefix: String = "",
+        ) = SccOpenApiSpec(
             openApiSpecYaml = this::class.java
                 .getResourceAsStream(openApiSpecYamlResourcePath)!!
                 .bufferedReader()
                 .use { it.readText() },
+            urlPrefix = urlPrefix,
         )
+
+        private val logger = KotlinLogging.logger {}
     }
 }
