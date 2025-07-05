@@ -24,4 +24,8 @@ interface ClubQuestRepository : CrudRepository<ClubQuest, String> {
         cursorId: String,
         pageable: Pageable,
     ): Page<ClubQuestSummary>
+
+    fun findByEndAtAfter(
+        endAtAfter: Instant,
+    ): List<ClubQuest>
 }

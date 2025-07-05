@@ -14,6 +14,7 @@ import club.staircrusher.quest.domain.model.ClubQuestPurposeType
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 import club.staircrusher.quest.util.HumanReadablePrefixGenerator
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -79,14 +80,23 @@ class ClubQuestCreateAplService(
             }
         }
             .filter { it.category in (questTargetPlaceCategories ?: defaultQuestTargetPlaceCategories) }
-        val accessibilityExistingPlaceIds = transactionManager.doInTransaction {
+        val accessibilityExistingPlaceIds = transactionManager.doInTransaction(isReadOnly = true) {
             accessibilityApplicationService.filterAccessibilityExistingPlaceIds(
                 places.map { it.id }
             ).toSet()
         }
+        val questAlreadyCreatedPlaceIds = transactionManager.doInTransaction(isReadOnly = true) {
+            val now = SccClock.instant()
+            clubQuestRepository.findByEndAtAfter(now)
+                .flatMap { it.targetBuildings }
+                .flatMap { it.places }
+                .map { it.placeId }
+        }
+
+        val placeIdsToExclude = (accessibilityExistingPlaceIds + questAlreadyCreatedPlaceIds).toSet()
 
         val buildingToPlaces = places
-            .filter { it.id !in accessibilityExistingPlaceIds && !it.isClosed && !it.isNotAccessible }
+            .filter { it.id !in placeIdsToExclude && !it.isClosed && !it.isNotAccessible }
             .groupBy { it.building }
             .mapValues { (_, places) -> places.distinctBy { it.id } }
         val buildings = buildingToPlaces.keys.toList()
