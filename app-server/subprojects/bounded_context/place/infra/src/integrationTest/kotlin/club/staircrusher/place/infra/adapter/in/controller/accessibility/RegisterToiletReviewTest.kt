@@ -56,7 +56,7 @@ class RegisterToiletReviewTest : AccessibilityITBase() {
         mvc
             .sccRequest("/registerToiletReview", failingRequest, user.account)
             .andExpect {
-                status { is5xxServerError() }
+                status { isBadRequest() }
             }
     }
 
@@ -95,7 +95,7 @@ class RegisterToiletReviewTest : AccessibilityITBase() {
         mvc
             .sccRequest("/registerToiletReview", failingRequest, user.account)
             .andExpect {
-                status { is5xxServerError() }
+                status { isBadRequest() }
             }
     }
 }
