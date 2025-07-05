@@ -10,6 +10,8 @@ data class SccOpenApiSpecPath(
     val securityTypes: List<SccOpenApiSpecSecurityType>,
 ) {
     val isIdentifiedUserOnly = SccOpenApiSpecSecurityType.IDENTIFIED in securityTypes
+    val isAnonymousUserAllowed = SccOpenApiSpecSecurityType.ANONYMOUS in securityTypes
+    val isAdminAllowed = SccOpenApiSpecSecurityType.ADMIN in securityTypes
 
     fun toRequestMatcher(): RequestMatcher {
         return AntPathRequestMatcher(url, method.name())

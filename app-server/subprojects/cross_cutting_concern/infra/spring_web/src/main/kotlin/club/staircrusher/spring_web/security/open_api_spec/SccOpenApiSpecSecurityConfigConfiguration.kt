@@ -13,7 +13,7 @@ class SccOpenApiSpecSecurityConfigConfiguration {
             val openApiSpec = SccOpenApiSpec.fromResourcePath("/api-spec.yaml")
 
             override fun requestMatchers(): List<RequestMatcher> {
-                return openApiSpec.paths.filter { !it.isIdentifiedUserOnly }
+                return openApiSpec.paths.filter { it.isAnonymousUserAllowed }
                     .map { it.toRequestMatcher() }
             }
 
@@ -30,13 +30,12 @@ class SccOpenApiSpecSecurityConfigConfiguration {
             val openApiSpec = SccOpenApiSpec.fromResourcePath("/admin-api-spec.yaml")
 
             override fun requestMatchers(): List<RequestMatcher> {
-                return openApiSpec.paths.filter { !it.isIdentifiedUserOnly }
+                return openApiSpec.paths.filter { it.isAdminAllowed }
                     .map { it.toRequestMatcher() }
             }
 
             override fun identifiedUserOnlyRequestMatchers(): List<RequestMatcher> {
-                return openApiSpec.paths.filter { it.isIdentifiedUserOnly }
-                    .map { it.toRequestMatcher() }
+                return emptyList()
             }
         }
     }
