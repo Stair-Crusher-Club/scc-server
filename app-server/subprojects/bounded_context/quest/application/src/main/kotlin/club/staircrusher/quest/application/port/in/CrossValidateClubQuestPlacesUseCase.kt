@@ -1,7 +1,7 @@
 package club.staircrusher.quest.application.port.`in`
 
-import club.staircrusher.place.application.port.`in`.PlaceApplicationService
-import club.staircrusher.place.application.port.`in`.PlaceCrawler
+import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
+import club.staircrusher.place.application.port.`in`.place.PlaceCrawler
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
 import club.staircrusher.stdlib.di.annotation.Component

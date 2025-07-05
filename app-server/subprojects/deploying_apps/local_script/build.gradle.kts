@@ -4,6 +4,7 @@ dependencies {
     implementation(libs.kotlin.serialization.json)
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 //    implementation("org.springframework:spring-web:6.0.7")
     implementation("org.springframework:spring-webflux")
     implementation("io.projectreactor.netty:reactor-netty")
@@ -12,6 +13,7 @@ dependencies {
     implementation(projects.crossCuttingConcern.stdlib)
     implementation(projects.boundedContext.place.domain)
     implementation(projects.boundedContext.place.application)
+    implementation(projects.boundedContext.challenge.domain)
     implementation(projects.boundedContext.place.infra)
-    implementation(projects.boundedContext.accessibility.domain)
+    implementation(projects.crossCuttingConcern.infra.network)
 }

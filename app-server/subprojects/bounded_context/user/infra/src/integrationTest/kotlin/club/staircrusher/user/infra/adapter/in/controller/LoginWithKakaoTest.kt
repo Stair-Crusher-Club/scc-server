@@ -204,7 +204,7 @@ class LoginWithKakaoTest : UserITBase() {
         )
 
         mvc
-            .sccRequest("/loginWithKakao", params)
+            .sccAnonymousRequest("/loginWithKakao", params)
             .andExpect {
                 status {
                     isOk()

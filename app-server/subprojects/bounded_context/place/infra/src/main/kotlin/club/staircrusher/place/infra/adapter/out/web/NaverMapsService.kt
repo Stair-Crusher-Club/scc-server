@@ -1,13 +1,13 @@
 package club.staircrusher.place.infra.adapter.out.web
 
-import club.staircrusher.place.application.port.out.web.MapsService
-import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.domain.model.BuildingAddress
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.infra.network.RateLimiterFactory
+import club.staircrusher.place.application.port.out.place.web.MapsService
+import club.staircrusher.place.domain.model.place.Building
+import club.staircrusher.place.domain.model.place.BuildingAddress
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.place.PlaceCategory
-import com.google.common.util.concurrent.RateLimiter
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
@@ -35,17 +35,9 @@ import java.util.concurrent.TimeUnit
 @Priority(Int.MAX_VALUE)
 class NaverMapsService(
     private val naverOpenApiProperties: NaverOpenApiProperties,
+    rateLimiterFactory: RateLimiterFactory,
 ): MapsService {
-    companion object {
-        private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
-        private val READ_TIMEOUT = Duration.ofSeconds(10)
-        private val WRITE_TIMEOUT = Duration.ofSeconds(10)
-
-        private val logger = KotlinLogging.logger {}
-    }
-
-    @Suppress("UnstableApiUsage", "MagicNumber")
-    private val rateLimiter = RateLimiter.create(1.0)
+    private val rateLimiter = rateLimiterFactory.create("naver_maps", REQUEST_PER_SECOND_LIMIT)
 
     private val httpClient = HttpClient.create()
         .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT.toMillis().toInt())
@@ -125,15 +117,12 @@ class NaverMapsService(
     private suspend fun fetchPageForSearchByKeyword(
         keyword: String,
     ): LocalSearchResult {
-        // FIXME: because rate limiter implementation of guice blocks current thread until it can acquire permit,
-        // and we are using kotlin coroutine or project reactor which are using size-limited thread pool normally,
-        // it could block all threads and prevent them from running.
-        @Suppress("UnstableApiUsage")
-        rateLimiter.acquire()
-
-        return naverOpenApiService.localSearch(
-            query = keyword,
-        ).awaitFirst()
+        // FIXME: same behavior as Guava RateLimiter
+        //  it blocks the thread until permit
+        //  We are using kotlin coroutine or project reactor which are using size-limited thread pool normally,
+        //  it could block all threads and prevent them from running.
+        rateLimiter.asBlocking().consumeUninterruptibly(1L)
+        return naverOpenApiService.localSearch(query = keyword,).awaitFirst()
     }
 
     @Serializable
@@ -241,4 +230,14 @@ class NaverMapsService(
         val errorMessage: String,
         val errorCode: String,
     )
+
+    companion object {
+        private val CONNECT_TIMEOUT = Duration.ofSeconds(10)
+        private val READ_TIMEOUT = Duration.ofSeconds(10)
+        private val WRITE_TIMEOUT = Duration.ofSeconds(10)
+
+        private val logger = KotlinLogging.logger {}
+
+        private const val REQUEST_PER_SECOND_LIMIT = 1L
+    }
 }

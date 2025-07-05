@@ -1,9 +1,9 @@
 package club.staircrusher.quest.application.port.`in`
 
-import club.staircrusher.place.application.port.out.persistence.PlaceRepository
+import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestTargetPlaceRepository
-import club.staircrusher.place.application.port.`in`.PlaceCrawler
+import club.staircrusher.place.application.port.`in`.place.PlaceCrawler
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestCreateDryRunResultItem
 import club.staircrusher.quest.domain.model.ClubQuestPurposeType

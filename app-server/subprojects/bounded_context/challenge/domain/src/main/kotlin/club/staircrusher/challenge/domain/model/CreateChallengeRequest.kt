@@ -11,4 +11,5 @@ data class CreateChallengeRequest(
     val milestones: List<Int>,
     val conditions: List<ChallengeCondition>,
     val description: String,
+    val crusherGroup: ChallengeCrusherGroup?,
 )

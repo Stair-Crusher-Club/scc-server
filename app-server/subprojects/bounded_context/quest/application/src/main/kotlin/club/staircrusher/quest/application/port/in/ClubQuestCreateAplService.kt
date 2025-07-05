@@ -1,10 +1,10 @@
 package club.staircrusher.quest.application.port.`in`
 
-import club.staircrusher.accessibility.application.port.`in`.AccessibilityApplicationService
-import club.staircrusher.place.application.port.`in`.PlaceApplicationService
-import club.staircrusher.place.application.port.`in`.PlaceCrawler
-import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.domain.model.Place
+import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityApplicationService
+import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
+import club.staircrusher.place.application.port.`in`.place.PlaceCrawler
+import club.staircrusher.place.domain.model.place.Building
+import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.quest.application.port.out.persistence.ClubQuestRepository
 import club.staircrusher.quest.application.port.out.web.ClubQuestTargetBuildingClusterer
 import club.staircrusher.quest.application.port.out.web.UrlShorteningService
@@ -14,6 +14,7 @@ import club.staircrusher.quest.domain.model.ClubQuestPurposeType
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetBuilding
 import club.staircrusher.quest.domain.model.DryRunnedClubQuestTargetPlace
 import club.staircrusher.quest.util.HumanReadablePrefixGenerator
+import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.geography.Location
 import club.staircrusher.stdlib.persistence.TransactionManager
@@ -52,41 +53,50 @@ class ClubQuestCreateAplService(
         val places = if (useAlreadyCrawledPlace) {
             when (regionType) {
                 null, ClubQuestCreateRegionType.CIRCLE -> {
-                    check(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
-                    check(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
+                    require(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
+                    require(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
                     placeApplicationService.searchPlacesInCircle(centerLocation, radiusMeters)
                 }
 
                 ClubQuestCreateRegionType.POLYGON -> {
-                    check(points != null) { "`points` should not be null if regionType is `POLYGON`." }
-                    check(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
+                    require(points != null) { "`points` should not be null if regionType is `POLYGON`." }
+                    require(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
                     placeApplicationService.searchPlacesInPolygon(points)
                 }
             }
         } else {
             when (regionType) {
                 null, ClubQuestCreateRegionType.CIRCLE -> {
-                    check(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
-                    check(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
+                    require(centerLocation != null) { "`centerLocation` should not be null if regionType is `CIRCLE`." }
+                    require(radiusMeters != null) { "`radiusMeters` should not be null if regionType is `CIRCLE`." }
                     placeCrawler.crawlPlacesInCircle(centerLocation, radiusMeters)
                 }
 
                 ClubQuestCreateRegionType.POLYGON -> {
-                    check(points != null) { "`points` should not be null if regionType is `POLYGON`." }
-                    check(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
+                    require(points != null) { "`points` should not be null if regionType is `POLYGON`." }
+                    require(points.size >= 3) { "최소 3개 이상의 점을 찍어야 합니다." }
                     placeCrawler.crawlPlacesInPolygon(points)
                 }
             }
         }
             .filter { it.category in (questTargetPlaceCategories ?: defaultQuestTargetPlaceCategories) }
-        val accessibilityExistingPlaceIds = transactionManager.doInTransaction {
+        val accessibilityExistingPlaceIds = transactionManager.doInTransaction(isReadOnly = true) {
             accessibilityApplicationService.filterAccessibilityExistingPlaceIds(
                 places.map { it.id }
             ).toSet()
         }
+        val questAlreadyCreatedPlaceIds = transactionManager.doInTransaction(isReadOnly = true) {
+            val now = SccClock.instant()
+            clubQuestRepository.findByEndAtAfter(now)
+                .flatMap { it.targetBuildings }
+                .flatMap { it.places }
+                .map { it.placeId }
+        }
+
+        val placeIdsToExclude = (accessibilityExistingPlaceIds + questAlreadyCreatedPlaceIds).toSet()
 
         val buildingToPlaces = places
-            .filter { it.id !in accessibilityExistingPlaceIds && !it.isClosed && !it.isNotAccessible }
+            .filter { it.id !in placeIdsToExclude && !it.isClosed && !it.isNotAccessible }
             .groupBy { it.building }
             .mapValues { (_, places) -> places.distinctBy { it.id } }
         val buildings = buildingToPlaces.keys.toList()

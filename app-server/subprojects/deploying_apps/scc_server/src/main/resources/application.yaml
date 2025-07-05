@@ -8,7 +8,7 @@ spring:
     url: jdbc:postgresql://localhost:15433/scc
     driver-class-name: org.postgresql.Driver
     hikari:
-      connection-timeout: 2000
+      connection-timeout: 25000
       data-source-properties.cachePrepStmts: true
       data-source-properties.prepStmtCacheSize: 250
       data-source-properties.prepStmtCacheSqlLimit: 2048
@@ -49,8 +49,13 @@ management:
 scc:
   environment: local
 
+  jwt:
+    secret: test
+    old-secret: test
+
   kakao:
-    api-key: test
+    rest-api-key: test
+    admin-key: test
 
   kakao-login:
     oauth-client-id: test
@@ -69,6 +74,7 @@ scc:
       bucketName: test
       thumbnailBucketName: test
       bannerBucketName: test
+      crusherLabelBucketName: test
 
   rekognition:
 
@@ -89,6 +95,7 @@ scc:
   slack:
     token: test
     channel:
+      alert: "#scc-server-alert"
       reportAccessibility: "#scc-accessibility-report-test"
 
   open-data:
@@ -97,3 +104,6 @@ scc:
   notification:
     push:
       credential: test
+
+  sqs:
+    commonQueueName: test

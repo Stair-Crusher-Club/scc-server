@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.domain.model
 
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.jpa.IntListToTextAttributeConverter
 import jakarta.persistence.Column
@@ -16,24 +17,24 @@ import java.time.Instant
 class Challenge(
     @Id
     val id: String,
-    val name: String,
-    val isPublic: Boolean,
-    val invitationCode: String?,
-    val passcode: String?,
+    var name: String,
+    var isPublic: Boolean,
+    var invitationCode: String?,
+    var passcode: String?,
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "TEXT")
-    val crusherGroup: ChallengeCrusherGroup?,
+    var crusherGroup: ChallengeCrusherGroup?,
     var isComplete: Boolean,
-    val startsAt: Instant,
-    val endsAt: Instant?,
-    val goal: Int,
+    var startsAt: Instant,
+    var endsAt: Instant?,
+    var goal: Int,
     @Convert(converter = IntListToTextAttributeConverter::class)
-    val milestones: List<Int>,
+    var milestones: List<Int>,
     @Convert(converter = ChallengeConditionListToTextAttributeConverter::class)
-    val conditions: List<ChallengeCondition>,
+    var conditions: List<ChallengeCondition>,
     val createdAt: Instant,
-    val updatedAt: Instant,
-    val description: String,
+    var updatedAt: Instant,
+    var description: String,
 ) {
     fun getStatus(criteriaTime: Instant): ChallengeStatus {
         return when {
@@ -41,6 +42,19 @@ class Challenge(
             endsAt != null && endsAt!! < criteriaTime -> ChallengeStatus.CLOSED
             else -> ChallengeStatus.IN_PROGRESS
         }
+    }
+
+    fun update(updateRequest: UpdateChallengeRequest) {
+        val endsAt = updateRequest.endsAt
+        if (endsAt != null && startsAt.isAfter(endsAt)) {
+            throw SccDomainException("시작 시각은 종료시각보다 빨라야 합니다.")
+        }
+
+        this.name = validateAndNormalizeString(updateRequest.name)
+        this.crusherGroup = updateRequest.crusherGroup
+        this.endsAt = endsAt
+        this.description = updateRequest.description.trim()
+        this.updatedAt = SccClock.instant()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -70,41 +84,12 @@ class Challenge(
 
         fun of(createRequest: CreateChallengeRequest): Challenge {
             val now = SccClock.instant()
-
             val invitationCode = createRequest.invitationCode?.let { validateAndNormalizeString(it) }
             val passcode = createRequest.passcode?.let { validateAndNormalizeString(it) }
-
-            if (createRequest.isPublic) {
-                check(invitationCode == null) {
-                    "공개 챌린지는 초대 코드가 없어야 합니다."
-                }
-            } else {
-                check(invitationCode != null) {
-                    "비공개 챌린지는 초대 코드가 있어야 합니다."
-                }
-            }
-
             val startsAt = Instant.ofEpochMilli(createRequest.startsAtMillis)
             val endsAt = createRequest.endsAtMillis?.let { Instant.ofEpochMilli(it) }
-            if (endsAt != null) {
-                check(startsAt < endsAt) { "시작 시각은 종료 시각보다 빨라야 합니다." }
-            }
-
             val milestones = createRequest.milestones.sorted()
-            if (milestones.isNotEmpty()) {
-                check(milestones.last() < createRequest.goal) {
-                    "목표는 마일스톤보다 커야 합니다."
-                }
-            }
-
-            createRequest.conditions.forEach { condition ->
-                check(condition.addressCondition?.rawEupMyeonDongs == null || condition.addressCondition.rawEupMyeonDongs.isNotEmpty()) {
-                    "퀘스트 대상 지역은 전체이거나 최소 1곳 이상을 지정해야 합니다."
-                }
-                check(condition.actionCondition?.types == null || condition.actionCondition.types.isNotEmpty()) {
-                    "퀘스트 대상 액션은 최소 1개 이상을 지정해야 합니다."
-                }
-            }
+            validate(invitationCode, createRequest.isPublic, startsAt, endsAt, createRequest.goal, milestones, createRequest.conditions)
 
             return Challenge(
                 id = EntityIdGenerator.generateRandom(),
@@ -112,7 +97,7 @@ class Challenge(
                 isPublic = createRequest.isPublic,
                 invitationCode = invitationCode,
                 passcode = passcode,
-                crusherGroup = null,
+                crusherGroup = createRequest.crusherGroup,
                 isComplete = false,
                 startsAt = startsAt,
                 endsAt = endsAt,
@@ -125,11 +110,50 @@ class Challenge(
             )
         }
 
+        private fun validate(
+            invitationCode: String?,
+            isPublic: Boolean,
+            startsAt: Instant,
+            endsAt: Instant?,
+            goal: Int,
+            milestones: List<Int>,
+            conditions: List<ChallengeCondition>,
+        ) {
+            if (isPublic) {
+                require(invitationCode == null) {
+                    "공개 챌린지는 초대 코드가 없어야 합니다."
+                }
+            } else {
+                require(invitationCode != null) {
+                    "비공개 챌린지는 초대 코드가 있어야 합니다."
+                }
+            }
+
+            if (endsAt != null) {
+                require(startsAt < endsAt) { "시작 시각은 종료 시각보다 빨라야 합니다." }
+            }
+
+            if (milestones.isNotEmpty()) {
+                require(milestones.last() < goal) {
+                    "목표는 마일스톤보다 커야 합니다."
+                }
+            }
+
+            conditions.forEach { condition ->
+                require(condition.addressCondition?.rawEupMyeonDongs == null || condition.addressCondition.rawEupMyeonDongs.isNotEmpty()) {
+                    "퀘스트 대상 지역은 전체이거나 최소 1곳 이상을 지정해야 합니다."
+                }
+                require(condition.actionCondition?.types == null || condition.actionCondition.types.isNotEmpty()) {
+                    "퀘스트 대상 액션은 최소 1개 이상을 지정해야 합니다."
+                }
+            }
+        }
+
         private fun validateAndNormalizeString(value: String): String {
             return value
                 .trim()
                 .also {
-                    check(it.isNotBlank()) { "값이 공백이면 안 됩니다." }
+                    require(it.isNotBlank()) { "값이 공백이면 안 됩니다." }
                 }
         }
     }

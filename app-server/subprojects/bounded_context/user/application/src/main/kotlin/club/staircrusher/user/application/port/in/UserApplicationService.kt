@@ -1,8 +1,8 @@
 package club.staircrusher.user.application.port.`in`
 
 import club.staircrusher.application.server_event.port.`in`.SccServerEventRecorder
-import club.staircrusher.domain.server_event.NewsletterSubscribedOnSignupPayload
-import club.staircrusher.notification.port.`in`.PushService
+import club.staircrusher.domain.server_event.NewsletterSubscribedPayload
+import club.staircrusher.domain.server_event.NewsletterUnsubscribedPayload
 import club.staircrusher.stdlib.clock.SccClock
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -11,9 +11,9 @@ import club.staircrusher.stdlib.persistence.TransactionIsolationLevel
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.time.getYear
 import club.staircrusher.stdlib.validation.email.EmailValidator
+import club.staircrusher.stdlib.validation.nickname.NicknameValidator
 import club.staircrusher.user.application.port.out.persistence.UserAccountConnectionRepository
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
-import club.staircrusher.user.application.port.out.persistence.UserAuthInfoRepository
 import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
@@ -26,11 +26,6 @@ import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.model.UserConnectionReason
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -43,10 +38,8 @@ class UserApplicationService(
     private val userAccountConnectionRepository: UserAccountConnectionRepository,
     private val userAuthService: UserAuthService,
     private val passwordEncryptor: PasswordEncryptor,
-    private val userAuthInfoRepository: UserAuthInfoRepository,
     private val stibeeSubscriptionService: StibeeSubscriptionService,
     private val sccServerEventRecorder: SccServerEventRecorder,
-    private val pushService: PushService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -72,8 +65,8 @@ class UserApplicationService(
 
     fun signUp(params: UserProfileRepository.CreateUserParams): IdentifiedUserVO {
         val normalizedNickname = params.nickname.trim()
-        if (normalizedNickname.length < 2) {
-            throw SccDomainException("최소 2자 이상의 닉네임을 설정해주세요.")
+        if (!NicknameValidator.isValid(normalizedNickname)) {
+            throw SccDomainException("최소 ${NicknameValidator.getMinLength()}자 이상의 닉네임을 설정해주세요.")
         }
         if (userProfileRepository.findFirstByNickname(normalizedNickname) != null) {
             throw SccDomainException("${normalizedNickname}은 이미 사용된 닉네임입니다.")
@@ -139,31 +132,52 @@ class UserApplicationService(
         userProfileRepository.save(userProfile)
     }
 
-    fun sendPushNotification(
-        userIds: List<String>,
-        title: String?,
-        body: String,
-        deepLink: String?,
-    ) = transactionManager.doInTransaction {
-        val userProfiles = userProfileRepository.findAllByUserIdIn(userIds)
-        val notifications = userProfiles.mapNotNull { userProfile ->
-            userProfile.pushToken ?: return@mapNotNull null
-            userProfile.pushToken!! to PushService.Notification(
-                // just poc for now, but not sure this substitution needs to be placed here
-                title = title?.replace("{{nickname}}", userProfile.nickname),
-                body = body.replace("{{nickname}}", userProfile.nickname),
-                link = deepLink,
-                collapseKey = null,
+    private fun validateAndNormalizeNickname(nickname: String, currentUserId: String? = null): String {
+        val normalizedNickname = nickname.trim()
+        if (!NicknameValidator.isValid(normalizedNickname)) {
+            throw SccDomainException(
+                "최소 ${NicknameValidator.getMinLength()}자 이상의 닉네임을 설정해주세요.",
+                SccDomainException.ErrorCode.INVALID_NICKNAME,
             )
         }
+        val alreadyRegisteredUser = userProfileRepository.findFirstByNickname(normalizedNickname)
+        if (alreadyRegisteredUser != null && alreadyRegisteredUser.userId != currentUserId) {
+            throw SccDomainException(
+                "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
+                SccDomainException.ErrorCode.INVALID_NICKNAME,
+            )
+        }
+        return normalizedNickname
+    }
 
-        transactionManager.doAfterCommit {
-            CoroutineScope(Dispatchers.IO).launch {
-                notifications.map { (t, n) ->
-                    async { pushService.send(t, emptyMap(), n) }
-                }.joinAll()
+    private fun validateAndNormalizeEmail(email: String, currentUserId: String? = null): String {
+        val normalizedEmail = email.trim()
+        if (!EmailValidator.isValid(normalizedEmail)) {
+            throw SccDomainException(
+                "${normalizedEmail}은 유효한 형태의 이메일이 아닙니다.",
+                SccDomainException.ErrorCode.INVALID_EMAIL,
+            )
+        }
+        val alreadyRegisteredUser = userProfileRepository.findFirstByEmail(normalizedEmail)
+        if (alreadyRegisteredUser != null && alreadyRegisteredUser.userId != currentUserId) {
+            throw SccDomainException(
+                "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
+                SccDomainException.ErrorCode.INVALID_EMAIL,
+            )
+        }
+        return normalizedEmail
+    }
+
+    private fun validateBirthYear(birthYear: Int?): Int? {
+        birthYear?.let {
+            if (it < 1900 || it > SccClock.instant().getYear()) {
+                throw SccDomainException(
+                    "출생 연도가 유효하지 않습니다.",
+                    SccDomainException.ErrorCode.INVALID_BIRTH_YEAR,
+                )
             }
         }
+        return birthYear
     }
 
     fun updateUserInfo(
@@ -173,70 +187,41 @@ class UserApplicationService(
         email: String,
         mobilityTools: List<UserMobilityTool>,
         birthYear: Int?,
-        isNewsLetterSubscriptionAgreed: Boolean,
+        isNewsLetterSubscriptionAgreed: Boolean?,
     ): UserProfile = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
         val userProfile = userProfileRepository.findFirstByUserId(userId) ?: throw SccDomainException("잘못된 계정입니다.")
-        userProfile.nickname = run {
-            val normalizedNickname = nickname.trim()
-            if (normalizedNickname.length < 2) {
-                throw SccDomainException(
-                    "최소 2자 이상의 닉네임을 설정해주세요.",
-                    SccDomainException.ErrorCode.INVALID_NICKNAME,
-                )
-            }
-            if (userProfileRepository.findFirstByNickname(normalizedNickname)?.takeIf { it.id != userProfile.id } != null) {
-                throw SccDomainException(
-                    "${normalizedNickname}은 이미 사용 중인 닉네임입니다.",
-                    SccDomainException.ErrorCode.INVALID_NICKNAME,
-                )
-            }
-            normalizedNickname
+
+        userProfile.let {
+            it.nickname = validateAndNormalizeNickname(nickname, it.userId)
+            it.email = validateAndNormalizeEmail(email, it.userId)
+            it.instagramId = instagramId?.trim()?.takeIf(CharSequence::isNotEmpty)
+            it.mobilityTools = mobilityTools
+            it.birthYear = validateBirthYear(birthYear)
         }
-        userProfile.email = run {
-            val normalizedEmail = email.trim()
-            if (!EmailValidator.isValid(normalizedEmail)) {
-                throw SccDomainException(
-                    "${normalizedEmail}은 유효한 형태의 이메일이 아닙니다.",
-                    SccDomainException.ErrorCode.INVALID_EMAIL,
-                )
-            }
-            if (userProfileRepository.findFirstByEmail(normalizedEmail)?.takeIf { it.id != userProfile.id } != null) {
-                throw SccDomainException(
-                    "${normalizedEmail}은 이미 사용 중인 이메일입니다.",
-                    SccDomainException.ErrorCode.INVALID_EMAIL,
-                )
-            }
-            normalizedEmail
-        }
-        userProfile.instagramId = instagramId?.trim()?.takeIf { it.isNotEmpty() }
-        userProfile.mobilityTools = mobilityTools
-        userProfile.birthYear = run {
-            birthYear?.let {
-                if (it < 1900 || it > SccClock.instant().getYear()) {
-                    throw SccDomainException(
-                        "출생 연도가 유효하지 않습니다.",
-                        SccDomainException.ErrorCode.INVALID_BIRTH_YEAR,
-                    )
-                }
-            }
-            birthYear
-        }
+
         userProfileRepository.save(userProfile)
 
-        if (isNewsLetterSubscriptionAgreed) {
-            userProfile.email?.let {
-                transactionManager.doAfterCommit {
-                    subscribeToNewsLetter(userId, it, userProfile.nickname)
-                }
-            }
-        }
-
+        handleNewsletterSubscription(userProfile, isNewsLetterSubscriptionAgreed)
         return@doInTransaction userProfile
     }
 
-    fun deleteUser(
-        userId: String,
-    ) = transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
+    private fun handleNewsletterSubscription(userProfile: UserProfile, isNewsLetterSubscriptionAgreed: Boolean?) {
+        if (userProfile.isNewsLetterSubscriptionAgreed == isNewsLetterSubscriptionAgreed || isNewsLetterSubscriptionAgreed == null) {
+            return
+        }
+
+        userProfile.isNewsLetterSubscriptionAgreed = isNewsLetterSubscriptionAgreed
+        userProfile.email?.let { email ->
+            transactionManager.doAfterCommit {
+                when (isNewsLetterSubscriptionAgreed) {
+                    true -> subscribeToNewsLetter(userProfile.userId, email, userProfile.nickname)
+                    false -> unsubscribeToNewsLetter(userProfile.userId, email)
+                }
+            }
+        }
+    }
+
+    fun deleteUser(userId: String) {
         val userAccount = userAccountRepository.findByIdOrNull(userId)
         val userProfile = userProfileRepository.findFirstByUserId(userId)
 
@@ -249,8 +234,6 @@ class UserApplicationService(
             it.delete(now)
             userProfileRepository.save(it)
         }
-
-        userAuthInfoRepository.removeByUserId(userId)
     }
 
     fun connectToIdentifiedAccount(anonymousUserId: String, identifiedUserId: String, reason: UserConnectionReason) {
@@ -281,7 +264,7 @@ class UserApplicationService(
     }
 
     private fun subscribeToNewsLetter(userId: String, email: String, name: String) {
-        sccServerEventRecorder.record(NewsletterSubscribedOnSignupPayload(userId))
+        sccServerEventRecorder.record(NewsletterSubscribedPayload(userId))
         runBlocking {
             stibeeSubscriptionService.registerSubscriber(
                 email = email,
@@ -292,7 +275,44 @@ class UserApplicationService(
         }
     }
 
-    fun isNicknameDuplicate(nickname: String): Boolean {
-        return userProfileRepository.existsByNickname(nickname)
+    private fun unsubscribeToNewsLetter(userId: String, email: String) {
+        sccServerEventRecorder.record(NewsletterUnsubscribedPayload(userId))
+        runBlocking {
+            stibeeSubscriptionService.unregisterSubscriber(email)
+        }
+    }
+
+    data class UserProfileValidationResult(
+        val nicknameErrorMessage: String?,
+        val emailErrorMessage: String?,
+    )
+
+    fun validateUserProfile(nickname: String?, email: String?, userId: String? = null): UserProfileValidationResult {
+        val nicknameErrorMessage = nickname?.let { nick ->
+            val normalizedNickname = nick.trim()
+            when {
+                !NicknameValidator.isValid(normalizedNickname) -> "올바른 닉네임 형식이 아닙니다."
+                userProfileRepository.findFirstByNickname(normalizedNickname)?.let { existingUser ->
+                    userId == null || existingUser.userId != userId
+                } == true -> "이미 사용 중인 닉네임입니다."
+                else -> null
+            }
+        }
+
+        val emailErrorMessage = email?.let { mail ->
+            val normalizedEmail = mail.trim()
+            when {
+                !EmailValidator.isValid(normalizedEmail) -> "올바른 이메일 형식이 아닙니다."
+                userProfileRepository.findFirstByEmail(normalizedEmail)?.let { existingUser ->
+                    userId == null || existingUser.id != userId
+                } == true -> "이미 사용 중인 이메일입니다."
+                else -> null
+            }
+        }
+
+        return UserProfileValidationResult(
+            nicknameErrorMessage = nicknameErrorMessage,
+            emailErrorMessage = emailErrorMessage,
+        )
     }
 }

@@ -1,6 +1,6 @@
 package club.staircrusher.quest.application.port.`in`
 
-import club.staircrusher.place.application.port.out.web.MapsService
+import club.staircrusher.place.application.port.out.place.web.MapsService
 import club.staircrusher.quest.domain.model.ClubQuest
 import club.staircrusher.quest.domain.model.ClubQuestPurposeType
 import club.staircrusher.stdlib.clock.SccClock

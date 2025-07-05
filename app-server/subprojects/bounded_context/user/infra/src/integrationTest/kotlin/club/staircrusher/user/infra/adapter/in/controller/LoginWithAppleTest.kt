@@ -216,7 +216,7 @@ class LoginWithAppleTest : UserITBase() {
             )
 
             mvc
-                .sccRequest("/loginWithApple", params)
+                .sccAnonymousRequest("/loginWithApple", params)
                 .andExpect {
                     status {
                         isOk()

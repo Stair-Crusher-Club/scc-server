@@ -16,7 +16,7 @@ class SignUpTest : UserITBase() {
             password = "password",
         )
         mvc
-            .sccRequest("/signUp", params)
+            .sccAnonymousRequest("/signUp", params)
             .andExpect {
                 header {
                     exists(SccSecurityFilterChainConfig.accessTokenHeader)

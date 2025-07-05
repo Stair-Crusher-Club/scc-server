@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.crossCuttingConcern.infra.springMessage)
     implementation(projects.crossCuttingConcern.stdlib)
     implementation(projects.crossCuttingConcern.infra.persistenceModel)
+    implementation(projects.crossCuttingConcern.infra.messageQueue)
 }
 
 jib {
@@ -36,7 +37,7 @@ jib {
         permissions.put("/app/run-java.sh", "755")
     }
     from {
-        image = "openjdk:19"
+        image = "eclipse-temurin:19"
         platforms {
             platform {
                 architecture = "amd64"

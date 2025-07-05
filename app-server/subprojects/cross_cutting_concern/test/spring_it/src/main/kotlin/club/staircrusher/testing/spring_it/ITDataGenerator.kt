@@ -1,19 +1,5 @@
 package club.staircrusher.testing.spring_it
 
-import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityCommentRepository
-import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityRepository
-import club.staircrusher.accessibility.application.port.out.persistence.BuildingAccessibilityUpvoteRepository
-import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityCommentRepository
-import club.staircrusher.accessibility.application.port.out.persistence.PlaceAccessibilityRepository
-import club.staircrusher.accessibility.domain.model.AccessibilityImage
-import club.staircrusher.accessibility.domain.model.BuildingAccessibility
-import club.staircrusher.accessibility.domain.model.BuildingAccessibilityComment
-import club.staircrusher.accessibility.domain.model.BuildingAccessibilityUpvote
-import club.staircrusher.accessibility.domain.model.EntranceDoorType
-import club.staircrusher.accessibility.domain.model.PlaceAccessibility
-import club.staircrusher.accessibility.domain.model.PlaceAccessibilityComment
-import club.staircrusher.accessibility.domain.model.StairHeightLevel
-import club.staircrusher.accessibility.domain.model.StairInfo
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
@@ -25,13 +11,32 @@ import club.staircrusher.challenge.domain.model.ChallengeParticipation
 import club.staircrusher.external_accessibility.application.port.out.persistence.ExternalAccessibilityRepository
 import club.staircrusher.external_accessibility.domain.model.ExternalAccessibility
 import club.staircrusher.external_accessibility.domain.model.ToiletAccessibilityDetails
-import club.staircrusher.place.application.port.out.persistence.BuildingRepository
-import club.staircrusher.place.application.port.out.persistence.PlaceFavoriteRepository
-import club.staircrusher.place.application.port.out.persistence.PlaceRepository
-import club.staircrusher.place.domain.model.Building
-import club.staircrusher.place.domain.model.BuildingAddress
-import club.staircrusher.place.domain.model.Place
-import club.staircrusher.place.domain.model.PlaceFavorite
+import club.staircrusher.place.application.port.out.accessibility.persistence.AccessibilityImageRepository
+import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityCommentRepository
+import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
+import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityUpvoteRepository
+import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityCommentRepository
+import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
+import club.staircrusher.place.application.port.out.place.persistence.BuildingRepository
+import club.staircrusher.place.application.port.out.place.persistence.PlaceFavoriteRepository
+import club.staircrusher.place.application.port.out.place.persistence.PlaceRepository
+import club.staircrusher.place.application.port.out.search.persistence.SearchPlacePresetRepository
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
+import club.staircrusher.place.domain.model.accessibility.AccessibilityImageOld
+import club.staircrusher.place.domain.model.accessibility.BuildingAccessibility
+import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityComment
+import club.staircrusher.place.domain.model.accessibility.BuildingAccessibilityUpvote
+import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
+import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
+import club.staircrusher.place.domain.model.accessibility.PlaceAccessibilityComment
+import club.staircrusher.place.domain.model.accessibility.StairHeightLevel
+import club.staircrusher.place.domain.model.accessibility.StairInfo
+import club.staircrusher.place.domain.model.place.Building
+import club.staircrusher.place.domain.model.place.BuildingAddress
+import club.staircrusher.place.domain.model.place.Place
+import club.staircrusher.place.domain.model.place.PlaceFavorite
+import club.staircrusher.place.domain.model.search.PresetType
+import club.staircrusher.place.domain.model.search.SearchPlacePreset
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.external_accessibility.ExternalAccessibilityCategory
@@ -50,6 +55,7 @@ import club.staircrusher.user.domain.service.PasswordEncryptor
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
 import java.time.Instant
+import kotlin.collections.map
 
 @Suppress("MagicNumber", "TooManyFunctions")
 @Component
@@ -101,6 +107,12 @@ class ITDataGenerator {
 
     @Autowired
     private lateinit var externalAccessibilityRepository: ExternalAccessibilityRepository
+
+    @Autowired
+    private lateinit var accessibilityImageRepository: AccessibilityImageRepository
+
+    @Autowired
+    private lateinit var searchPlacePresetRepository: SearchPlacePresetRepository
 
     fun createIdentifiedUser(
         nickname: String = SccRandom.string(12),
@@ -279,16 +291,12 @@ class ITDataGenerator {
     fun createPlaceFavorite(
         userId: String,
         placeId: String,
-        at: Instant = clock.instant()
     ): PlaceFavorite {
         return placeFavoriteRepository.save(
             PlaceFavorite(
                 id = EntityIdGenerator.generateRandom(),
                 userId = userId,
                 placeId = placeId,
-                createdAt = at,
-                updatedAt = at,
-                deletedAt = null,
             )
         )
     }
@@ -348,8 +356,7 @@ class ITDataGenerator {
         stairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
         hasSlope: Boolean = true,
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
-        imageUrls: List<String> = emptyList(),
-        images: List<AccessibilityImage> = emptyList(),
+        images: List<String> = emptyList(),
         userAccount: UserAccount? = null,
         at: Instant = clock.instant(),
     ): PlaceAccessibility {
@@ -364,65 +371,94 @@ class ITDataGenerator {
                 stairHeightLevel = stairHeightLevel,
                 hasSlope = hasSlope,
                 entranceDoorTypes = entranceDoorTypes,
-                imageUrls = imageUrls,
-                images = images,
+                oldImageUrls = images.map { it },
+                oldImages = images.map { AccessibilityImageOld(it) },
                 userId = userAccount?.id,
                 createdAt = at,
             ),
-        )
+        ).also {
+            it.images = images.map { img ->
+                AccessibilityImage(
+                    id = EntityIdGenerator.generateRandom(),
+                    accessibilityId = it.id,
+                    accessibilityType = AccessibilityImage.AccessibilityType.Place,
+                    originalImageUrl = img,
+                )
+            }.toMutableList()
+            accessibilityImageRepository.saveAll(it.images)
+        }
     }
 
     fun registerBuildingAccessibilityIfNotExists(
         building: Building,
         entranceStairInfo: StairInfo = StairInfo.NONE,
         entranceStairHeightLevel: StairHeightLevel = StairHeightLevel.THUMB,
-        entranceImageUrls: List<String> = emptyList(),
-        entranceImages: List<AccessibilityImage> = emptyList(),
+        entranceImages: List<String> = emptyList(),
         entranceDoorTypes: List<EntranceDoorType> = listOf(EntranceDoorType.Sliding, EntranceDoorType.Automatic),
         hasSlope: Boolean = true,
         hasElevator: Boolean = true,
         elevatorStairHeightLevel: StairHeightLevel = StairHeightLevel.HALF_THUMB,
-        elevatorImageUrls: List<String> = emptyList(),
-        elevatorImages: List<AccessibilityImage> = emptyList(),
+        elevatorImages: List<String> = emptyList(),
         userAccount: UserAccount? = null,
         at: Instant = clock.instant(),
     ): BuildingAccessibility {
-        return buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id) ?: buildingAccessibilityRepository.save(
-            BuildingAccessibility(
-                id = EntityIdGenerator.generateRandom(),
-                buildingId = building.id,
-                entranceStairInfo = entranceStairInfo,
-                entranceStairHeightLevel = entranceStairHeightLevel,
-                entranceImageUrls = entranceImageUrls,
-                entranceImages = entranceImages,
-                hasSlope = hasSlope,
-                hasElevator = hasElevator,
-                entranceDoorTypes = entranceDoorTypes,
-                elevatorStairInfo = StairInfo.NONE,
-                elevatorStairHeightLevel = elevatorStairHeightLevel,
-                elevatorImageUrls = elevatorImageUrls,
-                elevatorImages = elevatorImages,
-                userId = userAccount?.id,
-                createdAt = at,
-            ),
-        )
+        return (buildingAccessibilityRepository.findFirstByBuildingIdAndDeletedAtIsNull(building.id)
+            ?: buildingAccessibilityRepository.save(
+                BuildingAccessibility(
+                    id = EntityIdGenerator.generateRandom(),
+                    buildingId = building.id,
+                    entranceStairInfo = entranceStairInfo,
+                    entranceStairHeightLevel = entranceStairHeightLevel,
+                    oldEntranceImageUrls = entranceImages,
+                    oldEntranceImages = entranceImages.map {
+                        AccessibilityImageOld(it)
+                    },
+                    hasSlope = hasSlope,
+                    hasElevator = hasElevator,
+                    entranceDoorTypes = entranceDoorTypes,
+                    elevatorStairInfo = StairInfo.NONE,
+                    elevatorStairHeightLevel = elevatorStairHeightLevel,
+                    oldElevatorImageUrls = elevatorImages,
+                    oldElevatorImages = elevatorImages.map { AccessibilityImageOld(it) },
+                    userId = userAccount?.id,
+                    createdAt = at,
+                ),
+            ))
+            .also {
+                it.entranceImages = entranceImages.map { img ->
+                    AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
+                        accessibilityId = it.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Entrance,
+                        originalImageUrl = img,
+                    )
+                }.toMutableList()
+                it.elevatorImages = elevatorImages.map { img ->
+                    AccessibilityImage(
+                        id = EntityIdGenerator.generateRandom(),
+                        accessibilityId = it.id,
+                        accessibilityType = AccessibilityImage.AccessibilityType.Building,
+                        imageType = AccessibilityImage.ImageType.Elevator,
+                        originalImageUrl = img,
+                    )
+                }.toMutableList()
+                accessibilityImageRepository.saveAll(it.entranceImages + it.elevatorImages)
+            }
     }
 
     fun registerBuildingAndPlaceAccessibility(
         place: Place,
         userAccount: UserAccount? = null,
-        imageUrls: List<String> = emptyList(),
-        images: List<AccessibilityImage> = emptyList(),
+        images: List<String> = emptyList(),
         at: Instant = clock.instant(),
     ): Pair<PlaceAccessibility, BuildingAccessibility> {
         return Pair(
-            registerPlaceAccessibility(place = place, userAccount = userAccount, imageUrls = imageUrls, images = images, at = at),
+            registerPlaceAccessibility(place = place, userAccount = userAccount, images = images, at = at),
             registerBuildingAccessibilityIfNotExists(
                 place.building,
                 userAccount = userAccount,
-                entranceImageUrls = imageUrls,
                 entranceImages = images,
-                elevatorImageUrls = imageUrls,
                 elevatorImages = images,
                 at = at
             ),
@@ -461,7 +497,10 @@ class ITDataGenerator {
         )
     }
 
-    fun giveBuildingAccessibilityUpvote(buildingAccessibility: BuildingAccessibility, userAccount: UserAccount = createIdentifiedUser().account) {
+    fun giveBuildingAccessibilityUpvote(
+        buildingAccessibility: BuildingAccessibility,
+        userAccount: UserAccount = createIdentifiedUser().account
+    ) {
         buildingAccessibilityUpvoteRepository.save(
             BuildingAccessibilityUpvote(
                 id = EntityIdGenerator.generateRandom(),
@@ -469,6 +508,22 @@ class ITDataGenerator {
                 buildingAccessibilityId = buildingAccessibility.id,
                 createdAt = clock.instant(),
             ),
+        )
+    }
+
+    fun createSearchPlacePreset(
+        description: String = "장소 검색 프리셋",
+        searchText: String = "장소",
+    ) : SearchPlacePreset {
+        return searchPlacePresetRepository.save(
+            SearchPlacePreset(
+                id = EntityIdGenerator.generateRandom(),
+                type = PresetType.KEYWORD,
+                description = description,
+                searchText = searchText,
+                filter = null,
+                sort = null,
+            )
         )
     }
 }

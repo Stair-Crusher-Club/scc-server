@@ -1,4 +1,6 @@
 dependencies {
+    implementation(projects.crossCuttingConcern.infra.network)
+
     implementation(libs.aws.sdk.s3)
     implementation(libs.aws.sdk.rekognition)
     runtimeOnly(libs.aws.sdk.sts) // IRSA를 사용하기 위해서 필요함

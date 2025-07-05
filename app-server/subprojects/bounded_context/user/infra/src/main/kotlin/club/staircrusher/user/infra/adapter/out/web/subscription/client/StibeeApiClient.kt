@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.service.annotation.DeleteExchange
 import org.springframework.web.service.annotation.PostExchange
 import reactor.core.publisher.Mono
 
@@ -19,6 +20,16 @@ internal interface StibeeApiClient {
         @PathVariable("listId") listId: String,
         @RequestBody body: RegisterSubscriberRequestDto,
     ): Mono<RegisterSubscriberResponseDto>
+
+    @DeleteExchange(
+        url = "/lists/{listId}/subscribers",
+        contentType = "application/json",
+        accept = ["application/json"],
+    )
+    fun unregisterSubscriber(
+        @PathVariable("listId") listId: String,
+        @RequestBody body: UnregisterSubscriberRequestDto,
+    ): Mono<UnregisterSubscriberResponseDto>
 
     @Serializable
     data class RegisterSubscriberRequestDto(
@@ -59,6 +70,12 @@ internal interface StibeeApiClient {
             val isMarketingPushAgreed: Boolean,
         )
     }
+
+    @Serializable
+    data class UnregisterSubscriberRequestDto(
+        @SerialName("subscribers")
+        val subscribers: List<String>,
+    )
 
     @Serializable
     data class RegisterSubscriberResponseDto(
@@ -115,6 +132,36 @@ internal interface StibeeApiClient {
 
             @JsonNames("failDuplicatedEmail", "failDuplicatedPhone", "failExistEmail", "failExistPhone", "failNoEmail", "failUnknown", "failValidation", "failValidationDateTime", "failWrongEmail", "failWrongPhone")
             val failedSubscribers: List<Subscriber>,
+        )
+    }
+
+    @Serializable
+    data class UnregisterSubscriberResponseDto(
+        @SerialName("Ok")
+        val isOk: Boolean,
+
+        @SerialName("Error")
+        val error: Error? = null,
+
+        @SerialName("Value")
+        val result: Value,
+    ) {
+        @Serializable
+        data class Error(
+            @SerialName("Code")
+            val code: String,
+
+            @SerialName("Message")
+            val message: String,
+        )
+
+        @Serializable
+        data class Value(
+            @SerialName("success")
+            val unregisteredSubscribers: List<String>,
+
+            @SerialName("fail")
+            val failedSubscribers: List<String>,
         )
     }
 }

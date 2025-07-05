@@ -1,21 +1,22 @@
 package club.staircrusher.user.infra.adapter.`in`.controller
 
-import club.staircrusher.admin_api.spec.dto.AdminSendPushNotificationRequestDto
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPost200Response
-import club.staircrusher.api.spec.dto.CheckNicknameDuplicationPostRequest
 import club.staircrusher.api.spec.dto.GetUserInfoResponseDto
 import club.staircrusher.api.spec.dto.UpdatePushTokenPostRequest
 import club.staircrusher.api.spec.dto.UpdateUserInfoPost200Response
 import club.staircrusher.api.spec.dto.UpdateUserInfoPostRequest
-import club.staircrusher.spring_web.security.admin.SccAdminAuthentication
+import club.staircrusher.api.spec.dto.ValidateUserProfilePost200Response
+import club.staircrusher.api.spec.dto.ValidateUserProfilePostRequest
+import club.staircrusher.spring_web.security.InternalIpAddressChecker
 import club.staircrusher.spring_web.security.app.SccAppAuthentication
 import club.staircrusher.stdlib.domain.SccDomainException
 import club.staircrusher.stdlib.env.SccEnv
 import club.staircrusher.user.application.port.`in`.UserApplicationService
+import club.staircrusher.user.application.port.`in`.use_case.DeleteUserUseCase
 import club.staircrusher.user.application.port.`in`.use_case.GetUserProfileUseCase
+import club.staircrusher.user.application.port.`in`.use_case.UpdateExternalRefreshTokensUseCase
 import club.staircrusher.user.infra.adapter.`in`.converter.toDTO
 import club.staircrusher.user.infra.adapter.`in`.converter.toModel
-import mu.KotlinLogging
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,9 +27,9 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userApplicationService: UserApplicationService,
     private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val updateExternalRefreshTokensUseCase: UpdateExternalRefreshTokensUseCase,
 ) {
-    private val logger = KotlinLogging.logger {}
-
     @GetMapping("/getUserInfo")
     fun getUserInfo(
         authentication: SccAppAuthentication,
@@ -49,14 +50,13 @@ class UserController(
         @RequestBody request: UpdateUserInfoPostRequest,
         authentication: SccAppAuthentication,
     ): UpdateUserInfoPost200Response {
-        logger.info { "[UpdateUserInfo]: user(${authentication.principal}), $request" }
         val updatedUser = userApplicationService.updateUserInfo(
             userId = authentication.principal,
             nickname = request.nickname,
             instagramId = request.instagramId,
             email = request.email,
             mobilityTools = request.mobilityTools.map { it.toModel() },
-            isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed ?: false,
+            isNewsLetterSubscriptionAgreed = request.isNewsLetterSubscriptionAgreed,
             birthYear = request.birthYear,
         )
         return UpdateUserInfoPost200Response(
@@ -75,31 +75,32 @@ class UserController(
         )
     }
 
-    @PostMapping("/admin/user/sendPushNotification")
-    fun adminSendPushNotification(
-        @RequestBody request: AdminSendPushNotificationRequestDto,
-        @Suppress("UnusedPrivateMember") authentication: SccAdminAuthentication,
-    ) {
-        userApplicationService.sendPushNotification(
-            userIds = request.userIds,
-            title = request.notification.title,
-            body = request.notification.body,
-            deepLink = request.notification.deepLink,
-        )
-    }
-
     @PostMapping("/deleteUser")
     fun deleteUser(authentication: SccAppAuthentication): ResponseEntity<Unit> {
-        userApplicationService.deleteUser(authentication.principal)
+        deleteUserUseCase.handle(authentication.principal)
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/checkNicknameDuplication")
-    fun checkNicknameDuplication(
-        @RequestBody request: CheckNicknameDuplicationPostRequest,
-    ): CheckNicknameDuplicationPost200Response {
-        val isDuplicate = userApplicationService.isNicknameDuplicate(request.nickname)
-        return CheckNicknameDuplicationPost200Response(isDuplicate)
+    @PostMapping("/validateUserProfile")
+    fun validateUserProfile(
+        @RequestBody request: ValidateUserProfilePostRequest,
+        authentication: SccAppAuthentication,
+    ): ValidateUserProfilePost200Response {
+        val result = userApplicationService.validateUserProfile(
+            nickname = request.nickname,
+            email = request.email,
+            userId = authentication.principal,
+        )
+        return ValidateUserProfilePost200Response(
+            nicknameErrorMessage = result.nicknameErrorMessage,
+            emailErrorMessage = result.emailErrorMessage,
+        )
+    }
+
+    @PostMapping("/updateExternalRefreshTokens")
+    fun updateExternalRefreshTokens(request: HttpServletRequest) {
+        InternalIpAddressChecker.check(request)
+        updateExternalRefreshTokensUseCase.handle()
     }
 
     companion object {

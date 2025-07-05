@@ -52,12 +52,33 @@ data "aws_iam_policy_document" "scc_dev_home_banners_full_access" {
   }
 }
 
+data "aws_iam_policy_document" "scc_dev_crusher_labels_full_access" {
+  statement {
+    actions = [
+      "s3:*",
+    ]
+    resources = [
+      aws_s3_bucket.dev_crusher_labels.arn,
+      "${aws_s3_bucket.dev_crusher_labels.arn}/*",
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "scc_dev_rekognition_access" {
   statement {
     actions = [
       "rekognition:DetectFaces",
     ]
     resources = ["*"]
+  }
+}
+
+data "aws_iam_policy_document" "scc_dev_common_queue_full_access" {
+  statement {
+    actions = [
+      "sqs:*",
+    ]
+    resources = [aws_sqs_queue.dev_common_queue.arn]
   }
 }
 
@@ -81,9 +102,19 @@ resource "aws_iam_policy" "scc_dev_home_banners_full_access" {
   policy = data.aws_iam_policy_document.scc_dev_home_banners_full_access.json
 }
 
+resource "aws_iam_policy" "scc_dev_crusher_labels_full_access" {
+  name   = "scc-dev-crusher-labels-full-access"
+  policy = data.aws_iam_policy_document.scc_dev_crusher_labels_full_access.json
+}
+
 resource "aws_iam_policy" "scc_dev_rekognition_access" {
   name   = "scc-dev-rekognition-access"
   policy = data.aws_iam_policy_document.scc_dev_rekognition_access.json
+}
+
+resource "aws_iam_policy" "scc_dev_common_queue_full_access" {
+  name   = "scc-dev-common-queue-full-access"
+  policy = data.aws_iam_policy_document.scc_dev_common_queue_full_access.json
 }
 
 resource "aws_iam_role_policy_attachment" "scc_dev_accessibility_images_full_access" {
@@ -101,9 +132,19 @@ resource "aws_iam_role_policy_attachment" "scc_dev_home_banners_full_access" {
   policy_arn = aws_iam_policy.scc_dev_home_banners_full_access.arn
 }
 
+resource "aws_iam_role_policy_attachment" "scc_dev_crusher_labels_full_access" {
+  role       = aws_iam_role.scc_dev.name
+  policy_arn = aws_iam_policy.scc_dev_crusher_labels_full_access.arn
+}
+
 resource "aws_iam_role_policy_attachment" "scc_dev_rekognition_access" {
   role       = aws_iam_role.scc_dev.name
   policy_arn = aws_iam_policy.scc_dev_rekognition_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "scc_dev_common_queue_full_access" {
+  role       = aws_iam_role.scc_dev.name
+  policy_arn = aws_iam_policy.scc_dev_common_queue_full_access.arn
 }
 
 data "aws_iam_policy_document" "scc_deploy_secret_dev" {

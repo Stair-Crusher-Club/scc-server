@@ -64,7 +64,7 @@ internal class S3FileManagementService(
         )
     }
 
-    override fun downloadFile(url: String, destination: Path): File {
+    override suspend fun downloadFile(url: String, destination: Path): File {
         val resource = resourceLoader.getResource(url)
         val fileName = resource.filename ?: "tmp"
         val file = File(destination.resolve(fileName).toString())
@@ -131,9 +131,12 @@ internal class S3FileManagementService(
 
     private val ImageUploadPurposeType.bucketName: String
         get() = when (this) {
-            ImageUploadPurposeType.ACCESSIBILITY -> properties.bucketName
+            ImageUploadPurposeType.ACCESSIBILITY,
+            ImageUploadPurposeType.PLACE_REVIEW,
+            ImageUploadPurposeType.TOILET_REVIEW -> properties.bucketName
             ImageUploadPurposeType.ACCESSIBILITY_THUMBNAIL -> properties.thumbnailBucketName
             ImageUploadPurposeType.BANNER -> properties.bannerBucketName
+            ImageUploadPurposeType.CRUSHER_LABEL -> properties.crusherLabelBucketName
         }
 
     companion object {

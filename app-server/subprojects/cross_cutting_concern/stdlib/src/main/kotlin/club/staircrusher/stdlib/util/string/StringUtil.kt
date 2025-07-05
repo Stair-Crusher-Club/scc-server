@@ -12,8 +12,9 @@ fun String.isSimilarWith(pattern: String): Boolean {
     )
 }
 
+private val distance = JaroWinklerDistance()
 fun String.getSimilarityWith(other: String): Double {
-    return JaroWinklerDistance().apply(this, other)
+    return distance.apply(this, other)
 }
 
 private fun simpleMatch(text: String, pattern: String): Boolean {
