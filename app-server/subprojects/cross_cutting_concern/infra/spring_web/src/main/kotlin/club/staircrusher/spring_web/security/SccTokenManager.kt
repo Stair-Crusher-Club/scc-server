@@ -11,6 +11,7 @@ import com.auth0.jwt.exceptions.InvalidClaimException
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.SignatureVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
+import com.auth0.jwt.interfaces.DecodedJWT
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.time.Duration
@@ -54,21 +55,21 @@ class SccTokenManager(
 
     @Suppress("SwallowedException", "TooGenericExceptionCaught")
     override fun <T : Any> verify(token: String, contentClass: KClass<T>): T {
+        // 하위 호환성
+        val verificationAttempts = listOf(
+            { verifier.verify(token) },
+            { oldVerifier.verify(token) }
+        )
+
         val jwt = try {
-            verifier.verify(token)
-        } catch (_: SignatureVerificationException) {
-            // 하위 호환성 맞춰주기
-            try {
-                oldVerifier.verify(token)
-            } catch (e: SignatureVerificationException) {
-                throw TokenVerificationException(e.message ?: "")
-            }
+            verifyWithVerifiers(token, verificationAttempts)
         } catch (t: Throwable) {
             when (t) {
                 is JWTDecodeException,
                 is AlgorithmMismatchException,
                 is TokenExpiredException,
-                is InvalidClaimException -> throw TokenVerificationException(t.message ?: "")
+                is InvalidClaimException,
+                is SignatureVerificationException -> throw TokenVerificationException(t.message ?: "")
                 else -> throw t
             }
         }
@@ -76,6 +77,18 @@ class SccTokenManager(
             objectMapper.readValue(jwt.getClaim(bodyKey).asString(), contentClass.java)
         } catch (e: MismatchedInputException) {
             throw TokenVerificationException(e.message ?: "")
+        }
+    }
+
+    private fun verifyWithVerifiers(token: String, verifiers: List<() -> DecodedJWT>): DecodedJWT {
+        if (verifiers.isEmpty()) {
+            throw TokenVerificationException("")
+        }
+
+        return try {
+            verifiers.first().invoke()
+        } catch (_: SignatureVerificationException) {
+            verifyWithVerifiers(token, verifiers.drop(1))
         }
     }
 
