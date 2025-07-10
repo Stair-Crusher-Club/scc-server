@@ -1,12 +1,11 @@
 package club.staircrusher.image.infra.adapter.out.file_management
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.AwsCredentials
 
 @ConfigurationProperties("scc.s3.image-upload")
-internal data class S3ImageUploadProperties @ConstructorBinding constructor(
+internal data class S3ImageUploadProperties(
     val bucketName: String,
     val thumbnailBucketName: String,
     val bannerBucketName: String,

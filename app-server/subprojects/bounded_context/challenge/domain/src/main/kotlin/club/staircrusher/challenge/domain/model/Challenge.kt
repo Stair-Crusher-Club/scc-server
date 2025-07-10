@@ -120,30 +120,30 @@ class Challenge(
             conditions: List<ChallengeCondition>,
         ) {
             if (isPublic) {
-                check(invitationCode == null) {
+                require(invitationCode == null) {
                     "공개 챌린지는 초대 코드가 없어야 합니다."
                 }
             } else {
-                check(invitationCode != null) {
+                require(invitationCode != null) {
                     "비공개 챌린지는 초대 코드가 있어야 합니다."
                 }
             }
 
             if (endsAt != null) {
-                check(startsAt < endsAt) { "시작 시각은 종료 시각보다 빨라야 합니다." }
+                require(startsAt < endsAt) { "시작 시각은 종료 시각보다 빨라야 합니다." }
             }
 
             if (milestones.isNotEmpty()) {
-                check(milestones.last() < goal) {
+                require(milestones.last() < goal) {
                     "목표는 마일스톤보다 커야 합니다."
                 }
             }
 
             conditions.forEach { condition ->
-                check(condition.addressCondition?.rawEupMyeonDongs == null || condition.addressCondition.rawEupMyeonDongs.isNotEmpty()) {
+                require(condition.addressCondition?.rawEupMyeonDongs == null || condition.addressCondition.rawEupMyeonDongs.isNotEmpty()) {
                     "퀘스트 대상 지역은 전체이거나 최소 1곳 이상을 지정해야 합니다."
                 }
-                check(condition.actionCondition?.types == null || condition.actionCondition.types.isNotEmpty()) {
+                require(condition.actionCondition?.types == null || condition.actionCondition.types.isNotEmpty()) {
                     "퀘스트 대상 액션은 최소 1개 이상을 지정해야 합니다."
                 }
             }
@@ -153,7 +153,7 @@ class Challenge(
             return value
                 .trim()
                 .also {
-                    check(it.isNotBlank()) { "값이 공백이면 안 됩니다." }
+                    require(it.isNotBlank()) { "값이 공백이면 안 됩니다." }
                 }
         }
     }

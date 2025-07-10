@@ -8,8 +8,10 @@ import club.staircrusher.place.domain.model.accessibility.PlaceAccessibility
 import club.staircrusher.place.domain.model.place.Place
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TimestampCursor
+import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.user.application.port.`in`.UserApplicationService
 import club.staircrusher.user.domain.model.UserProfile
+import org.hibernate.Hibernate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -20,6 +22,7 @@ class AdminSearchAccessibilitiesUseCase(
     private val placeAccessibilityRepository: PlaceAccessibilityRepository,
     private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
     private val userAplService: UserApplicationService,
+    private val transactionManager: TransactionManager,
 ) {
     data class Result(
         val items: List<Item>,
@@ -40,7 +43,7 @@ class AdminSearchAccessibilitiesUseCase(
         createdAtToLocalDate: LocalDate?,
         cursorValue: String?,
         limit: Int?,
-    ): Result {
+    ): Result = transactionManager.doInTransaction(isReadOnly = true) {
         val cursor = cursorValue?.let { Cursor.parse(it) } ?: Cursor.initial()
         val normalizedLimit = limit ?: DEFAULT_LIMIT
 
@@ -52,6 +55,14 @@ class AdminSearchAccessibilitiesUseCase(
             cursorId = cursor.id,
             limit = normalizedLimit + 1, // 다음 페이지가 존재하는지 확인하기 위해 한 개를 더 조회한다.
         )
+        // https://agnica-coworkingspace.slack.com/archives/C093K16MQK1/p1751607055114659?thread_ts=1751593608.379319&cid=C093K16MQK1
+        // https://hibernate.atlassian.net/browse/HHH-16191 <- 이 이슈...
+        // FIXME: Spring Boot 3.1로 올리면서 hibernate 버전도 6.2로 올라가면 아래 줄 삭제하기
+        placeAccessibilities.forEach {
+            Hibernate.initialize(it)
+            it.images.forEach { it.id }
+        }
+
         val placeById = placeApplicationService.findAllByIds(placeAccessibilities.map { it.placeId })
             .associateBy { it.id }
         val buildingAccessibilityByBuildingId = buildingAccessibilityRepository
@@ -68,7 +79,7 @@ class AdminSearchAccessibilitiesUseCase(
             null
         }
 
-        return Result(
+        return@doInTransaction Result(
             items = placeAccessibilities.take(normalizedLimit).map { placeAccessibility ->
                 val place = placeById[placeAccessibility.placeId]!!
                 val buildingAccessibility = buildingAccessibilityByBuildingId[place.building.id]

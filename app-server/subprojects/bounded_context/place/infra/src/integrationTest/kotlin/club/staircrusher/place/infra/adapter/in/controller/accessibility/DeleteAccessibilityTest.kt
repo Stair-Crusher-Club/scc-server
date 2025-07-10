@@ -4,10 +4,10 @@ import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.DeleteAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.DeleteBuildingAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
-import club.staircrusher.domain_event.PlaceAccessibilityDeletedEvent
-import club.staircrusher.domain_event.PlaceAccessibilityCommentDeletedEvent
-import club.staircrusher.domain_event.BuildingAccessibilityDeletedEvent
 import club.staircrusher.domain_event.BuildingAccessibilityCommentDeletedEvent
+import club.staircrusher.domain_event.BuildingAccessibilityDeletedEvent
+import club.staircrusher.domain_event.PlaceAccessibilityCommentDeletedEvent
+import club.staircrusher.domain_event.PlaceAccessibilityDeletedEvent
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.mockito.kotlin.reset
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
@@ -58,7 +57,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
         }
         val getAccessibilityParams = GetAccessibilityPostRequest(placeId = place.id)
         mvc
-            .sccRequest("/getAccessibility", getAccessibilityParams)
+            .sccAnonymousRequest("/getAccessibility", getAccessibilityParams)
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
                 assertNull(result.placeAccessibility)
@@ -90,7 +89,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
         }
         val getAccessibilityParams = GetAccessibilityPostRequest(placeId = place.id)
         mvc
-            .sccRequest("/getAccessibility", getAccessibilityParams)
+            .sccAnonymousRequest("/getAccessibility", getAccessibilityParams)
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
                 assertNotNull(result.placeAccessibility)

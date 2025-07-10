@@ -94,17 +94,6 @@ kube-prometheus-stack:
         {{ end }}
         {{ end }}
 
-promtail:
-  serviceAccount:
-    create: true
-    name: loki
-    annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring
-
-  config:
-    clients:
-      - url: http://loki-write:3100/loki/api/v1/push
-
 loki:
   loki:
     auth_enabled: false
@@ -164,6 +153,24 @@ loki:
 
   backend:
     replicas: 1
+    extraEnv:
+      - name: AWS_ROLE_ARN
+        value: arn:aws:iam::291889421067:role/monitoring
+      - name: AWS_WEB_IDENTITY_TOKEN_FILE
+        value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+    extraVolumeMounts:
+      - name: aws-iam-token
+        mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        readOnly: true
+    extraVolumes:
+      - name: aws-iam-token
+        projected:
+          defaultMode: 420
+          sources:
+            - serviceAccountToken:
+                audience: sts.amazonaws.com
+                expirationSeconds: 86400
+                path: token
   read:
     replicas: 1
     extraEnv:
@@ -220,3 +227,111 @@ loki:
     name: loki
     annotations:
       eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring
+
+alloy:
+  serviceAccount:
+    create: true
+    name: alloy
+  alloy:
+    enableReporting: false
+    mounts:
+      varlog: true
+    configMap:
+      content: |-
+        discovery.kubernetes "kubernetes_pods" {
+          role = "pod"
+
+          namespaces {
+            names = ["scc", "dev"]
+          }
+        }
+        
+        discovery.relabel "kubernetes_pods" {
+          targets = discovery.kubernetes.kubernetes_pods.targets
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_controller_name"]
+            regex         = "([0-9a-z-.]+?)(-[0-9a-f]{8,10})?"
+            target_label  = "__tmp_controller_name"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name", "__meta_kubernetes_pod_label_app", "__tmp_controller_name", "__meta_kubernetes_pod_name"]
+            regex         = "^;*([^;]+)(;.*)?$"
+            target_label  = "app"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_instance", "__meta_kubernetes_pod_label_instance"]
+            regex         = "^;*([^;]+)(;.*)?$"
+            target_label  = "instance"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_component", "__meta_kubernetes_pod_label_component"]
+            regex         = "^;*([^;]+)(;.*)?$"
+            target_label  = "component"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_node_name"]
+            target_label  = "node_name"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_namespace"]
+            target_label  = "namespace"
+          }
+        
+          rule {
+            source_labels = ["namespace", "app"]
+            separator     = "/"
+            target_label  = "job"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_name"]
+            target_label  = "pod"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_container_name"]
+            target_label  = "container"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+            separator     = "/"
+            target_label  = "__path__"
+            replacement   = "/var/log/pods/*$1/*.log"
+          }
+        
+          rule {
+            source_labels = ["__meta_kubernetes_pod_annotationpresent_kubernetes_io_config_hash", "__meta_kubernetes_pod_annotation_kubernetes_io_config_hash", "__meta_kubernetes_pod_container_name"]
+            separator     = "/"
+            regex         = "true/(.*)"
+            target_label  = "__path__"
+            replacement   = "/var/log/pods/*$1/*.log"
+          }
+        }
+        
+        local.file_match "kubernetes_pods" {
+          path_targets = discovery.relabel.kubernetes_pods.output
+        }
+
+        loki.process "kubernetes_pods" {
+          stage.cri {}
+          forward_to = [loki.write.default.receiver]
+        }
+
+        loki.source.file "kubernetes_pods" {
+          targets               = local.file_match.kubernetes_pods.targets
+          forward_to            = [loki.process.kubernetes_pods.receiver]
+          legacy_positions_file = "/run/promtail/positions.yaml"
+        }
+
+        loki.write "default" {
+          endpoint {
+            url = "http://loki-write:3100/loki/api/v1/push"
+          }
+        }

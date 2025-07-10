@@ -12,6 +12,7 @@ import kotlinx.coroutines.future.await
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
+import org.springframework.context.annotation.Profile
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
 import software.amazon.awssdk.services.sqs.model.Message
@@ -19,6 +20,7 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import kotlin.coroutines.coroutineContext
 
 @Component
+@Profile("!local")
 class SqsMessageListener(
     private val sqsAsyncClient: SqsAsyncClient,
     private val sqsProperties: SqsProperties,

@@ -1,6 +1,7 @@
 package club.staircrusher.place.application.port.`in`.search
 
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityApplicationService
+import club.staircrusher.place.application.port.`in`.accessibility.place_review.PlaceReviewService
 import club.staircrusher.place.application.port.`in`.place.BuildingService
 import club.staircrusher.place.application.port.`in`.place.PlaceApplicationService
 import club.staircrusher.place.application.port.out.place.web.MapsService
@@ -18,6 +19,7 @@ import club.staircrusher.stdlib.place.PlaceCategory
 class PlaceSearchService(
     private val placeApplicationService: PlaceApplicationService,
     private val buildingService: BuildingService,
+    private val placeReviewService: PlaceReviewService,
     private val accessibilityApplicationService: AccessibilityApplicationService,
 ) {
 
@@ -151,6 +153,7 @@ class PlaceSearchService(
                     distance = currentLocation?.let { LocationUtils.calculateDistance(it, p.location) },
                     accessibilityScore = pa?.let { AccessibilityScore.get(pa, ba)?.coerceIn(0.0..5.0) },
                     isAccessibilityRegistrable = accessibilityApplicationService.isAccessibilityRegistrable(p),
+                    placeReviewCount = placeReviewService.countByPlaceId(p.id),
                     isFavoritePlace = placeIdToIsFavoriteMap[p.id] ?: false
                 )
             }

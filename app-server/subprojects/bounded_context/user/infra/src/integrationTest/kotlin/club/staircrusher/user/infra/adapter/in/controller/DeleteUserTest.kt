@@ -25,7 +25,6 @@ import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.wheneverBlocking
 import org.springframework.beans.factory.annotation.Autowired
@@ -59,7 +58,7 @@ class DeleteUserTest : UserITBase() {
 
         fun login(): ResultActionsDsl {
             return mvc
-                .sccRequest("/login", LoginPostRequest(user.profile.nickname, "password"))
+                .sccAnonymousRequest("/login", LoginPostRequest(user.profile.nickname, "password"))
         }
 
         login().andExpect {

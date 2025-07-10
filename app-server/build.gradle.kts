@@ -64,11 +64,17 @@ subprojects {
     }
 
     dependencies {
-        if (project.name == "infra") {
-            implementation(rootProject.projects.crossCuttingConcern.infra.springWeb)
-            implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        } else if (project.name == "application") {
-            implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        when (project.name) {
+            "infra" -> {
+                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+                implementation(rootProject.projects.crossCuttingConcern.infra.springWeb)
+            }
+            "application" -> {
+                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+            }
+            "domain" -> {
+                implementation("com.vladmihalcea:hibernate-types-60:2.21.1") // json type 지정용
+            }
         }
         implementation(rootProject.libs.bundles.kotlin.subproject)
     }
@@ -76,6 +82,14 @@ subprojects {
     tasks.test {
         useJUnitPlatform {
             includeEngines("junit-jupiter")
+        }
+
+        testLogging {
+            events("failed", "skipped")
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            showCauses = true
+            showExceptions = true
+            showStackTraces = true
         }
     }
 

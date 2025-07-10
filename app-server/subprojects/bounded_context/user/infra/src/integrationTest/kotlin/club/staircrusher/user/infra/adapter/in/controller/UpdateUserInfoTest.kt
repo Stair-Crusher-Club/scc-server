@@ -43,6 +43,7 @@ class UpdateUserInfoTest : UserITBase() {
         val user = transactionManager.doInTransaction {
             testDataGenerator.createIdentifiedUser()
         }
+        val originalBirthYear = user.profile.birthYear ?: 1990
 
         val changedNickname = SccRandom.string(32)
         val changedInstagramId = SccRandom.string(32)
@@ -51,7 +52,7 @@ class UpdateUserInfoTest : UserITBase() {
             UserMobilityTool.ELECTRIC_WHEELCHAIR,
             UserMobilityTool.WALKING_ASSISTANCE_DEVICE,
         )
-        val changedBirthYear = SccRandom.int(1900, 2025)
+        val changedBirthYear = SccRandom.int(originalBirthYear + 1, 2025)
         assertNotEquals(user.profile.nickname, changedNickname)
         assertNotEquals(user.profile.instagramId, changedInstagramId)
         assertNotEquals(user.profile.email, changedEmail)
@@ -423,7 +424,7 @@ class UpdateUserInfoTest : UserITBase() {
 
         val email = "${SccRandom.string(32)}@staircrusher.club"
         val nickname = SccRandom.string(32)
-        
+
         // First subscribe to newsletter
         val subscribeParams = UpdateUserInfoPostRequest(
             nickname = nickname,

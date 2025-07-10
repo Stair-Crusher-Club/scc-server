@@ -20,25 +20,25 @@ class Banner(
     displayOrder: Int,
 ) {
     init {
-        check(loggingKey.isNotBlank()) {
+        require(loggingKey.isNotBlank()) {
             "로깅 키가 비어 있습니다."
         }
-        check(imageUrl.isNotBlank()) {
+        require(imageUrl.isNotBlank()) {
             "배너 이미지 URL이 비어 있습니다."
         }
-        check(loggingKey.isNotBlank()) {
+        require(loggingKey.isNotBlank()) {
             "랜딩 페이지 URL이 비어 있습니다."
         }
-        check(clickPageTitle.isNotBlank()) {
+        require(clickPageTitle.isNotBlank()) {
             "랜딩 페이지 제목이 비어 있습니다."
         }
-        check(clickPageTitle.length <= 32) {
+        require(clickPageTitle.length <= 32) {
             "랜딩 페이지 제목은 32자를 초과할 수 없습니다."
         }
-        check((startAt ?: Instant.MIN) < (endAt ?: Instant.MAX)) {
+        require((startAt ?: Instant.MIN) < (endAt ?: Instant.MAX)) {
             "배너 종료 시각이 시작 시각 이후로 설정되어야 합니다."
         }
-        check(SccClock.instant() < (endAt ?: Instant.MAX)) {
+        require(SccClock.instant() < (endAt ?: Instant.MAX)) {
             "배너 종료 시각이 현재 시각 이후로 설정되어야 합니다."
         }
     }

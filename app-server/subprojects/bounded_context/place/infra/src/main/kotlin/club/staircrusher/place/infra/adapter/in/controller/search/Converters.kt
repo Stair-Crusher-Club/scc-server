@@ -40,6 +40,7 @@ fun SearchPlacesResult.toDTO() = PlaceListItem(
         hasSlope = placeAccessibility?.hasSlope ?: false,
         images = placeAccessibility?.images?.map { it.toDTO() } ?: emptyList(),
         imageUrls = emptyList(),
+        reviewCount = placeReviewCount,
         createdAt = placeAccessibility?.createdAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
     ),
 )

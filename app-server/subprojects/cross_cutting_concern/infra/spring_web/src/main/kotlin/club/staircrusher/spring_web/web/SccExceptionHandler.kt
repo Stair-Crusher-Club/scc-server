@@ -27,6 +27,13 @@ class SccExceptionHandler {
                     .body(objectMapper.writeValueAsString(t.toApiErrorResponse()))
             }
 
+            is IllegalArgumentException -> {
+                logger.info(t) { "Bad Request: $t, cause: ${t.cause}" }
+                ResponseEntity
+                    .badRequest()
+                    .body(objectMapper.writeValueAsString(t.toApiErrorResponse()))
+            }
+
             is HttpRequestMethodNotSupportedException,
             is HttpMediaTypeNotSupportedException,
             is HttpMessageNotReadableException,
@@ -62,6 +69,13 @@ class SccExceptionHandler {
                 SccDomainException.ErrorCode.CHALLENGE_CLOSED -> ApiErrorResponse.Code.CHALLENGE_CLOSED
                 null -> null
             }
+        )
+    }
+
+    private fun IllegalArgumentException.toApiErrorResponse(): ApiErrorResponse {
+        return ApiErrorResponse(
+            msg = message ?: "잘못된 요청입니다.",
+            code = null,
         )
     }
 }
