@@ -22,7 +22,20 @@ interface PlaceRepository : CrudRepository<Place, String> {
     fun findIdsByPlacesInCircle(centerLng: Double, centerLat: Double, radiusMeters: Double): List<String>
 
     @Query("""
-        SELECT p.id
+        SELECT p.*
+        FROM place p
+        WHERE
+            ST_Dwithin(
+                location_for_query,
+                ST_SetSRID(ST_MakePoint(:centerLng, :centerLat), 4326),
+                :radiusMeters,
+                false
+            ) IS TRUE
+    """, nativeQuery = true)
+    fun findAllByPlacesInCircle(centerLng: Double, centerLat: Double, radiusMeters: Double): List<Place>
+
+    @Query("""
+        SELECT p.*
         FROM place p
         WHERE
             ST_Within(
@@ -30,7 +43,7 @@ interface PlaceRepository : CrudRepository<Place, String> {
                 ST_GeomFromText(:polygonWkt, 4326)
             ) IS TRUE
     """, nativeQuery = true)
-    fun findIdsByPlacesInPolygon(polygonWkt: String): List<String>
+    fun findAllByPlacesInPolygon(polygonWkt: String): List<Place>
 
     @EntityGraph(attributePaths = ["building"])
     fun findAllByIdIn(ids: List<String>): List<Place>
