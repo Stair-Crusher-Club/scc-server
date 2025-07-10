@@ -153,6 +153,24 @@ loki:
 
   backend:
     replicas: 1
+    extraEnv:
+      - name: AWS_ROLE_ARN
+        value: arn:aws:iam::291889421067:role/monitoring
+      - name: AWS_WEB_IDENTITY_TOKEN_FILE
+        value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+    extraVolumeMounts:
+      - name: aws-iam-token
+        mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        readOnly: true
+    extraVolumes:
+      - name: aws-iam-token
+        projected:
+          defaultMode: 420
+          sources:
+            - serviceAccountToken:
+                audience: sts.amazonaws.com
+                expirationSeconds: 86400
+                path: token
   read:
     replicas: 1
     extraEnv:
@@ -213,9 +231,7 @@ loki:
 alloy:
   serviceAccount:
     create: true
-    name: loki
-    annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::291889421067:role/monitoring
+    name: alloy
   alloy:
     enableReporting: false
     mounts:
