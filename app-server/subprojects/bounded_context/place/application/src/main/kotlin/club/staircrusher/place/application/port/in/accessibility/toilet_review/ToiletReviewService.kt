@@ -31,7 +31,7 @@ class ToiletReviewService(
                     AccessibilityImage(
                         id = EntityIdGenerator.generateRandom(),
                         accessibilityId = it.id,
-                        accessibilityType = AccessibilityImage.AccessibilityType.Toilet,
+                        accessibilityType = AccessibilityImage.AccessibilityType.ToiletReview,
                         originalImageUrl = url,
                         displayOrder = index,
                     )
