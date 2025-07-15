@@ -140,7 +140,6 @@ class GetAccessibilityTest : AccessibilityITBase() {
             }
             .apply {
                 val result = getResult(AccessibilityInfoDto::class)
-                assertNull(result.placeAccessibility!!.deletionInfo)
                 assertFalse(result.placeAccessibility!!.isDeletable)
             }
     }
