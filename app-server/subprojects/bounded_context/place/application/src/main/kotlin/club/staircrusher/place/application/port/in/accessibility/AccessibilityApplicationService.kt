@@ -121,8 +121,6 @@ class AccessibilityApplicationService(
             },
             placeAccessibilityChallengeCrusherGroup = placeAccessibilityChallengeCrusherGroup,
             hasOtherPlacesToRegisterInSameBuilding = hasOtherPlacesToRegisterInSameBuilding(place.building),
-            isLastPlaceAccessibilityInBuilding = placeAccessibility?.isLastPlaceAccessibilityInBuilding(place.building.id)
-                ?: false,
             isFavoritePlace = userId?.let { placeApplicationService.isFavoritePlace(placeId, it) } ?: false,
             totalFavoriteCount = placeApplicationService.getTotalFavoriteCount(placeId),
         )
@@ -134,15 +132,6 @@ class AccessibilityApplicationService(
             placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placesInBuilding.map { it.id })
                 .map { it.placeId }
         return placesInBuilding.any { it.id !in placeAccessibilityExistingPlaceIds }
-    }
-
-    private fun PlaceAccessibility.isLastPlaceAccessibilityInBuilding(buildingId: String): Boolean {
-        val placeIds = placeApplicationService.findByBuildingId(buildingId)
-            .map { it.id }
-            .toSet()
-        return placeAccessibilityRepository.findByPlaceIdInAndDeletedAtIsNull(placeIds).let {
-            it.size == 1 && it[0].id == this.id
-        }
     }
 
     fun listPlaceAndBuildingAccessibility(places: List<Place>): List<Pair<PlaceAccessibility?, BuildingAccessibility?>> {
@@ -169,7 +158,6 @@ class AccessibilityApplicationService(
         val buildingAccessibilityComment: BuildingAccessibilityComment?,
         val accessibilityRegisterer: AccessibilityRegisterer?,
         val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
-        val isLastPlaceAccessibilityInBuilding: Boolean,
     )
 
     @Deprecated("PlaceAccessibilty, BuildingAccessibility 함수가 분리")
@@ -199,7 +187,6 @@ class AccessibilityApplicationService(
                 buildingAccessibilityComment = registerBuildingAccessibilityResult?.buildingAccessibilityComment,
                 accessibilityRegisterer = registerPlaceAccessibilityResult.accessibilityRegisterer,
                 registrationOrder = registerPlaceAccessibilityResult.registrationOrder,
-                isLastPlaceAccessibilityInBuilding = registerPlaceAccessibilityResult.isLastPlaceAccessibilityInBuilding,
             )
         }
         return registerResult
@@ -353,7 +340,6 @@ class AccessibilityApplicationService(
         val userInfo =
             createPlaceAccessibilityParams.userId?.let { userApplicationService.getProfileByUserIdOrNull(it) }
                 ?.toDomainModel()
-        val buildingId = place.building.id
 
         return RegisterPlaceAccessibilityResult(
             place = place,
@@ -361,7 +347,6 @@ class AccessibilityApplicationService(
             placeAccessibilityComment = placeAccessibilityComment,
             accessibilityRegisterer = userInfo,
             registrationOrder = placeAccessibilityRepository.countByDeletedAtIsNull(),
-            isLastPlaceAccessibilityInBuilding = result.isLastPlaceAccessibilityInBuilding(buildingId),
         )
     }
 

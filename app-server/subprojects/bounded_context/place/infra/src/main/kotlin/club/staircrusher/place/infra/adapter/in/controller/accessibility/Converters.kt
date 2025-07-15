@@ -10,7 +10,6 @@ import club.staircrusher.api.spec.dto.AccessibilityReportReason
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.ImageUploadPurpose
 import club.staircrusher.api.spec.dto.ImageDto
-import club.staircrusher.api.spec.dto.PlaceAccessibilityDeletionInfo
 import club.staircrusher.api.spec.dto.PlaceReviewDto
 import club.staircrusher.api.spec.dto.RecommendedMobilityTypeDto
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
@@ -99,7 +98,6 @@ fun GetAccessibilityResult.toDTO(authUser: AuthUser?) =
             it.value.toDTO(
                 registeredAccessibilityRegisterer = it.accessibilityRegisterer,
                 authUser = authUser,
-                isLastInBuilding = isLastPlaceAccessibilityInBuilding,
                 challengeCrusherGroup = placeAccessibilityChallengeCrusherGroup
             )
         },
@@ -142,7 +140,6 @@ fun PlaceAccessibility.toDTO(
     registeredAccessibilityRegisterer: AccessibilityRegisterer?,
     authUser: AuthUser?,
     challengeCrusherGroup: ChallengeCrusherGroup?,
-    isLastInBuilding: Boolean,
 ): club.staircrusher.api.spec.dto.PlaceAccessibility {
     val floors = if (this.floors.isNullOrEmpty()) {
         if (this.isFirstFloor) listOf(1)
@@ -165,13 +162,6 @@ fun PlaceAccessibility.toDTO(
         registeredUserName = registeredAccessibilityRegisterer?.nickname,
         isDeletable = isDeletable(authUser?.id),
         challengeCrusherGroup = challengeCrusherGroup?.toDTO(),
-        deletionInfo = if (isDeletable(authUser?.id)) {
-            PlaceAccessibilityDeletionInfo(
-                isLastInBuilding = isLastInBuilding,
-            )
-        } else {
-            null
-        },
         createdAt = EpochMillisTimestamp(createdAt.toEpochMilli())
     )
 }
