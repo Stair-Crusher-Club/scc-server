@@ -66,6 +66,6 @@ class AccessibilityImage(
     }
 
     enum class AccessibilityType {
-        Place, Building, PlaceReview, Toilet
+        Place, Building, PlaceReview, ToiletReview
     }
 }
