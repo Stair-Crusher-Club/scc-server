@@ -7,12 +7,10 @@ import club.staircrusher.api.spec.dto.ToiletLocationTypeDto
 import club.staircrusher.api.spec.dto.UserMobilityToolDto
 import club.staircrusher.place.application.port.out.accessibility.persistence.toilet_review.ToiletReviewRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
-import club.staircrusher.user.domain.model.UserMobilityTool
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.util.Assert
 
 class RegisterToiletReviewTest : AccessibilityITBase() {
     @Autowired
