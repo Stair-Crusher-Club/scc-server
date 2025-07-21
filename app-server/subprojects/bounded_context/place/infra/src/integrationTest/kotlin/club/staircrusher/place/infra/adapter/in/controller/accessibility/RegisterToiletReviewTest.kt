@@ -4,12 +4,15 @@ import club.staircrusher.api.spec.dto.EntranceDoorType
 import club.staircrusher.api.spec.dto.RegisterToiletReviewPost200Response
 import club.staircrusher.api.spec.dto.RegisterToiletReviewRequestDto
 import club.staircrusher.api.spec.dto.ToiletLocationTypeDto
+import club.staircrusher.api.spec.dto.UserMobilityToolDto
 import club.staircrusher.place.application.port.out.accessibility.persistence.toilet_review.ToiletReviewRepository
 import club.staircrusher.place.infra.adapter.`in`.controller.accessibility.base.AccessibilityITBase
+import club.staircrusher.user.domain.model.UserMobilityTool
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.util.Assert
 
 class RegisterToiletReviewTest : AccessibilityITBase() {
     @Autowired
@@ -32,6 +35,7 @@ class RegisterToiletReviewTest : AccessibilityITBase() {
             entranceDoorTypes = listOf(EntranceDoorType.AUTOMATIC),
             imageUrls = listOf("example.com/toilet1.jpg"),
             comment = "화장실이 깨끗하고, 접근성이 좋았습니다.",
+            mobilityTool = UserMobilityToolDto.MANUAL_WHEELCHAIR,
         )
 
         mvc
@@ -42,6 +46,7 @@ class RegisterToiletReviewTest : AccessibilityITBase() {
                 Assertions.assertNotNull(result.toiletReview)
                 Assertions.assertEquals(result.toiletReview!!.user.id, user.account.id)
                 Assertions.assertEquals(1, result.toiletReview!!.images!!.size)
+                Assertions.assertEquals(result.toiletReview!!.mobilityTool, UserMobilityToolDto.MANUAL_WHEELCHAIR)
             }
 
         val failingRequest = RegisterToiletReviewRequestDto(
@@ -51,6 +56,7 @@ class RegisterToiletReviewTest : AccessibilityITBase() {
             entranceDoorTypes = null,
             imageUrls = listOf("example.com/toilet1.jpg"),
             comment = "화장실이 깨끗하고, 접근성이 좋았습니다.",
+            mobilityTool = UserMobilityToolDto.MANUAL_WHEELCHAIR,
         )
 
         mvc
@@ -72,6 +78,7 @@ class RegisterToiletReviewTest : AccessibilityITBase() {
             entranceDoorTypes = null,
             imageUrls = null,
             comment = "화장실이 깨끗하고, 접근성이 좋았습니다.",
+            mobilityTool = UserMobilityToolDto.MANUAL_WHEELCHAIR,
         )
 
         mvc
@@ -90,6 +97,7 @@ class RegisterToiletReviewTest : AccessibilityITBase() {
             entranceDoorTypes = null,
             imageUrls = null,
             comment = null,
+            mobilityTool = UserMobilityToolDto.MANUAL_WHEELCHAIR,
         )
 
         mvc

@@ -1,0 +1,1 @@
+ALTER TABLE toilet_review ADD COLUMN mobility_tool VARCHAR(64) NOT NULL DEFAULT 'NONE';
