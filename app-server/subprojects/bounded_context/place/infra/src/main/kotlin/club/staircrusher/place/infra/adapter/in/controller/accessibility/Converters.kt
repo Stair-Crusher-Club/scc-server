@@ -339,6 +339,7 @@ fun RegisterToiletReviewRequestDto.toModel(userId: String) =
     ToiletReviewRepository.CreateParams(
         placeId = placeId,
         userId = userId,
+        mobilityTool = mobilityTool.toModel(),
         toiletLocationType = toiletLocationType.toModel(),
         floor = floor,
         entranceDoorTypes = entranceDoorTypes?.map { it.toModel() } ?: emptyList(),
@@ -362,6 +363,7 @@ fun ToiletLocationTypeDto.toModel() = when (this) {
 
 fun ToiletReview.toDTO(userId: String?, accessibilityRegisterer: AccessibilityRegisterer?) = ToiletReviewDto(
     id = id,
+    mobilityTool = mobilityTool.toDTO(),
     toiletLocationType = toiletLocationType.toDTO(),
     floor = floor,
     entranceDoorTypes = entranceDoorTypes?.map { it.toDTO() },
