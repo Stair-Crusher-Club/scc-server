@@ -24,6 +24,7 @@ class ToiletReviewService(
                 floor = params.floor,
                 entranceDoorTypes = params.entranceDoorTypes,
                 comment = params.comment,
+                mobilityTool = params.mobilityTool,
             )
         ).also {
             it.images = accessibilityImageRepository.saveAll(
