@@ -50,29 +50,29 @@ locals {
   standard_policy = jsonencode({
     rules = [
       {
-        rulePriority: 1,
-        description: "Expire untagged images older than 3 days",
-        selection: {
-          tagStatus: "untagged",
-          countType: "sinceImagePushed",
-          countUnit: "days",
-          countNumber: 3
-        },
-        action: {
+        rulePriority = 1
+        description = "Expire untagged images older than 3 days"
+        selection = {
+          tagStatus = "untagged"
+          countType = "sinceImagePushed"
+          countUnit = "days"
+          countNumber = 3
+        }
+        action = {
           type: "expire"
         }
       },
       {
-        rulePriority: 2,
-        description: "Expire any image older than 365 days (1 year)",
-        selection: {
-          tagStatus: "any",
-          countType: "sinceImagePushed",
-          countUnit: "days",
-          countNumber: 365
-        },
-        action: {
-          type: "expire"
+        rulePriority = 2
+        description = "Expire any image older than 365 days (1 year)"
+        selection = {
+          tagStatus = "any"
+          countType = "sinceImagePushed"
+          countUnit = "days"
+          countNumber = 365
+        }
+        action = {
+          type = "expire"
         }
       }
     ]
