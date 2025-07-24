@@ -26,7 +26,7 @@ interface PlaceRepository : CrudRepository<Place, String> {
         FROM place p
         WHERE
             ST_Within(
-                location_for_query::geometry,
+                CAST(location_for_query AS geometry),
                 ST_GeomFromText(:polygonWkt, 4326)
             )
     """, nativeQuery = true)
