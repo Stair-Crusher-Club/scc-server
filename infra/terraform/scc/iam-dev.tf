@@ -159,7 +159,10 @@ data "aws_iam_policy_document" "scc_deploy_secret_dev" {
     condition {
       test     = "StringEquals"
       variable = "k3s.staircrusher.club:sub"
-      values = ["system:serviceaccount:dev:scc-server-deploy-secret"]
+      values = [
+        "system:serviceaccount:dev:scc-server-deploy-secret",
+        "system:serviceaccount:dev:scc-admin-frontend-deploy-secret"
+      ]
     }
   }
 }
