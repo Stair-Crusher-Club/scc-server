@@ -8,7 +8,7 @@ replicaCount: 2
 filesDir: files/prod
 env: prod
 image:
-  repository: public.ecr.aws/i6n1n6v2/scc-server
+  repository: 291889421067.dkr.ecr.ap-northeast-2.amazonaws.com/scc-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: 0.22.8-hotfix4
