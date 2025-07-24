@@ -179,6 +179,27 @@ data "aws_iam_policy_document" "scc_deploy_secret_dev_kms_access" {
   }
 }
 
+data "aws_iam_policy_document" "scc_deploy_secret_dev_ecr_pull_access" {
+  statement {
+    actions = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "AllowImagePull"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage"
+    ]
+    # Restrict permissions to a specific repository for security
+    resources = [
+      data.terraform_remote_state.ecr.outputs.scc_server_repository_arn,
+      data.terraform_remote_state.ecr.outputs.scc_admin_frontend_repository_arn
+    ]
+  }
+}
+
 resource "aws_iam_role" "scc_deploy_secret_dev" {
   name               = "scc-deploy-secret-dev"
   assume_role_policy = data.aws_iam_policy_document.scc_deploy_secret_dev.json
@@ -189,7 +210,17 @@ resource "aws_iam_policy" "scc_deploy_secret_dev_kms_access" {
   policy = data.aws_iam_policy_document.scc_deploy_secret_dev_kms_access.json
 }
 
+resource "aws_iam_policy" "scc_deploy_secret_dev_ecr_pull_access" {
+  name   = "scc-deploy-secret-dev-ecr-pull-access"
+  policy = data.aws_iam_policy_document.scc_deploy_secret_dev_ecr_pull_access.json
+}
+
 resource "aws_iam_role_policy_attachment" "scc_deploy_secret_dev_kms_read_access" {
   role       = aws_iam_role.scc_deploy_secret_dev.name
   policy_arn = aws_iam_policy.scc_deploy_secret_dev_kms_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "scc_deploy_secret_dev_ecr_pull_access" {
+  role       = aws_iam_role.scc_deploy_secret_dev.name
+  policy_arn = aws_iam_policy.scc_deploy_secret_dev_ecr_pull_access.arn
 }
