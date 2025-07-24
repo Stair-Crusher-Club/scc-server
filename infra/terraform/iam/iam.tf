@@ -134,6 +134,14 @@ resource "aws_iam_group" "developer" {
 resource "aws_iam_user" "developer" {
   for_each = toset(var.developer)
   name     = each.key
+
+  lifecycle {
+    // Iam 유저가 Access Key 를 생성할 때마다 change 가 잡히므로 무시해둔다
+    ignore_changes = [
+      tags,
+      tags_all
+    ]
+  }
 }
 
 resource "aws_iam_group_membership" "developer" {
