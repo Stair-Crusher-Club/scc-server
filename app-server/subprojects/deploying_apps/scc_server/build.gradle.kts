@@ -52,7 +52,7 @@ jib {
     to {
         credHelper.helper = "ecr-login"
         val version = property("version") as? String ?: throw IllegalArgumentException("No property `version` exists!")
-        image = "291889421067.dkr.ecr.ap-northeast-2.amazonaws.com/scc-server:$version"
+        image = "public.ecr.aws/i6n1n6v2/scc-server:$version"
     }
     container {
         entrypoint = listOf("/app/run-java.sh")
