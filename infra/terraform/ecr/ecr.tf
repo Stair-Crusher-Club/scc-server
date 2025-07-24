@@ -59,7 +59,7 @@ locals {
           countNumber = 3
         }
         action = {
-          type: "expire"
+          type = "expire"
         }
       },
       {
