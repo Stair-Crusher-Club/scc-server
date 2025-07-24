@@ -147,11 +147,6 @@ resource "aws_iam_role_policy_attachment" "scc_dev_common_queue_full_access" {
   policy_arn = aws_iam_policy.scc_dev_common_queue_full_access.arn
 }
 
-resource "aws_iam_role_policy_attachment" "dev_scc_server_ecr_pull_access" {
-  role       = aws_iam_role.scc_dev.name
-  policy_arn = aws_iam_policy.scc_server_ecr_pull_access.arn
-}
-
 data "aws_iam_policy_document" "scc_deploy_secret_dev" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -199,31 +194,4 @@ resource "aws_iam_policy" "scc_deploy_secret_dev_kms_access" {
 resource "aws_iam_role_policy_attachment" "scc_deploy_secret_dev_kms_read_access" {
   role       = aws_iam_role.scc_deploy_secret_dev.name
   policy_arn = aws_iam_policy.scc_deploy_secret_dev_kms_access.arn
-}
-
-data "aws_iam_policy_document" "scc_admin_frontend_dev" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-
-    principals {
-      type = "Federated"
-      identifiers = [data.terraform_remote_state.oidc.outputs.k3s_oidc_arn]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "k3s.staircrusher.club:sub"
-      values = ["system:serviceaccount:dev:scc-admin-frontend"]
-    }
-  }
-}
-
-resource "aws_iam_role" "scc_admin_frontend_dev" {
-  name               = "scc-admin-frontend-dev"
-  assume_role_policy = data.aws_iam_policy_document.scc_admin_frontend_dev.json
-}
-
-resource "aws_iam_role_policy_attachment" "dev_scc_admin_frontend_ecr_pull_access" {
-  role       = aws_iam_role.scc_admin_frontend_dev.name
-  policy_arn = aws_iam_policy.scc_admin_frontend_ecr_pull_access.arn
 }

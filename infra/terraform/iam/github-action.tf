@@ -31,21 +31,7 @@ resource "aws_iam_policy" "github_action_ci_cd_policy" {
       {
         "Effect": "Allow",
         "Action": [
-          "ecr:PutImage",
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage",
-          "ecr:BatchCheckLayerAvailability"
-        ],
-        "Resource": "arn:aws:ecr:${var.region}:${var.account_id}:repository/*"
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
           "ecr-public:GetAuthorizationToken",
-          "ecr:GetAuthorizationToken",
           "sts:GetServiceBearerToken"
         ],
         "Resource": "*"
