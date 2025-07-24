@@ -11,7 +11,8 @@ data "aws_iam_policy_document" "scc_server_ecr_pull_access" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      data.terraform_remote_state.ecr.outputs.scc_server_repository_arn
+      data.terraform_remote_state.ecr.outputs.scc_server_repository_arn,
+      "${data.terraform_remote_state.ecr.outputs.scc_server_repository_arn}/*"
     ]
   }
 }
@@ -34,7 +35,8 @@ data "aws_iam_policy_document" "scc_admin_frontend_ecr_pull_access" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      data.terraform_remote_state.ecr.outputs.scc_admin_frontend_repository_arn
+      data.terraform_remote_state.ecr.outputs.scc_admin_frontend_repository_arn,
+      "${data.terraform_remote_state.ecr.outputs.scc_admin_frontend_repository_arn}/*"
     ]
   }
 }
