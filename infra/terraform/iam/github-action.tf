@@ -39,7 +39,7 @@ resource "aws_iam_policy" "github_action_ci_cd_policy" {
           "ecr:BatchGetImage",
           "ecr:BatchCheckLayerAvailability"
         ],
-        "Resource": "arn:aws:ecr::${var.account_id}:repository/*"
+        "Resource": "arn:aws:ecr:${var.region}:${var.account_id}:repository/*"
       },
       {
         "Effect": "Allow",
