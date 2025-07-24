@@ -33,3 +33,12 @@ data "terraform_remote_state" "kms" {
     region = "ap-northeast-2"
   }
 }
+
+data "terraform_remote_state" "ecr" {
+  backend = "s3"
+  config = {
+    bucket = "scc-prod-tf-remote-state"
+    key    = "ecr.tfstate"
+    region = "ap-northeast-2"
+  }
+}
