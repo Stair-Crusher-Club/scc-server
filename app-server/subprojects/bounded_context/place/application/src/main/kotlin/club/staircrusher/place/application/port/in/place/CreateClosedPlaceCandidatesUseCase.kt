@@ -10,6 +10,7 @@ import com.google.common.util.concurrent.RateLimiter
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.util.UUID
+import java.util.concurrent.Executors
 
 @Service
 class CreateClosedPlaceCandidatesUseCase(
@@ -18,11 +19,19 @@ class CreateClosedPlaceCandidatesUseCase(
     private val placeApplicationService: PlaceApplicationService,
     private val openDataService: OpenDataService,
 ) {
+    private val executor = Executors.newSingleThreadExecutor()
     private val logger = KotlinLogging.logger {}
     @Suppress("UnstableApiUsage", "MagicNumber")
     private val rateLimiter = RateLimiter.create(5.0)
 
     fun handle() {
+        logger.info { "[CreateClosedPlaceCandidates] Starting to create closed place candidates" }
+        executor.submit {
+            doHandle()
+        }
+    }
+
+    private fun doHandle() {
         val closedPlacesFromOpenData = openDataService.getClosedPlaces()
 
         val closedPlaceCandidates = closedPlacesFromOpenData.mapNotNull { closedPlace ->
@@ -61,6 +70,8 @@ class CreateClosedPlaceCandidatesUseCase(
 
             closedPlaceCandidateRepository.saveAll(filteredCandidates)
         }
+
+        logger.info { "[CreateClosedPlaceCandidates] Job completed" }
     }
 
     companion object {
