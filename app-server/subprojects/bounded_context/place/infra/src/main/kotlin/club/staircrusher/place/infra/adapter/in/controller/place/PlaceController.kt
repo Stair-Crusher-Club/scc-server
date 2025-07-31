@@ -13,6 +13,6 @@ class PlaceController(
     @PostMapping("/createClosedPlaceCandidates")
     fun createClosedPlaceCandidates(request: HttpServletRequest) {
         InternalIpAddressChecker.check(request)
-        createClosedPlaceCandidatesUseCase.handle()
+        createClosedPlaceCandidatesUseCase.handleAsync()
     }
 }

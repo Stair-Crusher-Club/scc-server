@@ -6,6 +6,7 @@ import club.staircrusher.place.domain.model.place.ClosedPlaceCandidate
 import club.staircrusher.stdlib.persistence.TransactionManager
 import club.staircrusher.stdlib.time.toStartOfDay
 import club.staircrusher.stdlib.util.string.getSimilarityWith
+import com.google.common.annotations.VisibleForTesting
 import com.google.common.util.concurrent.RateLimiter
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -24,14 +25,21 @@ class CreateClosedPlaceCandidatesUseCase(
     @Suppress("UnstableApiUsage", "MagicNumber")
     private val rateLimiter = RateLimiter.create(5.0)
 
-    fun handle() {
+    fun handleAsync() {
         logger.info { "[CreateClosedPlaceCandidates] Starting to create closed place candidates" }
         executor.submit {
-            doHandle()
+            try {
+                handle()
+            } catch (t: Throwable) {
+                logger.error(t) { "[CreateClosedPlaceCandidates] Failed to create closed place candidates" }
+            } finally {
+                logger.info { "[CreateClosedPlaceCandidates] Job finished" }
+            }
         }
     }
 
-    private fun doHandle() {
+    @VisibleForTesting
+    fun handle() {
         val closedPlacesFromOpenData = openDataService.getClosedPlaces()
 
         val closedPlaceCandidates = closedPlacesFromOpenData.mapNotNull { closedPlace ->
@@ -70,8 +78,6 @@ class CreateClosedPlaceCandidatesUseCase(
 
             closedPlaceCandidateRepository.saveAll(filteredCandidates)
         }
-
-        logger.info { "[CreateClosedPlaceCandidates] Job completed" }
     }
 
     companion object {
