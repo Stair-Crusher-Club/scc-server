@@ -9,7 +9,6 @@ import club.staircrusher.stdlib.geography.CrsType
 import club.staircrusher.stdlib.geography.Location
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.service.annotation.GetExchange
-import java.time.Duration
 import java.time.LocalDate
 
 @Component
@@ -25,7 +24,6 @@ class GovernmentOpenDataService(
                 .map { RuntimeException(it) }
                 .onErrorResume { response.createException() }
         },
-        readTimeout = READ_TIMEOUT,
     )
 
     override fun getClosedPlaces(): List<ClosedPlaceResult> {
@@ -198,7 +196,6 @@ class GovernmentOpenDataService(
         private const val CLOSED_STATE = "03"
         private const val RESTAURANT_CODE = "07_24_04_P"
         private const val CAFE_CODE = "07_24_05_P"
-        private val READ_TIMEOUT: Duration = Duration.ofSeconds(30L)
 
         private val locationConverter = CrsConverter(CrsType.EPSG_5174, CrsType.EPSG_4326)
     }
