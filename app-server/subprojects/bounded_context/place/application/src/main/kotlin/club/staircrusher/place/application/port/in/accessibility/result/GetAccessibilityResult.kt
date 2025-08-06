@@ -15,7 +15,6 @@ data class GetAccessibilityResult(
     val placeAccessibilityComments: List<WithUserInfo<PlaceAccessibilityComment>>,
     val placeAccessibilityChallengeCrusherGroup: ChallengeCrusherGroup?,
     val hasOtherPlacesToRegisterInSameBuilding: Boolean,
-    val isLastPlaceAccessibilityInBuilding: Boolean,
     val isFavoritePlace: Boolean,
     val totalFavoriteCount: Long
 ) {

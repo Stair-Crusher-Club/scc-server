@@ -17,7 +17,7 @@ interface PlaceRepository : CrudRepository<Place, String> {
                 ST_SetSRID(ST_MakePoint(:centerLng, :centerLat), 4326),
                 :radiusMeters,
                 false
-            ) IS TRUE
+            )
     """, nativeQuery = true)
     fun findIdsByPlacesInCircle(centerLng: Double, centerLat: Double, radiusMeters: Double): List<String>
 
@@ -39,9 +39,9 @@ interface PlaceRepository : CrudRepository<Place, String> {
         FROM place p
         WHERE
             ST_Within(
-                location_for_query,
+                CAST(location_for_query AS geometry),
                 ST_GeomFromText(:polygonWkt, 4326)
-            ) IS TRUE
+            )
     """, nativeQuery = true)
     fun findAllByPlacesInPolygon(polygonWkt: String): List<Place>
 

@@ -1,8 +1,8 @@
 package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
-import club.staircrusher.api.spec.dto.DeleteAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.DeleteBuildingAccessibilityPostRequest
+import club.staircrusher.api.spec.dto.DeletePlaceAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.domain_event.BuildingAccessibilityCommentDeletedEvent
 import club.staircrusher.domain_event.BuildingAccessibilityDeletedEvent
@@ -39,7 +39,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
     fun `장소 정보를 삭제하는 경우`() {
         val (user, place, placeAccessibility, buildingAccessibility) = registerAccessibility()
 
-        val deletePlaceAccessibilityParams = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
+        val deletePlaceAccessibilityParams = DeletePlaceAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
         mvc
             .sccRequest("/deletePlaceAccessibility", deletePlaceAccessibilityParams, userAccount = user)
             .apply {
@@ -106,7 +106,7 @@ class DeleteAccessibilityTest : AccessibilityITBase() {
             testDataGenerator.createIdentifiedUser()
         }
 
-        val params = DeleteAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
+        val params = DeletePlaceAccessibilityPostRequest(placeAccessibilityId = placeAccessibility.id)
         mvc
             .sccRequest("/deletePlaceAccessibility", params, userAccount = otherUser)
             .andExpect {

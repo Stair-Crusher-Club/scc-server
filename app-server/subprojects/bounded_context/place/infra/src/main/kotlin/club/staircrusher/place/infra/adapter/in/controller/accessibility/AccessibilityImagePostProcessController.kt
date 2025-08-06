@@ -2,28 +2,20 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImageMigrationService
 import club.staircrusher.place.application.port.`in`.accessibility.AccessibilityImagePipeline
-import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
-import club.staircrusher.place.application.port.out.accessibility.persistence.PlaceAccessibilityRepository
 import club.staircrusher.spring_web.security.InternalIpAddressChecker
-import club.staircrusher.stdlib.clock.SccClock
-import club.staircrusher.stdlib.persistence.TransactionManager
 import jakarta.servlet.http.HttpServletRequest
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.time.Duration
-import java.time.Instant
 import java.util.concurrent.Executors
 
 @RestController
 class AccessibilityImagePostProcessController(
     private val accessibilityImagePipeline: AccessibilityImagePipeline,
     private val accessibilityImageMigrationService: AccessibilityImageMigrationService,
-    private val transactionManager: TransactionManager,
-    private val placeAccessibilityRepository: PlaceAccessibilityRepository,
-    private val buildingAccessibilityRepository: BuildingAccessibilityRepository,
 ) {
     private val taskExecutor1 = Executors.newSingleThreadExecutor()
     private val taskExecutor2 = Executors.newSingleThreadExecutor()
@@ -46,14 +38,12 @@ class AccessibilityImagePostProcessController(
     @PostMapping("/migrateOldImagesToNewImages")
     fun migrateOldImages(
         request: HttpServletRequest,
-        @RequestParam(required = false) start: Instant?,
         @RequestParam(required = false) target: String?,
+        @RequestBody body: List<String>
     ) {
         InternalIpAddressChecker.check(request)
 
         taskExecutor2.submit {
-            val from = start ?: (SccClock.instant() - Duration.ofDays(2000))
-
             fun logMemoryUsage(label: String) {
                 val runtime = Runtime.getRuntime()
                 val used = (runtime.totalMemory() - runtime.freeMemory()) / (1024.0 * 1024.0)
@@ -63,8 +53,7 @@ class AccessibilityImagePostProcessController(
             val logInterval = 1000
 
             if (target == "place" || target == null) {
-                val placeAccessibilityIds =
-                    transactionManager.doInTransaction { placeAccessibilityRepository.findMigrationTargets(from) }
+                val placeAccessibilityIds = body
                 logger.info("[place] Start migration for ${placeAccessibilityIds.size} migrations")
                 logMemoryUsage("place start")
                 placeAccessibilityIds.forEachIndexed { index, id ->
@@ -78,8 +67,7 @@ class AccessibilityImagePostProcessController(
                 logger.info("[place] Finished migration for ${placeAccessibilityIds.size} migrations")
             }
             if (target == "building" || target == null) {
-                val buildingAccessibilityIds =
-                    transactionManager.doInTransaction { buildingAccessibilityRepository.findMigrationTargets(from) }
+                val buildingAccessibilityIds = body
                 logger.info("[building] Start migration for ${buildingAccessibilityIds.size} migrations")
                 logMemoryUsage("building start")
                 buildingAccessibilityIds.forEachIndexed { index, id ->

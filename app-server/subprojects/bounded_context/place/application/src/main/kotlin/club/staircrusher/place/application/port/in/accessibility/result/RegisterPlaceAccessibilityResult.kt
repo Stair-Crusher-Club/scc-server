@@ -11,5 +11,4 @@ data class RegisterPlaceAccessibilityResult(
     val placeAccessibilityComment: PlaceAccessibilityComment?,
     val accessibilityRegisterer: AccessibilityRegisterer?,
     val registrationOrder: Int, // n번째 정복자를 표현하기 위한 값.
-    val isLastPlaceAccessibilityInBuilding: Boolean,
 )

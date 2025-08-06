@@ -29,6 +29,7 @@ class Place private constructor(
     /**
      * geospatial query를 위해 location을 역정규화한 컬럼.
      */
+    @Column(name = "location_for_query", columnDefinition = "geography")
     val locationForQuery: Point?,
     @ManyToOne(fetch = FetchType.EAGER)
     val building: Building,

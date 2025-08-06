@@ -3,6 +3,7 @@ package club.staircrusher.place.application.port.out.accessibility.persistence.t
 import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
 import club.staircrusher.place.domain.model.accessibility.toilet_review.ToiletLocationType
 import club.staircrusher.place.domain.model.accessibility.toilet_review.ToiletReview
+import club.staircrusher.user.domain.model.UserMobilityTool
 import org.springframework.data.repository.CrudRepository
 
 interface ToiletReviewRepository : CrudRepository<ToiletReview, String> {
@@ -11,6 +12,7 @@ interface ToiletReviewRepository : CrudRepository<ToiletReview, String> {
     data class CreateParams(
         val placeId: String,
         val userId: String,
+        val mobilityTool: UserMobilityTool,
         val toiletLocationType: ToiletLocationType,
         val floor: Int?,
         val entranceDoorTypes: List<EntranceDoorType>,

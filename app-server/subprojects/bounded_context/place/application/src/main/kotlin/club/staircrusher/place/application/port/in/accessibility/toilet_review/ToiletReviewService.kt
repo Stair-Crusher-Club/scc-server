@@ -24,6 +24,7 @@ class ToiletReviewService(
                 floor = params.floor,
                 entranceDoorTypes = params.entranceDoorTypes,
                 comment = params.comment,
+                mobilityTool = params.mobilityTool,
             )
         ).also {
             it.images = accessibilityImageRepository.saveAll(
@@ -31,7 +32,7 @@ class ToiletReviewService(
                     AccessibilityImage(
                         id = EntityIdGenerator.generateRandom(),
                         accessibilityId = it.id,
-                        accessibilityType = AccessibilityImage.AccessibilityType.Toilet,
+                        accessibilityType = AccessibilityImage.AccessibilityType.ToiletReview,
                         originalImageUrl = url,
                         displayOrder = index,
                     )

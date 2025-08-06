@@ -4,6 +4,7 @@ import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
 import club.staircrusher.place.domain.model.accessibility.EntranceDoorType
 import club.staircrusher.stdlib.domain.entity.EntityIdGenerator
 import club.staircrusher.stdlib.persistence.jpa.TimeAuditingBaseEntity
+import club.staircrusher.user.domain.model.UserMobilityTool
 import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -44,6 +45,9 @@ class ToiletReview(
 
     @Column(columnDefinition = "text")
     val comment: String?,
+
+    @Enumerated(EnumType.STRING)
+    val mobilityTool: UserMobilityTool,
 ) : TimeAuditingBaseEntity() {
     init {
         when (toiletLocationType) {
