@@ -30,7 +30,7 @@ interface PlaceRepository : CrudRepository<Place, String> {
                 ST_SetSRID(ST_MakePoint(:centerLng, :centerLat), 4326),
                 :radiusMeters,
                 false
-            ) IS TRUE
+            )
     """, nativeQuery = true)
     fun findAllByPlacesInCircle(centerLng: Double, centerLat: Double, radiusMeters: Double): List<Place>
 
