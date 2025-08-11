@@ -51,6 +51,7 @@ class FcmPushSender(
         apnsConfig: ApnsConfig,
         androidConfig: AndroidConfig,
     ): Boolean {
+        logger.info { "Sending push notification" }
         val future = messaging.sendAsync(
             Message.builder().apply {
                 setToken(pushToken)
@@ -61,6 +62,7 @@ class FcmPushSender(
 
         return try {
             ApiFutureToListenableFuture(future).await()
+            logger.info { "Successfully sent push notification" }
             true
         } catch (e: Throwable) {
             logger.error(e) { "Failed to send push notification" }
