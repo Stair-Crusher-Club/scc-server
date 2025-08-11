@@ -15,6 +15,7 @@ import com.google.firebase.messaging.ApsAlert
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.withTimeout
 import mu.KotlinLogging
 import java.util.UUID
 
@@ -61,10 +62,13 @@ class FcmPushSender(
         )
 
         return try {
-            ApiFutureToListenableFuture(future).await()
+            withTimeout(FCM_TIMEOUT_MILLIS) {
+                ApiFutureToListenableFuture(future).await()
+            }
             logger.info { "Successfully sent push notification" }
             true
         } catch (e: Throwable) {
+            future.cancel(true)
             logger.error(e) { "Failed to send push notification" }
             return false
         }
@@ -112,5 +116,6 @@ class FcmPushSender(
 
     companion object {
         private const val DEEPLINK_CUSTOM_DATA_KEY = "_d"
+        private const val FCM_TIMEOUT_MILLIS = 5000L
     }
 }
