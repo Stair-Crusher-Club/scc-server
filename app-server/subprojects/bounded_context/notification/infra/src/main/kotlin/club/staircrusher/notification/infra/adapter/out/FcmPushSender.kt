@@ -52,7 +52,6 @@ class FcmPushSender(
         apnsConfig: ApnsConfig,
         androidConfig: AndroidConfig,
     ): Boolean {
-        logger.info { "Sending push notification" }
         val future = messaging.sendAsync(
             Message.builder().apply {
                 setToken(pushToken)
@@ -65,7 +64,6 @@ class FcmPushSender(
             withTimeout(FCM_TIMEOUT_MILLIS) {
                 ApiFutureToListenableFuture(future).await()
             }
-            logger.info { "Successfully sent push notification" }
             true
         } catch (e: Throwable) {
             future.cancel(true)
