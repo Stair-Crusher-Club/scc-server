@@ -15,6 +15,7 @@ import com.google.firebase.messaging.ApsAlert
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.withTimeout
 import mu.KotlinLogging
 import java.util.UUID
 
@@ -61,7 +62,9 @@ class FcmPushSender(
         )
 
         return try {
-            ApiFutureToListenableFuture(future).await()
+            withTimeout(5000L) {
+                ApiFutureToListenableFuture(future).await()
+            }
             logger.info { "Successfully sent push notification" }
             true
         } catch (e: Throwable) {
