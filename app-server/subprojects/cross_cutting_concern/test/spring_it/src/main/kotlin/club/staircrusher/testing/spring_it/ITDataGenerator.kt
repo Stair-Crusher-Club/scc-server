@@ -281,6 +281,7 @@ class ITDataGenerator {
                 goal = goal,
                 milestones = milestones,
                 conditions = conditions,
+                quests = null,
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
                 description = description,
@@ -314,6 +315,7 @@ class ITDataGenerator {
                 challengeId = challenge.id,
                 userId = userAccount.id,
                 participantName = participantName,
+                questProgresses = emptyList(),
                 createdAt = participateAt
             )
         )

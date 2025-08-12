@@ -33,6 +33,9 @@ class Challenge(
     var milestones: List<Int>,
     @Convert(converter = ChallengeConditionListToTextAttributeConverter::class)
     var conditions: List<ChallengeCondition>,
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "TEXT")
+    var quests: List<ChallengeQuest>?,
     val createdAt: Instant,
     var updatedAt: Instant,
     var description: String,
@@ -51,10 +54,18 @@ class Challenge(
             throw SccDomainException("시작 시각은 종료시각보다 빨라야 합니다.")
         }
 
+        // 시작된 챌린지의 퀘스트는 수정할 수 없음
+        if (updateRequest.quests != null) {
+            if (getStatus(SccClock.instant()) != ChallengeStatus.UPCOMING) {
+                throw SccDomainException("시작된 챌린지의 퀘스트는 수정할 수 없습니다.")
+            }
+        }
+
         this.name = validateAndNormalizeString(updateRequest.name)
         this.crusherGroup = updateRequest.crusherGroup
         this.endsAt = endsAt
         this.description = updateRequest.description.trim()
+        updateRequest.quests?.let { this.quests = it }
         this.updatedAt = SccClock.instant()
     }
 
@@ -74,7 +85,7 @@ class Challenge(
     override fun toString(): String {
         return "Challenge(id='$id', name='$name', isPublic=$isPublic, invitationCode=$invitationCode, " +
             "passcode=$passcode, companyName=$companyName, crusherGroup=$crusherGroup, isComplete=$isComplete, startsAt=$startsAt, " +
-            "endsAt=$endsAt, goal=$goal, milestones=$milestones, conditions=$conditions, createdAt=$createdAt, " +
+            "endsAt=$endsAt, goal=$goal, milestones=$milestones, conditions=$conditions, quests=$quests, createdAt=$createdAt, " +
             "updatedAt=$updatedAt, description='$description')"
     }
 
@@ -107,6 +118,7 @@ class Challenge(
                 goal = createRequest.goal,
                 milestones = milestones,
                 conditions = createRequest.conditions,
+                quests = createRequest.quests ?: emptyList(),
                 createdAt = now,
                 updatedAt = now,
                 description = createRequest.description.trim(),

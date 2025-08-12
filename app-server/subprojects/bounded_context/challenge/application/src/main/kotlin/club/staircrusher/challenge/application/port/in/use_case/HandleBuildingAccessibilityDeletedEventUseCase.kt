@@ -17,8 +17,8 @@ class HandleBuildingAccessibilityDeletedEventUseCase(
         }
         challengeService.deleteContributions(
             userId = event.accessibilityRegisterer.id!!,
-            contribution = ChallengeService.Contribution.BuildingAccessibilityComment(
-                buildingAccessibilityCommentId = event.id,
+            contribution = ChallengeService.Contribution.BuildingAccessibility(
+                buildingAccessibilityId = event.id,
                 buildingAccessibilityAddress = ChallengeAddress(
                     siDo = event.building.address.siDo,
                     siGunGu = event.building.address.siGunGu,
@@ -26,6 +26,7 @@ class HandleBuildingAccessibilityDeletedEventUseCase(
                     li = event.building.address.li,
                     roadName = event.building.address.roadName,
                 ),
+                placeCategoryValue = null, // BuildingAccessibility는 카테고리가 없음
             ),
         )
     }

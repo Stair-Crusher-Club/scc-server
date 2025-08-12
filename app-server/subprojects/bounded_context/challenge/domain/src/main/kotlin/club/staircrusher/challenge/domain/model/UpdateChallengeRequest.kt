@@ -8,4 +8,5 @@ data class UpdateChallengeRequest(
     val endsAt: Instant?,
     val description: String,
     val crusherGroup: ChallengeCrusherGroup?,
+    val quests: List<ChallengeQuest>?,
 )

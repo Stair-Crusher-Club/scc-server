@@ -77,15 +77,16 @@ class JoinChallengeUseCase(
             if (challenge.endsAt?.let { it < now } == true) {
                 throw SccDomainException(msg = "이미 종료되었습니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_CLOSED)
             }
-            challengeParticipationRepository.save(
-                ChallengeParticipation(
-                    id = EntityIdGenerator.generateRandom(),
-                    challengeId = challenge.id,
-                    userId = userId,
-                    participantName = companyInfo?.participantName,
-                    createdAt = clock.instant()
-                )
+            val participation = ChallengeParticipation(
+                id = EntityIdGenerator.generateRandom(),
+                challengeId = challenge.id,
+                userId = userId,
+                participantName = companyInfo?.participantName,
+                questProgresses = emptyList(),
+                createdAt = clock.instant()
             )
+            
+            challengeParticipationRepository.save(participation)
             return@doInTransaction JoinChallengeResult(
                 challenge = challenge,
                 contributionsCount = challengeContributionRepository.countByChallengeId(challengeId).toInt(),
