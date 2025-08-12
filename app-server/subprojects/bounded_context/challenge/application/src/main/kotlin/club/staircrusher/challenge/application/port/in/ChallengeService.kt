@@ -8,6 +8,7 @@ import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
+import club.staircrusher.challenge.domain.model.ChallengeQuestProgress
 import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -71,6 +72,16 @@ class ChallengeService(
             userId = userId,
             challengeId = challengeId
         ).isNotEmpty()
+    }
+
+    fun getQuestProgressForUser(userId: String, challengeId: String): List<ChallengeQuestProgress> {
+        return challengeParticipationRepository.findByChallengeIdAndUserId(
+            userId = userId,
+            challengeId = challengeId
+        )
+            .firstOrNull()
+            ?.questProgresses
+            ?: emptyList()
     }
 
     fun getPlaceAccessibilityCrusherGroup(placeAccessibilityId: String): ChallengeCrusherGroup? {

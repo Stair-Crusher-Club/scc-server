@@ -2,12 +2,15 @@ package club.staircrusher.challenge.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.ChallengeCrusherGroupDto
 import club.staircrusher.api.spec.dto.ChallengeDto
+import club.staircrusher.api.spec.dto.ChallengeQuestDto
 import club.staircrusher.api.spec.dto.ChallengeRankDto
 import club.staircrusher.api.spec.dto.ChallengeStatusDto
 import club.staircrusher.api.spec.dto.EpochMillisTimestamp
 import club.staircrusher.api.spec.dto.ImageDto
 import club.staircrusher.api.spec.dto.ListChallengesItemDto
 import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
+import club.staircrusher.challenge.domain.model.ChallengeQuest
+import club.staircrusher.challenge.domain.model.ChallengeQuestProgress
 import club.staircrusher.challenge.domain.model.ChallengeRank
 import club.staircrusher.challenge.domain.model.ChallengeStatus
 import java.time.Instant
@@ -59,4 +62,13 @@ fun ChallengeRank.toDto(nickname: String) = ChallengeRankDto(
     contributionCount = contributionCount,
     rank = rank,
     nickname = nickname,
+)
+
+fun ChallengeQuest.toDto(questProgress: ChallengeQuestProgress? = null): ChallengeQuestDto = ChallengeQuestDto(
+    id = id,
+    title = title,
+    description = description,
+    targetCount = condition.targetCount,
+    completedCount = questProgress?.completedCount ?: 0,
+    isCompleted = questProgress?.isCompleted ?: false
 )
