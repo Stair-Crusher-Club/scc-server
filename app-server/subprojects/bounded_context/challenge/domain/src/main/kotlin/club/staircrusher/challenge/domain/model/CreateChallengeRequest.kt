@@ -5,6 +5,7 @@ data class CreateChallengeRequest(
     val isPublic: Boolean,
     val invitationCode: String?,
     val passcode: String?,
+    val companyName: String?,
     val startsAtMillis: Long,
     val endsAtMillis: Long?,
     val goal: Int,

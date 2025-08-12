@@ -29,7 +29,12 @@ class JoinChallengeUseCase(
         val participationsCount: Int,
     )
 
-    fun handle(userId: String, challengeId: String, passcode: String?): JoinChallengeResult =
+    data class CompanyJoinInfo(
+        val companyName: String,
+        val participantName: String
+    )
+
+    fun handle(userId: String, challengeId: String, passcode: String?, companyInfo: CompanyJoinInfo?): JoinChallengeResult =
         transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
             val challenge = challengeRepository.findById(challengeId).get()
             if (challengeService.hasJoined(userId = userId, challengeId = challengeId)) {
@@ -39,11 +44,28 @@ class JoinChallengeUseCase(
                     participationsCount = challengeParticipationRepository.countByChallengeId(challengeId).toInt()
                 )
             }
+            // Check passcode if required
             if (challenge.passcode != null && challenge.passcode != passcode) {
                 throw SccDomainException(
                     msg = "잘못된 참여코드 입니다.",
                     errorCode = SccDomainException.ErrorCode.INVALID_PASSCODE
                 )
+            }
+
+            // Check company name if required
+            if (challenge.companyName != null) {
+                if (companyInfo == null) {
+                    throw SccDomainException(
+                        msg = "회사 정보가 필요합니다.",
+                        errorCode = SccDomainException.ErrorCode.INVALID_COMPANY_NAME
+                    )
+                }
+                if (challenge.companyName != companyInfo.companyName) {
+                    throw SccDomainException(
+                        msg = "잘못된 회사명입니다.",
+                        errorCode = SccDomainException.ErrorCode.INVALID_COMPANY_NAME
+                    )
+                }
             }
             val now = clock.instant()
             if (now < challenge.startsAt) {
@@ -60,6 +82,7 @@ class JoinChallengeUseCase(
                     id = EntityIdGenerator.generateRandom(),
                     challengeId = challenge.id,
                     userId = userId,
+                    participantName = companyInfo?.participantName,
                     createdAt = clock.instant()
                 )
             )

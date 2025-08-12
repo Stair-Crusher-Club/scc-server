@@ -72,6 +72,7 @@ class ChallengeController(
             ranks = leaderboardResult?.ranks?.map { (rank, user) -> rank.toDto(user!!.nickname) } ?: emptyList(),
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
+            hasCompanyName = result.challenge.companyName != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
             isB2B = false, // FIXME: API spec 변경 임시 대응
@@ -114,6 +115,7 @@ class ChallengeController(
             ranks = leaderboardResult.ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
+            hasCompanyName = result.challenge.companyName != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
             isB2B = false, // FIXME: API spec 변경 임시 대응
@@ -127,10 +129,17 @@ class ChallengeController(
         authentication: SccAppAuthentication,
     ): JoinChallengeResponseDto {
         val userId = authentication.principal
+        val companyInfo = request.companyInfo?.let {
+            JoinChallengeUseCase.CompanyJoinInfo(
+                companyName = it.companyName,
+                participantName = it.participantName
+            )
+        }
         val result = joinChallengeUseCase.handle(
             userId = userId,
             challengeId = request.challengeId,
-            passcode = request.passcode
+            passcode = request.passcode,
+            companyInfo = companyInfo
         )
         val leaderboardResult = getChallengeLeaderboardUseCase.handle(challengeId = request.challengeId)
         return JoinChallengeResponseDto(

@@ -50,6 +50,7 @@ open class ChallengeITBase : SccSpringITBase() {
         goal: Int = 1000,
         passcode: String? = null,
         invitationCode: String? = null,
+        companyName: String? = null,
         isInfiniteChallenge: Boolean = false
     ): Challenge {
         return transactionManager.doInTransaction {
@@ -57,6 +58,7 @@ open class ChallengeITBase : SccSpringITBase() {
                 name = "진행중 챌린지",
                 passcode = passcode,
                 invitationCode = invitationCode,
+                companyName = companyName,
                 goal = goal,
                 startsAt = clock.instant().minus(Duration.ofHours(Random.nextLong(from = 1, until = 360))),
                 endsAt = if (isInfiniteChallenge) null

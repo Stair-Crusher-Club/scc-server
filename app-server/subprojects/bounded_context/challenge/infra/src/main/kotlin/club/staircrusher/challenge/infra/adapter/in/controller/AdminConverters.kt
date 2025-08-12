@@ -41,6 +41,7 @@ fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
     isPublic = isPublic,
     invitationCode = invitationCode,
     passcode = passcode,
+    companyName = companyName,
     startsAtMillis = startsAtMillis,
     endsAtMillis = endsAtMillis,
     goal = goal,

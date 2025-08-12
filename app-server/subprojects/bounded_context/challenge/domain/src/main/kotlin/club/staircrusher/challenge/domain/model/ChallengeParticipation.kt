@@ -10,6 +10,7 @@ class ChallengeParticipation(
     val id: String,
     val challengeId: String,
     val userId: String,
+    val participantName: String?,
     val createdAt: Instant,
 ) {
     override fun equals(other: Any?): Boolean {
@@ -25,6 +26,6 @@ class ChallengeParticipation(
     }
 
     override fun toString(): String {
-        return "ChallengeParticipation(id='$id', challengeId='$challengeId', userId='$userId', createdAt=$createdAt)"
+        return "ChallengeParticipation(id='$id', challengeId='$challengeId', userId='$userId', participant=$participantName, createdAt=$createdAt)"
     }
 }

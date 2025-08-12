@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.infra.adapter.`in`.controller
 
 import club.staircrusher.api.spec.dto.ApiErrorResponse
+import club.staircrusher.api.spec.dto.JoinChallengeRequestCompanyJoinInfoDto
 import club.staircrusher.api.spec.dto.JoinChallengeRequestDto
 import club.staircrusher.api.spec.dto.JoinChallengeResponseDto
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
@@ -162,6 +163,76 @@ class JoinChallengeTest : ChallengeITBase() {
             .getResult(ApiErrorResponse::class)
             .apply {
                 assert(this.code == ApiErrorResponse.Code.CHALLENGE_CLOSED)
+            }
+    }
+
+    @Test
+    fun `회사명이 필요한 B2B 챌린지에 회사명과 개인명을 알맞게 입력하면 참여 완료`() {
+        val userAccount = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser().account
+        }
+        val inProgressChallenge = registerInProgressChallenge(companyName = "StairCrusher")
+        val response = mvc
+            .sccRequest(
+                "/joinChallenge",
+                JoinChallengeRequestDto(
+                    challengeId = inProgressChallenge.id,
+                    passcode = null,
+                    companyInfo = JoinChallengeRequestCompanyJoinInfoDto(
+                        companyName = "StairCrusher",
+                        participantName = "홍길동"
+                    )
+                ),
+                userAccount = userAccount
+            )
+            .getResult(JoinChallengeResponseDto::class)
+        assert(response.challenge.id == inProgressChallenge.id)
+
+        // Check that personal name is recorded in participation
+        val participation = challengeParticipationRepository.findByChallengeIdAndUserId(inProgressChallenge.id, userAccount.id)[0]
+        assertEquals("홍길동", participation.participantName)
+    }
+
+    @Test
+    fun `회사명이 필요한 B2B 챌린지에 회사 정보가 없거나 다르면 에러가 난다`() {
+        val userAccount = transactionManager.doInTransaction {
+            testDataGenerator.createIdentifiedUser().account
+        }
+        val inProgressChallenge = registerInProgressChallenge(companyName = "StairCrusher")
+
+        // Test with no company info
+        mvc
+            .sccRequest(
+                "/joinChallenge",
+                JoinChallengeRequestDto(
+                    challengeId = inProgressChallenge.id,
+                    passcode = null,
+                    companyInfo = null
+                ),
+                userAccount = userAccount
+            )
+            .getResult(ApiErrorResponse::class)
+            .apply {
+                assert(this.code == ApiErrorResponse.Code.INVALID_COMPANY_NAME)
+            }
+
+        // Test with wrong company name
+        mvc
+            .sccRequest(
+                "/joinChallenge",
+                JoinChallengeRequestDto(
+                    challengeId = inProgressChallenge.id,
+                    passcode = null,
+                    companyInfo = JoinChallengeRequestCompanyJoinInfoDto(
+                        companyName = "WrongCompany",
+                        participantName = "홍길동"
+                    )
+                ),
+                userAccount = userAccount
+            )
+            .getResult(ApiErrorResponse::class)
+            .apply {
+                assert(this.code == ApiErrorResponse.Code.INVALID_COMPANY_NAME)
             }
     }
 }

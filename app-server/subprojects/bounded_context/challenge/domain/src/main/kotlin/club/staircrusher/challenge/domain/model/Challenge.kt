@@ -21,6 +21,7 @@ class Challenge(
     var isPublic: Boolean,
     var invitationCode: String?,
     var passcode: String?,
+    var companyName: String?,
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "TEXT")
     var crusherGroup: ChallengeCrusherGroup?,
@@ -72,7 +73,7 @@ class Challenge(
 
     override fun toString(): String {
         return "Challenge(id='$id', name='$name', isPublic=$isPublic, invitationCode=$invitationCode, " +
-            "passcode=$passcode, crusherGroup=$crusherGroup, isComplete=$isComplete, startsAt=$startsAt, " +
+            "passcode=$passcode, companyName=$companyName, crusherGroup=$crusherGroup, isComplete=$isComplete, startsAt=$startsAt, " +
             "endsAt=$endsAt, goal=$goal, milestones=$milestones, conditions=$conditions, createdAt=$createdAt, " +
             "updatedAt=$updatedAt, description='$description')"
     }
@@ -86,6 +87,7 @@ class Challenge(
             val now = SccClock.instant()
             val invitationCode = createRequest.invitationCode?.let { validateAndNormalizeString(it) }
             val passcode = createRequest.passcode?.let { validateAndNormalizeString(it) }
+            val companyName = createRequest.companyName?.let { validateAndNormalizeString(it) }
             val startsAt = Instant.ofEpochMilli(createRequest.startsAtMillis)
             val endsAt = createRequest.endsAtMillis?.let { Instant.ofEpochMilli(it) }
             val milestones = createRequest.milestones.sorted()
@@ -97,6 +99,7 @@ class Challenge(
                 isPublic = createRequest.isPublic,
                 invitationCode = invitationCode,
                 passcode = passcode,
+                companyName = companyName,
                 crusherGroup = createRequest.crusherGroup,
                 isComplete = false,
                 startsAt = startsAt,
