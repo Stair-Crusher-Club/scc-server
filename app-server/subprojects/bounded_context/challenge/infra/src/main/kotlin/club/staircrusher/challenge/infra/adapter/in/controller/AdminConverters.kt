@@ -93,7 +93,7 @@ fun AdminChallengeActionConditionTypeEnumDTO.toModel() = when (this) {
     AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
     AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
     AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
-    AdminChallengeActionConditionTypeEnumDTO.PLACE_REVIEW -> TODO()
+    AdminChallengeActionConditionTypeEnumDTO.PLACE_REVIEW -> ChallengeActionCondition.Type.PLACE_REVIEW
 }
 
 fun ChallengeActionCondition.Type.toModel() = when (this) {
@@ -101,6 +101,7 @@ fun ChallengeActionCondition.Type.toModel() = when (this) {
     ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY_COMMENT
     ChallengeActionCondition.Type.PLACE_ACCESSIBILITY -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY
     ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT
+    ChallengeActionCondition.Type.PLACE_REVIEW -> AdminChallengeActionConditionTypeEnumDTO.PLACE_REVIEW
 }
 
 fun AdminCrusherGroupDto.toModel() = ChallengeCrusherGroup(

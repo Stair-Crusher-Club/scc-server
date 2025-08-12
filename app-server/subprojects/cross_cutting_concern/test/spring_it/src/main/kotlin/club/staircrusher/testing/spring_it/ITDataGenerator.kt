@@ -339,6 +339,7 @@ class ITDataGenerator {
                 placeAccessibilityCommentId = placeAccessibilityComment?.id,
                 buildingAccessibilityId = buildingAccessibility?.id,
                 buildingAccessibilityCommentId = buildingAccessibilityComment?.id,
+                placeReviewId = null,
                 createdAt = contributeAt,
                 updatedAt = contributeAt
             )

@@ -145,6 +145,7 @@ class ChallengeService(
                 placeAccessibilityCommentId = (contribution as? Contribution.PlaceAccessibilityComment)?.placeAccessibilityCommentId,
                 buildingAccessibilityId = (contribution as? Contribution.BuildingAccessibility)?.buildingAccessibilityId,
                 buildingAccessibilityCommentId = (contribution as? Contribution.BuildingAccessibilityComment)?.buildingAccessibilityCommentId,
+                placeReviewId = (contribution as? Contribution.PlaceReview)?.placeReviewId,
                 createdAt = clock.instant(),
                 updatedAt = clock.instant()
             )
@@ -197,6 +198,13 @@ class ChallengeService(
                 challengeContributionRepository.findFirstByChallengeIdAndBuildingAccessibilityCommentId(
                     challengeId = challengeId,
                     buildingAccessibilityCommentId = contribution.buildingAccessibilityCommentId
+                )
+            }
+
+            is Contribution.PlaceReview -> {
+                challengeContributionRepository.findFirstByChallengeIdAndPlaceReviewId(
+                    challengeId = challengeId,
+                    placeReviewId = contribution.placeReviewId
                 )
             }
         }
@@ -295,17 +303,23 @@ class ChallengeService(
         data class BuildingAccessibility(
             val buildingAccessibilityId: String,
             val buildingAccessibilityAddress: ChallengeAddress,
-            val placeCategoryValue: String?,
-        ) : Contribution(buildingAccessibilityAddress, placeCategoryValue) {
+        ) : Contribution(buildingAccessibilityAddress, placeCategory = null) {
             override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
         }
 
         data class BuildingAccessibilityComment(
             val buildingAccessibilityCommentId: String,
             val buildingAccessibilityAddress: ChallengeAddress,
-            val placeCategoryValue: String?,
-        ) : Contribution(buildingAccessibilityAddress, placeCategoryValue) {
+        ) : Contribution(buildingAccessibilityAddress, placeCategory = null) {
             override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
+        }
+
+        data class PlaceReview(
+            val placeReviewId: String,
+            val placeReviewAddress: ChallengeAddress,
+            val placeCategoryValue: String?,
+        ) : Contribution(placeReviewAddress, placeCategoryValue) {
+            override val actionType = ChallengeActionCondition.Type.PLACE_REVIEW
         }
     }
 }

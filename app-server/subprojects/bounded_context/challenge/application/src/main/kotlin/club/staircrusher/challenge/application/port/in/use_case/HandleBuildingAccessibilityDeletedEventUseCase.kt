@@ -26,7 +26,6 @@ class HandleBuildingAccessibilityDeletedEventUseCase(
                     li = event.building.address.li,
                     roadName = event.building.address.roadName,
                 ),
-                placeCategoryValue = null, // BuildingAccessibility는 카테고리가 없음
             ),
         )
     }

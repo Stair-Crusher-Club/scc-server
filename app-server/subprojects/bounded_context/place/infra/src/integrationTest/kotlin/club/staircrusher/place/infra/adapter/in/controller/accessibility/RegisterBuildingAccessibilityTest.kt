@@ -3,6 +3,9 @@ package club.staircrusher.place.infra.adapter.`in`.controller.accessibility
 import club.staircrusher.api.spec.dto.AccessibilityInfoDto
 import club.staircrusher.api.spec.dto.GetAccessibilityPostRequest
 import club.staircrusher.api.spec.dto.RegisterBuildingAccessibilityRequestDto
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
+import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityRepository
 import club.staircrusher.place.application.port.out.accessibility.persistence.BuildingAccessibilityUpvoteRepository
 import club.staircrusher.place.domain.model.accessibility.AccessibilityImage
@@ -26,10 +29,23 @@ class RegisterBuildingAccessibilityTest : AccessibilityITBase() {
     @Autowired
     private lateinit var buildingAccessibilityUpvoteRepository: BuildingAccessibilityUpvoteRepository
 
+    @Autowired
+    private lateinit var challengeRepository: ChallengeRepository
+
+    @Autowired
+    private lateinit var challengeParticipationRepository: ChallengeParticipationRepository
+
+    @Autowired
+    private lateinit var challengeContributionRepository: ChallengeContributionRepository
+
     @BeforeEach
     fun setUp() = transactionManager.doInTransaction {
         buildingAccessibilityUpvoteRepository.deleteAll()
         buildingAccessibilityRepository.deleteAll()
+
+        challengeRepository.deleteAll()
+        challengeParticipationRepository.deleteAll()
+        challengeContributionRepository.deleteAll()
     }
 
     @Test

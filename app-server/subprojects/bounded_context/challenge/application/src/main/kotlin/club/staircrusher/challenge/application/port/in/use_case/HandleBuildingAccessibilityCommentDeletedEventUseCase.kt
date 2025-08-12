@@ -26,7 +26,6 @@ class HandleBuildingAccessibilityCommentDeletedEventUseCase(
                     li = event.building.address.li,
                     roadName = event.building.address.roadName,
                 ),
-                placeCategoryValue = null, // BuildingAccessibilityComment는 카테고리가 없음
             ),
         )
     }

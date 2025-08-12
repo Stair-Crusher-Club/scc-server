@@ -7,7 +7,7 @@ import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 
 fun main() {
@@ -39,6 +39,7 @@ fun main() {
             placeAccessibilityCommentId = null,
             buildingAccessibilityId = null,
             buildingAccessibilityCommentId = null,
+            placeReviewId = null,
             createdAt = it.createdAt,
             updatedAt = it.createdAt,
         )
@@ -51,6 +52,7 @@ fun main() {
             placeAccessibilityCommentId = null,
             buildingAccessibilityId = it.id,
             buildingAccessibilityCommentId = null,
+            placeReviewId = null,
             createdAt = it.createdAt,
             updatedAt = it.createdAt,
         )
@@ -105,6 +107,7 @@ private  fun ChallengeContribution.toInsertQuery(): String {
         "$buildingAccessibilityStr," + // building_accessibility_id
         "NULL," + // building_accessibility_comment_id
         "'${createdAt.toQueryString()}'," + // created_at
-        "'${createdAt.toQueryString()}'" + // updated_at
+        "'${createdAt.toQueryString()}'," + // updated_at
+        "NULL" + // place_review_id
         ");"
 }
