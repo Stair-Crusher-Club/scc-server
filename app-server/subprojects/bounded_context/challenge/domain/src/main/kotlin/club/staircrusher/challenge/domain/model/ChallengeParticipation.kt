@@ -14,11 +14,18 @@ class ChallengeParticipation(
     val challengeId: String,
     val userId: String,
     val participantName: String?,
+    val companyName: String?,
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "TEXT")
     var questProgresses: List<ChallengeQuestProgress>,
     val createdAt: Instant,
 ) {
+    init {
+        check((participantName != null) == (companyName != null)) {
+            "participantName과 companyName은 같이 설정되거나 같이 설정되지 않아야 합니다. $this"
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -77,6 +84,6 @@ class ChallengeParticipation(
     }
 
     override fun toString(): String {
-        return "ChallengeParticipation(id='$id', challengeId='$challengeId', userId='$userId', participantName=$participantName, questProgresses=$questProgresses, createdAt=$createdAt)"
+        return "ChallengeParticipation(id='$id', challengeId='$challengeId', userId='$userId', participantName=$participantName, companyName=$companyName, questProgresses=$questProgresses, createdAt=$createdAt)"
     }
 }

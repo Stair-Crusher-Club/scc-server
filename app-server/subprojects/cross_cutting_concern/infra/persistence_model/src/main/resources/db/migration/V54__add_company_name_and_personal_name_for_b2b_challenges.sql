@@ -1,8 +1,7 @@
--- Add company_name to challenge table for B2B join conditions
-ALTER TABLE challenge ADD COLUMN company_name VARCHAR(128) NULL;
-
--- Add participant_name to challenge_participation table for recording participant info
+-- Add participant_name and company_name to challenge_participation table for recording participant info
+-- Each participant can belong to different companies in the same challenge
 ALTER TABLE challenge_participation ADD COLUMN participant_name VARCHAR(64) NULL;
+ALTER TABLE challenge_participation ADD COLUMN company_name VARCHAR(128) NULL;
 
--- Add index on company_name for efficient lookups
-CREATE INDEX idx_challenge_company_name ON challenge(company_name);
+-- Add isB2B flag to challenge table to indicate if it's a B2B challenge
+ALTER TABLE challenge ADD COLUMN is_b2b BOOLEAN NOT NULL DEFAULT FALSE;

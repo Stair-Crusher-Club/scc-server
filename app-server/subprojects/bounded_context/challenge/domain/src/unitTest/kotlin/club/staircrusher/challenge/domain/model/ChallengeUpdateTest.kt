@@ -91,7 +91,7 @@ class ChallengeUpdateTest {
             isPublic = true,
             invitationCode = null,
             passcode = null,
-            companyName = null,
+            isB2B = false,
             crusherGroup = null,
             isComplete = false,
             startsAt = startsAt,

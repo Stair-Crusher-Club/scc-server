@@ -162,7 +162,8 @@ class ChallengeParticipationQuestTest {
             id = "participation1",
             challengeId = "challenge1",
             userId = "user1",
-            participantName = "테스트 사용자",
+            participantName = null,
+            companyName = null,
             questProgresses = emptyList(),
             createdAt = SccClock.instant()
         )

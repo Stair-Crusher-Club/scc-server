@@ -257,7 +257,7 @@ class ITDataGenerator {
         isPublic: Boolean = true,
         invitationCode: String? = null,
         passcode: String? = null,
-        companyName: String? = null,
+        isB2B: Boolean = false,
         isComplete: Boolean = false,
         startsAt: Instant = clock.instant(),
         endsAt: Instant? = null,
@@ -274,7 +274,8 @@ class ITDataGenerator {
                 isPublic = isPublic,
                 invitationCode = invitationCode,
                 passcode = passcode,
-                companyName = companyName,
+                isB2B = isB2B,
+                crusherGroup = crusherGroup,
                 isComplete = isComplete,
                 startsAt = startsAt,
                 endsAt = endsAt,
@@ -285,7 +286,6 @@ class ITDataGenerator {
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
                 description = description,
-                crusherGroup = crusherGroup
             )
         )
     }
@@ -307,7 +307,8 @@ class ITDataGenerator {
         userAccount: UserAccount,
         challenge: Challenge,
         participateAt: Instant,
-        participantName: String? = null
+        participantName: String? = null,
+        companyName: String? = null
     ): ChallengeParticipation {
         return challengeParticipationRepository.save(
             ChallengeParticipation(
@@ -315,6 +316,7 @@ class ITDataGenerator {
                 challengeId = challenge.id,
                 userId = userAccount.id,
                 participantName = participantName,
+                companyName = companyName,
                 questProgresses = emptyList(),
                 createdAt = participateAt
             )

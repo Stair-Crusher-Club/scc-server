@@ -52,21 +52,16 @@ class JoinChallengeUseCase(
                 )
             }
 
-            // Check company name if required
-            if (challenge.companyName != null) {
-                if (companyInfo == null) {
+            // Check company info if B2B challenge
+            if (challenge.isB2B) {
+                if (companyInfo?.companyName.isNullOrBlank() || companyInfo.participantName.isBlank()) {
                     throw SccDomainException(
-                        msg = "회사 정보가 필요합니다.",
-                        errorCode = SccDomainException.ErrorCode.INVALID_COMPANY_NAME
-                    )
-                }
-                if (challenge.companyName != companyInfo.companyName) {
-                    throw SccDomainException(
-                        msg = "잘못된 회사명입니다.",
-                        errorCode = SccDomainException.ErrorCode.INVALID_COMPANY_NAME
+                        msg = "B2B 챌린지는 회사명과 참여자명이 필수입니다.",
+                        errorCode = SccDomainException.ErrorCode.B2B_INFO_REQUIRED
                     )
                 }
             }
+
             val now = clock.instant()
             if (now < challenge.startsAt) {
                 throw SccDomainException(
@@ -82,10 +77,11 @@ class JoinChallengeUseCase(
                 challengeId = challenge.id,
                 userId = userId,
                 participantName = companyInfo?.participantName,
+                companyName = companyInfo?.companyName,
                 questProgresses = emptyList(),
                 createdAt = clock.instant()
             )
-            
+
             challengeParticipationRepository.save(participation)
             return@doInTransaction JoinChallengeResult(
                 challenge = challenge,

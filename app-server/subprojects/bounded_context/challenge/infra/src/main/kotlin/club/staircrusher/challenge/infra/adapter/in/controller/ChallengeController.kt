@@ -72,7 +72,7 @@ class ChallengeController(
             ranks = leaderboardResult?.ranks?.map { (rank, user) -> rank.toDto(user!!.nickname) } ?: emptyList(),
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
-            hasCompanyName = result.challenge.companyName != null,
+            isB2B = result.challenge.isB2B,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
             isB2B = false, // FIXME: API spec 변경 임시 대응
@@ -115,7 +115,7 @@ class ChallengeController(
             ranks = leaderboardResult.ranks.map { (rank, user) -> rank.toDto(user!!.nickname) },
             hasJoined = result.hasJoined,
             hasPasscode = result.challenge.passcode != null,
-            hasCompanyName = result.challenge.companyName != null,
+            isB2B = result.challenge.isB2B,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
             isB2B = false, // FIXME: API spec 변경 임시 대응
