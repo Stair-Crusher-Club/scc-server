@@ -16,6 +16,6 @@ class CreateAnonymousUserUseCase(
         val anonymousUser = userApplicationService.createAnonymousUser()
         val accessToken = userAuthService.issueAnonymousAccessToken(anonymousUser.id)
 
-        AuthTokens(accessToken)
+        AuthTokens(accessToken, userId = anonymousUser.id)
     }
 }

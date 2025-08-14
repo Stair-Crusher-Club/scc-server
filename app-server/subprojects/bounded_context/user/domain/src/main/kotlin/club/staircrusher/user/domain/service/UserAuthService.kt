@@ -2,10 +2,10 @@ package club.staircrusher.user.domain.service
 
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.token.TokenManager
-import club.staircrusher.user.domain.model.UserAccessTokenPayload
-import club.staircrusher.user.domain.exception.UserAuthenticationException
 import club.staircrusher.stdlib.token.TokenVerificationException
+import club.staircrusher.user.domain.exception.UserAuthenticationException
 import club.staircrusher.user.domain.model.AuthTokens
+import club.staircrusher.user.domain.model.UserAccessTokenPayload
 import club.staircrusher.user.domain.model.UserAccount
 import club.staircrusher.user.domain.model.UserAuthInfo
 import java.time.Duration
@@ -28,7 +28,7 @@ class UserAuthService(
 
     fun issueTokens(userAuthInfo: UserAuthInfo): AuthTokens {
         val accessToken = tokenManager.issueToken(UserAccessTokenPayload(userId = userAuthInfo.userId))
-        return AuthTokens(accessToken = accessToken)
+        return AuthTokens(accessToken = accessToken, userId = userAuthInfo.userId)
     }
 
     @Throws(UserAuthenticationException::class)

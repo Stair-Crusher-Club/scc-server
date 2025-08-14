@@ -74,6 +74,6 @@ class AuthController(
     @PostMapping("/createAnonymousUser")
     fun createAnonymousUser(): CreateAnonymousUserResponseDto {
         val authTokens = createAnonymousUserUseCase.handle()
-        return CreateAnonymousUserResponseDto(authTokens.toDTO())
+        return CreateAnonymousUserResponseDto(authTokens = authTokens.toDTO(), userId = authTokens.userId)
     }
 }

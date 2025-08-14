@@ -14,16 +14,16 @@ import club.staircrusher.stdlib.validation.email.EmailValidator
 import club.staircrusher.stdlib.validation.nickname.NicknameValidator
 import club.staircrusher.user.application.port.out.persistence.UserAccountConnectionRepository
 import club.staircrusher.user.application.port.out.persistence.UserAccountRepository
-import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.application.port.out.persistence.UserProfileRepository
 import club.staircrusher.user.application.port.out.web.subscription.StibeeSubscriptionService
+import club.staircrusher.user.domain.model.AuthTokens
 import club.staircrusher.user.domain.model.IdentifiedUserVO
 import club.staircrusher.user.domain.model.UserAccount
 import club.staircrusher.user.domain.model.UserAccountConnection
-import club.staircrusher.user.domain.model.UserProfile
-import club.staircrusher.user.domain.model.UserMobilityTool
 import club.staircrusher.user.domain.model.UserAccountType
 import club.staircrusher.user.domain.model.UserConnectionReason
+import club.staircrusher.user.domain.model.UserMobilityTool
+import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import club.staircrusher.user.domain.service.UserAuthService
 import kotlinx.coroutines.runBlocking
@@ -60,7 +60,7 @@ class UserApplicationService(
         val (userAccount, userProfile) = signUp(params)
 
         val accessToken = userAuthService.issueAccessToken(userAccount)
-        AuthTokens(accessToken)
+        AuthTokens(accessToken, userId = userAccount.id)
     }
 
     fun signUp(params: UserProfileRepository.CreateUserParams): IdentifiedUserVO {
@@ -120,7 +120,7 @@ class UserApplicationService(
             throw SccDomainException("잘못된 비밀번호입니다.")
         }
         val accessToken = userAuthService.issueAccessToken(userAccount)
-        AuthTokens(accessToken)
+        AuthTokens(accessToken, userId = userAccount.id)
     }
 
     fun updatePushToken(
