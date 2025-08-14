@@ -74,6 +74,8 @@ class ChallengeController(
             hasPasscode = result.challenge.passcode != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
+            isB2B = false, // FIXME: API spec 변경 임시 대응
+            quests = emptyList(), // FIXME: API spec 변경 임시 대응
         )
     }
 
@@ -114,6 +116,8 @@ class ChallengeController(
             hasPasscode = result.challenge.passcode != null,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
+            isB2B = false, // FIXME: API spec 변경 임시 대응
+            quests = emptyList(), // FIXME: API spec 변경 임시 대응
         )
     }
 

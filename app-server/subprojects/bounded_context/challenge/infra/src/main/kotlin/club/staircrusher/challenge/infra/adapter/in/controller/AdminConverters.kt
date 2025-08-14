@@ -90,6 +90,7 @@ fun AdminChallengeActionConditionTypeEnumDTO.toModel() = when (this) {
     AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
     AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
     AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
+    AdminChallengeActionConditionTypeEnumDTO.PLACE_REVIEW -> TODO()
 }
 
 fun ChallengeActionCondition.Type.toModel() = when (this) {
