@@ -75,8 +75,10 @@ class ChallengeController(
             isB2B = result.challenge.isB2B,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
-            isB2B = false, // FIXME: API spec 변경 임시 대응
-            quests = emptyList(), // FIXME: API spec 변경 임시 대응
+            quests = result.challenge.quests?.map { quest ->
+                val progress = result.questProgress.find { it.questId == quest.id }
+                quest.toDto(progress)
+            } ?: emptyList(),
         )
     }
 
@@ -118,8 +120,10 @@ class ChallengeController(
             isB2B = result.challenge.isB2B,
             myRank = myRank?.let { (rank, user) -> rank.toDto(user!!.nickname) },
             contributionCountForNextRank = contributionCountForNextRank,
-            isB2B = false, // FIXME: API spec 변경 임시 대응
-            quests = emptyList(), // FIXME: API spec 변경 임시 대응
+            quests = result.challenge.quests?.map { quest ->
+                val progress = result.questProgress.find { it.questId == quest.id }
+                quest.toDto(progress)
+            } ?: emptyList(),
         )
     }
 
