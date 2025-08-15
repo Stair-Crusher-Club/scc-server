@@ -1,5 +1,6 @@
 package club.staircrusher.challenge.domain.model
 
+import club.staircrusher.stdlib.place.PlaceCategory
 import java.time.Instant
 
 data class ChallengeQuest(
@@ -18,11 +19,11 @@ data class ChallengeQuestCondition(
     val startsAt: Instant?, // null이면 챌린지 시작과 동시에 시작
     val endsAt: Instant?, // null이면 챌린지 종료와 함께 종료
     val actionConditions: List<ChallengeActionCondition.Type>, // 어떤 액션들을 대상으로 하는지
-    val placeCategories: List<String>?, // null이면 모든 카테고리, 값이 있으면 특정 카테고리만
+    val placeCategories: List<PlaceCategory>?, // null이면 모든 카테고리, 값이 있으면 특정 카테고리만
 ) {
     fun isSatisfied(
         actionType: ChallengeActionCondition.Type,
-        placeCategory: String?,
+        placeCategory: PlaceCategory?,
         challengeStartsAt: Instant,
         challengeEndsAt: Instant?,
         contributionCreatedAt: Instant

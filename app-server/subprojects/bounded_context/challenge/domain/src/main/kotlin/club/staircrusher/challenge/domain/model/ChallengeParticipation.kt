@@ -1,5 +1,6 @@
 package club.staircrusher.challenge.domain.model
 
+import club.staircrusher.stdlib.place.PlaceCategory
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -17,11 +18,11 @@ class ChallengeParticipation(
     val companyName: String?,
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "TEXT")
-    var questProgresses: List<ChallengeQuestProgress>,
+    var questProgresses: List<ChallengeQuestProgress>?,
     val createdAt: Instant,
 ) {
     init {
-        check((participantName != null) == (companyName != null)) {
+        require((participantName != null) == (companyName != null)) {
             "participantName과 companyName은 같이 설정되거나 같이 설정되지 않아야 합니다. $this"
         }
     }
@@ -42,7 +43,7 @@ class ChallengeParticipation(
         challengeQuests: List<ChallengeQuest>,
         contributionId: String,
         actionType: ChallengeActionCondition.Type,
-        placeCategory: String?,
+        placeCategory: PlaceCategory?,
         challengeStartsAt: Instant,
         challengeEndsAt: Instant?,
         contributionCreatedAt: Instant
@@ -64,10 +65,11 @@ class ChallengeParticipation(
     }
 
     private fun getOrInitializeQuestProgress(questId: String): ChallengeQuestProgress {
-        val existingProgress = questProgresses.find { it.questId == questId }
+        val currentProgresses = questProgresses ?: emptyList()
+        val existingProgress = currentProgresses.find { it.questId == questId }
         return if (existingProgress == null) {
             val newProgress = ChallengeQuestProgress.create(questId)
-            questProgresses = questProgresses + newProgress
+            questProgresses = currentProgresses + newProgress
             newProgress
         } else {
             existingProgress
@@ -75,7 +77,7 @@ class ChallengeParticipation(
     }
 
     fun removeQuestProgress(contributionId: String, challengeQuests: List<ChallengeQuest>) {
-        questProgresses.forEach { progress ->
+        questProgresses?.forEach { progress ->
             val quest = challengeQuests.find { it.id == progress.questId }
             if (quest != null) {
                 progress.removeContribution(contributionId, quest)
