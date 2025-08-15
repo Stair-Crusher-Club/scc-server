@@ -16,11 +16,16 @@ class ChallengeParticipation(
     val userId: String,
     val participantName: String?,
     val companyName: String?,
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "TEXT")
-    var questProgresses: List<ChallengeQuestProgress>?,
+    questProgresses: List<ChallengeQuestProgress>,
     val createdAt: Instant,
 ) {
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "questProgresses", columnDefinition = "JSONB")
+    internal var _questProgresses: List<ChallengeQuestProgress>? = questProgresses
+
+    val questProgresses: List<ChallengeQuestProgress>
+        get() = _questProgresses ?: emptyList()
+
     init {
         require((participantName != null) == (companyName != null)) {
             "participantName과 companyName은 같이 설정되거나 같이 설정되지 않아야 합니다. $this"
@@ -69,7 +74,7 @@ class ChallengeParticipation(
         val existingProgress = currentProgresses.find { it.questId == questId }
         return if (existingProgress == null) {
             val newProgress = ChallengeQuestProgress.create(questId)
-            questProgresses = currentProgresses + newProgress
+            _questProgresses = currentProgresses + newProgress
             newProgress
         } else {
             existingProgress

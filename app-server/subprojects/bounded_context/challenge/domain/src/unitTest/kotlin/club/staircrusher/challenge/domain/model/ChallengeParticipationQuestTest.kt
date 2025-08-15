@@ -32,9 +32,9 @@ class ChallengeParticipationQuestTest {
         )
 
         // then
-        assertEquals(1, participation.questProgresses!!.size)
-        assertEquals("quest1", participation.questProgresses!![0].questId)
-        assertEquals(1, participation.questProgresses!![0].completedCount)
+        assertEquals(1, participation.questProgresses.size)
+        assertEquals("quest1", participation.questProgresses[0].questId)
+        assertEquals(1, participation.questProgresses[0].completedCount)
     }
 
     @Test
@@ -58,7 +58,7 @@ class ChallengeParticipationQuestTest {
         )
 
         // then
-        val progress = participation.questProgresses!!.first { it.questId == "quest1" }
+        val progress = participation.questProgresses.first { it.questId == "quest1" }
         assertEquals(1, progress.completedCount)
         assertEquals(listOf("contribution1"), progress.contributionIds)
         assertFalse(progress.isCompleted)
@@ -85,7 +85,7 @@ class ChallengeParticipationQuestTest {
         )
 
         // then
-        val progress = participation.questProgresses!!.first { it.questId == "quest1" }
+        val progress = participation.questProgresses.first { it.questId == "quest1" }
         assertEquals(1, progress.completedCount)
         assertTrue(progress.isCompleted)
         assertNotNull(progress.completedAt)
@@ -116,7 +116,7 @@ class ChallengeParticipationQuestTest {
         )
 
         // then - 조건에 맞지 않아 진행도가 생성되지 않음
-        assertTrue(participation.questProgresses!!.isEmpty())
+        assertTrue(participation.questProgresses.isEmpty())
     }
 
     @Test
@@ -153,7 +153,7 @@ class ChallengeParticipationQuestTest {
         participation.removeQuestProgress("contribution1", listOf(quest))
 
         // then
-        val progress = participation.questProgresses!!.first { it.questId == "quest1" }
+        val progress = participation.questProgresses.first { it.questId == "quest1" }
         assertEquals(1, progress.completedCount)
         assertEquals(listOf("contribution2"), progress.contributionIds)
     }

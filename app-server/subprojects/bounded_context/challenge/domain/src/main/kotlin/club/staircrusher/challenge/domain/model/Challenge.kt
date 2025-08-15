@@ -21,6 +21,7 @@ class Challenge(
     var isPublic: Boolean,
     var invitationCode: String?,
     var passcode: String?,
+    @Column(name = "is_b2b")
     var isB2B: Boolean,
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "TEXT")
@@ -34,7 +35,7 @@ class Challenge(
     @Convert(converter = ChallengeConditionListToTextAttributeConverter::class)
     var conditions: List<ChallengeCondition>,
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "JSONB")
     var quests: List<ChallengeQuest>?,
     val createdAt: Instant,
     var updatedAt: Instant,
