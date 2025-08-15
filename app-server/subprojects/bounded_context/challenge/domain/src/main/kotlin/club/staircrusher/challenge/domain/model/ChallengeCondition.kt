@@ -31,6 +31,7 @@ data class ChallengeActionCondition(val types: List<Type>) {
         BUILDING_ACCESSIBILITY_COMMENT,
         PLACE_ACCESSIBILITY,
         PLACE_ACCESSIBILITY_COMMENT,
+        PLACE_REVIEW,
     }
 
     fun isSatisfied(type: Type): Boolean {

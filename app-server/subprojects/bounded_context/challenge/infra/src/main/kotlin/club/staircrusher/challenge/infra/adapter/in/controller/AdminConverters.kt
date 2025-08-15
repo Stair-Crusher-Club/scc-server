@@ -41,11 +41,13 @@ fun AdminCreateChallengeRequestDTO.toModel() = CreateChallengeRequest(
     isPublic = isPublic,
     invitationCode = invitationCode,
     passcode = passcode,
+    isB2B = false, // TODO: Admin API에서 B2B 챌린지 지원 시 추가.
     startsAtMillis = startsAtMillis,
     endsAtMillis = endsAtMillis,
     goal = goal,
     milestones = milestones,
     conditions = conditions.map { it.toModel() },
+    quests = null, // TODO: Admin API에서 퀘스트 지원 시 추가
     description = description,
     crusherGroup = crusherGroup?.toModel(),
 )
@@ -90,7 +92,7 @@ fun AdminChallengeActionConditionTypeEnumDTO.toModel() = when (this) {
     AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
     AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
     AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT -> ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
-    AdminChallengeActionConditionTypeEnumDTO.PLACE_REVIEW -> TODO()
+    AdminChallengeActionConditionTypeEnumDTO.PLACE_REVIEW -> ChallengeActionCondition.Type.PLACE_REVIEW
 }
 
 fun ChallengeActionCondition.Type.toModel() = when (this) {
@@ -98,6 +100,7 @@ fun ChallengeActionCondition.Type.toModel() = when (this) {
     ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.BUILDING_ACCESSIBILITY_COMMENT
     ChallengeActionCondition.Type.PLACE_ACCESSIBILITY -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY
     ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT -> AdminChallengeActionConditionTypeEnumDTO.PLACE_ACCESSIBILITY_COMMENT
+    ChallengeActionCondition.Type.PLACE_REVIEW -> AdminChallengeActionConditionTypeEnumDTO.PLACE_REVIEW
 }
 
 fun AdminCrusherGroupDto.toModel() = ChallengeCrusherGroup(

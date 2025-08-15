@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.application.port.`in`
 
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
+import club.staircrusher.stdlib.place.PlaceCategory
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
@@ -8,6 +9,7 @@ import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeAddress
 import club.staircrusher.challenge.domain.model.ChallengeContribution
 import club.staircrusher.challenge.domain.model.ChallengeCrusherGroup
+import club.staircrusher.challenge.domain.model.ChallengeQuestProgress
 import club.staircrusher.challenge.domain.model.ChallengeStatus
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.domain.SccDomainException
@@ -71,6 +73,16 @@ class ChallengeService(
             userId = userId,
             challengeId = challengeId
         ).isNotEmpty()
+    }
+
+    fun getQuestProgressForUser(userId: String, challengeId: String): List<ChallengeQuestProgress> {
+        return challengeParticipationRepository.findByChallengeIdAndUserId(
+            userId = userId,
+            challengeId = challengeId
+        )
+            .firstOrNull()
+            ?.questProgresses
+            ?: emptyList()
     }
 
     fun getPlaceAccessibilityCrusherGroup(placeAccessibilityId: String): ChallengeCrusherGroup? {
@@ -145,10 +157,23 @@ class ChallengeService(
                 placeAccessibilityCommentId = (contribution as? Contribution.PlaceAccessibilityComment)?.placeAccessibilityCommentId,
                 buildingAccessibilityId = (contribution as? Contribution.BuildingAccessibility)?.buildingAccessibilityId,
                 buildingAccessibilityCommentId = (contribution as? Contribution.BuildingAccessibilityComment)?.buildingAccessibilityCommentId,
+                placeReviewId = (contribution as? Contribution.PlaceReview)?.placeReviewId,
                 createdAt = clock.instant(),
                 updatedAt = clock.instant()
             )
         )
+
+        // 퀘스트 진행도 업데이트
+        updateQuestProgress(
+            userId = userId,
+            challengeId = challenge.id,
+            contributionId = challengeContribution.id,
+            actionType = contribution.actionType,
+            placeCategory = contribution.placeCategory,
+            challenge = challenge,
+            contributionCreatedAt = challengeContribution.createdAt
+        )
+
         val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
         challengeRepository.save(
             challenge.also {
@@ -187,6 +212,13 @@ class ChallengeService(
                     buildingAccessibilityCommentId = contribution.buildingAccessibilityCommentId
                 )
             }
+
+            is Contribution.PlaceReview -> {
+                challengeContributionRepository.findFirstByChallengeIdAndPlaceReviewId(
+                    challengeId = challengeId,
+                    placeReviewId = contribution.placeReviewId
+                )
+            }
         }
     }
 
@@ -197,42 +229,109 @@ class ChallengeService(
         val myInProgressChallenges = getMyInProgressChallenges(userId = userId)
         myInProgressChallenges
             .mapNotNull { myInProgressChallenge ->
-                getExistingContribution(myInProgressChallenge.id, contribution)
+                getExistingContribution(myInProgressChallenge.id, contribution)?.let { contrib ->
+                    myInProgressChallenge to contrib
+                }
             }
-            .forEach {
-                challengeContributionRepository.deleteById(it.id)
+            .forEach { (challenge, challengeContribution) ->
+                // 퀘스트 진행도에서 제거
+                removeQuestProgress(
+                    userId = userId,
+                    challengeId = challenge.id,
+                    contributionId = challengeContribution.id,
+                    challenge = challenge
+                )
+
+                challengeContributionRepository.deleteById(challengeContribution.id)
             }
     }
 
-    sealed class Contribution(val address: ChallengeAddress) {
+    private fun updateQuestProgress(
+        userId: String,
+        challengeId: String,
+        contributionId: String,
+        actionType: ChallengeActionCondition.Type,
+        placeCategory: String?,
+        challenge: Challenge,
+        contributionCreatedAt: Instant
+    ) {
+        val challengeQuests = challenge.quests
+        if (challengeQuests.isNullOrEmpty()) return
+
+        val participation = challengeParticipationRepository.findByChallengeIdAndUserId(
+            userId = userId,
+            challengeId = challengeId
+        ).firstOrNull() ?: return
+
+        participation.updateQuestProgress(
+            challengeQuests = challengeQuests,
+            contributionId = contributionId,
+            actionType = actionType,
+            placeCategory = placeCategory?.let { PlaceCategory.valueOfOrNull(it) },
+            challengeStartsAt = challenge.startsAt,
+            challengeEndsAt = challenge.endsAt,
+            contributionCreatedAt = contributionCreatedAt
+        )
+        challengeParticipationRepository.save(participation)
+    }
+
+    private fun removeQuestProgress(
+        userId: String,
+        challengeId: String,
+        contributionId: String,
+        challenge: Challenge
+    ) {
+        val challengeQuests = challenge.quests
+        if (challengeQuests.isNullOrEmpty()) return
+
+        val participation = challengeParticipationRepository.findByChallengeIdAndUserId(
+            userId = userId,
+            challengeId = challengeId
+        ).firstOrNull() ?: return
+
+        participation.removeQuestProgress(contributionId, challengeQuests)
+        challengeParticipationRepository.save(participation)
+    }
+
+    sealed class Contribution(val address: ChallengeAddress, val placeCategory: String?) {
         abstract val actionType: ChallengeActionCondition.Type
 
         data class PlaceAccessibility(
             val placeAccessibilityId: String,
             val placeAccessibilityAddress: ChallengeAddress,
-        ) : Contribution(placeAccessibilityAddress) {
+            val placeCategoryValue: String?,
+        ) : Contribution(placeAccessibilityAddress, placeCategoryValue) {
             override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY
         }
 
         data class PlaceAccessibilityComment(
             val placeAccessibilityCommentId: String,
             val placeAccessibilityAddress: ChallengeAddress,
-        ) : Contribution(placeAccessibilityAddress) {
+            val placeCategoryValue: String?,
+        ) : Contribution(placeAccessibilityAddress, placeCategoryValue) {
             override val actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY_COMMENT
         }
 
         data class BuildingAccessibility(
             val buildingAccessibilityId: String,
             val buildingAccessibilityAddress: ChallengeAddress,
-        ) : Contribution(buildingAccessibilityAddress) {
+        ) : Contribution(buildingAccessibilityAddress, placeCategory = null) {
             override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY
         }
 
         data class BuildingAccessibilityComment(
             val buildingAccessibilityCommentId: String,
             val buildingAccessibilityAddress: ChallengeAddress,
-        ) : Contribution(buildingAccessibilityAddress) {
+        ) : Contribution(buildingAccessibilityAddress, placeCategory = null) {
             override val actionType = ChallengeActionCondition.Type.BUILDING_ACCESSIBILITY_COMMENT
+        }
+
+        data class PlaceReview(
+            val placeReviewId: String,
+            val placeReviewAddress: ChallengeAddress,
+            val placeCategoryValue: String?,
+        ) : Contribution(placeReviewAddress, placeCategoryValue) {
+            override val actionType = ChallengeActionCondition.Type.PLACE_REVIEW
         }
     }
 }

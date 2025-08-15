@@ -27,6 +27,8 @@ naming:
     active: false
   ObjectPropertyNaming:
     active: false
+  VariableNaming:
+    active: false
 performance:
   SpreadOperator:
     active: false

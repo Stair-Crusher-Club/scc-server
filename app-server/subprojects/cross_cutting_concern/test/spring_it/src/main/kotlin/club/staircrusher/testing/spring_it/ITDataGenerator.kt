@@ -49,13 +49,12 @@ import club.staircrusher.user.application.port.out.persistence.UserProfileReposi
 import club.staircrusher.user.domain.model.IdentifiedUserVO
 import club.staircrusher.user.domain.model.UserAccount
 import club.staircrusher.user.domain.model.UserAccountType
-import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.model.UserMobilityTool
+import club.staircrusher.user.domain.model.UserProfile
 import club.staircrusher.user.domain.service.PasswordEncryptor
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Clock
 import java.time.Instant
-import kotlin.collections.map
 
 @Suppress("MagicNumber", "TooManyFunctions")
 @Component
@@ -258,6 +257,7 @@ class ITDataGenerator {
         isPublic: Boolean = true,
         invitationCode: String? = null,
         passcode: String? = null,
+        isB2B: Boolean = false,
         isComplete: Boolean = false,
         startsAt: Instant = clock.instant(),
         endsAt: Instant? = null,
@@ -274,16 +274,18 @@ class ITDataGenerator {
                 isPublic = isPublic,
                 invitationCode = invitationCode,
                 passcode = passcode,
+                isB2B = isB2B,
+                crusherGroup = crusherGroup,
                 isComplete = isComplete,
                 startsAt = startsAt,
                 endsAt = endsAt,
                 goal = goal,
                 milestones = milestones,
                 conditions = conditions,
+                quests = null,
                 createdAt = clock.instant(),
                 updatedAt = clock.instant(),
                 description = description,
-                crusherGroup = crusherGroup
             )
         )
     }
@@ -304,13 +306,18 @@ class ITDataGenerator {
     fun participateChallenge(
         userAccount: UserAccount,
         challenge: Challenge,
-        participateAt: Instant
+        participateAt: Instant,
+        participantName: String? = null,
+        companyName: String? = null
     ): ChallengeParticipation {
         return challengeParticipationRepository.save(
             ChallengeParticipation(
                 id = EntityIdGenerator.generateRandom(),
                 challengeId = challenge.id,
                 userId = userAccount.id,
+                participantName = participantName,
+                companyName = companyName,
+                questProgresses = emptyList(),
                 createdAt = participateAt
             )
         )
@@ -334,6 +341,7 @@ class ITDataGenerator {
                 placeAccessibilityCommentId = placeAccessibilityComment?.id,
                 buildingAccessibilityId = buildingAccessibility?.id,
                 buildingAccessibilityCommentId = buildingAccessibilityComment?.id,
+                placeReviewId = null,
                 createdAt = contributeAt,
                 updatedAt = contributeAt
             )

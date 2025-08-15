@@ -26,6 +26,7 @@ open class SccClock : Clock() {
     companion object {
         fun instant(): Instant {
             val globalSccClock = SccClockBeanHolder.get()
+                ?: SccClock().also { SccClockBeanHolder.setIfNull(it) }
             checkNotNull(globalSccClock) { "Cannot use SccClock.instant() since SccClock bean is not initialized yet." }
             return globalSccClock.instant()
         }

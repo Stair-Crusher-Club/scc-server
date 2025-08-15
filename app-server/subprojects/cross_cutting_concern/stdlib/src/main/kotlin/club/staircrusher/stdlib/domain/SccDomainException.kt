@@ -11,6 +11,7 @@ open class SccDomainException(
         INVALID_EMAIL,
         INVALID_BIRTH_YEAR,
         INVALID_PASSCODE,
+        B2B_INFO_REQUIRED,
         INVALID_ARGUMENTS,
         ALREADY_JOINED,
         CHALLENGE_NOT_OPENED,

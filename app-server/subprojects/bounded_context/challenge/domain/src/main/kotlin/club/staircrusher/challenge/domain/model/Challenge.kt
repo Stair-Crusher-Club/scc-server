@@ -21,6 +21,8 @@ class Challenge(
     var isPublic: Boolean,
     var invitationCode: String?,
     var passcode: String?,
+    @Column(name = "is_b2b")
+    var isB2B: Boolean,
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "TEXT")
     var crusherGroup: ChallengeCrusherGroup?,
@@ -32,6 +34,9 @@ class Challenge(
     var milestones: List<Int>,
     @Convert(converter = ChallengeConditionListToTextAttributeConverter::class)
     var conditions: List<ChallengeCondition>,
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "JSONB")
+    var quests: List<ChallengeQuest>?,
     val createdAt: Instant,
     var updatedAt: Instant,
     var description: String,
@@ -72,8 +77,8 @@ class Challenge(
 
     override fun toString(): String {
         return "Challenge(id='$id', name='$name', isPublic=$isPublic, invitationCode=$invitationCode, " +
-            "passcode=$passcode, crusherGroup=$crusherGroup, isComplete=$isComplete, startsAt=$startsAt, " +
-            "endsAt=$endsAt, goal=$goal, milestones=$milestones, conditions=$conditions, createdAt=$createdAt, " +
+            "passcode=$passcode, isB2B=$isB2B, crusherGroup=$crusherGroup, isComplete=$isComplete, startsAt=$startsAt, " +
+            "endsAt=$endsAt, goal=$goal, milestones=$milestones, conditions=$conditions, quests=$quests, createdAt=$createdAt, " +
             "updatedAt=$updatedAt, description='$description')"
     }
 
@@ -97,6 +102,7 @@ class Challenge(
                 isPublic = createRequest.isPublic,
                 invitationCode = invitationCode,
                 passcode = passcode,
+                isB2B = createRequest.isB2B,
                 crusherGroup = createRequest.crusherGroup,
                 isComplete = false,
                 startsAt = startsAt,
@@ -104,6 +110,7 @@ class Challenge(
                 goal = createRequest.goal,
                 milestones = milestones,
                 conditions = createRequest.conditions,
+                quests = createRequest.quests ?: emptyList(),
                 createdAt = now,
                 updatedAt = now,
                 description = createRequest.description.trim(),
