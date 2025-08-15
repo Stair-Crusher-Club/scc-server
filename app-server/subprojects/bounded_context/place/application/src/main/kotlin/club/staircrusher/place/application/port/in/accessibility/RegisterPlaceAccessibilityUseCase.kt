@@ -45,6 +45,7 @@ class RegisterPlaceAccessibilityUseCase(
                 contribution = ChallengeService.Contribution.PlaceAccessibility(
                     placeAccessibilityId = registerResult.placeAccessibility.id,
                     placeAccessibilityAddress = ChallengeAddress(registerResult.place),
+                    placeCategoryValue = registerResult.place.category?.name,
                 )
             )
             val getAccessibilityResult =

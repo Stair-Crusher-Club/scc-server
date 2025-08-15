@@ -12,5 +12,6 @@ interface ChallengeContributionRepository : CrudRepository<ChallengeContribution
     fun findFirstByChallengeIdAndBuildingAccessibilityId(challengeId: String, buildingAccessibilityId: String): ChallengeContribution?
     fun findByBuildingAccessibilityId(buildingAccessibilityId: String): List<ChallengeContribution>
     fun findFirstByChallengeIdAndBuildingAccessibilityCommentId(challengeId: String, buildingAccessibilityCommentId: String): ChallengeContribution?
+    fun findFirstByChallengeIdAndPlaceReviewId(challengeId: String, placeReviewId: String): ChallengeContribution?
     fun countByChallengeId(challengeId: String): Long
 }

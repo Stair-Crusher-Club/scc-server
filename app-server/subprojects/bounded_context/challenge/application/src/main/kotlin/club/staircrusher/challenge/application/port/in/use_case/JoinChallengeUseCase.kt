@@ -29,7 +29,12 @@ class JoinChallengeUseCase(
         val participationsCount: Int,
     )
 
-    fun handle(userId: String, challengeId: String, passcode: String?): JoinChallengeResult =
+    data class CompanyJoinInfo(
+        val companyName: String,
+        val participantName: String
+    )
+
+    fun handle(userId: String, challengeId: String, passcode: String?, companyInfo: CompanyJoinInfo?): JoinChallengeResult =
         transactionManager.doInTransaction(TransactionIsolationLevel.REPEATABLE_READ) {
             val challenge = challengeRepository.findById(challengeId).get()
             if (challengeService.hasJoined(userId = userId, challengeId = challengeId)) {
@@ -39,12 +44,24 @@ class JoinChallengeUseCase(
                     participationsCount = challengeParticipationRepository.countByChallengeId(challengeId).toInt()
                 )
             }
+            // Check passcode if required
             if (challenge.passcode != null && challenge.passcode != passcode) {
                 throw SccDomainException(
                     msg = "잘못된 참여코드 입니다.",
                     errorCode = SccDomainException.ErrorCode.INVALID_PASSCODE
                 )
             }
+
+            // Check company info if B2B challenge
+            if (challenge.isB2B) {
+                if (companyInfo?.companyName.isNullOrBlank() || companyInfo?.participantName.isNullOrBlank()) {
+                    throw SccDomainException(
+                        msg = "B2B 챌린지는 회사명과 참여자명이 필수입니다.",
+                        errorCode = SccDomainException.ErrorCode.B2B_INFO_REQUIRED
+                    )
+                }
+            }
+
             val now = clock.instant()
             if (now < challenge.startsAt) {
                 throw SccDomainException(
@@ -55,14 +72,17 @@ class JoinChallengeUseCase(
             if (challenge.endsAt?.let { it < now } == true) {
                 throw SccDomainException(msg = "이미 종료되었습니다.", errorCode = SccDomainException.ErrorCode.CHALLENGE_CLOSED)
             }
-            challengeParticipationRepository.save(
-                ChallengeParticipation(
-                    id = EntityIdGenerator.generateRandom(),
-                    challengeId = challenge.id,
-                    userId = userId,
-                    createdAt = clock.instant()
-                )
+            val participation = ChallengeParticipation(
+                id = EntityIdGenerator.generateRandom(),
+                challengeId = challenge.id,
+                userId = userId,
+                participantName = companyInfo?.participantName,
+                companyName = companyInfo?.companyName,
+                questProgresses = emptyList(),
+                createdAt = clock.instant()
             )
+
+            challengeParticipationRepository.save(participation)
             return@doInTransaction JoinChallengeResult(
                 challenge = challenge,
                 contributionsCount = challengeContributionRepository.countByChallengeId(challengeId).toInt(),

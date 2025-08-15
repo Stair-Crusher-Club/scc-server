@@ -26,6 +26,7 @@ class HandlePlaceAccessibilityCommentDeletedEventUseCase(
                     li = event.place.address.li,
                     roadName = event.place.address.roadName,
                 ),
+                placeCategoryValue = event.place.category?.name, // Place의 카테고리 이름 사용
             ),
         )
     }

@@ -14,6 +14,7 @@ class ChallengeContribution(
     val placeAccessibilityCommentId: String?,
     val buildingAccessibilityId: String?,
     val buildingAccessibilityCommentId: String?,
+    val placeReviewId: String?,
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {
@@ -33,7 +34,7 @@ class ChallengeContribution(
         return "ChallengeContribution(id='$id', userId='$userId', challengeId='$challengeId', " +
             "placeAccessibilityId=$placeAccessibilityId, placeAccessibilityCommentId=$placeAccessibilityCommentId, " +
             "buildingAccessibilityId=$buildingAccessibilityId, " +
-            "buildingAccessibilityCommentId=$buildingAccessibilityCommentId, createdAt=$createdAt, " +
-            "updatedAt=$updatedAt)"
+            "buildingAccessibilityCommentId=$buildingAccessibilityCommentId, placeReviewId=$placeReviewId, " +
+            "createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }

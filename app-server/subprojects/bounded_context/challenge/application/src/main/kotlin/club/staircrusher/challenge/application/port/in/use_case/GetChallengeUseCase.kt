@@ -5,6 +5,7 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeCon
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
+import club.staircrusher.challenge.domain.model.ChallengeQuestProgress
 import club.staircrusher.stdlib.di.annotation.Component
 import club.staircrusher.stdlib.persistence.TransactionManager
 
@@ -20,18 +21,27 @@ class GetChallengeUseCase(
         val challenge: Challenge,
         val contributionsCount: Int,
         val participationsCount: Int,
-        val hasJoined: Boolean
+        val hasJoined: Boolean,
+        val questProgress: List<ChallengeQuestProgress>
     )
 
     fun handle(userId: String? = null, challengeId: String): GetChallengeResult = transactionManager.doInTransaction {
         val challenge = challengeRepository.findById(challengeId).get()
         val participationsCount = challengeParticipationRepository.countByChallengeId(challengeId = challenge.id)
         val contributionsCount = challengeContributionRepository.countByChallengeId(challengeId = challenge.id)
+        val hasJoined = userId?.let { challengeService.hasJoined(userId, challenge.id) } ?: false
+        val questProgress = if (hasJoined && userId != null) {
+            challengeService.getQuestProgressForUser(userId, challengeId)
+        } else {
+            emptyList()
+        }
+
         return@doInTransaction GetChallengeResult(
             challenge = challenge,
             contributionsCount = contributionsCount.toInt(),
             participationsCount = participationsCount.toInt(),
-            hasJoined = userId?.let { challengeService.hasJoined(userId, challenge.id) } ?: false
+            hasJoined = hasJoined,
+            questProgress = questProgress,
         )
     }
 }

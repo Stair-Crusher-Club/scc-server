@@ -17,8 +17,8 @@ class HandleBuildingAccessibilityCommentDeletedEventUseCase(
         }
         challengeService.deleteContributions(
             userId = event.commentRegisterer.id!!,
-            contribution = ChallengeService.Contribution.BuildingAccessibility(
-                buildingAccessibilityId = event.id,
+            contribution = ChallengeService.Contribution.BuildingAccessibilityComment(
+                buildingAccessibilityCommentId = event.id,
                 buildingAccessibilityAddress = ChallengeAddress(
                     siDo = event.building.address.siDo,
                     siGunGu = event.building.address.siGunGu,
