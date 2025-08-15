@@ -58,7 +58,6 @@ fun AdminUpdateChallengeRequestDTO.toModel(challengeId: String) = UpdateChalleng
     endsAt = endsAtMillis?.let { Instant.ofEpochMilli(it) },
     description = description,
     crusherGroup = crusherGroup?.toModel(),
-    quests = null, // TODO: Admin API에서 퀘스트 지원 시 추가
 )
 
 fun AdminChallengeConditionDTO.toModel() = ChallengeCondition(

@@ -54,18 +54,10 @@ class Challenge(
             throw SccDomainException("시작 시각은 종료시각보다 빨라야 합니다.")
         }
 
-        // 시작된 챌린지의 퀘스트는 수정할 수 없음
-        if (updateRequest.quests != null) {
-            if (getStatus(SccClock.instant()) != ChallengeStatus.UPCOMING) {
-                throw SccDomainException("시작된 챌린지의 퀘스트는 수정할 수 없습니다.")
-            }
-        }
-
         this.name = validateAndNormalizeString(updateRequest.name)
         this.crusherGroup = updateRequest.crusherGroup
         this.endsAt = endsAt
         this.description = updateRequest.description.trim()
-        updateRequest.quests?.let { this.quests = it }
         this.updatedAt = SccClock.instant()
     }
 
