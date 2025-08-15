@@ -98,6 +98,8 @@ Each bounded context follows hexagonal architecture with `domain/application/inf
 - Keep bounded contexts isolated via Gradle modules
 - Generate API clients from OpenAPI specs in scc-api submodule
 - Database migrations are managed via Flyway in `persistence_model` module
+- Always add trailing comma.
+- **MANDATORY**: When evolving entities and database schemas, ensure backward compatibility - existing data must deserialize correctly after changes.
 
 ### File Structure Navigation
 - Core business logic: `app-server/subprojects/bounded_context/{bc_name}/{layer}/src/main/kotlin/`
