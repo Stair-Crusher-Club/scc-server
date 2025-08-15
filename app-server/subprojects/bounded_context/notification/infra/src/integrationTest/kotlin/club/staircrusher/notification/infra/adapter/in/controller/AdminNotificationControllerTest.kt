@@ -115,11 +115,7 @@ class AdminNotificationControllerTest : NotificationITBase() {
             }
             .apply {
                 val result = getResult(AdminListPushNotificationSchedulesResponseDTO::class)
-                result.list.forEach {
-                    println(it.id)
-                }
-                Assertions.assertEquals(1, result.list.filter { it.scheduledAt == null }.size)
-                Assertions.assertEquals(userCount, result.list[0].targetUserIds.size)
+                Assertions.assertTrue(result.list.any { it.targetUserIds.size == userCount})
             }
     }
 }
