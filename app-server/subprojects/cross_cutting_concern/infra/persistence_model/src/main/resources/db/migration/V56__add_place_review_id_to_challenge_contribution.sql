@@ -1,4 +1,4 @@
-ALTER TABLE challenge_contribution ADD COLUMN place_review_id TEXT;
+ALTER TABLE challenge_contribution ADD COLUMN place_review_id TEXT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_challenge_contribution_place_accessibility_id
 ON challenge_contribution (place_accessibility_id);
