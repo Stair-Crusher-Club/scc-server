@@ -38,7 +38,7 @@ class PushScheduleService(
             overFetchLimit,
         )
         val result = pushNotificationScheduleRepository.findCursored(
-            cursorScheduledAt = cursor.timestamp,
+            cursorCreatedAt = cursor.timestamp,
             cursorId = cursor.id,
             pageable = pageRequest,
         )
@@ -53,6 +53,7 @@ class PushScheduleService(
                     body = schedules.first().body,
                     deepLink = schedules.first().deepLink,
                     userIds = schedules.flatMap { it.userIds },
+                    createdAt = schedules.first().createdAt,
                 )
             }
         val selected = grouped.take(normalizedLimit)
@@ -80,6 +81,7 @@ class PushScheduleService(
             body = pushNotificationSchedules.first().body,
             deepLink = pushNotificationSchedules.first().deepLink,
             userIds = pushNotificationSchedules.flatMap { it.userIds },
+            createdAt = pushNotificationSchedules.first().createdAt,
         )
     }
 
@@ -90,7 +92,7 @@ class PushScheduleService(
         val schedules = pushNotificationScheduleRepository.findAllByScheduledAtBeforeAndSentAtIsNull(now)
 
         schedules
-            .filter { it.scheduledAt.isBefore(now - scheduledPushNotificationInterval) }
+            .filter { it.scheduledAt != null && it.scheduledAt!!.isBefore(now - scheduledPushNotificationInterval) }
             .let { outdatedSchedules ->
                 if (outdatedSchedules.isNotEmpty()) {
                     alertOutdatedPushSchedules(outdatedSchedules)
@@ -101,15 +103,17 @@ class PushScheduleService(
     }
 
     fun create(
-        scheduledAt: Instant,
+        scheduledAt: Instant?,
         title: String?,
         body: String,
         deepLink: String?,
         userIds: List<String>,
     ) = transactionManager.doInTransaction {
         val now = SccClock.instant()
-        if (scheduledAt.isBefore(now)) throw SccDomainException("스케줄링 시간은 현재 시간 이후여야 합니다.")
-        checkDuplicateSchedule(now, scheduledAt, title, body, deepLink, userIds)
+        if (scheduledAt != null) {
+            if (scheduledAt.isBefore(now)) throw SccDomainException("스케줄링 시간은 현재 시간 이후여야 합니다.")
+            checkDuplicateSchedule(now, scheduledAt, title, body, deepLink, userIds)
+        }
 
         val groupId = EntityIdGenerator.generateRandom()
 
@@ -144,7 +148,9 @@ class PushScheduleService(
         }
 
         if (pushNotificationSchedules.any { it.isSent() }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 수정할 수 없습니다.")
-        if (pushNotificationSchedules.any { it.scheduledAt.isBefore(now) }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 수정할 수 없습니다.")
+        if (pushNotificationSchedules.any { it.scheduledAt != null && it.scheduledAt!!.isBefore(now) }) {
+            throw SccDomainException("이미 전송된 푸시 알림 스케줄은 수정할 수 없습니다.")
+        }
         if (scheduledAt.isBefore(now)) throw SccDomainException("스케줄링 시간은 현재 시간 이후여야 합니다.")
 
         pushNotificationSchedules.forEach {
@@ -174,7 +180,9 @@ class PushScheduleService(
         }
 
         if (pushNotificationSchedules.any { it.isSent() }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
-        if (pushNotificationSchedules.any { it.scheduledAt.isBefore(now) }) throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
+        if (pushNotificationSchedules.any { it.scheduledAt != null && it.scheduledAt!!.isBefore(now) }) {
+            throw SccDomainException("이미 전송된 푸시 알림 스케줄은 삭제할 수 없습니다.")
+        }
 
         pushNotificationScheduleRepository.deleteAllByGroupId(groupId)
     }
@@ -189,10 +197,10 @@ class PushScheduleService(
     ) {
         val recentlyCreatedSchedules = pushNotificationScheduleRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(
             now.minusSeconds(60L),
-        )
+        ).filter { it.scheduledAt != null }
 
         val existsDuplicate = recentlyCreatedSchedules.any {
-            it.scheduledAt == scheduledAt &&
+            it.scheduledAt!!.epochSecond == scheduledAt.epochSecond &&
             it.title == title &&
             it.body == body &&
             it.deepLink == deepLink &&
@@ -212,11 +220,11 @@ class PushScheduleService(
     }
 
     private data class Cursor(
-        val scheduledAt: Instant,
+        val createdAt: Instant,
         val groupId: String,
-    ) : TimestampCursor(scheduledAt, groupId) {
+    ) : TimestampCursor(createdAt, groupId) {
         constructor(schedule: FlattenedPushSchedule) : this(
-            scheduledAt = schedule.scheduledAt,
+            createdAt = schedule.createdAt,
             groupId = schedule.groupId,
         )
 

@@ -20,7 +20,10 @@ class PushNotificationSchedule(
      */
     val groupId: String,
 
-    var scheduledAt: Instant,
+    /**
+     * 즉시 발송의 경우 null 이 들어간다
+     */
+    var scheduledAt: Instant?,
 
     var title: String?,
 
@@ -32,7 +35,7 @@ class PushNotificationSchedule(
     var userIds: List<String>
 ) : TimeAuditingBaseEntity() {
     init {
-        require(scheduledAt.isAfter(SccClock.instant()))
+        require(scheduledAt == null || scheduledAt?.isAfter(SccClock.instant()) == true)
     }
 
     var sentAt: Instant? = null
