@@ -70,5 +70,7 @@ fun ChallengeQuest.toDto(questProgress: ChallengeQuestProgress? = null): Challen
     description = description,
     targetCount = condition.targetCount,
     completedCount = questProgress?.completedCount ?: 0,
-    isCompleted = questProgress?.isCompleted ?: false
+    completedAt = questProgress?.completedAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
+    startDate = condition.startsAt?.let { EpochMillisTimestamp(it.toEpochMilli()) },
+    endDate = condition.endsAt?.let { EpochMillisTimestamp(it.toEpochMilli()) }
 )
