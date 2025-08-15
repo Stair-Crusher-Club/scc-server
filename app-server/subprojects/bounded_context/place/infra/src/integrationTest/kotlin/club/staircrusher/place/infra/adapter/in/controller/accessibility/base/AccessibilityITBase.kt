@@ -8,13 +8,13 @@ import club.staircrusher.testing.spring_it.base.SccSpringITBase
 import club.staircrusher.user.domain.model.UserAccount
 
 class AccessibilityITBase : SccSpringITBase() {
-    fun registerAccessibility(overridingUser: UserAccount? = null, overridingBuilding: Building? = null): RegisterAccessibilityResult {
+    fun registerAccessibility(overridingUser: UserAccount? = null, overridingBuilding: Building? = null, imageUrls: List<String> = emptyList()): RegisterAccessibilityResult {
         val user = overridingUser ?: transactionManager.doInTransaction {
             testDataGenerator.createIdentifiedUser().account
         }
         return transactionManager.doInTransaction {
             val place = testDataGenerator.createBuildingAndPlace(placeName = "장소장소", building = overridingBuilding)
-            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user)
+            val (placeAccessibility, buildingAccessibility) = testDataGenerator.registerBuildingAndPlaceAccessibility(place, user, imageUrls)
 
             testDataGenerator.registerBuildingAccessibilityComment(place.building, "건물 코멘트")
             testDataGenerator.registerPlaceAccessibilityComment(place, "장소 코멘트", user)
