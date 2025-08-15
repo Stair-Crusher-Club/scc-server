@@ -7,10 +7,14 @@ import club.staircrusher.challenge.application.port.out.persistence.ChallengeCon
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
+import club.staircrusher.challenge.domain.model.ChallengeActionCondition
 import club.staircrusher.challenge.domain.model.ChallengeContribution
+import club.staircrusher.challenge.domain.model.ChallengeQuest
+import club.staircrusher.challenge.domain.model.ChallengeQuestCondition
 import club.staircrusher.challenge.infra.adapter.`in`.controller.base.ChallengeITBase
+import club.staircrusher.stdlib.place.PlaceCategory
 import club.staircrusher.user.domain.model.UserAccount
-import club.staircrusher.user.domain.model.UserProfile
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -199,5 +203,73 @@ class GetChallengeTest : ChallengeITBase() {
 
        assertTrue(getChallengeResponseDto.ranks.isNotEmpty())
        assertNotNull(getChallengeResponseDto.myRank)
+   }
+
+   @Test
+   fun `퀘스트가 있는 챌린지를 올바르게 조회하고 역직렬화할 수 있다`() {
+       val user = transactionManager.doInTransaction { testDataGenerator.createIdentifiedUser() }
+
+       // 퀘스트가 있는 챌린지 생성
+       val challengeWithQuests = transactionManager.doInTransaction {
+           val quests = listOf(
+               ChallengeQuest(
+                   id = "quest1",
+                   title = "병원 접근성 정보 등록하기",
+                   description = "병원의 접근성 정보를 5개 등록해보세요.",
+                   condition = ChallengeQuestCondition(
+                       targetCount = 5,
+                       startsAt = null,
+                       endsAt = null,
+                       actionConditions = listOf(ChallengeActionCondition.Type.PLACE_ACCESSIBILITY),
+                       placeCategories = listOf(PlaceCategory.HOSPITAL)
+                   )
+               ),
+               ChallengeQuest(
+                   id = "quest2",
+                   title = "카페 리뷰 작성하기",
+                   description = "카페에 대한 리뷰를 3개 작성해보세요.",
+                   condition = ChallengeQuestCondition(
+                       targetCount = 3,
+                       startsAt = null,
+                       endsAt = null,
+//                       startsAt = SccClock.instant(),
+//                       endsAt = SccClock.instant() + Duration.ofDays(1),
+                       actionConditions = listOf(ChallengeActionCondition.Type.PLACE_REVIEW),
+                       placeCategories = null
+                   )
+               )
+           )
+
+           testDataGenerator.createChallenge(
+               name = "퀘스트 테스트 챌린지",
+               goal = 100,
+               startsAt = clock.instant().minusSeconds(3600),
+               endsAt = clock.instant().plusSeconds(3600),
+               conditions = listOf(),
+               quests = quests
+           )
+       }
+
+       // 챌린지 조회하여 퀘스트 데이터가 올바르게 역직렬화되는지 확인
+       val getChallengeResponse = mvc.sccRequest(
+           "/getChallenge",
+           GetChallengeRequestDto(challengeId = challengeWithQuests.id),
+           userAccount = user.account
+       ).getResult(GetChallengeResponseDto::class)
+
+       assertNotNull(getChallengeResponse.quests)
+       assertEquals(2, getChallengeResponse.quests.size)
+
+       val quest1 = getChallengeResponse.quests.find { it.id == "quest1" }
+       assertNotNull(quest1)
+       assertEquals("병원 접근성 정보 등록하기", quest1!!.title)
+       assertEquals("병원의 접근성 정보를 5개 등록해보세요.", quest1.description)
+       assertEquals(5, quest1.targetCount)
+
+       val quest2 = getChallengeResponse.quests.find { it.id == "quest2" }
+       assertNotNull(quest2)
+       assertEquals("카페 리뷰 작성하기", quest2!!.title)
+       assertEquals("카페에 대한 리뷰를 3개 작성해보세요.", quest2.description)
+       assertEquals(3, quest2.targetCount)
    }
 }
