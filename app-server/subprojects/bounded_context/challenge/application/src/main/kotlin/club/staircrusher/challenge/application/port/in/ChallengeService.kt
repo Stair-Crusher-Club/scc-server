@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.application.port.`in`
 
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeContributionRepository
+import club.staircrusher.stdlib.place.PlaceCategory
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeParticipationRepository
 import club.staircrusher.challenge.application.port.out.persistence.ChallengeRepository
 import club.staircrusher.challenge.domain.model.Challenge
@@ -266,7 +267,7 @@ class ChallengeService(
             challengeQuests = challengeQuests,
             contributionId = contributionId,
             actionType = actionType,
-            placeCategory = placeCategory,
+            placeCategory = placeCategory?.let { PlaceCategory.valueOfOrNull(it) },
             challengeStartsAt = challenge.startsAt,
             challengeEndsAt = challenge.endsAt,
             contributionCreatedAt = contributionCreatedAt

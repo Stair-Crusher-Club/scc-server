@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.domain.model
 
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.place.PlaceCategory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -31,9 +32,9 @@ class ChallengeParticipationQuestTest {
         )
 
         // then
-        assertEquals(1, participation.questProgresses.size)
-        assertEquals("quest1", participation.questProgresses[0].questId)
-        assertEquals(1, participation.questProgresses[0].completedCount)
+        assertEquals(1, participation.questProgresses!!.size)
+        assertEquals("quest1", participation.questProgresses!![0].questId)
+        assertEquals(1, participation.questProgresses!![0].completedCount)
     }
 
     @Test
@@ -57,7 +58,7 @@ class ChallengeParticipationQuestTest {
         )
 
         // then
-        val progress = participation.questProgresses.first { it.questId == "quest1" }
+        val progress = participation.questProgresses!!.first { it.questId == "quest1" }
         assertEquals(1, progress.completedCount)
         assertEquals(listOf("contribution1"), progress.contributionIds)
         assertFalse(progress.isCompleted)
@@ -84,7 +85,7 @@ class ChallengeParticipationQuestTest {
         )
 
         // then
-        val progress = participation.questProgresses.first { it.questId == "quest1" }
+        val progress = participation.questProgresses!!.first { it.questId == "quest1" }
         assertEquals(1, progress.completedCount)
         assertTrue(progress.isCompleted)
         assertNotNull(progress.completedAt)
@@ -97,7 +98,7 @@ class ChallengeParticipationQuestTest {
         val quest = createChallengeQuest(
             "quest1",
             "카페 전용 퀘스트",
-            placeCategories = listOf("카페")
+            placeCategories = listOf(PlaceCategory.CAFE)
         )
 
         val challengeStartsAt = Instant.parse("2024-01-01T00:00:00Z")
@@ -108,14 +109,14 @@ class ChallengeParticipationQuestTest {
             challengeQuests = listOf(quest),
             contributionId = "contribution1",
             actionType = ChallengeActionCondition.Type.PLACE_ACCESSIBILITY,
-            placeCategory = "음식점",
+            placeCategory = PlaceCategory.RESTAURANT,
             challengeStartsAt = challengeStartsAt,
             challengeEndsAt = null,
             contributionCreatedAt = contributionCreatedAt
         )
 
         // then - 조건에 맞지 않아 진행도가 생성되지 않음
-        assertTrue(participation.questProgresses.isEmpty())
+        assertTrue(participation.questProgresses!!.isEmpty())
     }
 
     @Test
@@ -152,7 +153,7 @@ class ChallengeParticipationQuestTest {
         participation.removeQuestProgress("contribution1", listOf(quest))
 
         // then
-        val progress = participation.questProgresses.first { it.questId == "quest1" }
+        val progress = participation.questProgresses!!.first { it.questId == "quest1" }
         assertEquals(1, progress.completedCount)
         assertEquals(listOf("contribution2"), progress.contributionIds)
     }
@@ -173,7 +174,7 @@ class ChallengeParticipationQuestTest {
         id: String,
         title: String,
         targetCount: Int = 3,
-        placeCategories: List<String>? = null
+        placeCategories: List<PlaceCategory>? = null
     ): ChallengeQuest {
         return ChallengeQuest(
             id = id,

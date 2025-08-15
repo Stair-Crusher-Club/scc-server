@@ -1,6 +1,7 @@
 package club.staircrusher.challenge.domain.model
 
 import club.staircrusher.stdlib.clock.SccClock
+import club.staircrusher.stdlib.place.PlaceCategory
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -70,7 +71,7 @@ class ChallengeQuestTest {
             startsAt = null,
             endsAt = null,
             actionConditions = listOf(ChallengeActionCondition.Type.PLACE_ACCESSIBILITY),
-            placeCategories = listOf("카페", "음식점")
+            placeCategories = listOf(PlaceCategory.CAFE, PlaceCategory.RESTAURANT)
         )
         val challengeStartsAt = Instant.parse("2024-01-01T00:00:00Z")
         val contributionCreatedAt = Instant.parse("2024-01-02T00:00:00Z")
@@ -78,7 +79,7 @@ class ChallengeQuestTest {
         // 허용된 카테고리
         assertTrue(condition.isSatisfied(
             ChallengeActionCondition.Type.PLACE_ACCESSIBILITY,
-            "카페",
+            PlaceCategory.CAFE,
             challengeStartsAt,
             null,
             contributionCreatedAt
@@ -87,7 +88,7 @@ class ChallengeQuestTest {
         // 허용되지 않은 카테고리
         assertFalse(condition.isSatisfied(
             ChallengeActionCondition.Type.PLACE_ACCESSIBILITY,
-            "병원",
+            PlaceCategory.HOSPITAL,
             challengeStartsAt,
             null,
             contributionCreatedAt

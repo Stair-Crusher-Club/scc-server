@@ -54,7 +54,7 @@ class JoinChallengeUseCase(
 
             // Check company info if B2B challenge
             if (challenge.isB2B) {
-                if (companyInfo?.companyName.isNullOrBlank() || companyInfo.participantName.isBlank()) {
+                if (companyInfo?.companyName.isNullOrBlank() || companyInfo?.participantName.isNullOrBlank()) {
                     throw SccDomainException(
                         msg = "B2B 챌린지는 회사명과 참여자명이 필수입니다.",
                         errorCode = SccDomainException.ErrorCode.B2B_INFO_REQUIRED
