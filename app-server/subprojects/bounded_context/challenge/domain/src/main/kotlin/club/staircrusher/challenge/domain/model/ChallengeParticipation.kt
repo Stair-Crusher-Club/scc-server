@@ -20,7 +20,7 @@ class ChallengeParticipation(
     val createdAt: Instant,
 ) {
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "questProgresses", columnDefinition = "JSONB")
+    @Column(name = "quest_progresses", columnDefinition = "JSONB")
     internal var _questProgresses: List<ChallengeQuestProgress>? = questProgresses
 
     val questProgresses: List<ChallengeQuestProgress>

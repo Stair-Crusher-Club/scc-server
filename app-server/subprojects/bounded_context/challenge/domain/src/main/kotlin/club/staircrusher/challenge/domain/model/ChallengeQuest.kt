@@ -31,11 +31,11 @@ data class ChallengeQuestCondition(
         // 퀘스트 기간 체크
         val questStartTime = startsAt ?: challengeStartsAt
         val questEndTime = endsAt ?: challengeEndsAt
-        
+
         if (contributionCreatedAt.isBefore(questStartTime)) {
             return false
         }
-        
+
         if (questEndTime != null && contributionCreatedAt.isAfter(questEndTime)) {
             return false
         }
