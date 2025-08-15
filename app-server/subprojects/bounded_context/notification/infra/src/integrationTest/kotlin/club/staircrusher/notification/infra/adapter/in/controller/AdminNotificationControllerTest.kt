@@ -17,7 +17,7 @@ class AdminNotificationControllerTest : NotificationITBase() {
     private lateinit var pushNotificationScheduleRepository: PushNotificationScheduleRepository
 
     @BeforeEach
-    fun cleanUp() {
+    fun cleanUp() = transactionManager.doInTransaction {
         pushNotificationScheduleRepository.deleteAll()
     }
 
@@ -60,45 +60,6 @@ class AdminNotificationControllerTest : NotificationITBase() {
         mvc.sccAdminRequest("/admin/notifications/sendPush", HttpMethod.POST, body)
             .andExpect {
                 status { isBadRequest() }
-            }
-    }
-
-    @Test
-    fun `이미 scheduledAt 이 지났으면 어드민에서 안보인다`() {
-        // given
-        val scheduledAt = clock.instant().plusSeconds(60)
-        val body = AdminSendPushNotificationRequestDTO(
-            scheduledAt = scheduledAt.toDTO(),
-            title = "test title",
-            body = "test message",
-            deepLink = null,
-            userIds = listOf("user1", "user2"),
-        )
-
-        // when
-        mvc.sccAdminRequest("/admin/notifications/sendPush", HttpMethod.POST, body)
-            .andExpect {
-                status { isOk() }
-            }
-
-        mvc.sccAdminRequest("/admin/notifications/pushSchedules", HttpMethod.GET, null)
-            .andExpect {
-                status { isOk() }
-            }
-            .apply {
-                val result = getResult(AdminListPushNotificationSchedulesResponseDTO::class)
-                Assertions.assertEquals(1, result.list.size)
-            }
-
-        clock.advanceTime(Duration.ofMinutes(5L))
-
-        mvc.sccAdminRequest("/admin/notifications/pushSchedules", HttpMethod.GET, null)
-            .andExpect {
-                status { isOk() }
-            }
-            .apply {
-                val result = getResult(AdminListPushNotificationSchedulesResponseDTO::class)
-                Assertions.assertEquals(0, result.list.size)
             }
     }
 
@@ -154,8 +115,11 @@ class AdminNotificationControllerTest : NotificationITBase() {
             }
             .apply {
                 val result = getResult(AdminListPushNotificationSchedulesResponseDTO::class)
-                Assertions.assertEquals(1, result.list.size)
-                Assertions.assertEquals(userCount, result.list[0].targetUsersCount)
+                result.list.forEach {
+                    println(it.id)
+                }
+                Assertions.assertEquals(1, result.list.filter { it.scheduledAt == null }.size)
+                Assertions.assertEquals(userCount, result.list[0].targetUserIds.size)
             }
     }
 }

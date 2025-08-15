@@ -8,10 +8,10 @@ import club.staircrusher.notification.port.`in`.result.FlattenedPushSchedule
 
 fun FlattenedPushSchedule.toAdminDTO() = AdminPushNotificationScheduleDTO(
     id = groupId,
-    scheduledAt = scheduledAt.toDTO(),
+    scheduledAt = scheduledAt?.toDTO(),
     sentAt = sentAt?.toDTO(),
     title = title,
     body = body,
     deepLink = deepLink,
-    targetUsersCount = userIds.size,
+    targetUserIds = userIds,
 )
